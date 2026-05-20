@@ -23,6 +23,35 @@ pip install difflogic
 
 For additional installation support, see [INSTALLATION_SUPPORT.md](INSTALLATION_SUPPORT.md).
 
+
+## Fresh Clone Setup
+
+The repository contains a custom CUDA extension. During installation, `pip` compiles it into a shared library such as `difflogic_cuda.cpython-312-x86_64-linux-gnu.so`.
+This file is expected, is generated automatically, and should typically not be committed.
+
+From a fresh clone, the reproducible setup steps are:
+
+```shell
+git clone <your-repo-url>
+cd difflogic
+
+python3.12 -m venv venv
+source venv/bin/activate
+
+python -m pip install --upgrade pip
+CUDA_HOME=/usr TORCH_CUDA_ARCH_LIST=7.5 pip install -r requirements.txt
+```
+
+The `requirements.txt` file already includes the PyTorch CUDA wheel index, so no extra `--extra-index-url` flag is needed.
+The repository also includes a `pyproject.toml` build-system declaration so that `torch` is available inside pip's isolated build environment when the editable install builds the CUDA extension.
+
+Optional verification:
+
+```shell
+python -c "import torch, difflogic; print(torch.__version__, torch.version.cuda, torch.cuda.is_available()); print(torch.cuda.get_device_name(0))"
+python experiments/main.py --dataset adult -ni 1 -ef 1 -k 64 -l 1 -bs 32
+```
+
 ## 🌱 Intro and Training
 
 This library provides a framework for both training and inference with logic gate networks.

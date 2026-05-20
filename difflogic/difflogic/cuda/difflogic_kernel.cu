@@ -591,8 +591,7 @@ std::tuple<torch::Tensor, int> tensor_packbits_cuda(
     const auto out_size = t.size(0);
     const auto pad_len = (bit_count - batch_in_size % bit_count) % bit_count;
 
-    dim3 threads_per_block(32, 32);
-
+    dim3 threads_per_block(16, 16);
     const dim3 blocks_per_grid(
         min(static_cast<int64_t>(65535), ceil_div(batch_out_size, static_cast<int64_t>(threads_per_block.x))),
         min(static_cast<int64_t>(65535), ceil_div(out_size, static_cast<int64_t>(threads_per_block.y)))
