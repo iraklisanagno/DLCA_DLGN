@@ -1,0 +1,109 @@
+###############################################################################
+# PyTorch Universal Container for Heterogeneous GPU Cluster
+# Supports: 
+# - NVIDIA A100 (8.0), A6000 (8.6)
+# - RTX 3090 (8.6), Titan RTX (7.5), Titan XP (6.1)
+# - V100 (7.0), RTX 2080 Ti (7.5)
+# Base Image: pytorch/pytorch:2.4.0-cuda12.4-cudnn9-devel
+###############################################################################
+Bootstrap: docker
+From: pytorch/pytorch:2.4.0-cuda12.4-cudnn9-devel
+Stage: build
+
+%post
+    ##################################################
+    # Essential System Dependencies
+    ##################################################
+    apt-get update && apt-get install -y \
+        g++ \
+        make \
+        cmake \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+    ##################################################
+    # CUDA Architecture Configuration
+    ##################################################
+    export TORCH_CUDA_ARCH_LIST="6.1;7.0;7.5;8.0;8.6"
+
+    ##################################################
+    # Python Packages
+    ##################################################
+    pip3 install --no-cache-dir --upgrade pip
+    pip3 install --no-cache-dir \
+        tqdm \
+        scikit-learn \
+        numpy \
+        matplotlib \
+        seaborn \
+        pandas \
+        difflogic \
+        torchattacks \
+        wandb \
+        huggingface-hub \
+        datasets \
+        tokenizers \
+        nltk \
+        sympy \
+        einops \
+        sacrebleu \
+        rouge-score \
+        pyarrow \
+        networkx \
+        psutil \
+        optree \
+        joblib \
+        ninja
+
+    ##################################################
+    # Prepare artifacts
+    ##################################################
+    mkdir -p /opt/artifacts/lib/python3.11/site-packages
+    cp -r /opt/conda/lib/python3.11/site-packages/* /opt/artifacts/lib/python3.11/site-packages/
+
+###############################################################################
+# Final Runtime Image
+###############################################################################
+
+Bootstrap: docker
+From: pytorch/pytorch:2.4.0-cuda12.4-cudnn9-runtime
+Stage: final
+
+%files from build
+    /opt/artifacts /opt/artifacts
+
+%post
+    ##################################################
+    # Install Python packages from build stage
+    ##################################################
+    cp -r /opt/artifacts/lib/python3.11/site-packages/* /opt/conda/lib/python3.11/site-packages/
+
+    ##################################################
+    # Cleanup and permissions
+    ##################################################
+    rm -rf /opt/artifacts
+    chmod -R a+r /opt/conda/lib/python3.11/site-packages
+    ldconfig  # Update shared library cache
+
+%environment
+    ##################################################
+    # Environment Configuration
+    ##################################################
+    export LC_ALL=C.UTF-8
+    export PATH=/opt/conda/bin:$PATH
+
+%runscript
+    ##################################################
+    # Startup Information
+    ##################################################
+    echo "===================================================================="
+    echo "PyTorch Universal Container"
+    echo "Supported CUDA Architectures: 6.1, 7.0, 7.5, 8.0, 8.6"
+    echo "--------------------------------------------------------------------"
+    echo "Python version: $(python --version)"
+    echo "PyTorch version: $(python -c 'import torch; print(torch.__version__)')"
+    echo "CUDA available: $(python -c 'import torch; print(torch.cuda.is_available())')"
+    echo "CUDA version: $(python -c 'import torch; print(torch.version.cuda)')"
+    echo "GPU detected: $(python -c 'import torch; print(torch.cuda.get_device_name(0))')"
+    echo "===================================================================="
+    echo "Usage: singularity exec --nv --bind <host_path>:<container_path> <image.sif> python script.py"

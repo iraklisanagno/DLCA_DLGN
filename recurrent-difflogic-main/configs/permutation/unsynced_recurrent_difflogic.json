@@ -1,0 +1,233 @@
+{
+    "dataset": {
+        "name": "permutation",
+        "params": {
+            "dataset_path": "/data/permutation_datasets",
+            "num_samples": 100000,
+            "min_seq_length": 3,
+            "max_seq_length": 20,
+            "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+            "validation_split": 0.1,
+            "test_split": 0.1,
+            "operation_distribution": null,
+            "force_reload": false,
+            "seed": 42
+        }
+    },
+    "tokenizer": {
+        "name": "permutation",
+        "params": {
+            "tk_level": "perm_aware",
+            "tokens_per_batch": 512,
+            "seq_length": 16,
+            "max_vocab_size": 2000,
+            "pad_idx": 0,
+            "unk_idx": 1,
+            "shift": 0,
+            "cache_dir": "/data/permutation_tokenizer_cache",
+            "use_disk_cache": true,
+            "vocab_sample_size": 50000,
+            "max_preprocess_size": 50000,
+            "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        }
+    },
+    "model": {
+        "name": "UnsyncedRecurrentDifflogic",
+        "params": {
+            "embedding_dim": 1024,
+            "seq_length": 16,
+            "k_layers_sizes": [
+                10000
+              ],
+              "l_layers_sizes": [
+                40918
+              ],
+              "m_layers_sizes": [
+                294846,
+                193228,
+                193228,
+                193228,
+                193228,
+                480000
+              ],
+              "n_layers_sizes": [
+                35274
+              ],
+              "p_layers_sizes": [
+                312786
+              ],
+            "group_factor": 30,
+            "grad_factor": 1.0,
+            "connections": "random",
+            "difflogic_init_type": "residual",
+            "noise_factor": 0.5,
+            "hidden_state_init_type": "gaussian",
+            "seed": 45,
+            "group_sum_tau": 2.0,
+            "gumbel_tau": null,
+            "dropout_prob": 0,
+            "frozen_layers": {},
+            "noise_layers": {},
+            "noise_std": 0.01,
+            "use_channel_logic": false,
+            "channel_logic_k": 2,
+            "channel_regularization_lambda": 0.0016,
+            "gradient_rescaling": {
+                "k_layers": 1.0,
+                "l_layers": 1.0,
+                "m_layers": 1.0,
+                "n_layers": 1.0,
+                "p_layers": 1.0,
+                "embedding": 1.0
+            },
+            "adaptive_gradient_clipping": false
+        }
+    },
+    "metrics": [
+        "accuracy",
+        "top_5_accuracy",
+        "top_10_accuracy",
+        "perplexity",
+        "precision",
+        "recall",
+        "f1"
+    ],
+    "training": {
+        "epochs": 1,
+        "log_every_n_steps": 250,
+        "visualize_every_n_steps": 2500,
+        "gradient_log_frequency": 50,
+        "gradient_clipping": false,
+        "gradient_clip_value": 1.0,
+        "main_loss": "cross_entropy",
+        "label_smoothing": 0.1,
+        "optimizer": {
+            "name": "AdamW",
+            "params": {
+                "lr": 0.073,
+                "weight_decay": 0.001,
+                "betas": [
+                    0.9,
+                    0.999
+                ]
+            }
+        },
+        "scheduler": {
+            "name": "linear_ramp",
+            "params": {
+                "start_value": 1.0,
+                "end_value": 0.1, 
+                "start_step": 2000,
+                "end_step": 52000
+            }
+        },
+        "aux_scheduler": [
+            {
+                "type": "linear_ramp",
+                "start_value": 0.0,
+                "end_value": 0.1,
+                "start_step": 1000,
+                "end_step": 100000,
+                "comment": "Binary Regularization Loss + Channel Regularization - First aux loss"
+            },
+            {
+                "type": "constant",
+                "value": 0,
+                "comment": "Contrastive Loss - Second aux loss"
+            },
+            {
+                "type": "constant",
+                "value": 0,
+                "comment": "Diversity Loss - Third aux loss"
+            },
+            {
+                "type": "constant",
+                "value": 0,
+                "comment": "Information Bottleneck Loss - Fourth aux loss"
+            },
+            {
+                "type": "constant",
+                "value": 0,
+                "comment": "Logic Entropy Loss - Fifth aux loss (DiffLogic only)"
+            },
+            {
+                "type": "constant",
+                "value": 0.01,
+                "comment": "Weight Magnitude Loss - Sixth aux loss (DiffLogic only)"
+            }
+        ],
+        "layer_lr_scheduler": [
+            {
+                "type": "constant",
+                "value": 1.0,
+                "layers": [
+                    "embedding"
+                ],
+                "comment": "Embedding - matched to successful run parameters"
+            },
+            {
+                "type": "constant",
+                "value": 1.0,
+                "layers": [
+                    "n_layers"
+                ],
+                "comment": "N layers - matched to successful run parameters"
+            },
+            {
+                "type": "constant",
+                "value": 1.0,
+                "layers": [
+                    "k_layers"
+                ],
+                "comment": "K layers - matched to successful run parameters"
+            },
+            {
+                "type": "constant",
+                "value": 1.0,
+                "layers": [
+                    "l_layers"
+                ],
+                "comment": "L layers - matched to successful run parameters"
+            },
+            {
+                "type": "constant",
+                "value": 1.0,
+                "layers": [
+                    "p_layers"
+                ],
+                "comment": "P layers - fixed reference from successful WMT run"
+            },
+            {
+                "type": "constant",
+                "value": 1.0,
+                "layers": [
+                    "m_layers"
+                ],
+                "comment": "M layers - stable reference layer"
+            }
+        ],
+        "collapse_mode": true
+    },
+    "visualization": [
+        {
+            "type": "translation_table",
+            "max_examples": 3,
+            "max_positions": 20
+        },
+        {
+            "type": "logic_distribution",
+            "fig_width": 12,
+            "fig_height_per_layer": 2.5
+        },
+        {
+            "type": "weight_histogram"
+        }
+    ],
+    "save_path": "/data/checkpoints/wmt_unsynced_difflogic_optimized_from_successful_run.pt",
+    "scheduler": {
+        "params": {
+            "factor": 0.95,
+            "patience": 10000
+        }
+    }
+}

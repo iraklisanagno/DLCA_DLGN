@@ -1,0 +1,85 @@
+{
+    "dataset": {
+        "name": "permutation",
+        "params": {
+            "dataset_path": "/data/permutation_datasets",
+            "num_samples": 100000,
+            "min_seq_length": 3,
+            "max_seq_length": 20,
+            "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+            "validation_split": 0.1,
+            "test_split": 0.1,
+            "operation_distribution": null,
+            "force_reload": false,
+            "seed": 42
+        }
+    },
+    "tokenizer": {
+        "name": "permutation",
+        "params": {
+            "tk_level": "perm_aware",
+            "tokens_per_batch": 512,
+            "seq_length": 16,
+            "max_vocab_size": 2000,
+            "pad_idx": 0,
+            "unk_idx": 1,
+            "shift": 0,
+            "cache_dir": "/data/permutation_tokenizer_cache",
+            "use_disk_cache": true,
+            "vocab_sample_size": 50000,
+            "max_preprocess_size": 50000,
+            "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        }
+    },
+    "model": {
+        "name": "UnsyncedGRU",
+        "params": {
+            "embedding_dim": 128,
+            "hidden_dim": 128,
+            "seed": 42
+        }
+    },
+    "metrics": [
+        "accuracy",
+        "top_5_accuracy",
+        "top_10_accuracy",
+        "perplexity",
+        "precision",
+        "recall",
+        "f1"
+    ],
+    "training": {
+        "epochs": 1,
+        "log_every_n_steps": 250,
+        "visualize_every_n_steps": 2500,
+        "main_loss": "cross_entropy",
+        "optimizer": {
+            "name": "AdamW",
+            "params": {
+                "lr": 0.0015,
+                "weight_decay": 0.001
+            }
+        },
+        "scheduler": {
+            "name": "constant",
+            "params": {
+                "value": 1.0
+            }
+        },
+        "label_smoothing": 0.1
+    },
+    "visualization": [
+        {
+            "type": "translation_table",
+            "max_examples": 3,
+            "max_positions": 20
+        }
+    ],
+    "save_path": "/data/checkpoints/unsynced_rnn.pt",
+    "scheduler": {
+        "params": {
+            "factor": 0.95,
+            "patience": 10000
+        }
+    }
+}

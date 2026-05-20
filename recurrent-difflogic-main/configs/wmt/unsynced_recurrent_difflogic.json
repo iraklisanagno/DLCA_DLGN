@@ -1,0 +1,234 @@
+{
+    "dataset": {
+        "name": "wmt",
+        "params": {
+            "dataset_name": "wmt14",
+            "language_pair": "de-en",
+            "dataset_path": "/data/wmt_datasets",
+            "streaming": false,
+            "force_reload": false,
+            "subset_size": null
+        }
+    },
+    "tokenizer": {
+        "name": "machine_translation",
+        "params": {
+            "tk_level": "word",
+            "tokens_per_batch": 1024,
+            "seq_length": 16,
+            "src_lang": "en",
+            "tgt_lang": "de",
+            "max_vocab_size": 16000,
+            "cache_dir": "/data/tokenizer_cache",
+            "use_disk_cache": true,
+            "vocab_sample_size": 500000,
+            "max_preprocess_size": 500000,
+            "shift": 0,
+            "shared_vocab": true
+        }
+    },
+    "model": {
+        "name": "UnsyncedRecurrentDifflogic",
+        "params": {
+            "embedding_dim": 1024,
+            "seq_length": 16,
+            "k_layers_sizes": [
+                54000,
+                32000
+            ],
+            "l_layers_sizes": [
+                12000,
+                12000
+            ],
+            "m_layers_sizes": [
+                400000,
+                400000,
+                480000
+            ],
+            "n_layers_sizes": [
+                12000,
+                12000
+            ],
+            "p_layers_sizes": [
+                64000,
+                48000
+            ],
+            "group_factor": 30,
+            "grad_factor": 1,
+            "connections": "random",
+            "difflogic_init_type": "residual",
+            "noise_factor": 0.5,
+            "hidden_state_init_type": "gaussian",
+            "seed": 45,
+            "group_sum_tau": 2,
+            "gumbel_tau": null,
+            "dropout_prob": 0,
+            "frozen_layers": {},
+            "noise_layers": {},
+            "noise_std": 0.01,
+            "use_channel_logic": false,
+            "channel_logic_k": 2,
+            "channel_regularization_lambda": 0.0016,
+            "gradient_rescaling": {
+                "k_layers": 1,
+                "l_layers": 1,
+                "m_layers": 1,
+                "n_layers": 1,
+                "p_layers": 1,
+                "embedding": 1
+            },
+            "adaptive_gradient_clipping": false
+        }
+    },
+    "metrics": [
+        "accuracy",
+        "top_5_accuracy",
+        "top_10_accuracy",
+        "perplexity",
+        "precision",
+        "recall",
+        "f1",
+        "bleu",
+        "rouge_l",
+        "chrf",
+        "meteor",
+        "nist"
+    ],
+    "training": {
+        "epochs": 1,
+        "log_every_n_steps": 250,
+        "visualize_every_n_steps": 2500,
+        "gradient_log_frequency": 50,
+        "gradient_clipping": false,
+        "gradient_clip_value": 1,
+        "main_loss": "cross_entropy",
+        "label_smoothing": 0.1,
+        "optimizer": {
+            "name": "AdamW",
+            "params": {
+                "lr": 0.05,
+                "weight_decay": 0.001,
+                "betas": [
+                    0.9,
+                    0.999
+                ]
+            }
+        },
+        "scheduler": {
+            "name": "ReduceLROnPlateau",
+            "params": {
+                "mode": "min",
+                "factor": 0.8,
+                "patience": 2000
+            }
+        },
+        "aux_scheduler": [
+            {
+                "type": "linear_ramp",
+                "start_value": 0,
+                "end_value": 0.1,
+                "start_step": 1000,
+                "end_step": 100000,
+                "comment": "Binary Regularization Loss + Channel Regularization - First aux loss"
+            },
+            {
+                "type": "constant",
+                "value": 0,
+                "comment": "Contrastive Loss - Second aux loss"
+            },
+            {
+                "type": "constant",
+                "value": 0,
+                "comment": "Diversity Loss - Third aux loss"
+            },
+            {
+                "type": "constant",
+                "value": 0,
+                "comment": "Information Bottleneck Loss - Fourth aux loss"
+            },
+            {
+                "type": "constant",
+                "value": 0,
+                "comment": "Logic Entropy Loss - Fifth aux loss (DiffLogic only)"
+            },
+            {
+                "type": "constant",
+                "value": 0.001,
+                "comment": "Weight Magnitude Loss - Sixth aux loss (DiffLogic only)"
+            }
+        ],
+        "layer_lr_scheduler": [
+            {
+                "type": "constant",
+                "value": 1,
+                "layers": [
+                    "embedding"
+                ],
+                "comment": "Embedding - matched to successful run parameters"
+            },
+            {
+                "type": "constant",
+                "value": 1,
+                "layers": [
+                    "n_layers"
+                ],
+                "comment": "N layers - matched to successful run parameters"
+            },
+            {
+                "type": "constant",
+                "value": 1,
+                "layers": [
+                    "k_layers"
+                ],
+                "comment": "K layers - matched to successful run parameters"
+            },
+            {
+                "type": "constant",
+                "value": 1,
+                "layers": [
+                    "l_layers"
+                ],
+                "comment": "L layers - matched to successful run parameters"
+            },
+            {
+                "type": "constant",
+                "value": 1,
+                "layers": [
+                    "p_layers"
+                ],
+                "comment": "P layers - fixed reference from successful WMT run"
+            },
+            {
+                "type": "constant",
+                "value": 1,
+                "layers": [
+                    "m_layers"
+                ],
+                "comment": "M layers - stable reference layer"
+            }
+        ],
+        "collapse_mode": true
+    },
+    "visualization": [
+        {
+            "type": "translation_table",
+            "max_examples": 3,
+            "max_positions": 20
+        },
+        {
+            "type": "logic_distribution",
+            "fig_width": 12,
+            "fig_height_per_layer": 2.5
+        },
+        {
+            "type": "weight_histogram"
+        }
+    ],
+    "save_path": "/data/checkpoints/wmt_unsynced_difflogic_optimized_from_successful_run.pt",
+    "scheduler": {
+        "params": {
+            "factor": 0.95,
+            "patience": 10000
+        }
+    }
+}

@@ -1,0 +1,27 @@
+\begin{table}[!htb]
+\centering
+\setlength{\tabcolsep}{3mm}
+\begin{sc}
+\begin{tabular}{c|cc}
+\toprule
+Model & FLOPs & OPs \\
+\midrule
+Transformer & 80.04M & - \\
+GRU & 37.49M & - \\
+RNN & 35.36M & - \\
+RDDLGN & - & 1.53M \\
+\bottomrule
+\end{tabular}
+\end{sc}
+\caption{Computational complexity comparison across different model architectures (excluding embedding operations). 
+FLOPs (Floating Point Operations) are calculated for a single forward pass with batch size 1, 
+source sequence length 16, target sequence length 16, and vocabulary size 16,000. 
+Embedding lookup operations are excluded from all FLOP calculations to focus on core architectural differences. 
+For RNN and GRU models, FLOPs include recurrent computations (matrix multiplications, element-wise operations, 
+and activations) and output projections. For Transformer models, FLOPs include positional encodings, 
+multi-head attention mechanisms (Q/K/V projections, attention scores, softmax operations), feed-forward networks, 
+layer normalizations, and output projections across all encoder and decoder layers. OPs (Operations) for RDDLGN 
+represent the sum of all layer sizes from the model configuration, indicating the total number of logical 
+operations in the differentiable logic network.}
+\label{tab:computational_complexity}
+\end{table}

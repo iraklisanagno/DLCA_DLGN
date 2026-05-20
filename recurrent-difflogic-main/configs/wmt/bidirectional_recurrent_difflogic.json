@@ -1,0 +1,146 @@
+{
+    "dataset": {
+        "name": "wmt",
+        "params": {
+            "dataset_name": "wmt14",
+            "language_pair": "de-en",
+            "dataset_path": "/data/wmt_datasets",
+            "streaming": false,
+            "force_reload": false,
+            "subset_size": null
+        }
+    },
+    "tokenizer": {
+        "name": "machine_translation",
+        "params": {
+            "tk_level": "word",
+            "tokens_per_batch": 1024,
+            "seq_length": 16,
+            "src_lang": "en",
+            "tgt_lang": "de",
+            "max_vocab_size": 16000,
+            "cache_dir": "/data/tokenizer_cache",
+            "use_disk_cache": true,
+            "vocab_sample_size": 500000,
+            "max_preprocess_size": 500000,
+            "shift": 0,
+            "shared_vocab": true
+        }
+    },
+    "model": {
+        "name": "BidirectionalRecurrentDifflogic",
+        "params": {
+            "embedding_dim": 256,
+            "seq_length": 32,
+            "n_layers_sizes": [
+                16000,
+                24000
+            ],
+            "j_layers_sizes": [
+                32000,
+                24000,
+                16000
+            ],
+            "k_layers_sizes": [
+                32000,
+                32000
+            ],
+            "g_layers_sizes": [
+                16000,
+                16000
+            ],
+            "l_layers_sizes": [
+                16000,
+                24000
+            ],
+            "p_layers_sizes": [
+                96000,
+                76000,
+                54000
+            ],
+            "m_layers_sizes": [
+                96000,
+                128000,
+                256000
+            ],
+            "group_factor": 20,
+            "grad_factor": 1.16,
+            "connections": "random",
+            "difflogic_init_type": "noisy_residual",
+            "noise_factor": 2.0,
+            "hidden_state_init_type": "gaussian",
+            "seed": 45,
+            "group_sum_tau": 2,
+            "gumbel_tau": 0.25,
+            "dropout_prob": 0.0
+        }
+    },
+    "metrics": [
+        "accuracy",
+        "top_5_accuracy",
+        "top_10_accuracy",
+        "perplexity",
+        "precision",
+        "recall",
+        "f1",
+        "bleu",
+        "rouge_l",
+        "chrf",
+        "meteor",
+        "nist"
+    ],
+    "training": {
+        "epochs": 1,
+        "log_every_n_steps": 250,
+        "visualize_every_n_steps": 2500,
+        "gradient_clipping": 0.5,
+        "main_loss": "cross_entropy",
+        "label_smoothing": 0.1,
+        "optimizer": {
+            "name": "AdamW",
+            "params": {
+                "lr": 0.0015,
+                "weight_decay": 0.001
+            }
+        },
+        "scheduler": {
+            "name": "constant",
+            "params": {
+                "value": 1.0
+            }
+        },
+        "aux_scheduler": [
+            {
+                "type": "linear_ramp",
+                "start_value": 0.0,
+                "end_value": 0.5,
+                "start_step": 1000,
+                "end_step": 10000
+            }
+        ],
+        "layer_lr_scheduler": [],
+        "collapse_mode": false
+    },
+    "visualization": [
+        {
+            "type": "translation_table",
+            "max_examples": 3,
+            "max_positions": 20
+        },
+        {
+            "type": "logic_distribution",
+            "fig_width": 12,
+            "fig_height_per_layer": 2.5
+        },
+        {
+            "type": "weight_histogram"
+        }
+    ],
+    "save_path": "/data/checkpoints/bidirectional_recurrent_difflogic.pt",
+    "scheduler": {
+        "params": {
+            "factor": 0.95,
+            "patience": 10000
+        }
+    }
+}

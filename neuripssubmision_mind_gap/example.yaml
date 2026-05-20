@@ -1,0 +1,17 @@
+experiment_name: "example_run"
+dataset: "CIFAR10"
+seed: 42
+num_layers: 12
+num_neurons: 256000
+training_bit_count: 32
+grad_factor: 1.0
+gumbel_tau: 1.0
+stochastic: "gumbel"
+batch_size: 128
+lr: 0.01
+num_iterations: 10000000
+tau: 100
+save_final_model: true
+save_model_per_eval: false
+resume_checkpoint: null
+
