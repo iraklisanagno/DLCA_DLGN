@@ -312,7 +312,7 @@ if __name__ == '__main__':
 
             if args.packbits_eval:
                 r['train_acc_eval'] = packbits_eval(model, train_loader)
-                r['valid_acc_eval'] = packbits_eval(model, train_loader)
+                r['valid_acc_eval'] = packbits_eval(model, validation_loader)
                 r['test_acc_eval'] = packbits_eval(model, test_loader)
 
             if args.experiment_id is not None:
