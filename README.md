@@ -34,5 +34,7 @@ PDFs - DLGNs
 - [GIC-DLC: Differentiable Logic Circuits for Hardware-Friendly Grayscale Image Compression](https://arxiv.org/pdf/2601.14130)
 - [WARP Logic Neural Networks](https://arxiv.org/pdf/2602.03527)
     - [repo](https://github.com/ligerlac/torchlogix)
+- [Inter-patient ECG Arrhythmia Classification with LGNs and LUTNs](https://arxiv.org/pdf/2601.11433)
+
 
 - [Deep Differentiable Logic Gate Networks: Neuron Collapse Through a Neural Architecture Search Perspective](https://tik-db.ee.ethz.ch/file/e40a1e75d6dfab7f3a1816c624b2f93e/draft_difflogic_nas_proposal_yousefi.pdf) -> **CHECK IT PROJECT IDEA**
