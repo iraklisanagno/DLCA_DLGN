@@ -1,3 +1,6 @@
+### Mind the Gap: Removing the Discretization Gap in Differentiable Logic Gate Networks – Summary Notes
+
+
 This paper is actually very interesting because it attacks a **different problem than IWP**.
 
 If I had to summarize the evolution of the ETH Zürich DLGN work:
@@ -971,3 +974,279 @@ If I were reviewing a future paper, one of the first questions I'd ask is:
 > Does the 50% unused-neuron phenomenon still exist under IWP, or was it largely a consequence of the original softmax-over-16-gates formulation?
 
 That experiment would be very revealing.
+
+-------------------------
+
+
+The core purpose of Gumbel is:
+
+> **Make a discrete decision trainable with gradient descent.**
+
+Classification is just one application.
+
+---
+
+## What Gumbel is solving
+
+Suppose your model must choose one option:
+
+$
+k = \arg\max_i z_i
+$
+
+The problem is:
+
+$
+\arg\max
+$
+
+is not differentiable.
+
+So gradients cannot flow through the decision.
+
+Gumbel-Softmax provides a differentiable approximation.
+
+This can be used anywhere you need:
+
+* gate selection,
+* routing,
+* architecture search,
+* expert selection,
+* connectivity learning,
+* operator selection.
+
+---
+
+# Example 1: DLGNs (Mind the Gap paper)
+
+Choose:
+
+```text
+AND
+OR
+XOR
+...
+```
+
+Gumbel makes gate selection trainable.
+
+---
+
+# Example 2: Mixture of Experts (MoE)
+
+Choose:
+
+```text
+Expert 1
+Expert 2
+Expert 3
+```
+
+instead of evaluating all experts.
+
+Modern LLMs often use similar ideas.
+
+---
+
+# Example 3: Connectivity Learning
+
+Remember one of the ideas we discussed:
+
+Instead of random inputs:
+
+```text
+Neuron
+  ↓
+Input 17
+Input 54
+```
+
+learn which inputs to connect to.
+
+You could use Gumbel to select:
+
+$
+x_{17}
+$
+
+instead of
+
+$
+x_{54}
+$
+
+This is actually one of the ideas I find more promising than IWP itself.
+
+---
+
+# Example 4: Neural Architecture Search
+
+Choose:
+
+```text
+3x3 Conv
+5x5 Conv
+Skip Connection
+Attention
+```
+
+Gumbel is widely used here.
+
+---
+
+# Example 5: Hardware Mapping
+
+This is where it becomes relevant to your work.
+
+Suppose a runtime system must choose:
+
+```text
+CPU
+GPU
+NPU
+FPGA
+```
+
+for each layer.
+
+You can make this decision differentiable with Gumbel.
+
+People do this in accelerator co-design papers.
+
+---
+
+# For your DLGN research
+
+The interesting question is not:
+
+> Can Gumbel be used?
+
+Absolutely yes.
+
+The interesting question is:
+
+> Where should Gumbel be used?
+
+I see three possibilities.
+
+---
+
+## Option 1: Gate Selection (Mind the Gap)
+
+Current paper:
+
+```text
+16 candidate gates
+↓
+Gumbel
+↓
+select one
+```
+
+---
+
+## Option 2: Input Selection
+
+Much more interesting in my opinion:
+
+```text
+100 candidate inputs
+↓
+Gumbel
+↓
+select two
+```
+
+This would learn connectivity.
+
+Current DLGNs do not do this.
+
+---
+
+## Option 3: Variable-Arity Gates
+
+Suppose a neuron chooses:
+
+```text
+2-input gate
+3-input gate
+4-input gate
+```
+
+using Gumbel.
+
+This directly addresses one of the limitations of IWP.
+
+---
+
+# What happens with IWP?
+
+This is where things become tricky.
+
+The Mind the Gap paper works because OP has:
+
+$
+p_1,\ldots,p_{16}
+$
+
+a categorical distribution.
+
+Gumbel naturally operates on categories.
+
+---
+
+IWP does not have categories.
+
+It has:
+
+$
+\omega_{00},\omega_{01},\omega_{10},\omega_{11}
+$
+
+continuous truth-table entries.
+
+So there is nothing obvious to "sample."
+
+You would need to define a new discrete decision.
+
+For example:
+
+### Gate discretization
+
+Sample:
+
+$
+\omega_{ij}\in{0,1}
+$
+
+using Straight-Through Bernoulli estimators.
+
+---
+
+### Connectivity selection
+
+Use Gumbel on input choices.
+
+This is the direction I would explore.
+
+---
+
+# My research opinion
+
+If I were trying to outperform IWP, I would **not** use Gumbel for gate selection.
+
+IWP already removed much of the gate-selection machinery.
+
+Instead, I would use Gumbel for:
+
+```text
+Which inputs should a gate connect to?
+```
+
+because:
+
+1. Current DLGNs use fixed random connectivity.
+2. Connectivity probably affects accuracy more than the exact gate parameterization.
+3. This problem remains completely unsolved by IWP.
+
+That, in my opinion, is where Gumbel could have the largest impact on future DLGN architectures.
