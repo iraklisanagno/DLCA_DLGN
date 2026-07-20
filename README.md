@@ -27,14 +27,27 @@ PDFs - DLGNs
 - [From MNIST to ImageNet: Understanding the Scalability Boundaries of Differentiable Logic Gate Networks](https://arxiv.org/pdf/2509.25933)
 - [LILogic Net: Compact Logic Gate Networks with Learnable Connectivity for Efficient Hardware Deployment](https://arxiv.org/pdf/2511.12340)
 - [Lightweight in-Network Flow Classification with Deep Differentiable Logic Gate Networks](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=11323087)
-- [Deepgate: Learning neural representations of logic gates](https://dl.acm.org/doi/pdf/10.1145/3489517.3530497)
 - [Logic Neural Networks for Efficient FPGA Implementation](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=10746856)
-- [Neural Cellular Automata for Lightweight, Robust and Explainable Classification of White Blood Cell Images](https://arxiv.org/pdf/2404.05584)
-- [A Path to Universal Neural Cellular Automata](https://arxiv.org/pdf/2505.13058)
 - [GIC-DLC: Differentiable Logic Circuits for Hardware-Friendly Grayscale Image Compression](https://arxiv.org/pdf/2601.14130)
 - [WARP Logic Neural Networks](https://arxiv.org/pdf/2602.03527)
     - [repo](https://github.com/ligerlac/torchlogix)
 - [Inter-patient ECG Arrhythmia Classification with LGNs and LUTNs](https://arxiv.org/pdf/2601.11433)
+- [Fitting Multilinear Polynomials for Logic Gate Networks](https://arxiv.org/pdf/2605.08657)
+- [Polynomial Surrogate Training for Differentiable Ternary Logic Gate Networks](https://arxiv.org/pdf/2603.00302)
+- [Silicon Aware Neural Networks](https://arxiv.org/pdf/2604.19334)
+- [BitLogic: A Framework for Gradient-Based LUT-Native Neural Networks](https://openreview.net/pdf?id=ZbsSZAfDod)
+- [ET: An Energy Eficient Edge Transformer Architecture](https://dl.acm.org/doi/epdf/10.1145/3828726)
+
+
+Cellular automata
+
+- [Neural Cellular Automata for Lightweight, Robust and Explainable Classification of White Blood Cell Images](https://arxiv.org/pdf/2404.05584)
+- [A Path to Universal Neural Cellular Automata](https://arxiv.org/pdf/2505.13058)
+
 
 
 - [Deep Differentiable Logic Gate Networks: Neuron Collapse Through a Neural Architecture Search Perspective](https://tik-db.ee.ethz.ch/file/e40a1e75d6dfab7f3a1816c624b2f93e/draft_difflogic_nas_proposal_yousefi.pdf) -> **CHECK IT PROJECT IDEA**
+
+
+Other:
+- [Deepgate: Learning neural representations of logic gates](https://dl.acm.org/doi/pdf/10.1145/3489517.3530497)
