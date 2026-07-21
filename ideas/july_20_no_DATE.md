@@ -65,16 +65,16 @@ Can a DLGN be trained so that a new subject can recover useful accuracy by chang
 
 Split the model into a global Boolean core and a small subject adapter:
 
-\[
+$$
 f_u(x) = f_{\theta^*}\left(B(x;\Omega_0 + \Delta\Omega_u)\right),
-\]
+$$
 
-where \(\theta^*\) contains the frozen gates and connections, \(\Omega_0\) contains global thresholds, and \(\Delta\Omega_u\) is the only subject-specific state.
+where $\theta^*$ contains the frozen gates and connections, $\Omega_0$ contains global thresholds, and $\Delta\Omega_u$ is the only subject-specific state.
 
 1. Train the global thresholds and DLGN normally across training subjects.
 2. Harden and freeze the DLGN gates and connectivity.
-3. Adapt only \(\Delta\Omega_u\) for each new subject using a small support set.
-4. Regularize the adapter with \(\|\Delta\Omega_u\|_1\) or \(\|\Delta\Omega_u\|_2^2\) and preserve threshold ordering through positive increments.
+3. Adapt only $\Delta\Omega_u$ for each new subject using a small support set.
+4. Regularize the adapter with $\|\Delta\Omega_u\|_1$ or $\|\Delta\Omega_u\|_2^2$ and preserve threshold ordering through positive increments.
 5. As a stronger version, use episodic training: repeatedly hide one training subject and optimize the global circuit so that its thresholds adapt in a few gradient steps.
 
 The first implementation should use ordinary fine-tuning of thresholds. Meta-learning is a second-stage addition only if the simple method demonstrates a clear adaptation signal.
@@ -119,13 +119,13 @@ Can a hardened DLGN adapt to concept drift while limiting both forgetting and th
 
 Warm-start a soft model from the deployed hard circuit. Penalize changes relative to the deployed truth table:
 
-\[
+$$
 L = L_{new} + \lambda_{old}L_{replay}
     + \lambda_{patch}\sum_n\sum_g \pi_{n,g}
       d_H(T_g,T_{g_n^{old}}),
-\]
+$$
 
-where \(\pi_{n,g}\) is the relaxed probability of gate \(g\) at node \(n\), \(T_g\) is its truth table, and \(d_H\) is truth-table Hamming distance. After hardening, serialize only changed entries:
+where $\pi_{n,g}$ is the relaxed probability of gate $g$ at node $n$, $T_g$ is its truth table, and $d_H$ is truth-table Hamming distance. After hardening, serialize only changed entries:
 
 ```text
 (gate index, new gate id)
@@ -133,7 +133,7 @@ where \(\pi_{n,g}\) is the relaxed probability of gate \(g\) at node \(n\), \(T_
 
 For larger LUTs, use changed truth-table words rather than the full LUT. Preserve old behavior with a small replay buffer or teacher distillation from the deployed model. Compare both because a replay buffer consumes device memory, while teacher outputs can be generated at the server.
 
-A useful extension is a patch budget: select at most \(K\) gate changes using a straight-through top-K mask. Begin with the regularizer because it is simpler and yields a complete Pareto curve over \(\lambda_{patch}\).
+A useful extension is a patch budget: select at most $K$ gate changes using a straight-through top-K mask. Begin with the regularizer because it is simpler and yields a complete Pareto curve over $\lambda_{patch}$.
 
 ### Clear novelty boundary
 
@@ -173,7 +173,7 @@ Can a ternary DLGN reduce confidently wrong predictions under sensor loss while 
 
 Map a continuous feature to FALSE, UNKNOWN, or TRUE with a learned uncertainty interval:
 
-\[
+$$
 B_j(x)=
 \begin{cases}
 0 & \text{if feature }j\text{ is missing},\\
@@ -181,7 +181,7 @@ B_j(x)=
 0 & \text{if }\Omega_j^- \le x_j \le \Omega_j^+,\\
 +1 & \text{if }x_j > \Omega_j^+.
 \end{cases}
-\]
+$$
 
 Train on paired clean and sensor-masked samples. Optimize classification plus three DLGN-specific terms:
 
@@ -225,11 +225,11 @@ This idea targets sequential software inference. It should not claim equivalent 
 
 ### Proposed method
 
-Partition the network into independently evaluable class-vote blocks. After block \(k\), class \(c\) has accumulated score \(S_c^{(k)}\), and its unevaluated blocks contain at most \(R_c^{(k)}\) additional positive votes. The current winner \(c^*\) is final if
+Partition the network into independently evaluable class-vote blocks. After block $k$, class $c$ has accumulated score $S_c^{(k)}$, and its unevaluated blocks contain at most $R_c^{(k)}$ additional positive votes. The current winner $c^*$ is final if
 
-\[
+$$
 S_{c^*}^{(k)} > \max_{c\ne c^*}\left(S_c^{(k)}+R_c^{(k)}\right).
-\]
+$$
 
 This certificate guarantees agreement with full-network inference for every unevaluated gate output. It does not certify that the model's class is correct; it certifies that additional computation cannot change the model's decision.
 
@@ -271,9 +271,9 @@ Edge gateways, storage engines, and network services repeatedly ask whether a ke
 
 The accounting must include all state:
 
-\[
+$$
 M_{total}=M_{DLGN}+M_{encoder}+M_{backup}.
-\]
+$$
 
 Use an asymmetric loss because false negatives increase backup memory while false positives increase unnecessary downstream lookups. A more distinctive version directly fits a differentiable proxy for total memory plus query false-positive cost.
 
@@ -311,13 +311,13 @@ Can a hardened DLGN map a syndrome and a few quantized reliability bits to a cor
 
 ### Proposed method
 
-For a received word \(r\) and parity-check matrix \(H\), compute the syndrome using exact XOR gates:
+For a received word $r$ and parity-check matrix $H$, compute the syndrome using exact XOR gates:
 
-\[
+$$
 s=Hr^T \pmod 2.
-\]
+$$
 
-Feed \(s\), and optionally 2 to 4 threshold bits per channel reliability value, to a DLGN that predicts an error pattern or a small candidate list. Apply the correction and check the syndrome again. If parity still fails, abstain, request retransmission, or fall back to the conventional decoder.
+Feed $s$, and optionally 2 to 4 threshold bits per channel reliability value, to a DLGN that predicts an error pattern or a small candidate list. Apply the correction and check the syndrome again. If parity still fails, abstain, request retransmission, or fall back to the conventional decoder.
 
 Generate unlimited training data from:
 

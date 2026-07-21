@@ -92,34 +92,34 @@ Conditional on dynamic power being material, two hardened DLGNs with the same ga
 
 ### Proposed method
 
-For gate (n), estimate a differentiable output-one probability over a representative workload:
+For gate $n$, estimate a differentiable output-one probability over a representative workload:
 
-\[
+$$
 p_n = \mathbb{E}_{x}[q_n(x)],
-\]
+$$
 
-where (q_n(x)) is the relaxed gate output. For independently ordered samples, a first activity estimate is
+where $q_n(x)$ is the relaxed gate output. For independently ordered samples, a first activity estimate is
 
-\[
+$$
 \alpha_n = 2p_n(1-p_n).
-\]
+$$
 
 For streams, sensor traces, or video, use the more faithful sequential estimate
 
-\[
+$$
 \alpha_n = \mathbb{E}_{t}\left[\left|q_n(x_t)-q_n(x_{t-1})\right|\right].
-\]
+$$
 
 Combine it with target-library energy data:
 
-\[
+$$
 L = L_{task} + \lambda_E \sum_n \sum_g \pi_{n,g}
 \left(E^{int}_g(\text{input transitions}) + \alpha_n C^{eff}_{n,g}V^2\right).
-\]
+$$
 
-Here, (pi_{n,g}) is the soft probability of selecting gate (g), (E^{int}_g) is a characterized internal switching cost, and (C^{eff}_{n,g}) contains load/fanout capacitance. Start with a simple fanout-based capacitance proxy. Add placement-derived wire capacitance only after the loss shows a useful signal.
+Here, $\pi_{n,g}$ is the soft probability of selecting gate $g$, $E^{int}_g$ is a characterized internal switching cost, and $C^{eff}_{n,g}$ contains load/fanout capacitance. Start with a simple fanout-based capacitance proxy. Add placement-derived wire capacitance only after the loss shows a useful signal.
 
-Use mini-batch exponential moving averages for (p_n) and activity so that the loss is stable. After hardening, emit stimulus traces, collect VCD/SAIF activity, and use gate-level power analysis to validate whether the differentiable proxy ranks models correctly.
+Use mini-batch exponential moving averages for $p_n$ and activity so that the loss is stable. After hardening, emit stimulus traces, collect VCD/SAIF activity, and use gate-level power analysis to validate whether the differentiable proxy ranks models correctly.
 
 ### Clear novelty boundary
 
@@ -134,7 +134,7 @@ The contribution is not "add an energy term." It is the derivation and validatio
 - Tasks: MNIST and Fashion-MNIST for iteration; CIFAR-10 for the main result; one high-rate or naturally sequential dataset, such as network-flow classification, if time permits.
 - Models: original DLGN and Light/IWP or hard-Gumbel DLGN at two gate budgets.
 - Baselines: task loss only; the area-aware loss from [Silicon Aware Neural Networks](https://arxiv.org/abs/2604.19334); constant gate-cost regularization; post-training exact synthesis.
-- Ablations: marginal (2p(1-p)) versus sequential activity; cell-only versus fanout-aware; soft estimated activity versus hardened measured activity.
+- Ablations: marginal $2p_n(1-p_n)$ versus sequential activity; cell-only versus fanout-aware; soft estimated activity versus hardened measured activity.
 - Metrics: hard accuracy, area, worst path delay, dynamic power, leakage power, clock power, total power, energy/inference, total toggles, controllable dynamic fraction, correlation between predicted and post-synthesis energy, and Pareto hypervolume.
 - Report at least three seeds for accuracy and repeat power estimation with identical activity traces.
 
@@ -171,13 +171,13 @@ Exact logic synthesis must preserve every output bit for every input, although a
 3. Evaluate many candidates rapidly with bit-parallel simulation over a calibration set.
 4. Score each rewrite by
 
-\[
+$$
 \text{score}(r) =
 \frac{\Delta \widehat{PPA}(r)}
 {\epsilon + \Delta L_{margin}(r)},
-\]
+$$
 
-where (L_{margin}) penalizes changes to the winner-runner-up class margin more strongly near the decision boundary.
+where $L_{margin}$ penalizes changes to the winner-runner-up class margin more strongly near the decision boundary.
 5. Apply rewrites iteratively with periodic exact resimulation because approximation errors interact.
 6. Optionally generate a SAT miter for the high-confidence region to certify that the optimized netlist preserves the class label whenever the original score margin exceeds a chosen bound. Treat this certificate as a stretch goal; the paper remains viable with measured risk and statistical confidence intervals.
 
@@ -222,27 +222,27 @@ Accuracy, parameter reduction, and a new feed-forward architecture. Its single c
 
 ### Hypothesis
 
-The main weakness on natural images is not necessarily GroupSum. A depth-(d), two-input output can depend on at most (2^d) source signals, and random wiring can duplicate paths long before reaching this bound. A deterministic multi-scale wiring schedule can guarantee rapid input coverage, bounded fanout, and regular hardware without storing or training connection weights.
+The main weakness on natural images is not necessarily GroupSum. A depth-$d$, two-input output can depend on at most $2^d$ source signals, and random wiring can duplicate paths long before reaching this bound. A deterministic multi-scale wiring schedule can guarantee rapid input coverage, bounded fanout, and regular hardware without storing or training connection weights.
 
 ### Proposed architecture
 
 Assign each signal a dependency signature describing which input regions can influence it. Construct each layer offline by pairing signals that maximize new coverage while respecting fanout and locality budgets:
 
-\[
+$$
 (i,j)^* = \arg\max_{i,j}
 \left|S_i \cup S_j\right|
 - \lambda_f \operatorname{fanoutCost}(i,j)
 - \lambda_w \operatorname{wireCost}(i,j).
-\]
+$$
 
 Use a deterministic schedule rather than an expensive global search:
 
 - Early layers mix within small spatial or feature blocks.
-- At layer (l), a fixed shuffle pairs blocks separated by a power-of-two stride.
+- At layer $l$, a fixed shuffle pairs blocks separated by a power-of-two stride.
 - Every few layers, retain a local pair alongside the long-range pair.
 - Use balanced fanout so no attractive signal becomes a routing hot spot.
 
-This resembles a butterfly/expander communication pattern. The design goal is a theorem or constructive guarantee: after (O(\log D)) stages, every output cone covers all (D) input groups, subject to layer width.
+This resembles a butterfly/expander communication pattern. The design goal is a theorem or constructive guarantee: after $O(\log D)$ stages, every output cone covers all $D$ input groups, subject to layer width.
 
 The gate functions remain trainable with Light/IWP or hard Gumbel. The connections are generated from a seed and a schedule, so connection-training parameters and index storage can be zero or negligible.
 
@@ -296,7 +296,7 @@ The standard GroupSum head converts cheap Boolean features into wide popcount/ad
 4. The root-to-leaf decisions form the class code. During training, sum binary cross-entropies for every internal decision on the target path, optionally adding a consistency term between soft and hard routing.
 5. For hardware, instantiate the Boolean decision tree and a compact encoder/multiplexer. Evaluate both fully combinational execution and sequential path evaluation for resource-constrained edge devices.
 
-The final circuit contains no class-wise accumulation and no Hamming-distance popcount. For (C) classes, inference makes (\lceil \log_2 C \rceil) hierarchical decisions on the active path, although the fully combinational implementation may instantiate multiple tree nodes.
+The final circuit contains no class-wise accumulation and no Hamming-distance popcount. For $C$ classes, inference makes $\lceil \log_2 C \rceil$ hierarchical decisions on the active path, although the fully combinational implementation may instantiate multiple tree nodes.
 
 ### Clear novelty boundary
 
@@ -341,10 +341,10 @@ DLGNs map directly to a Boolean circuit, which makes permanent and transient har
 - During hard forward passes, sample one or more persistent fault maps per mini-batch and reuse each map across several steps so training sees permanent, correlated faults rather than independent activation noise.
 - Optimize
 
-\[
+$$
 L = L_{clean} + \lambda_f\mathbb{E}_{F\sim\mathcal{D}}L(x,y;F)
 + \lambda_w \max_{F\in\mathcal{B}}L(x,y;F),
-\]
+$$
 
 where the last term approximates the worst fault in a small sampled budget.
 - Add a small fanout-aware duplication budget only for gates with high measured fault sensitivity. This produces selective redundancy rather than full triple modular redundancy.
