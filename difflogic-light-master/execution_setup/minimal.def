@@ -13,6 +13,7 @@ Stage: build
     apt-get update && apt-get install -y g++ make cmake
     pip3 install --no-cache-dir --upgrade pip
     # Training
-    pip3 install --no-cache-dir tqdm numpy difflogic  
+    pip3 install --no-cache-dir tqdm numpy 
+    pip3 install --no-cache-dir --no-build-isolation  difflogic  
     # Logging
     pip3 install --no-cache-dir zarr wandb

@@ -37,7 +37,7 @@ PDFs - DLGNs
 - [Silicon Aware Neural Networks](https://arxiv.org/pdf/2604.19334)
 - [BitLogic: A Framework for Gradient-Based LUT-Native Neural Networks](https://openreview.net/pdf?id=ZbsSZAfDod)
 - [ET: An Energy Eficient Edge Transformer Architecture](https://dl.acm.org/doi/epdf/10.1145/3828726)
-
+- [Two-Stage Unit Tying for Simplifying Differentiable Logic Gate Networks](https://openreview.net/pdf/bcb00a589c7c9b97b68e4e13f2fc1696b46557e3.pdf)
 
 Cellular automata
 

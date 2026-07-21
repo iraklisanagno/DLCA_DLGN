@@ -227,9 +227,9 @@ This idea targets sequential software inference. It should not claim equivalent 
 
 Partition the network into independently evaluable class-vote blocks. After block $k$, class $c$ has accumulated score $S_c^{(k)}$, and its unevaluated blocks contain at most $R_c^{(k)}$ additional positive votes. The current winner $c^*$ is final if
 
-$
+$$
 S_{c^*}^{(k)} > \max_{c\ne c^*}\left(S_c^{(k)}+R_c^{(k)}\right).
-$
+$$
 
 This certificate guarantees agreement with full-network inference for every unevaluated gate output. It does not certify that the model's class is correct; it certifies that additional computation cannot change the model's decision.
 
