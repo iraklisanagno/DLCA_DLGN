@@ -14,10 +14,10 @@ General links
 
 
 PDFs - DLGNs
-- [Deep Differentiable Logic Gate Networks](https://arxiv.org/pdf/2210.08277) --> [difflogic](./difflogic/)
+- [Deep Differentiable Logic Gate Networks](https://arxiv.org/pdf/2210.08277) --> [difflogic](./repos/difflogic/)
 - [Convolutional Differentiable Logic Gate Networks](https://arxiv.org/pdf/2411.04732)
-- [Light Differentiable Logic Gate Networks](https://arxiv.org/pdf/2510.03250) --> [difflogic-light-master](./difflogic-light-master)
-- [Mind the Gap: Removing the Discretization Gap in Differentiable Logic Gate Networks](https://arxiv.org/pdf/2506.07500) --> [neuripssubmision_mind_gap](./neuripssubmision_mind_gap/)
+- [Light Differentiable Logic Gate Networks](https://arxiv.org/pdf/2510.03250) --> [difflogic-light-master](./repos/difflogic-light-master/)
+- [Mind the Gap: Removing the Discretization Gap in Differentiable Logic Gate Networks](https://arxiv.org/pdf/2506.07500) --> [neuripssubmision_mind_gap](./repos/neuripssubmision_mind_gap/)
 - [Recurrent Deep Differentiable Logic Gate Networks](https://arxiv.org/pdf/2508.06097) --> [recurrent-difflogic-main](./recurrent-difflogic-main/)
 
 
@@ -29,7 +29,7 @@ PDFs - DLGNs
 - [Lightweight in-Network Flow Classification with Deep Differentiable Logic Gate Networks](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=11323087)
 - [Logic Neural Networks for Efficient FPGA Implementation](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=10746856)
 - [GIC-DLC: Differentiable Logic Circuits for Hardware-Friendly Grayscale Image Compression](https://arxiv.org/pdf/2601.14130)
-- [WARP Logic Neural Networks](https://arxiv.org/pdf/2602.03527)
+- [WARP Logic Neural Networks](https://arxiv.org/pdf/2602.03527) --> [torchlogix](./repos/torchlogix/)
     - [repo](https://github.com/ligerlac/torchlogix)
 - [Inter-patient ECG Arrhythmia Classification with LGNs and LUTNs](https://arxiv.org/pdf/2601.11433)
 - [Fitting Multilinear Polynomials for Logic Gate Networks](https://arxiv.org/pdf/2605.08657)
