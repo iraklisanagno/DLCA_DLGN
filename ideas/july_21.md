@@ -67,7 +67,7 @@ Construct each layer from a deterministic mixture of three edge classes:
 
 Let $A_i^{(l)}$ be a compact bitset or sketch of input features that can influence node $i$ at layer $l$. For each new two-input gate, choose a pair from a small deterministic candidate schedule by
 
-$$
+```math
 (i,j)^* = \arg\max_{(i,j)\in\mathcal{C}_l}
 \left[
 |A_i^{(l-1)}\cup A_j^{(l-1)}|
@@ -75,7 +75,7 @@ $$
 - \lambda_f F(i,j)
 - \lambda_d D(i,j)
 \right],
-$$
+```
 
 where $F$ penalizes excessive fan-out and $D$ is an optional locality/wire-length proxy. The construction runs once before training. The final model stores only a seed and topology parameters, or an explicit integer edge list; it has no differentiable router.
 
@@ -179,19 +179,19 @@ DLGNs have an unusual deployment representation: a model is a graph plus a small
 
 Start from a hardened network with truth tables $T^0_g$. During adaptation, warm-start a soft representation at each old truth table and optimize
 
-$$
+```math
 \mathcal{L} =
 \mathcal{L}_{\text{new}}
 + \lambda_r\mathcal{L}_{\text{replay/distill}}
 + \lambda_p\sum_g \pi_g d_H(T_g,T^0_g)
 + \lambda_s\sum_g \pi_g,
-$$
+```
 
 where $\pi_g$ is a learned or sensitivity-derived probability that gate $g$ is editable. A hard top-$K$ budget restricts adaptation to at most $K$ gates. The deployed patch contains:
 
-$$
+```math
 \{(\text{gate ID},\;\text{new truth-table bits})\}_{g\in\mathcal{P}},
-$$
+```
 
 plus optional input-threshold deltas. The base model remains unchanged and can be restored without retransmission.
 
@@ -281,20 +281,20 @@ Standard knowledge distillation matches final logits or dense hidden vectors. A 
 
 For selected teacher layers $z_l^T(x)$, define a fixed random or learned low-cost projection $R_l$ and target bits
 
-$$
+```math
 b_l^T(x)=\mathbb{1}[R_l z_l^T(x)>\tau_l].
-$$
+```
 
 Attach temporary probes to groups of student gates and optimize
 
-$$
+```math
 \mathcal{L}=
 \mathcal{L}_{\text{CE}}
 +\lambda_{KD}\,\tau^2\operatorname{KL}
 \left(p_{\mathrm{teacher}}^{(\tau)}\|p_{\mathrm{student}}^{(\tau)}\right)
 +\sum_l \lambda_l\operatorname{BCE}(q_l^S,b_l^T)
 +\lambda_m\mathcal{L}_{\text{hard-margin}}.
-$$
+```
 
 The probes and teacher are discarded after training. The hardened inference graph is exactly the original DLGN architecture and size.
 
@@ -382,9 +382,9 @@ Learnable thresholds already improve DLGNs, but they are normally trained global
 
 Train a global model with base thresholds $\Omega_0$. For user/domain $u$, define
 
-$$
+```math
 \Omega_u=\Omega_0+B\alpha_u,
-$$
+```
 
 where $B$ is an optional low-rank threshold basis learned across training domains and $\alpha_u$ is a very small adaptation vector. The gate graph and truth tables are frozen. Compare three levels of complexity:
 
@@ -468,9 +468,9 @@ DLGN classifiers often allocate many output gates to each class and sum their Bo
 
 Partition the output-reachable graph into ordered blocks. After evaluating block $k$, let $S_c^{(k)}$ be the accumulated score for class $c$ and $R_c^{(k)}$ an upper bound on its remaining score. Stop with winner $w$ when
 
-$$
+```math
 S_w^{(k)} > \max_{c\neq w}\left(S_c^{(k)}+R_c^{(k)}\right).
-$$
+```
 
 For binary unit votes, $R_c^{(k)}$ is simply the number of unevaluated votes assigned to class $c$. Tighter bounds can account for already computed shared ancestors or gates whose outputs have become logically forced.
 
@@ -549,17 +549,17 @@ WARP and LUT-based networks make higher fan-in practical, but a $k$-input LUT st
 
 Learn a dictionary $\mathcal{D}=\{D_1,\dots,D_M\}$ of $k$-input truth tables and a categorical assignment $a_g$ for each gate:
 
-$$
+```math
 T_g = \sum_{m=1}^{M} a_{gm}D_m,
 \qquad
 a_g\in\{e_1,\dots,e_M\}.
-$$
+```
 
 During training, use Gumbel-softmax or straight-through assignments and a WARP/IWP-style relaxation for dictionary entries. At deployment, storage is approximately
 
-$$
+```math
 M2^k + N\lceil\log_2 M\rceil
-$$
+```
 
 bits instead of $N2^k$ bits for $N$ independent LUTs, before connection indices. Optional layer-specific dictionaries trade compression for accuracy.
 
@@ -641,12 +641,12 @@ In an ordinary feed-forward classifier, a small soft-to-hard error can affect on
 
 Run coupled soft and hard-forward rollouts from the same initial state and optimize
 
-$$
+```math
 \mathcal{L}=
 \mathcal{L}_{\text{task}}(s_{1:T}^{H})
 +\lambda\sum_{t=1}^{T} w_t d(s_t^S,s_t^H)
 +\mu\sum_{t=1}^{T-1} d(\Delta s_t^S,\Delta s_t^H),
-$$
+```
 
 where $d$ can combine bitwise cross-entropy, Hamming distance, and a perceptual/image-space metric. Gradients use a hard-forward/soft-backward estimator or a temperature schedule. Curriculum training gradually increases $T$, and perturbation batches include asynchronous updates, random cell erasure, and state noise.
 
