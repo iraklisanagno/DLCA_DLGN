@@ -2,7 +2,13 @@
 """Training script for TorchLogix models."""
 
 import argparse
+import hashlib
+import importlib.metadata
+import json
+import platform
 import random
+import subprocess
+import time
 from pathlib import Path
 from collections import defaultdict
 import numpy as np
@@ -14,17 +20,34 @@ import torch
 from tqdm import tqdm
 import torchlogix
 import torchlogix.models
-
-from utils import (
-    CreateFolder, save_metrics_csv, save_config, save_thresholds_csv,
-    evaluate_model, get_model, load_dataset, load_n
+from torchlogix.topology import (
+    analyze_conv_channel_topology,
+    analyze_model_topology,
+    model_topology_metadata,
+    strategy_choices,
+    write_topology_report,
 )
+
+try:
+    from .utils import (
+        CreateFolder, save_metrics_csv, save_config, save_thresholds_csv,
+        evaluate_model, get_model, load_dataset, load_n
+    )
+except ImportError:  # Direct execution: python experiments/train.py
+    from utils import (
+        CreateFolder, save_metrics_csv, save_config, save_thresholds_csv,
+        evaluate_model, get_model, load_dataset, load_n
+    )
 
 def get_parser():
     parser = argparse.ArgumentParser(description="Train TorchLogix models")
+    parser.add_argument(
+        "--config", type=Path, default=None,
+        help="JSON file providing parser defaults; explicit CLI arguments take precedence"
+    )
     # Dataset and architecture
     parser.add_argument(
-        "--dataset", type=str, choices=["mnist", "cifar-10"],
+        "--dataset", type=str, choices=["mnist", "fashion-mnist", "cifar-10"],
         default="mnist", help="Dataset to train on"
     )
     parser.add_argument(
@@ -38,6 +61,13 @@ def get_parser():
 
     # Training parameters
     parser.add_argument("--seed", "-s", type=int, default=None, help="Random seed")
+    parser.add_argument(
+        "--data-split-seed", type=int, default=None,
+        help=(
+            "Independent train/validation split seed. If omitted, preserve the "
+            "legacy behavior in which --seed and the global PyTorch RNG control the split."
+        ),
+    )
     parser.add_argument("--batch-size", "-bs", type=int, default=128, help="Batch size")
     parser.add_argument(
         "--num-iterations", "-ni", type=int, default=100_000, help="Number of training iterations"
@@ -49,6 +79,10 @@ def get_parser():
     parser.add_argument(
         "--valid-set-size", "-vss", type=float, default=0.1,
         help="Fraction of train set for validation"
+    )
+    parser.add_argument(
+        "--augmentation", choices=["none", "standard"], default="none",
+        help="Training-only data augmentation; standard means crop/flip for CIFAR"
     )
 
     # Learning rate parameters
@@ -90,8 +124,40 @@ def get_parser():
         default="fixed", help="Connection strategy"
     )
     parser.add_argument(
-        "--connections-init-method", type=str, choices=["random", "random-unique"],
+        "--connections-init-method", type=str, choices=strategy_choices(),
         default="random", help="Connection initialization strategy"
+    )
+    parser.add_argument(
+        "--topology-seed", type=int, default=None,
+        help="Independent fixed-topology seed. Omit to preserve legacy random initialization."
+    )
+    parser.add_argument(
+        "--coverage-candidate-pool-size", type=int, default=64,
+        help="Number of candidate predecessor pairs scored per greedy edge"
+    )
+    parser.add_argument(
+        "--coverage-long-range-fraction", type=float, default=0.25,
+        help="Fraction of hybrid gates assigned greedy long-range pairs"
+    )
+    parser.add_argument(
+        "--coverage-swap-fraction", type=float, default=0.25,
+        help=(
+            "Fraction of gates eligible for degree-preserving semantic-hybrid "
+            "two-edge swaps"
+        ),
+    )
+    parser.add_argument(
+        "--coverage-novelty-weight", type=float, default=1.0,
+        help="Cross-gate semantic-ancestry novelty weight for balanced swaps",
+    )
+    parser.add_argument("--coverage-alpha", type=float, default=1.0)
+    parser.add_argument("--coverage-beta", type=float, default=1.0)
+    parser.add_argument("--coverage-gamma", type=float, default=0.25)
+    parser.add_argument("--coverage-delta", type=float, default=0.0)
+    parser.add_argument("--coverage-local-radius", type=int, default=4)
+    parser.add_argument(
+        "--coverage-hybrid-base", choices=["butterfly", "local_cyclic"],
+        default="butterfly"
     )
     parser.add_argument(
         "--connections-temperature", type=float, default=0.001,
@@ -172,6 +238,7 @@ class CallbackContext:
     step: int
     metrics: dict  # Required: val_loss, train_loss, etc.
     model: Optional[torch.nn.Module] = None  # Optional for advanced use
+    args: Optional[argparse.Namespace] = None
 
 
 class LearningRateSchedulerCallback:
@@ -214,13 +281,134 @@ def save_best_model(ctx: CallbackContext, output_dir: Path):
         save_best_model.best_val_acc = val_acc
         model_path = f"{output_dir}/best_model.pt"
         torch.save(ctx.model.state_dict(), model_path)
+        torch.save(
+            checkpoint_payload(ctx.model, ctx.args, ctx.step, ctx.metrics),
+            f"{output_dir}/best_checkpoint.pt",
+        )
         print(f"New best model saved with val_accuracy: {val_acc:.4f} at step {ctx.step}")
+
+
+def checkpoint_payload(model, args, step, metrics):
+    """Create a self-describing checkpoint while retaining legacy state dict files."""
+    def plain(value):
+        if isinstance(value, Path):
+            return str(value)
+        if isinstance(value, np.generic):
+            return value.item()
+        if isinstance(value, torch.Tensor) and value.numel() == 1:
+            return value.detach().cpu().item()
+        if isinstance(value, dict):
+            return {str(key): plain(item) for key, item in value.items()}
+        if isinstance(value, (list, tuple)):
+            return [plain(item) for item in value]
+        if value is None or isinstance(value, (str, int, float, bool)):
+            return value
+        return str(value)
+
+    return {
+        "format_version": 1,
+        "model_state_dict": model.state_dict(),
+        "metadata": {
+            "step": plain(step),
+            "metrics": plain(dict(metrics)),
+            "configuration": plain(vars(args)) if args is not None else {},
+            "topology": plain(model_topology_metadata(model)),
+            "python": platform.python_version(),
+            # ``torch.__version__`` is a TorchVersion (a ``str`` subclass), which
+            # PyTorch's default weights-only loader intentionally rejects.
+            "torch": str(torch.__version__),
+            "cuda": torch.version.cuda,
+        },
+    }
+
+
+def source_manifest_files(root: Path = Path(".")):
+    """Return code/config files, excluding generated experiment artifacts."""
+    files = sorted((root / "src" / "torchlogix").rglob("*.py"))
+    files += sorted((root / "experiments").rglob("*.py"))
+    files += [
+        path
+        for path in sorted((root / "experiments").rglob("*.json"))
+        if not {"results", "summary"}.intersection(path.relative_to(root).parts)
+    ]
+    return files
+
+
+def source_tree_sha256(root: Path = Path(".")):
+    """Hash stable source-relative paths and contents."""
+    source_hasher = hashlib.sha256()
+    for path in source_manifest_files(root):
+        source_hasher.update(path.relative_to(root).as_posix().encode())
+        source_hasher.update(path.read_bytes())
+    return source_hasher.hexdigest()
+
+
+def training_manifest_files(root: Path = Path(".")):
+    """Return only implementation files imported by the training path."""
+    files = sorted((root / "src" / "torchlogix").rglob("*.py"))
+    files += [
+        root / "experiments" / name
+        for name in ("train.py", "utils.py")
+        if (root / "experiments" / name).exists()
+    ]
+    return files
+
+
+def training_implementation_sha256(root: Path = Path(".")):
+    """Hash training code without unrelated reports, queues, or configs."""
+    hasher = hashlib.sha256()
+    for path in training_manifest_files(root):
+        hasher.update(path.relative_to(root).as_posix().encode())
+        hasher.update(path.read_bytes())
+    return hasher.hexdigest()
+
+
+def save_environment_fingerprint(output_dir: Path):
+    """Record enough source and environment state to reproduce a run."""
+    def git(*arguments):
+        result = subprocess.run(
+            ["git", *arguments], capture_output=True, text=True, check=False
+        )
+        return result.stdout.strip()
+
+    payload = {
+        "source_revision": git("rev-parse", "HEAD"),
+        "source_status": git("status", "--short"),
+        "source_tree_sha256": source_tree_sha256(),
+        "source_manifest_scope": (
+            "src/torchlogix/**/*.py, experiments/**/*.py, and "
+            "experiments/**/*.json excluding results/ and summary/"
+        ),
+        "training_implementation_sha256": training_implementation_sha256(),
+        "training_manifest_scope": (
+            "src/torchlogix/**/*.py, experiments/train.py, and "
+            "experiments/utils.py; the resolved run configuration is stored "
+            "separately in training_config.json"
+        ),
+        "python": platform.python_version(),
+        "platform": platform.platform(),
+        "torch": torch.__version__,
+        "cuda_build": torch.version.cuda,
+        "cuda_available": torch.cuda.is_available(),
+        "gpu_names": (
+            [torch.cuda.get_device_name(i) for i in range(torch.cuda.device_count())]
+            if torch.cuda.is_available() else []
+        ),
+        "packages": {
+            distribution.metadata["Name"]: distribution.version
+            for distribution in importlib.metadata.distributions()
+            if distribution.metadata["Name"]
+        },
+    }
+    with (Path(output_dir) / "environment.json").open("w") as handle:
+        json.dump(payload, handle, indent=2, sort_keys=True)
 
 
 def run_training(args, callbacks=None):
     """Run the training loop."""
     if callbacks is None:
         callbacks = []
+    save_best_model.best_val_acc = 0.0
     # Setup experiment
     if args.seed is not None:
         torch.manual_seed(args.seed)
@@ -247,6 +435,31 @@ def run_training(args, callbacks=None):
     model= get_model(thresholds, args)
     num_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
     print(f"Total trainable parameters: {num_params}")
+
+    topology_rows = analyze_model_topology(model)
+    if args.output is not None and topology_rows:
+        write_topology_report(
+            topology_rows,
+            args.output,
+            metadata={
+                "architecture": args.architecture,
+                "strategy": args.connections_init_method,
+                "topology_seed": args.topology_seed,
+            },
+        )
+    conv_topology_rows = analyze_conv_channel_topology(model)
+    if args.output is not None and conv_topology_rows:
+        write_topology_report(
+            conv_topology_rows,
+            args.output,
+            stem="conv_topology",
+            metadata={
+                "architecture": args.architecture,
+                "strategy": args.connections_init_method,
+                "topology_seed": args.topology_seed,
+                "spatial_indexing": "unchanged",
+            },
+        )
 
     model.to(args.device)
     print(model)
@@ -307,6 +520,9 @@ def run_training(args, callbacks=None):
     # Training tracking
     metrics = defaultdict(dict)
     best_val_acc = 0.0
+    started = time.perf_counter()
+    if args.device == "cuda":
+        torch.cuda.reset_peak_memory_stats()
 
     learning_rate_scheduler = LearningRateSchedulerCallback.from_args(optimizer, args)
     callbacks.append(learning_rate_scheduler)
@@ -318,6 +534,7 @@ def run_training(args, callbacks=None):
     
     if args.output is not None:
         save_config(vars(args), args.output, "training_config.json")
+        save_environment_fingerprint(args.output)
 
     pbar = tqdm(
         enumerate(load_n(train_loader, args.num_iterations)),
@@ -370,8 +587,11 @@ def run_training(args, callbacks=None):
             ctx = CallbackContext(
                 step=i + 1,
                 metrics=metrics,
-                model=model
+                model=model,
+                args=args,
             )
+
+            best_val_acc = max(best_val_acc, float(metrics["val_acc_discrete"]))
 
             for cb in callbacks:
                 cb(ctx)
@@ -379,6 +599,22 @@ def run_training(args, callbacks=None):
     # Save final model
     if args.output is not None:
         torch.save(model.state_dict(), f"{args.output}/final_model.pt")
+        torch.save(
+            checkpoint_payload(model, args, args.num_iterations, metrics),
+            f"{args.output}/final_checkpoint.pt",
+        )
+        wall_seconds = time.perf_counter() - started
+        summary = {
+            "wall_seconds": wall_seconds,
+            "best_validation_hard_accuracy": best_val_acc,
+            "final_metrics": metrics,
+            "peak_gpu_memory_bytes": (
+                torch.cuda.max_memory_allocated() if args.device == "cuda" else 0
+            ),
+            "topology": model_topology_metadata(model),
+        }
+        with open(f"{args.output}/run_summary.json", "w") as handle:
+            json.dump(summary, handle, indent=2, default=str)
 
     print(f"\nTraining completed!")
     print(f"Best validation accuracy: {best_val_acc:.4f}")
@@ -387,9 +623,28 @@ def run_training(args, callbacks=None):
     return metrics
 
 
-def main():
+def parse_args(argv=None):
+    pre_parser = argparse.ArgumentParser(add_help=False)
+    pre_parser.add_argument("--config", type=Path, default=None)
+    pre_args, _ = pre_parser.parse_known_args(argv)
     parser = get_parser()
-    args = parser.parse_args()
+    if pre_args.config is not None:
+        with pre_args.config.open() as handle:
+            defaults = json.load(handle)
+        valid_destinations = {action.dest for action in parser._actions}
+        unknown = sorted(set(defaults) - valid_destinations)
+        if unknown:
+            parser.error(f"Unknown configuration keys: {', '.join(unknown)}")
+        parser.set_defaults(**defaults)
+    args = parser.parse_args(argv)
+    if args.output is not None:
+        args.output = Path(args.output)
+        args.output.mkdir(parents=True, exist_ok=True)
+    return args
+
+
+def main(argv=None):
+    args = parse_args(argv)
 
     # Validation
     if args.eval_freq > 0:

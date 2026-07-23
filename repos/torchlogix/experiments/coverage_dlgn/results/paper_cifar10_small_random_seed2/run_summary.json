@@ -1,0 +1,42 @@
+{
+  "wall_seconds": 736.7619148190133,
+  "best_validation_hard_accuracy": 0.4933999848365784,
+  "final_metrics": {
+    "val_loss_discrete": 1.4617716431617738,
+    "val_acc_discrete": 0.48539998769760134,
+    "val_loss_relaxed": 1.4577146434783936,
+    "val_acc_relaxed": 0.489999988079071,
+    "train_loss": 0.5820272827148438
+  },
+  "peak_gpu_memory_bytes": 113936896,
+  "topology": [
+    {
+      "strategy": "random",
+      "topology_seed": 2,
+      "layer_index": 0,
+      "construction_seconds": 0.011765752919018269,
+      "generator_temporary_bytes": 24632832
+    },
+    {
+      "strategy": "random",
+      "topology_seed": 2,
+      "layer_index": 1,
+      "construction_seconds": 0.013446289114654064,
+      "generator_temporary_bytes": 36288000
+    },
+    {
+      "strategy": "random",
+      "topology_seed": 2,
+      "layer_index": 2,
+      "construction_seconds": 0.015118041075766087,
+      "generator_temporary_bytes": 36288000
+    },
+    {
+      "strategy": "random",
+      "topology_seed": 2,
+      "layer_index": 3,
+      "construction_seconds": 0.014668019954115152,
+      "generator_temporary_bytes": 36288000
+    }
+  ]
+}

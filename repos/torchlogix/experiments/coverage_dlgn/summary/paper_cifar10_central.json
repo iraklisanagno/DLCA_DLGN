@@ -1,0 +1,482 @@
+{
+  "final_fanout_cv": {
+    "hybrid_mean": 0.16059710706065888,
+    "mean_difference": 0.16059710706065888,
+    "metric": "final_fanout_cv",
+    "note": "Three paired seeds with identical split, architecture, gate budget, optimizer, batch size, and training steps. Expand to five seeds before a final DATE statistical claim.",
+    "pairs": [
+      {
+        "difference": 0.16072751268321592,
+        "hybrid": 0.16072751268321592,
+        "random": 0.0,
+        "seed": 0
+      },
+      {
+        "difference": 0.1611159003119597,
+        "hybrid": 0.1611159003119597,
+        "random": 0.0,
+        "seed": 1
+      },
+      {
+        "difference": 0.15994790818680105,
+        "hybrid": 0.15994790818680105,
+        "random": 0.0,
+        "seed": 2
+      }
+    ],
+    "random_mean": 0.0,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "std_difference": 0.0005948156192502133,
+    "student_t_ci95": [
+      0.1591193838908483,
+      0.16207483023046948
+    ],
+    "student_t_ci95_half_width": 0.0014777231698105868
+  },
+  "final_mean_gate_ancestry": {
+    "hybrid_mean": 15.994305555555556,
+    "mean_difference": 0.005833333333333357,
+    "metric": "final_mean_gate_ancestry",
+    "note": "Three paired seeds with identical split, architecture, gate budget, optimizer, batch size, and training steps. Expand to five seeds before a final DATE statistical claim.",
+    "pairs": [
+      {
+        "difference": 0.004916666666666458,
+        "hybrid": 15.993083333333333,
+        "random": 15.988166666666666,
+        "seed": 0
+      },
+      {
+        "difference": 0.004000000000001336,
+        "hybrid": 15.994083333333334,
+        "random": 15.990083333333333,
+        "seed": 1
+      },
+      {
+        "difference": 0.008583333333332277,
+        "hybrid": 15.99575,
+        "random": 15.987166666666667,
+        "seed": 2
+      }
+    ],
+    "random_mean": 15.988472222222223,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "std_difference": 0.002425272035141477,
+    "student_t_ci95": [
+      -0.00019186264914579886,
+      0.011858529315812513
+    ],
+    "student_t_ci95_half_width": 0.006025195982479156
+  },
+  "final_overlap_mean": {
+    "hybrid_mean": 0.0045,
+    "mean_difference": -0.0015833333333333333,
+    "metric": "final_overlap_mean",
+    "note": "Three paired seeds with identical split, architecture, gate budget, optimizer, batch size, and training steps. Expand to five seeds before a final DATE statistical claim.",
+    "pairs": [
+      {
+        "difference": -0.00041666666666666675,
+        "hybrid": 0.005416666666666667,
+        "random": 0.005833333333333334,
+        "seed": 0
+      },
+      {
+        "difference": -0.0011666666666666665,
+        "hybrid": 0.004916666666666666,
+        "random": 0.006083333333333333,
+        "seed": 1
+      },
+      {
+        "difference": -0.0031666666666666666,
+        "hybrid": 0.0031666666666666666,
+        "random": 0.006333333333333333,
+        "seed": 2
+      }
+    ],
+    "random_mean": 0.006083333333333333,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "std_difference": 0.0014215601757693317,
+    "student_t_ci95": [
+      -0.005114969593427387,
+      0.00194830292676072
+    ],
+    "student_t_ci95_half_width": 0.0035316362600940534
+  },
+  "hard_accuracy": {
+    "hybrid_mean": 0.5141999864578247,
+    "mean_difference": 0.019066665569941188,
+    "mean_difference_percentage_points": 1.9066665569941188,
+    "meets_positive_0_3pp_mean_threshold": true,
+    "metric": "hard_accuracy",
+    "note": "Three paired seeds with identical split, architecture, gate budget, optimizer, batch size, and training steps. Expand to five seeds before a final DATE statistical claim.",
+    "pairs": [
+      {
+        "difference": 0.012399994730949437,
+        "hybrid": 0.5139999836683273,
+        "random": 0.5015999889373779,
+        "seed": 0
+      },
+      {
+        "difference": 0.019599998593330337,
+        "hybrid": 0.5099999874830246,
+        "random": 0.4903999888896942,
+        "seed": 1
+      },
+      {
+        "difference": 0.02520000338554379,
+        "hybrid": 0.5185999882221222,
+        "random": 0.4933999848365784,
+        "seed": 2
+      }
+    ],
+    "random_mean": 0.4951333208878835,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "std_difference": 0.0064166493183592825,
+    "student_t_ci95": [
+      0.0031255384989317472,
+      0.03500779264095063
+    ],
+    "student_t_ci95_half_width": 0.01594112707100944,
+    "student_t_ci95_percentage_points": [
+      0.3125538498931747,
+      3.500779264095063
+    ]
+  },
+  "inference_milliseconds_per_batch": {
+    "hybrid_mean": 0.7776061757405599,
+    "mean_difference": -0.0006514485677083423,
+    "metric": "inference_milliseconds_per_batch",
+    "note": "Three paired seeds with identical split, architecture, gate budget, optimizer, batch size, and training steps. Expand to five seeds before a final DATE statistical claim.",
+    "pairs": [
+      {
+        "difference": -0.008686141967773509,
+        "hybrid": 0.7755193328857422,
+        "random": 0.7842054748535157,
+        "seed": 0
+      },
+      {
+        "difference": 0.0042018890380859375,
+        "hybrid": 0.7815618896484375,
+        "random": 0.7773600006103516,
+        "seed": 1
+      },
+      {
+        "difference": 0.0025299072265625444,
+        "hybrid": 0.7757373046875,
+        "random": 0.7732073974609375,
+        "seed": 2
+      }
+    ],
+    "random_mean": 0.7782576243082683,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "std_difference": 0.007008288258862096,
+    "student_t_ci95": [
+      -0.018062406864140637,
+      0.016759509728723955
+    ],
+    "student_t_ci95_half_width": 0.017410958296432296
+  },
+  "peak_gpu_memory_bytes": {
+    "hybrid_mean": 113936896,
+    "mean_difference": 0,
+    "metric": "peak_gpu_memory_bytes",
+    "note": "Three paired seeds with identical split, architecture, gate budget, optimizer, batch size, and training steps. Expand to five seeds before a final DATE statistical claim.",
+    "pairs": [
+      {
+        "difference": 0,
+        "hybrid": 113936896,
+        "random": 113936896,
+        "seed": 0
+      },
+      {
+        "difference": 0,
+        "hybrid": 113936896,
+        "random": 113936896,
+        "seed": 1
+      },
+      {
+        "difference": 0,
+        "hybrid": 113936896,
+        "random": 113936896,
+        "seed": 2
+      }
+    ],
+    "random_mean": 113936896,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "std_difference": 0.0,
+    "student_t_ci95": [
+      0.0,
+      0.0
+    ],
+    "student_t_ci95_half_width": 0.0
+  },
+  "soft_accuracy": {
+    "hybrid_mean": 0.5131333208084106,
+    "mean_difference": 0.022066665689150444,
+    "mean_difference_percentage_points": 2.206666568915044,
+    "meets_positive_0_3pp_mean_threshold": true,
+    "metric": "soft_accuracy",
+    "note": "Three paired seeds with identical split, architecture, gate budget, optimizer, batch size, and training steps. Expand to five seeds before a final DATE statistical claim.",
+    "pairs": [
+      {
+        "difference": 0.01719999969005581,
+        "hybrid": 0.5147999888658523,
+        "random": 0.4975999891757965,
+        "seed": 0
+      },
+      {
+        "difference": 0.017799997925758315,
+        "hybrid": 0.5075999867916107,
+        "random": 0.48979998886585235,
+        "seed": 1
+      },
+      {
+        "difference": 0.031199999451637206,
+        "hybrid": 0.5169999867677688,
+        "random": 0.4857999873161316,
+        "seed": 2
+      }
+    ],
+    "random_mean": 0.4910666551192602,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "std_difference": 0.007915386199260714,
+    "student_t_ci95": [
+      0.0024021693206947997,
+      0.04173116205760609
+    ],
+    "student_t_ci95_half_width": 0.019664496368455645,
+    "student_t_ci95_percentage_points": [
+      0.24021693206947997,
+      4.173116205760609
+    ]
+  },
+  "test_hard_accuracy": {
+    "hybrid_mean": 0.5066999855637551,
+    "mean_difference": 0.017566664218902572,
+    "mean_difference_percentage_points": 1.7566664218902572,
+    "meets_positive_0_3pp_mean_threshold": true,
+    "metric": "test_hard_accuracy",
+    "note": "Three paired seeds with identical split, architecture, gate budget, optimizer, batch size, and training steps. Expand to five seeds before a final DATE statistical claim.",
+    "pairs": [
+      {
+        "difference": 0.019399996995925872,
+        "hybrid": 0.5077999854087829,
+        "random": 0.48839998841285703,
+        "seed": 0
+      },
+      {
+        "difference": 0.011399996578693394,
+        "hybrid": 0.5042999848723412,
+        "random": 0.4928999882936478,
+        "seed": 1
+      },
+      {
+        "difference": 0.02189999908208845,
+        "hybrid": 0.507999986410141,
+        "random": 0.48609998732805254,
+        "seed": 2
+      }
+    ],
+    "random_mean": 0.48913332134485243,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "std_difference": 0.0054848286159465895,
+    "student_t_ci95": [
+      0.003940494922203323,
+      0.03119283351560182
+    ],
+    "student_t_ci95_half_width": 0.013626169296699249,
+    "student_t_ci95_percentage_points": [
+      0.39404949222033236,
+      3.119283351560182
+    ]
+  },
+  "test_soft_accuracy": {
+    "hybrid_mean": 0.5074666525920232,
+    "mean_difference": 0.016199999054272978,
+    "mean_difference_percentage_points": 1.6199999054272978,
+    "meets_positive_0_3pp_mean_threshold": true,
+    "metric": "test_soft_accuracy",
+    "note": "Three paired seeds with identical split, architecture, gate budget, optimizer, batch size, and training steps. Expand to five seeds before a final DATE statistical claim.",
+    "pairs": [
+      {
+        "difference": 0.018100000917911585,
+        "hybrid": 0.5093999859690667,
+        "random": 0.4912999850511551,
+        "seed": 0
+      },
+      {
+        "difference": 0.010199997723102538,
+        "hybrid": 0.504199985563755,
+        "random": 0.49399998784065247,
+        "seed": 1
+      },
+      {
+        "difference": 0.020299998521804807,
+        "hybrid": 0.508799986243248,
+        "random": 0.48849998772144315,
+        "seed": 2
+      }
+    ],
+    "random_mean": 0.49126665353775023,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "std_difference": 0.0053113095696654,
+    "student_t_ci95": [
+      0.0030049097541218484,
+      0.029395088354424108
+    ],
+    "student_t_ci95_half_width": 0.01319508930015113,
+    "student_t_ci95_percentage_points": [
+      0.30049097541218484,
+      2.939508835442411
+    ]
+  },
+  "topology_construction_seconds": {
+    "hybrid_mean": 4.8279060221587615,
+    "mean_difference": 4.7827127062094705,
+    "metric": "topology_construction_seconds",
+    "note": "Three paired seeds with identical split, architecture, gate budget, optimizer, batch size, and training steps. Expand to five seeds before a final DATE statistical claim.",
+    "pairs": [
+      {
+        "difference": 4.795453617349267,
+        "hybrid": 4.82621980085969,
+        "random": 0.030766183510422707,
+        "seed": 0
+      },
+      {
+        "difference": 4.7634087055921555,
+        "hybrid": 4.813224366866052,
+        "random": 0.049815661273896694,
+        "seed": 1
+      },
+      {
+        "difference": 4.78927579568699,
+        "hybrid": 4.844273898750544,
+        "random": 0.05499810306355357,
+        "seed": 2
+      }
+    ],
+    "random_mean": 0.04519331594929099,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "std_difference": 0.017000726454999178,
+    "student_t_ci95": [
+      4.7404771519080695,
+      4.824948260510872
+    ],
+    "student_t_ci95_half_width": 0.0422355543014014
+  },
+  "topology_peak_temporary_bytes": {
+    "hybrid_mean": 27840000,
+    "mean_difference": -8448000,
+    "metric": "topology_peak_temporary_bytes",
+    "note": "Three paired seeds with identical split, architecture, gate budget, optimizer, batch size, and training steps. Expand to five seeds before a final DATE statistical claim.",
+    "pairs": [
+      {
+        "difference": -8448000,
+        "hybrid": 27840000,
+        "random": 36288000,
+        "seed": 0
+      },
+      {
+        "difference": -8448000,
+        "hybrid": 27840000,
+        "random": 36288000,
+        "seed": 1
+      },
+      {
+        "difference": -8448000,
+        "hybrid": 27840000,
+        "random": 36288000,
+        "seed": 2
+      }
+    ],
+    "random_mean": 36288000,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "std_difference": 0.0,
+    "student_t_ci95": [
+      -8448000.0,
+      -8448000.0
+    ],
+    "student_t_ci95_half_width": 0.0
+  },
+  "training_wall_seconds": {
+    "hybrid_mean": 737.3336148865832,
+    "mean_difference": 5.838505092697839,
+    "metric": "training_wall_seconds",
+    "note": "Three paired seeds with identical split, architecture, gate budget, optimizer, batch size, and training steps. Expand to five seeds before a final DATE statistical claim.",
+    "pairs": [
+      {
+        "difference": 35.817092936020344,
+        "hybrid": 748.4119602697901,
+        "random": 712.5948673337698,
+        "seed": 0
+      },
+      {
+        "difference": 2.8727977769449353,
+        "hybrid": 748.0013450058177,
+        "random": 745.1285472288728,
+        "seed": 1
+      },
+      {
+        "difference": -21.174375434871763,
+        "hybrid": 715.5875393841416,
+        "random": 736.7619148190133,
+        "seed": 2
+      }
+    ],
+    "random_mean": 731.4951097938853,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "std_difference": 28.6112465942963,
+    "student_t_ci95": [
+      -65.24150800926262,
+      76.9185181946583
+    ],
+    "student_t_ci95_half_width": 71.08001310196046
+  }
+}

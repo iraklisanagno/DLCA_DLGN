@@ -1,0 +1,56 @@
+{
+  "wall_seconds": 912.9015173581429,
+  "best_validation_hard_accuracy": 0.9716666360696157,
+  "final_metrics": {
+    "val_loss_discrete": 0.0995672640701135,
+    "val_acc_discrete": 0.9691666384538015,
+    "val_loss_relaxed": 0.09726597815752029,
+    "val_acc_relaxed": 0.9703333059946696,
+    "train_loss": 0.009404711723327637
+  },
+  "peak_gpu_memory_bytes": 106689536,
+  "topology": [
+    {
+      "strategy": "coverage_hybrid",
+      "topology_seed": 1,
+      "layer_index": 0,
+      "construction_seconds": 0.3323941878043115,
+      "generator_temporary_bytes": 1041536
+    },
+    {
+      "strategy": "coverage_hybrid",
+      "topology_seed": 1,
+      "layer_index": 1,
+      "construction_seconds": 0.3255965821444988,
+      "generator_temporary_bytes": 1792000
+    },
+    {
+      "strategy": "coverage_hybrid",
+      "topology_seed": 1,
+      "layer_index": 2,
+      "construction_seconds": 0.32380311796441674,
+      "generator_temporary_bytes": 1792000
+    },
+    {
+      "strategy": "coverage_hybrid",
+      "topology_seed": 1,
+      "layer_index": 3,
+      "construction_seconds": 0.32342015998438,
+      "generator_temporary_bytes": 1792000
+    },
+    {
+      "strategy": "coverage_hybrid",
+      "topology_seed": 1,
+      "layer_index": 4,
+      "construction_seconds": 0.3232185053639114,
+      "generator_temporary_bytes": 1792000
+    },
+    {
+      "strategy": "coverage_hybrid",
+      "topology_seed": 1,
+      "layer_index": 5,
+      "construction_seconds": 0.32320533599704504,
+      "generator_temporary_bytes": 1792000
+    }
+  ]
+}

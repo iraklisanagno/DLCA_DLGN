@@ -1,0 +1,220 @@
+{
+  "audit": {
+    "complete_runs": 52,
+    "conv_spatial_coordinates_identical": true,
+    "paired_protocols_equal_except_routing": true,
+    "status": "pass"
+  },
+  "conv_inference_milliseconds_per_batch": {
+    "random": 6.8675834147135415,
+    "v4": 6.869032999674479
+  },
+  "conv_pilot_test": {
+    "baseline": "random",
+    "baseline_mean_percent": 55.42,
+    "metric": "test_hard_accuracy",
+    "n": 3,
+    "paired_differences_percentage_points": [
+      2.059999999999995,
+      2.749999999999997,
+      1.1900000000000022
+    ],
+    "paired_mean_percentage_points": 1.999999999999998,
+    "paired_std_percentage_points": 0.7817288532477201,
+    "paired_t95_ci_percentage_points": [
+      0.05807787521096586,
+      3.94192212478903
+    ],
+    "proposed": "v4",
+    "proposed_mean_percent": 57.42
+  },
+  "conv_pilot_validation": {
+    "baseline": "random",
+    "baseline_mean_percent": 55.18000000000001,
+    "metric": "validation_hard_accuracy",
+    "n": 3,
+    "paired_differences_percentage_points": [
+      2.5599999999999956,
+      1.9799999999999929,
+      0.759999999999994
+    ],
+    "paired_mean_percentage_points": 1.7666666666666608,
+    "paired_std_percentage_points": 0.9187672900867414,
+    "paired_t95_ci_percentage_points": [
+      -0.5156778070463024,
+      4.0490111403796245
+    ],
+    "proposed": "v4",
+    "proposed_mean_percent": 56.946666666666665
+  },
+  "depth_validation": [
+    {
+      "baseline": "random",
+      "baseline_mean_percent": 49.039998610814415,
+      "budget": "48k",
+      "depth": 4,
+      "metric": "validation_hard_accuracy",
+      "n": 3,
+      "paired_differences_percentage_points": [
+        2.380000352859496,
+        4.100000143051147,
+        2.979999601840971
+      ],
+      "paired_mean_percentage_points": 3.1533333659172045,
+      "paired_std_percentage_points": 0.8730024426606473,
+      "paired_t95_ci_percentage_points": [
+        0.9846750755721771,
+        5.321991656262232
+      ],
+      "proposed": "v3",
+      "proposed_mean_percent": 52.19333197673161
+    },
+    {
+      "baseline": "random",
+      "baseline_mean_percent": 44.90666558345159,
+      "budget": "48k",
+      "depth": 8,
+      "metric": "validation_hard_accuracy",
+      "n": 3,
+      "paired_differences_percentage_points": [
+        1.599999547004699,
+        2.619999766349795,
+        3.719999730587009
+      ],
+      "paired_mean_percentage_points": 2.646666347980501,
+      "paired_std_percentage_points": 1.060251632646306,
+      "paired_t95_ci_percentage_points": [
+        0.012855283279903151,
+        5.280477412681099
+      ],
+      "proposed": "v3",
+      "proposed_mean_percent": 47.55333193143209
+    },
+    {
+      "baseline": "random",
+      "baseline_mean_percent": 14.08666627109051,
+      "budget": "48k",
+      "depth": 12,
+      "metric": "validation_hard_accuracy",
+      "n": 3,
+      "paired_differences_percentage_points": [
+        -7.93999968469143,
+        2.3799999654293065,
+        0.40000003576278614
+      ],
+      "paired_mean_percentage_points": -1.7199998944997792,
+      "paired_std_percentage_points": 5.476896746594552,
+      "paired_t95_ci_percentage_points": [
+        -15.325365646589663,
+        11.885365857590106
+      ],
+      "proposed": "v3",
+      "proposed_mean_percent": 12.366666376590729
+    },
+    {
+      "baseline": "random",
+      "baseline_mean_percent": 54.81999878088634,
+      "budget": "512k",
+      "depth": 4,
+      "metric": "validation_hard_accuracy",
+      "n": 3,
+      "paired_differences_percentage_points": [
+        4.0799999237060565,
+        4.640000104904174,
+        4.699999809265143
+      ],
+      "paired_mean_percentage_points": 4.473333279291791,
+      "paired_std_percentage_points": 0.3419551689814052,
+      "paired_t95_ci_percentage_points": [
+        3.623869548265179,
+        5.322797010318403
+      ],
+      "proposed": "v3",
+      "proposed_mean_percent": 59.29333206017813
+    },
+    {
+      "baseline": "random",
+      "baseline_mean_percent": 48.413332184155784,
+      "budget": "512k",
+      "depth": 8,
+      "metric": "validation_hard_accuracy",
+      "n": 3,
+      "paired_differences_percentage_points": [
+        4.259999990463259,
+        3.199999809265136,
+        3.3199998736381464
+      ],
+      "paired_mean_percentage_points": 3.5933332244555136,
+      "paired_std_percentage_points": 0.5804596769257971,
+      "paired_t95_ci_percentage_points": [
+        2.1513914507995002,
+        5.035274998111527
+      ],
+      "proposed": "v3",
+      "proposed_mean_percent": 52.0066654086113
+    },
+    {
+      "baseline": "random",
+      "baseline_mean_percent": 11.806666343162457,
+      "budget": "512k",
+      "depth": 12,
+      "metric": "validation_hard_accuracy",
+      "n": 3,
+      "paired_differences_percentage_points": [
+        0.9599999934434889,
+        -1.5999999158084393,
+        -0.9999999925494191
+      ],
+      "paired_mean_percentage_points": -0.5466666383047898,
+      "paired_std_percentage_points": 1.3388551943341314,
+      "paired_t95_ci_percentage_points": [
+        -3.8725673172481017,
+        2.7792340406385225
+      ],
+      "proposed": "v3",
+      "proposed_mean_percent": 11.259999704857666
+    }
+  ],
+  "medium_full_test": {
+    "baseline": "random",
+    "baseline_mean_percent": 54.02799867391585,
+    "metric": "test_hard_accuracy",
+    "n": 5,
+    "paired_differences_percentage_points": [
+      4.549999743700028,
+      3.8599999845027932,
+      4.369999617338182,
+      4.540000259876253,
+      3.9600003063678724
+    ],
+    "paired_mean_percentage_points": 4.255999982357026,
+    "paired_std_percentage_points": 0.32577589711441723,
+    "paired_t95_ci_percentage_points": [
+      3.8514957794275198,
+      4.660504185286532
+    ],
+    "proposed": "v3",
+    "proposed_mean_percent": 58.283998656272885
+  },
+  "medium_full_validation": {
+    "baseline": "random",
+    "baseline_mean_percent": 55.08399879932404,
+    "metric": "validation_hard_accuracy",
+    "n": 5,
+    "paired_differences_percentage_points": [
+      4.579999983310701,
+      3.99999994039536,
+      4.699999809265131,
+      4.519999861717217,
+      4.579999744892116
+    ],
+    "paired_mean_percentage_points": 4.475999867916105,
+    "paired_std_percentage_points": 0.2740072547359532,
+    "paired_t95_ci_percentage_points": [
+      4.135774924463823,
+      4.816224811368387
+    ],
+    "proposed": "v3",
+    "proposed_mean_percent": 59.559998667240144
+  }
+}

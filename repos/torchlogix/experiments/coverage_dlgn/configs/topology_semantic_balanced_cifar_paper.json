@@ -1,0 +1,14 @@
+{
+  "in_dim": 9216,
+  "widths": [12000, 12000, 12000, 12000],
+  "strategy": "semantic_balanced_hybrid",
+  "topology_seed": 0,
+  "candidate_pool_size": 8,
+  "swap_fraction": 0.25,
+  "novelty_weight": 1.0,
+  "output_groups": 10,
+  "image_shape": [3, 32, 32],
+  "threshold_bits": 3,
+  "input_layout": "channel_interleaved",
+  "output": "experiments/coverage_dlgn/topology_studies/v3_cifar_paper"
+}

@@ -11,6 +11,15 @@ import numpy as np
 import torch
 import torchvision
 import torchlogix
+import torchlogix.models
+
+
+def split_permutation(length: int, seed=None):
+    """Return split indices without advancing the global RNG when seeded."""
+    generator = None
+    if seed is not None:
+        generator = torch.Generator().manual_seed(seed)
+    return torch.randperm(length, generator=generator).tolist()
 
 
 def load_dataset(args):
@@ -18,16 +27,41 @@ def load_dataset(args):
     # check env varaible for dataset path
     data_path = os.getenv("DATASET_PATH", ".")
     transform = torchvision.transforms.ToTensor()
+    train_transform = transform
+    if getattr(args, "augmentation", "none") == "standard":
+        if args.dataset != "cifar-10":
+            raise ValueError("standard augmentation is currently defined only for CIFAR-10")
+        train_transform = torchvision.transforms.Compose([
+            torchvision.transforms.RandomCrop(32, padding=4),
+            torchvision.transforms.RandomHorizontalFlip(),
+            transform,
+        ])
     if args.dataset == "mnist":     
         train_set = torchvision.datasets.MNIST(
-            f"{data_path}/data-mnist", train=True, download=True, transform=transform
+            f"{data_path}/data-mnist", train=True, download=True, transform=train_transform
+        )
+        validation_source = torchvision.datasets.MNIST(
+            f"{data_path}/data-mnist", train=True, transform=transform
         )
         test_set = torchvision.datasets.MNIST(
             f"{data_path}/data-mnist", train=False, transform=transform
         )
+    elif args.dataset == "fashion-mnist":
+        train_set = torchvision.datasets.FashionMNIST(
+            f"{data_path}/data-fashion-mnist", train=True, download=True, transform=train_transform
+        )
+        validation_source = torchvision.datasets.FashionMNIST(
+            f"{data_path}/data-fashion-mnist", train=True, transform=transform
+        )
+        test_set = torchvision.datasets.FashionMNIST(
+            f"{data_path}/data-fashion-mnist", train=False, transform=transform
+        )
     elif args.dataset == "cifar-10":
         train_set = torchvision.datasets.CIFAR10(
-            f"{data_path}/data-cifar", train=True, download=True, transform=transform
+            f"{data_path}/data-cifar", train=True, download=True, transform=train_transform
+        )
+        validation_source = torchvision.datasets.CIFAR10(
+            f"{data_path}/data-cifar", train=True, transform=transform
         )
         test_set = torchvision.datasets.CIFAR10(
             f"{data_path}/data-cifar", train=False, transform=transform
@@ -36,8 +70,11 @@ def load_dataset(args):
     if args.valid_set_size > 0:
         train_set_size = math.ceil((1 - args.valid_set_size) * len(train_set))
         valid_set_size = len(train_set) - train_set_size
-        train_set, validation_set = torch.utils.data.random_split(
-            train_set, [train_set_size, valid_set_size]
+        split_seed = getattr(args, "data_split_seed", None)
+        permutation = split_permutation(len(train_set), split_seed)
+        train_set = torch.utils.data.Subset(train_set, permutation[:train_set_size])
+        validation_set = torch.utils.data.Subset(
+            validation_source, permutation[train_set_size:]
         )
     else:
         print(f"Training on entire training set. Using test set as validation set.")
@@ -55,16 +92,16 @@ def load_dataset(args):
     validation_loader = torch.utils.data.DataLoader(
         validation_set,
         batch_size=args.batch_size,
-        shuffle=True,
+        shuffle=False,
         pin_memory=True,
-        drop_last=True,
+        drop_last=False,
     )
     test_loader = torch.utils.data.DataLoader(
         test_set,
         batch_size=args.batch_size,
         shuffle=False,
         pin_memory=True,
-        drop_last=True,
+        drop_last=False,
     )
     return train_loader, validation_loader, test_loader
 
@@ -89,7 +126,18 @@ def get_model(thresholds, args):
         "connections_kwargs": {
             "init_method": args.connections_init_method,
             "temperature": args.connections_temperature,
-            "gumbel": args.connections_gumbel
+            "gumbel": args.connections_gumbel,
+            "topology_seed": getattr(args, "topology_seed", None),
+            "candidate_pool_size": getattr(args, "coverage_candidate_pool_size", 64),
+            "long_range_fraction": getattr(args, "coverage_long_range_fraction", 0.25),
+            "coverage_alpha": getattr(args, "coverage_alpha", 1.0),
+            "coverage_beta": getattr(args, "coverage_beta", 1.0),
+            "coverage_gamma": getattr(args, "coverage_gamma", 0.25),
+            "coverage_delta": getattr(args, "coverage_delta", 0.0),
+            "local_radius": getattr(args, "coverage_local_radius", 4),
+            "hybrid_base": getattr(args, "coverage_hybrid_base", "butterfly"),
+            "swap_fraction": getattr(args, "coverage_swap_fraction", 0.25),
+            "novelty_weight": getattr(args, "coverage_novelty_weight", 1.0),
             },
         "parametrization": args.parametrization,
         "parametrization_kwargs": {
@@ -249,12 +297,12 @@ def load_model_from_checkpoint(model_path: Path, model_class, **model_kwargs):
 
 
 def evaluate_model(model, loader, eval_functions, mode="eval", device="cuda"):
-    """Evaluate model on a data loader with given evaluation functions.
-    Assumes metrics can be computed in batches and averaged."""
+    """Evaluate a model, weighting batch means by the number of examples."""
     orig_mode = model.training
     model.train(mode == "train")
 
-    metrics = defaultdict(list)
+    metric_sums = defaultdict(float)
+    example_count = 0
 
     with torch.no_grad():
         for x, y in loader:
@@ -264,10 +312,15 @@ def evaluate_model(model, loader, eval_functions, mode="eval", device="cuda"):
                 x = torchlogix.PackBitsTensor(x.reshape(x.shape[0], -1).round().bool())
 
             preds = model(x)
+            batch_size = y.shape[0]
+            example_count += batch_size
 
             for name, fn in eval_functions.items():
-                metrics[name].append(fn(preds, y).to(torch.float32).mean().item())
+                batch_mean = fn(preds, y).to(torch.float32).mean().item()
+                metric_sums[name] += batch_mean * batch_size
 
     model.train(orig_mode)
 
-    return {name: np.mean(vals) for name, vals in metrics.items()}
+    if example_count == 0:
+        raise ValueError("Cannot evaluate an empty data loader")
+    return {name: total / example_count for name, total in metric_sums.items()}

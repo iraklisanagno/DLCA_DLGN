@@ -191,7 +191,10 @@ class ClgnCifar10(torch.nn.Sequential):
                 tree_depth=3,
                 receptive_field_size=3,
                 padding=1,
-                connections_kwargs=connections_kwargs | {"channel_group_size": group_size_input},
+                connections_kwargs=connections_kwargs | {
+                    "channel_group_size": group_size_input,
+                    "layer_index": 0,
+                },
                 **llkw,
             )
         )
@@ -205,7 +208,7 @@ class ClgnCifar10(torch.nn.Sequential):
                 tree_depth=3,
                 receptive_field_size=3,
                 padding=1,
-                connections_kwargs=connections_kwargs,
+                connections_kwargs=connections_kwargs | {"layer_index": 1},
                 **llkw,
             )
         )
@@ -219,7 +222,7 @@ class ClgnCifar10(torch.nn.Sequential):
                 tree_depth=3,
                 receptive_field_size=3,
                 padding=1,
-                connections_kwargs=connections_kwargs,
+                connections_kwargs=connections_kwargs | {"layer_index": 2},
                 **llkw,
             )
         )
@@ -233,7 +236,7 @@ class ClgnCifar10(torch.nn.Sequential):
                 tree_depth=3,
                 receptive_field_size=3,
                 padding=1,
-                connections_kwargs=connections_kwargs,
+                connections_kwargs=connections_kwargs | {"layer_index": 3},
                 **llkw,
             )
         )

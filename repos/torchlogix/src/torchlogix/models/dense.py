@@ -3,6 +3,7 @@ import torch
 
 from ..layers import GroupSum, LogicDense
 from ..layers.binarization import setup_binarization
+from ..topology import canonical_strategy, image_input_semantics, packed_identity
 
 
 class Dlgn(torch.nn.Sequential):
@@ -23,6 +24,8 @@ class Dlgn(torch.nn.Sequential):
         neurons_per_layer: Union[int, list],
         class_count: int,
         tau: float,
+        input_shape: tuple[int, int, int] | None = None,
+        input_layout: str = "pixel_interleaved",
         **llkw
     ):
         assert n_layers >= self.n_learnable_layers
@@ -33,24 +36,75 @@ class Dlgn(torch.nn.Sequential):
             assert thresholds.shape[-1] == self.n_input_bits, f"{self.__class__.__name__} model requires {self.n_input_bits}-bit thresholds."
         binarization_module = setup_binarization(thresholds, binarization, **binarization_kwargs)
         layers = [binarization_module, torch.nn.Flatten()]
-        if self.n_learnable_layers > 0:
-            layers.append(
-                LogicDense(in_dim=in_dim, out_dim=neurons_per_layer[0], **(llkw | {"connections": "learnable"}))
+        connection_kwargs = dict(llkw.get("connections_kwargs") or {})
+        strategy = canonical_strategy(connection_kwargs.get("init_method", "random"))
+        semantics = None
+        if input_shape is not None:
+            channels, height, width = input_shape
+            semantics = image_input_semantics(
+                channels,
+                height,
+                width,
+                int(thresholds.shape[-1]),
+                layout=input_layout,
             )
-        else:
-            layers.append(
-                LogicDense(in_dim=in_dim, out_dim=neurons_per_layer[0], **llkw)
+            if semantics.n_inputs != in_dim:
+                raise ValueError(
+                    f"input semantics describe {semantics.n_inputs} bits, "
+                    f"but the architecture expects {in_dim}"
+                )
+        track_ancestry = (
+            llkw.get("connections", "fixed") == "fixed"
+            and strategy in {
+                "coverage_greedy",
+                "coverage_hybrid",
+                "semantic_balanced_hybrid",
+            }
+        )
+        if track_ancestry and self.n_learnable_layers:
+            raise ValueError("Coverage-aware fixed topology cannot follow a learnable connection layer")
+        ancestry = (
+            semantics.source_ancestry()
+            if track_ancestry
+            and strategy == "semantic_balanced_hybrid"
+            and semantics is not None
+            else packed_identity(in_dim) if track_ancestry else None
+        )
+
+        for i in range(n_layers):
+            layer_in_dim = in_dim if i == 0 else neurons_per_layer[i - 1]
+            layer_kwargs = dict(llkw)
+            layer_connections_kwargs = dict(connection_kwargs)
+            layer_connections_kwargs["layer_index"] = i
+            if track_ancestry:
+                layer_connections_kwargs["input_ancestry"] = ancestry
+            if (
+                strategy == "semantic_balanced_hybrid"
+                and semantics is not None
+                and i == 0
+            ):
+                layer_connections_kwargs["input_semantics"] = semantics
+                # The tensor-aware butterfly is the complete first-layer
+                # mechanism. Unconstrained swaps here would erase the spatial
+                # structure that this schedule is intended to preserve.
+                layer_connections_kwargs["swap_fraction"] = 0.0
+            layer_connections_kwargs["output_groups"] = (
+                class_count if i == n_layers - 1 else 1
             )
-        for i in range(1, n_layers):
+            layer_kwargs["connections_kwargs"] = layer_connections_kwargs
             if self.n_learnable_layers > i:
-                layers.append(
-                    LogicDense(in_dim=neurons_per_layer[i-1], out_dim=neurons_per_layer[i], **(llkw | {"connections": "learnable"}))
-                )
-            else:
-                layers.append(
-                    LogicDense(in_dim=neurons_per_layer[i-1], out_dim=neurons_per_layer[i], **llkw)
-                )
+                layer_kwargs["connections"] = "learnable"
+            layer = LogicDense(
+                in_dim=layer_in_dim,
+                out_dim=neurons_per_layer[i],
+                **layer_kwargs,
+            )
+            layers.append(layer)
+            if track_ancestry:
+                ancestry = layer.connections.consume_output_ancestry()
         super(Dlgn, self).__init__(*layers, GroupSum(class_count, tau))
+        self.input_semantics = semantics
+        self.class_count = class_count
 
 
 class DlgnFashionMnist(Dlgn):
@@ -63,14 +117,41 @@ class DlgnFashionMnist(Dlgn):
     n_learnable_layers = 0
 
     def __init__(self, neurons_per_layer: int, tau: float, **llkw):
-        llkw["binarization"] = "uniform"
         super(DlgnFashionMnist, self).__init__(
             in_dim=28*28*self.n_input_bits,
             n_layers=5,
             neurons_per_layer=neurons_per_layer,
             class_count=10,
             tau=tau,
+            input_shape=(1, 28, 28),
+            input_layout="pixel_interleaved",
             **llkw
+        )
+
+
+class DlgnFashionMnistPaperSmall(Dlgn):
+    """Six-by-8,000 Fashion-MNIST DLGN used by Mommen et al. (2025).
+
+    Fashion-MNIST is encoded with the three fixed thresholds 0.25, 0.5,
+    and 0.75.  The distinct class name prevents the pre-existing five-layer
+    ``DlgnFashionMnistSmall`` model from being mistaken for the reported
+    six-layer, 48,000-gate architecture.
+    """
+
+    n_input_bits = 3
+    n_learnable_layers = 0
+
+    def __init__(self, **llkw):
+        tau = llkw.get("tau", 1.0 / 0.1)
+        super().__init__(
+            in_dim=28 * 28 * self.n_input_bits,
+            n_layers=6,
+            neurons_per_layer=8000,
+            class_count=10,
+            tau=tau,
+            input_shape=(1, 28, 28),
+            input_layout="pixel_interleaved",
+            **llkw,
         )
 
 
@@ -114,6 +195,8 @@ class DlgnMnist(Dlgn):
             neurons_per_layer=neurons_per_layer,
             class_count=10,
             tau=tau,
+            input_shape=(1, 28, 28),
+            input_layout="pixel_interleaved",
             **llkw
         )
 
@@ -121,6 +204,32 @@ class DlgnMnistTiny(DlgnMnist):
     def __init__(self, **llkw):
         tau = llkw.get("tau", 1./0.1)
         super(DlgnMnistTiny, self).__init__(neurons_per_layer=1000, tau=tau, **llkw)
+
+
+class DlgnMnistPaperSmall(Dlgn):
+    """Six-by-8,000 MNIST DLGN from Petersen et al. (NeurIPS 2022).
+
+    This class is deliberately separate from :class:`DlgnMnistSmall`: the
+    latter predates this reproduction and builds five logic layers, whereas
+    Table 6 of the paper reports six layers and 48,000 gates.
+    """
+
+    n_input_bits = 1
+    n_learnable_layers = 0
+
+    def __init__(self, **llkw):
+        tau = llkw.get("tau", 1.0 / 0.1)
+        super().__init__(
+            in_dim=28 * 28,
+            n_layers=6,
+            neurons_per_layer=8000,
+            class_count=10,
+            tau=tau,
+            input_shape=(1, 28, 28),
+            input_layout="pixel_interleaved",
+            **llkw,
+        )
+
 
 class DlgnMnistSmall(DlgnMnist):
     def __init__(self, **llkw):
@@ -170,6 +279,8 @@ class DlgnCifar10(Dlgn):
             neurons_per_layer=neurons_per_layer,
             class_count=10,
             tau=tau,
+            input_shape=(3, 32, 32),
+            input_layout="channel_interleaved",
             **llkw
         )
 
@@ -329,6 +440,64 @@ class DlgnCifar10Medium(DlgnCifar10):
         tau = llkw.get("tau", 1./0.01)
         super(DlgnCifar10Medium, self).__init__(
             n_layers=4, neurons_per_layer=128_000, tau=tau, **llkw
+        )
+
+
+class DlgnCifar10Budget48kDepth8(DlgnCifar10):
+    """Eight-layer CIFAR-10 DLGN with the small model's 48K-gate budget."""
+    n_input_bits = 3
+
+    def __init__(self, **llkw):
+        # Preserve the small model's maximum GroupSum logit of 36:
+        # (6_000 / 10 outputs) / tau = 36.
+        tau = llkw.get("tau", 1. / 0.06)
+        super(DlgnCifar10Budget48kDepth8, self).__init__(
+            n_layers=8, neurons_per_layer=6_000, tau=tau, **llkw
+        )
+
+
+class DlgnCifar10Budget48kDepth12(DlgnCifar10):
+    """Twelve-layer CIFAR-10 DLGN with the small model's 48K-gate budget."""
+    n_input_bits = 3
+    # Rank-2 coverage requires at least ceil(9_216 / 2) first-layer gates.
+    # The remaining gates are distributed as evenly as possible, with a final
+    # width divisible by the ten classifier groups.
+    widths = [4_608] + [3_946] * 2 + [3_945] * 8 + [3_940]
+
+    def __init__(self, **llkw):
+        # Preserve the small model's maximum GroupSum logit of 36:
+        # (3_940 / 10 outputs) / tau = 36.
+        tau = llkw.get("tau", 3_940 / (10 * 36))
+        super(DlgnCifar10Budget48kDepth12, self).__init__(
+            n_layers=12, neurons_per_layer=self.widths, tau=tau, **llkw
+        )
+
+
+class DlgnCifar10Budget512kDepth8(DlgnCifar10):
+    """Eight-layer CIFAR-10 DLGN with the medium model's 512K-gate budget."""
+    n_input_bits = 3
+
+    def __init__(self, **llkw):
+        # Preserve the medium model's maximum GroupSum logit of 128:
+        # (64_000 / 10 outputs) / tau = 128.
+        tau = llkw.get("tau", 50.0)
+        super(DlgnCifar10Budget512kDepth8, self).__init__(
+            n_layers=8, neurons_per_layer=64_000, tau=tau, **llkw
+        )
+
+
+class DlgnCifar10Budget512kDepth12(DlgnCifar10):
+    """Twelve-layer CIFAR-10 DLGN with an exact 512K-gate budget."""
+    n_input_bits = 3
+    widths = [42_666] * 7 + [42_667] * 4 + [42_670]
+
+    def __init__(self, **llkw):
+        # The tiny width imbalance makes the total exactly 512K while keeping
+        # the final width divisible by ten. Preserve the medium model's
+        # maximum GroupSum logit of 128.
+        tau = llkw.get("tau", 42_670 / (10 * 128))
+        super(DlgnCifar10Budget512kDepth12, self).__init__(
+            n_layers=12, neurons_per_layer=self.widths, tau=tau, **llkw
         )
 
 
