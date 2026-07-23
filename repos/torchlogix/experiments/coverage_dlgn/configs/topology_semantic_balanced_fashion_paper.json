@@ -1,0 +1,14 @@
+{
+  "in_dim": 2352,
+  "widths": [8000, 8000, 8000, 8000, 8000, 8000],
+  "strategy": "semantic_balanced_hybrid",
+  "topology_seed": 0,
+  "candidate_pool_size": 8,
+  "swap_fraction": 0.25,
+  "novelty_weight": 1.0,
+  "output_groups": 10,
+  "image_shape": [1, 28, 28],
+  "threshold_bits": 3,
+  "input_layout": "pixel_interleaved",
+  "output": "experiments/coverage_dlgn/topology_studies/v3_fashion_paper"
+}

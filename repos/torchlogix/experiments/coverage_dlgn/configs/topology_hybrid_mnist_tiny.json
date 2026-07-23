@@ -1,0 +1,15 @@
+{
+  "in_dim": 784,
+  "widths": [1000, 1000, 1000, 1000, 1000],
+  "strategy": "coverage_hybrid",
+  "topology_seed": 0,
+  "candidate_pool_size": 32,
+  "long_range_fraction": 0.25,
+  "alpha": 1.0,
+  "beta": 1.0,
+  "gamma": 0.25,
+  "delta": 0.0,
+  "local_radius": 4,
+  "hybrid_base": "butterfly",
+  "output": "experiments/coverage_dlgn/results/topology_hybrid_mnist_tiny"
+}

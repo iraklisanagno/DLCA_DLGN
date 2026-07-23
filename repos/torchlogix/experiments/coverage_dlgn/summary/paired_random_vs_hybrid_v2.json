@@ -1,0 +1,37 @@
+{
+  "hybrid_mean": 0.8273607336956521,
+  "mean_difference": -0.002377717391304379,
+  "mean_difference_percentage_points": -0.23777173913043792,
+  "meets_positive_0_3pp_mean_threshold": false,
+  "metric": "hard_accuracy",
+  "note": "Smoke-only interval; not a paper claim.",
+  "pairs": [
+    {
+      "difference": 0.0037364130434782705,
+      "hybrid": 0.8301630434782609,
+      "random": 0.8264266304347826,
+      "seed": 1
+    },
+    {
+      "difference": -0.008491847826087029,
+      "hybrid": 0.8245584239130435,
+      "random": 0.8330502717391305,
+      "seed": 2
+    }
+  ],
+  "random_mean": 0.8297384510869565,
+  "seeds": [
+    1,
+    2
+  ],
+  "std_difference": 0.008646686182987732,
+  "student_t_ci95": [
+    -0.08006385869565272,
+    0.07530842391304396
+  ],
+  "student_t_ci95_half_width": 0.07768614130434834,
+  "student_t_ci95_percentage_points": [
+    -8.006385869565271,
+    7.530842391304396
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "dataset": "cifar-10",
+  "architecture": "DlgnCifar10Small",
+  "device": "cuda",
+  "seed": 0,
+  "topology_seed": 0,
+  "batch_size": 128,
+  "num_iterations": 100000,
+  "eval_freq": 2000,
+  "valid_set_size": 0.1,
+  "augmentation": "standard",
+  "connections": "fixed",
+  "connections_init_method": "coverage_hybrid",
+  "coverage_candidate_pool_size": 64,
+  "coverage_long_range_fraction": 0.25,
+  "output": "experiments/coverage_dlgn/results/pilot_cifar10_hybrid_seed0"
+}

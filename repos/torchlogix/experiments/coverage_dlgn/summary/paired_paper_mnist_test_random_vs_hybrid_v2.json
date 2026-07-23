@@ -1,0 +1,44 @@
+{
+  "hybrid_mean": 0.9725333114465078,
+  "mean_difference": 0.0007000007232030129,
+  "mean_difference_percentage_points": 0.07000007232030128,
+  "meets_positive_0_3pp_mean_threshold": false,
+  "metric": "test_hard_accuracy",
+  "note": "Frozen best-validation checkpoints evaluated once on test.",
+  "pairs": [
+    {
+      "difference": -0.00040000081062319115,
+      "hybrid": 0.9728999769687653,
+      "random": 0.9732999777793885,
+      "seed": 0
+    },
+    {
+      "difference": 0.0015000027418136108,
+      "hybrid": 0.9714999800920486,
+      "random": 0.969999977350235,
+      "seed": 1
+    },
+    {
+      "difference": 0.001000000238418619,
+      "hybrid": 0.9731999772787094,
+      "random": 0.9721999770402908,
+      "seed": 2
+    }
+  ],
+  "random_mean": 0.9718333107233048,
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "std_difference": 0.000984887382732318,
+  "student_t_ci95": [
+    -0.0017467926326140831,
+    0.0031467940790201087
+  ],
+  "student_t_ci95_half_width": 0.002446793355817096,
+  "student_t_ci95_percentage_points": [
+    -0.1746792632614083,
+    0.3146794079020109
+  ]
+}

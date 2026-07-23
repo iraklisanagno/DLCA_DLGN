@@ -1,0 +1,439 @@
+{
+  "checks": {
+    "all_central_runs_have_inference_benchmarks": true,
+    "all_central_runs_have_test_metrics": true,
+    "all_expected_runs_complete": true,
+    "all_learning_curves_have_54_rows": true,
+    "all_pair_protocol_checks_pass": true,
+    "environment_versions_consistent": true,
+    "v3_source_hash_cohorts_explained": true
+  },
+  "environment_values": {
+    "cuda_build": [
+      "13.0"
+    ],
+    "python": [
+      "3.12.13"
+    ],
+    "source_revision": [
+      "c1102f9953dedb331f24925e49262550ed12485c"
+    ],
+    "torch": [
+      "2.9.0+cu130"
+    ]
+  },
+  "expected_runs": {
+    "paper_cifar10_small_hybrid_v2_seed0": {
+      "complete": true,
+      "has_inference_benchmark": true,
+      "has_test_metrics": true,
+      "metrics_rows": 54,
+      "missing": []
+    },
+    "paper_cifar10_small_hybrid_v2_seed1": {
+      "complete": true,
+      "has_inference_benchmark": true,
+      "has_test_metrics": true,
+      "metrics_rows": 54,
+      "missing": []
+    },
+    "paper_cifar10_small_hybrid_v2_seed2": {
+      "complete": true,
+      "has_inference_benchmark": true,
+      "has_test_metrics": true,
+      "metrics_rows": 54,
+      "missing": []
+    },
+    "paper_cifar10_small_random_seed0": {
+      "complete": true,
+      "has_inference_benchmark": true,
+      "has_test_metrics": true,
+      "metrics_rows": 54,
+      "missing": []
+    },
+    "paper_cifar10_small_random_seed1": {
+      "complete": true,
+      "has_inference_benchmark": true,
+      "has_test_metrics": true,
+      "metrics_rows": 54,
+      "missing": []
+    },
+    "paper_cifar10_small_random_seed2": {
+      "complete": true,
+      "has_inference_benchmark": true,
+      "has_test_metrics": true,
+      "metrics_rows": 54,
+      "missing": []
+    },
+    "paper_cifar10_small_random_seed3": {
+      "complete": true,
+      "has_inference_benchmark": true,
+      "has_test_metrics": true,
+      "metrics_rows": 54,
+      "missing": []
+    },
+    "paper_cifar10_small_random_seed4": {
+      "complete": true,
+      "has_inference_benchmark": true,
+      "has_test_metrics": true,
+      "metrics_rows": 54,
+      "missing": []
+    },
+    "paper_cifar10_small_semantic_balanced_v3_seed0": {
+      "complete": true,
+      "has_inference_benchmark": true,
+      "has_test_metrics": true,
+      "metrics_rows": 54,
+      "missing": []
+    },
+    "paper_cifar10_small_semantic_balanced_v3_seed1": {
+      "complete": true,
+      "has_inference_benchmark": true,
+      "has_test_metrics": true,
+      "metrics_rows": 54,
+      "missing": []
+    },
+    "paper_cifar10_small_semantic_balanced_v3_seed2": {
+      "complete": true,
+      "has_inference_benchmark": true,
+      "has_test_metrics": true,
+      "metrics_rows": 54,
+      "missing": []
+    },
+    "paper_cifar10_small_semantic_balanced_v3_seed3": {
+      "complete": true,
+      "has_inference_benchmark": true,
+      "has_test_metrics": true,
+      "metrics_rows": 54,
+      "missing": []
+    },
+    "paper_cifar10_small_semantic_balanced_v3_seed4": {
+      "complete": true,
+      "has_inference_benchmark": true,
+      "has_test_metrics": true,
+      "metrics_rows": 54,
+      "missing": []
+    },
+    "paper_fashion_mnist_small_hybrid_f000_v2_seed0": {
+      "complete": true,
+      "has_inference_benchmark": false,
+      "has_test_metrics": false,
+      "metrics_rows": 54,
+      "missing": []
+    },
+    "paper_fashion_mnist_small_hybrid_f050_v2_seed0": {
+      "complete": true,
+      "has_inference_benchmark": false,
+      "has_test_metrics": false,
+      "metrics_rows": 54,
+      "missing": []
+    },
+    "paper_fashion_mnist_small_hybrid_f075_v2_seed0": {
+      "complete": true,
+      "has_inference_benchmark": false,
+      "has_test_metrics": false,
+      "metrics_rows": 54,
+      "missing": []
+    },
+    "paper_fashion_mnist_small_hybrid_f100_v2_seed0": {
+      "complete": true,
+      "has_inference_benchmark": false,
+      "has_test_metrics": false,
+      "metrics_rows": 54,
+      "missing": []
+    },
+    "paper_fashion_mnist_small_hybrid_v2_seed0": {
+      "complete": true,
+      "has_inference_benchmark": true,
+      "has_test_metrics": true,
+      "metrics_rows": 54,
+      "missing": []
+    },
+    "paper_fashion_mnist_small_hybrid_v2_seed1": {
+      "complete": true,
+      "has_inference_benchmark": true,
+      "has_test_metrics": true,
+      "metrics_rows": 54,
+      "missing": []
+    },
+    "paper_fashion_mnist_small_hybrid_v2_seed2": {
+      "complete": true,
+      "has_inference_benchmark": true,
+      "has_test_metrics": true,
+      "metrics_rows": 54,
+      "missing": []
+    },
+    "paper_fashion_mnist_small_random_seed0": {
+      "complete": true,
+      "has_inference_benchmark": true,
+      "has_test_metrics": true,
+      "metrics_rows": 54,
+      "missing": []
+    },
+    "paper_fashion_mnist_small_random_seed1": {
+      "complete": true,
+      "has_inference_benchmark": true,
+      "has_test_metrics": true,
+      "metrics_rows": 54,
+      "missing": []
+    },
+    "paper_fashion_mnist_small_random_seed2": {
+      "complete": true,
+      "has_inference_benchmark": true,
+      "has_test_metrics": true,
+      "metrics_rows": 54,
+      "missing": []
+    },
+    "paper_fashion_mnist_small_random_seed3": {
+      "complete": true,
+      "has_inference_benchmark": true,
+      "has_test_metrics": true,
+      "metrics_rows": 54,
+      "missing": []
+    },
+    "paper_fashion_mnist_small_random_seed4": {
+      "complete": true,
+      "has_inference_benchmark": true,
+      "has_test_metrics": true,
+      "metrics_rows": 54,
+      "missing": []
+    },
+    "paper_fashion_mnist_small_semantic_balanced_v3_seed0": {
+      "complete": true,
+      "has_inference_benchmark": true,
+      "has_test_metrics": true,
+      "metrics_rows": 54,
+      "missing": []
+    },
+    "paper_fashion_mnist_small_semantic_balanced_v3_seed1": {
+      "complete": true,
+      "has_inference_benchmark": true,
+      "has_test_metrics": true,
+      "metrics_rows": 54,
+      "missing": []
+    },
+    "paper_fashion_mnist_small_semantic_balanced_v3_seed2": {
+      "complete": true,
+      "has_inference_benchmark": true,
+      "has_test_metrics": true,
+      "metrics_rows": 54,
+      "missing": []
+    },
+    "paper_fashion_mnist_small_semantic_balanced_v3_seed3": {
+      "complete": true,
+      "has_inference_benchmark": true,
+      "has_test_metrics": true,
+      "metrics_rows": 54,
+      "missing": []
+    },
+    "paper_fashion_mnist_small_semantic_balanced_v3_seed4": {
+      "complete": true,
+      "has_inference_benchmark": true,
+      "has_test_metrics": true,
+      "metrics_rows": 54,
+      "missing": []
+    }
+  },
+  "failed_attempts_excluded_from_tables": [
+    "paper_fashion_mnist_small_random_seed1_failed_sigterm_attempt1",
+    "paper_fashion_mnist_small_random_seed1_failed_sigterm_attempt2"
+  ],
+  "legacy_hash_scope_defect": "The run-time fingerprint included generated JSON under results/ and therefore changed between otherwise source-identical runs.",
+  "legacy_recorded_source_tree_hash_count": 17,
+  "legacy_recorded_source_tree_hashes": [
+    "215343b78b0045c7dde47d4a535078bcb0e0ee90867c3a092fb9991b689c7bc0",
+    "2bf064407dea8962828122fdec2458971914ee3c661d434d8a5d1e9e32100bc3",
+    "39cb5464d9ccc3200119c6a22822456b043998cd6a6dd787b2809516f23af33a",
+    "6883f4d695e558a63e639ceb9accf78962797a06c6ccf2c72b9bc757ea6ec103",
+    "6bd1105abd3f4fb4f92563d1539484e36c55be2759d967debd255cda47ea90e6",
+    "7d5c2030a49a9e9b8626e3630a9034825e284131fdf11be6649b5f7e70b87d9d",
+    "8229b69f1e1160babfefdcb62c6eab7be2c865310b49c2f1335213fdb6593f6f",
+    "8e485bf2966371ce87e69254ab7ce45e5eb467d307289d0511e37b545f26fe9d",
+    "956d69b4019586e710f95308062f7b04561651a3286a28fac5f841017e56dbd6",
+    "95b695c79fba0dc472d4f60128e6304eeaba5a3d0ece5592dccf9c3be3c53c9a",
+    "b4c29a9b1c9a29cc96f3c510744eecdbce49f79aede51ef34c6964aef3c61ce9",
+    "c3275c2861def7a881f816f22543ef55c4119f8f5e157929c86285a27de18fa4",
+    "dd1ab4457e0d11ba5fee21435e446107852b2b4b24308e2d60fb7fb74ae4ceb5",
+    "de419f1701c2520cb32e399f52046b13bac491e60b1bdfa5fd65124544765089",
+    "df9a61f654c101247734b6d5fbd3d88b6c4eb83b8819174d0e6d6901f063e263",
+    "fb751659b84e439b35a2a70a5c58a98efaabb0afcb1f2f8a16db34cc3a0cebf7",
+    "fff1e3a3a2e7e3859dd9c6ecd1e79879941f3de89ec3f44b30eabe9975b935b7"
+  ],
+  "paired_protocol": [
+    {
+      "candidate": "hybrid-v2",
+      "dataset": "fashion-mnist",
+      "gate_count_identical": true,
+      "protocol_fields_identical": true,
+      "routing_bits_identical": true,
+      "seed": 0,
+      "topology_seed_paired": true,
+      "training_seed_paired": true
+    },
+    {
+      "candidate": "hybrid-v2",
+      "dataset": "fashion-mnist",
+      "gate_count_identical": true,
+      "protocol_fields_identical": true,
+      "routing_bits_identical": true,
+      "seed": 1,
+      "topology_seed_paired": true,
+      "training_seed_paired": true
+    },
+    {
+      "candidate": "hybrid-v2",
+      "dataset": "fashion-mnist",
+      "gate_count_identical": true,
+      "protocol_fields_identical": true,
+      "routing_bits_identical": true,
+      "seed": 2,
+      "topology_seed_paired": true,
+      "training_seed_paired": true
+    },
+    {
+      "candidate": "semantic-balanced-v3",
+      "dataset": "fashion-mnist",
+      "gate_count_identical": true,
+      "protocol_fields_identical": true,
+      "routing_bits_identical": true,
+      "seed": 0,
+      "topology_seed_paired": true,
+      "training_seed_paired": true
+    },
+    {
+      "candidate": "semantic-balanced-v3",
+      "dataset": "fashion-mnist",
+      "gate_count_identical": true,
+      "protocol_fields_identical": true,
+      "routing_bits_identical": true,
+      "seed": 1,
+      "topology_seed_paired": true,
+      "training_seed_paired": true
+    },
+    {
+      "candidate": "semantic-balanced-v3",
+      "dataset": "fashion-mnist",
+      "gate_count_identical": true,
+      "protocol_fields_identical": true,
+      "routing_bits_identical": true,
+      "seed": 2,
+      "topology_seed_paired": true,
+      "training_seed_paired": true
+    },
+    {
+      "candidate": "semantic-balanced-v3",
+      "dataset": "fashion-mnist",
+      "gate_count_identical": true,
+      "protocol_fields_identical": true,
+      "routing_bits_identical": true,
+      "seed": 3,
+      "topology_seed_paired": true,
+      "training_seed_paired": true
+    },
+    {
+      "candidate": "semantic-balanced-v3",
+      "dataset": "fashion-mnist",
+      "gate_count_identical": true,
+      "protocol_fields_identical": true,
+      "routing_bits_identical": true,
+      "seed": 4,
+      "topology_seed_paired": true,
+      "training_seed_paired": true
+    },
+    {
+      "candidate": "hybrid-v2",
+      "dataset": "cifar-10",
+      "gate_count_identical": true,
+      "protocol_fields_identical": true,
+      "routing_bits_identical": true,
+      "seed": 0,
+      "topology_seed_paired": true,
+      "training_seed_paired": true
+    },
+    {
+      "candidate": "hybrid-v2",
+      "dataset": "cifar-10",
+      "gate_count_identical": true,
+      "protocol_fields_identical": true,
+      "routing_bits_identical": true,
+      "seed": 1,
+      "topology_seed_paired": true,
+      "training_seed_paired": true
+    },
+    {
+      "candidate": "hybrid-v2",
+      "dataset": "cifar-10",
+      "gate_count_identical": true,
+      "protocol_fields_identical": true,
+      "routing_bits_identical": true,
+      "seed": 2,
+      "topology_seed_paired": true,
+      "training_seed_paired": true
+    },
+    {
+      "candidate": "semantic-balanced-v3",
+      "dataset": "cifar-10",
+      "gate_count_identical": true,
+      "protocol_fields_identical": true,
+      "routing_bits_identical": true,
+      "seed": 0,
+      "topology_seed_paired": true,
+      "training_seed_paired": true
+    },
+    {
+      "candidate": "semantic-balanced-v3",
+      "dataset": "cifar-10",
+      "gate_count_identical": true,
+      "protocol_fields_identical": true,
+      "routing_bits_identical": true,
+      "seed": 1,
+      "topology_seed_paired": true,
+      "training_seed_paired": true
+    },
+    {
+      "candidate": "semantic-balanced-v3",
+      "dataset": "cifar-10",
+      "gate_count_identical": true,
+      "protocol_fields_identical": true,
+      "routing_bits_identical": true,
+      "seed": 2,
+      "topology_seed_paired": true,
+      "training_seed_paired": true
+    },
+    {
+      "candidate": "semantic-balanced-v3",
+      "dataset": "cifar-10",
+      "gate_count_identical": true,
+      "protocol_fields_identical": true,
+      "routing_bits_identical": true,
+      "seed": 3,
+      "topology_seed_paired": true,
+      "training_seed_paired": true
+    },
+    {
+      "candidate": "semantic-balanced-v3",
+      "dataset": "cifar-10",
+      "gate_count_identical": true,
+      "protocol_fields_identical": true,
+      "routing_bits_identical": true,
+      "seed": 4,
+      "topology_seed_paired": true,
+      "training_seed_paired": true
+    }
+  ],
+  "stable_training_source_sha256_before_reporting_edits": "ddb1cfb4da65b0d41573a1a8796a7d8c772efe4ec385e575eb93b00b9e19b65d",
+  "status": "pass",
+  "training_source_archive": "training_source_pre_analysis.tar.gz",
+  "training_source_archive_sha256": "84dd8a2ac53ee14fba59c582606eb25a29ecb801b37d89dc27f8f58f07053c47",
+  "v3_recorded_source_tree_hashes_by_dataset": {
+    "cifar-10": [
+      "3b7662c118fce05a79c1d990e92c6367f378bb5168f2d1c6db842c92d0cd5b59",
+      "dd1ab4457e0d11ba5fee21435e446107852b2b4b24308e2d60fb7fb74ae4ceb5"
+    ],
+    "fashion-mnist": [
+      "87f548a0e4a7b0d9798f668358eb1699efae29a7e945d358fbed10722327bd45",
+      "dd1ab4457e0d11ba5fee21435e446107852b2b4b24308e2d60fb7fb74ae4ceb5"
+    ]
+  },
+  "v3_source_hash_cohort_note": "Seeds 0-2 and seeds 3-4 form two recorded broad-source-hash cohorts because reporting scripts and queue/config files were added between escalations. Training implementation files and resolved protocol fields were unchanged. Future manifests record a separate training_implementation_sha256 that excludes reporting and queue/config additions."
+}

@@ -1,0 +1,44 @@
+{
+  "hybrid_mean": 0.9718333042330212,
+  "mean_difference": 0.0003333336777157081,
+  "mean_difference_percentage_points": 0.03333336777157081,
+  "meets_positive_0_3pp_mean_threshold": false,
+  "metric": "hard_accuracy",
+  "note": "Three-seed paper-scale MNIST validation pilot.",
+  "pairs": [
+    {
+      "difference": 0.0005000005165736177,
+      "hybrid": 0.9716666370630265,
+      "random": 0.9711666365464529,
+      "seed": 0
+    },
+    {
+      "difference": 0.0004999995231628196,
+      "hybrid": 0.9716666360696157,
+      "random": 0.9711666365464529,
+      "seed": 1
+    },
+    {
+      "difference": 9.934106870446158e-10,
+      "hybrid": 0.9721666395664215,
+      "random": 0.9721666385730108,
+      "seed": 2
+    }
+  ],
+  "random_mean": 0.9714999705553055,
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "std_difference": 0.000288674572520234,
+  "student_t_ci95": [
+    -0.00038383159256760637,
+    0.0010504989479990226
+  ],
+  "student_t_ci95_half_width": 0.0007171652702833145,
+  "student_t_ci95_percentage_points": [
+    -0.03838315925676064,
+    0.10504989479990226
+  ]
+}

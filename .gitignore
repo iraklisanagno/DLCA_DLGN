@@ -1,0 +1,47 @@
+# Python environments and caches
+**/venv/
+**/.venv/
+**/env/
+**/__pycache__/
+*.py[cod]
+*.egg-info/
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+.coverage
+htmlcov/
+
+# Local datasets and package/build outputs
+**/data/
+**/data-*/
+**/datasets/
+**/build/
+**/dist/
+
+# Training checkpoints and exported model binaries
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.safetensors
+
+# Large generated arrays and archives
+*.npy
+*.npz
+*.tar
+*.tar.gz
+*.tgz
+*.zip
+
+# Runtime logs, caches, and experiment trackers
+*.log
+**/.cache/
+**/wandb/
+**/runs/
+**/lightning_logs/
+
+# Editor and operating-system noise
+**/.idea/
+**/.vscode/
+.DS_Store
+*~

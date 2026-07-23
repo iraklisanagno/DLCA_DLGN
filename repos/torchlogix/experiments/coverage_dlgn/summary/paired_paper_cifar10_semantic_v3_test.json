@@ -1,0 +1,58 @@
+{
+  "hybrid_mean": 0.5235799872279168,
+  "mean_difference": 0.03301999956369402,
+  "mean_difference_percentage_points": 3.3019999563694022,
+  "meets_positive_0_3pp_mean_threshold": true,
+  "metric": "test_hard_accuracy",
+  "note": "Five paired full-budget seeds. The semantic topology and its candidate pool, swap fraction, and novelty weight were selected on CIFAR-10 validation and then applied to Fashion-MNIST without retuning.",
+  "pairs": [
+    {
+      "difference": 0.035599998831749025,
+      "hybrid": 0.5239999872446061,
+      "random": 0.48839998841285703,
+      "seed": 0
+    },
+    {
+      "difference": 0.03389999955892564,
+      "hybrid": 0.5267999878525734,
+      "random": 0.4928999882936478,
+      "seed": 1
+    },
+    {
+      "difference": 0.034799998998642,
+      "hybrid": 0.5208999863266945,
+      "random": 0.48609998732805254,
+      "seed": 2
+    },
+    {
+      "difference": 0.025400000214576723,
+      "hybrid": 0.5204999879002571,
+      "random": 0.49509998768568036,
+      "seed": 3
+    },
+    {
+      "difference": 0.03540000021457673,
+      "hybrid": 0.5256999868154526,
+      "random": 0.49029998660087587,
+      "seed": 4
+    }
+  ],
+  "random_mean": 0.4905599876642227,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "std_difference": 0.004310684034522169,
+  "student_t_ci95": [
+    0.027668436462641267,
+    0.03837156266474678
+  ],
+  "student_t_ci95_half_width": 0.005351563101052757,
+  "student_t_ci95_percentage_points": [
+    2.766843646264127,
+    3.837156266474678
+  ]
+}

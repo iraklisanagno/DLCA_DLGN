@@ -1,0 +1,6 @@
+ancestry_bytes,construction_seconds,covered_inputs,deployed_index_bits,deployed_index_bytes_packed,depth,distinct_predecessor_pairs,duplicate_predecessor_pairs,fanout_cv,fanout_max,fanout_mean,generator_temporary_bytes,in_dim,indices_tensor_bytes,input_coverage,jaccard_overlap_mean,lut_rank,max_gate_ancestry,mean_gate_ancestry,original_inputs,out_dim,overlap_max,overlap_mean,overlap_p50,overlap_p90,overlap_std,reachable_gate_fraction,std_gate_ancestry,strategy,unused_outputs
+104000,0.08814876992255449,784,20000,2500,0,1000,0,0.19497692171126307,3,2.5510204081632653,201536,784,16000,1.0,0.0,2,2,2.0,784,1000,0,0.0,0.0,0.0,0.0,1.0,0.0,coverage_greedy,0
+104000,0.08748771995306015,784,20000,2500,1,1000,0,0.19235384061671346,3,2.0,224000,1000,16000,1.0,0.0,2,4,4.0,784,1000,0,0.0,0.0,0.0,0.0,1.0,0.0,coverage_greedy,0
+104000,0.09152676723897457,784,20000,2500,2,1000,0,0.1857417562100671,3,2.0,224000,1000,16000,1.0,0.0,2,8,8.0,784,1000,0,0.0,0.0,0.0,0.0,1.0,0.0,coverage_greedy,0
+104000,0.08745555393397808,784,20000,2500,3,1000,0,0.1746424919657298,3,2.0,224000,1000,16000,1.0,0.0,2,16,16.0,784,1000,0,0.0,0.0,0.0,0.0,1.0,0.0,coverage_greedy,0
+104000,0.08716679224744439,784,20000,2500,4,1000,0,0.20493901531919198,3,2.0,224000,1000,16000,1.0,0.0,2,32,32.0,784,1000,0,0.0,0.0,0.0,0.0,1.0,0.0,coverage_greedy,0

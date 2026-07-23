@@ -1,0 +1,13 @@
+{
+  "batch_size": 100,
+  "checkpoint": "best_checkpoint.pt",
+  "device": "cuda",
+  "examples_per_second": 88150.44004603902,
+  "input_transfer_excluded": true,
+  "microseconds_per_example": 11.34424285888672,
+  "milliseconds_per_batch": 1.134424285888672,
+  "mode": "hardened",
+  "timed_batches": 100,
+  "total_milliseconds": 113.44242858886719,
+  "warmup_batches": 20
+}

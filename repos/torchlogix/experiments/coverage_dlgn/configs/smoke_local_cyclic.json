@@ -1,0 +1,17 @@
+{
+  "dataset": "mnist",
+  "architecture": "DlgnMnistTiny",
+  "device": "cuda",
+  "seed": 0,
+  "topology_seed": 0,
+  "batch_size": 128,
+  "num_iterations": 1000,
+  "eval_freq": 500,
+  "valid_set_size": 0.1,
+  "augmentation": "none",
+  "binarization_num_batches": 1,
+  "connections": "fixed",
+  "connections_init_method": "local_cyclic",
+  "coverage_local_radius": 4,
+  "output": "experiments/coverage_dlgn/results/smoke_local_cyclic_seed0"
+}

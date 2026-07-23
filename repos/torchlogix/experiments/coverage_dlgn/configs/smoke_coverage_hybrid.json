@@ -1,0 +1,23 @@
+{
+  "dataset": "mnist",
+  "architecture": "DlgnMnistTiny",
+  "device": "cuda",
+  "seed": 0,
+  "topology_seed": 0,
+  "batch_size": 128,
+  "num_iterations": 1000,
+  "eval_freq": 500,
+  "valid_set_size": 0.1,
+  "augmentation": "none",
+  "binarization_num_batches": 1,
+  "connections": "fixed",
+  "connections_init_method": "coverage_hybrid",
+  "coverage_candidate_pool_size": 32,
+  "coverage_long_range_fraction": 0.25,
+  "coverage_alpha": 1.0,
+  "coverage_beta": 1.0,
+  "coverage_gamma": 0.25,
+  "coverage_delta": 0.0,
+  "coverage_hybrid_base": "butterfly",
+  "output": "experiments/coverage_dlgn/results/smoke_coverage_hybrid_seed0"
+}

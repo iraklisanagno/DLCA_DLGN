@@ -1,12 +1,18 @@
 from typing import Union
 from abc import ABC, abstractmethod
 import itertools
+import time
 
 import torch
 from torch.nn.common_types import _size_2_t, _size_3_t
 from torch.nn.modules.utils import _pair, _triple
 
 from .functional import softmax, take_tuples, get_combination_indices
+from .topology import (
+    canonical_strategy,
+    generate_dense_topology,
+    propagate_packed_ancestry,
+)
     
 
 def setup_connections(
@@ -89,10 +95,25 @@ class FixedDenseConnections(Connections):
             self, 
             in_dim, 
             out_dim, 
-            lut_rank=2, 
-            device=None,
-            init_method="random",
-            **kwargs
+        lut_rank=2,
+        device=None,
+        init_method="random",
+        topology_seed=None,
+        layer_index=0,
+        input_ancestry=None,
+        candidate_pool_size=64,
+        long_range_fraction=0.25,
+        coverage_alpha=1.0,
+        coverage_beta=1.0,
+        coverage_gamma=0.25,
+        coverage_delta=0.0,
+        local_radius=4,
+        hybrid_base="butterfly",
+        input_semantics=None,
+        swap_fraction=0.25,
+        output_groups=1,
+        novelty_weight=1.0,
+        **kwargs
         ):
         super().__init__(
             lut_rank=lut_rank,
@@ -102,6 +123,25 @@ class FixedDenseConnections(Connections):
         )
         self.in_dim = in_dim
         self.out_dim = out_dim
+        self.strategy = canonical_strategy(init_method)
+        self.topology_seed = topology_seed
+        self.layer_index = layer_index
+        self.input_ancestry = input_ancestry
+        self.candidate_pool_size = candidate_pool_size
+        self.long_range_fraction = long_range_fraction
+        self.coverage_alpha = coverage_alpha
+        self.coverage_beta = coverage_beta
+        self.coverage_gamma = coverage_gamma
+        self.coverage_delta = coverage_delta
+        self.local_radius = local_radius
+        self.hybrid_base = hybrid_base
+        self.input_semantics = input_semantics
+        self.swap_fraction = swap_fraction
+        self.output_groups = output_groups
+        self.novelty_weight = novelty_weight
+        self._output_ancestry = None
+        self.construction_seconds = 0.0
+        self.generator_temporary_bytes = 0
         self.register_buffer('indices', self._init_connections())
 
     def _init_connections(self):
@@ -124,21 +164,71 @@ class FixedDenseConnections(Connections):
                 f"({self.out_dim} * {self.lut_rank} < {self.in_dim})."
                 )
 
-        if self.init_method == "random":
+        # Preserve the untouched TorchLogix initializer when no independent
+        # topology seed was requested.  This keeps old checkpoints and baseline
+        # runs reproducible.
+        if self.init_method == "random" and self.topology_seed is None:
             # With this method both inputs can stem from the same input feature
             c = torch.randperm(self.lut_rank * self.out_dim, 
                                device=self.device) % self.in_dim
             c = c.reshape(self.lut_rank, self.out_dim)
-        elif self.init_method == "random-unique":
+        elif self.init_method == "random-unique" and self.topology_seed is None:
             c = get_random_unique_connections(
                 in_dim=self.in_dim,
                 out_dim=self.out_dim,
                 n=self.lut_rank
             )
         else:
-            raise ValueError(self.init_method)
+            result = generate_dense_topology(
+                in_dim=self.in_dim,
+                out_dim=self.out_dim,
+                lut_rank=self.lut_rank,
+                strategy=self.strategy,
+                topology_seed=0 if self.topology_seed is None else self.topology_seed,
+                layer_index=self.layer_index,
+                input_ancestry=self.input_ancestry,
+                candidate_pool_size=self.candidate_pool_size,
+                long_range_fraction=self.long_range_fraction,
+                alpha=self.coverage_alpha,
+                beta=self.coverage_beta,
+                gamma=self.coverage_gamma,
+                delta=self.coverage_delta,
+                local_radius=self.local_radius,
+                hybrid_base=self.hybrid_base,
+                input_semantics=self.input_semantics,
+                swap_fraction=self.swap_fraction,
+                output_groups=self.output_groups,
+                novelty_weight=self.novelty_weight,
+            )
+            c = torch.from_numpy(result.indices)
+            self._output_ancestry = result.output_ancestry
+            self.construction_seconds = result.construction_seconds
+            self.generator_temporary_bytes = result.temporary_bytes
+        if self.input_ancestry is not None and self._output_ancestry is None:
+            self._output_ancestry = propagate_packed_ancestry(self.input_ancestry, c)
         c = c.contiguous().to(torch.int64).to(self.device)
         return c
+
+    def consume_output_ancestry(self):
+        """Return and release construction-only ancestry state."""
+        ancestry = self._output_ancestry
+        self._output_ancestry = None
+        self.input_ancestry = None
+        self.input_semantics = None
+        return ancestry
+
+    def topology_metadata(self):
+        """Serializable metadata stored alongside training checkpoints."""
+        return {
+            "strategy": self.strategy,
+            "topology_seed": self.topology_seed,
+            "layer_index": self.layer_index,
+            "construction_seconds": self.construction_seconds,
+            "generator_temporary_bytes": self.generator_temporary_bytes,
+            "swap_fraction": self.swap_fraction,
+            "output_groups": self.output_groups,
+            "novelty_weight": self.novelty_weight,
+        }
     
     def forward(self, x):
         return x[:, self.indices]
@@ -317,6 +407,11 @@ class FixedConvConnections(Connections):
             device=None,
             init_method="random",  # | "random-unique"
             channel_group_size: int = None,
+            topology_seed: int = None,
+            layer_index: int = 0,
+            candidate_pool_size: int = 8,
+            swap_fraction: float = 0.25,
+            novelty_weight: float = 1.0,
             **kwargs
         ):
         super().__init__(
@@ -345,6 +440,14 @@ class FixedConvConnections(Connections):
         self.stride = stride
         self.padding = padding
         self.channel_group_size = channel_group_size
+        self.topology_seed = topology_seed
+        self.layer_index = layer_index
+        self.candidate_pool_size = candidate_pool_size
+        self.swap_fraction = swap_fraction
+        self.novelty_weight = novelty_weight
+        self.strategy = canonical_strategy(init_method)
+        self.construction_seconds = 0.0
+        self.generator_temporary_bytes = 0
         if channel_group_size is not None:
             assert channels > channel_group_size, (
                 "channel_group_size must be smaller than the number of channels"
@@ -363,17 +466,82 @@ class FixedConvConnections(Connections):
 
     def _init_connections(self):
         # Setup connections
-        if self.init_method == "random":
+        started = time.perf_counter()
+        self._topology_generator = self._make_topology_generator()
+        if self.strategy == "random":
             kernels = self._get_random_receptive_field_tensor()
-        elif self.init_method == "random-unique":
+        elif self.strategy == "random_unique":
             kernels = self._get_random_unique_receptive_field_tensor()
+        elif self.strategy == "semantic_channel_hybrid":
+            if self.channel_group_size != 2:
+                raise ValueError(
+                    "semantic_channel_hybrid currently requires channel_group_size=2"
+                )
+            if self.lut_rank != 2:
+                raise NotImplementedError(
+                    "semantic_channel_hybrid currently supports rank-2 LUTs only"
+                )
+            channel_topology = generate_dense_topology(
+                in_dim=self.channels,
+                out_dim=self.num_kernels,
+                lut_rank=2,
+                strategy="semantic_balanced_hybrid",
+                topology_seed=0 if self.topology_seed is None else self.topology_seed,
+                layer_index=self.layer_index,
+                candidate_pool_size=self.candidate_pool_size,
+                swap_fraction=self.swap_fraction,
+                novelty_weight=self.novelty_weight,
+            )
+            self.channel_pairs = torch.from_numpy(
+                channel_topology.indices
+            ).to(device=self.device, dtype=torch.int64)
+            kernels = self._get_random_receptive_field_tensor(
+                channel_pairs=self.channel_pairs
+            )
+            self.generator_temporary_bytes = max(
+                channel_topology.temporary_bytes,
+                self.channel_pairs.numel() * self.channel_pairs.element_size(),
+            )
         else:
             raise ValueError(f"Unknown connections type: {self.init_method}")
         # Build tree indices
-        return self._get_indices_from_kernel_tensor(kernels)
+        indices = self._get_indices_from_kernel_tensor(kernels)
+        self.generator_temporary_bytes = max(
+            self.generator_temporary_bytes,
+            kernels.numel() * kernels.element_size(),
+        )
+        self.construction_seconds = time.perf_counter() - started
+        del self._topology_generator
+        return indices
+
+    def _make_topology_generator(self):
+        """Use an independent RNG when a topology seed was requested."""
+        if self.topology_seed is None and self.strategy != "semantic_channel_hybrid":
+            return None
+        seed = (
+            int(0 if self.topology_seed is None else self.topology_seed)
+            + 0x9E3779B1 * int(self.layer_index)
+        ) % (1 << 63)
+        return torch.Generator(device=self.device or "cpu").manual_seed(seed)
+
+    def _randint(self, high, size):
+        return torch.randint(
+            0,
+            high,
+            size,
+            device=self.device,
+            generator=self._topology_generator,
+        )
+
+    def _randperm(self, size):
+        return torch.randperm(
+            size,
+            device=self.device,
+            generator=self._topology_generator,
+        )
 
 
-    def _get_random_receptive_field_tensor(self):
+    def _get_random_receptive_field_tensor(self, channel_pairs=None):
         """
         Random sampling (with replacement).
 
@@ -415,7 +583,26 @@ class FixedConvConnections(Connections):
 
         for k in range(self.num_kernels):
 
-            if g is None:
+            if channel_pairs is not None:
+                c_rf = channel_pairs[:, k]
+                inputs_per_channel = total_inputs // c_rf.numel()
+                channel_chunks = []
+                for channel in c_rf:
+                    idx = self._randint(
+                        num_spatial,
+                        (inputs_per_channel,),
+                    )
+                    chosen = spatial_positions[idx]
+                    ch_col = torch.full(
+                        (inputs_per_channel, 1),
+                        channel,
+                        device=device,
+                    )
+                    channel_chunks.append(torch.cat([chosen, ch_col], dim=1))
+                coords_k = torch.cat(channel_chunks, dim=0)
+                coords_k = coords_k[self._randperm(total_inputs)]
+                coords_k = coords_k.view(sample_size, self.lut_rank, 3)
+            elif g is None:
                 c_rf = torch.arange(0, c, device=device)
 
                 # full 3D position space
@@ -425,10 +612,9 @@ class FixedConvConnections(Connections):
                 )
                 num_positions = all_positions.shape[0]
 
-                idx = torch.randint(
-                    0, num_positions,
+                idx = self._randint(
+                    num_positions,
                     (sample_size, self.lut_rank),
-                    device=device,
                 )
 
                 coords_k = all_positions[idx]
@@ -446,10 +632,9 @@ class FixedConvConnections(Connections):
                 channel_chunks = []
 
                 for channel in c_rf:
-                    idx = torch.randint(
-                        0, num_spatial,
+                    idx = self._randint(
+                        num_spatial,
                         (inputs_per_channel,),
-                        device=device,
                     )
 
                     chosen = spatial_positions[idx]
@@ -466,7 +651,7 @@ class FixedConvConnections(Connections):
 
                 coords_k = torch.cat(channel_chunks, dim=0)
 
-                perm = torch.randperm(total_inputs, device=device)
+                perm = self._randperm(total_inputs)
                 coords_k = coords_k[perm]
 
                 coords_k = coords_k.view(sample_size, self.lut_rank, 3)
@@ -540,10 +725,7 @@ class FixedConvConnections(Connections):
                 if len(all_indices) < sample_size:
                     raise ValueError("Not enough unique combinations.")
 
-                chosen = torch.randperm(
-                    len(all_indices),
-                    device=device
-                )[:sample_size]
+                chosen = self._randperm(len(all_indices))[:sample_size]
 
                 selected = [
                     torch.tensor(all_indices[i], device=device)
@@ -572,10 +754,7 @@ class FixedConvConnections(Connections):
                 channel_chunks = []
 
                 for channel in c_rf:
-                    idx = torch.randperm(
-                        num_spatial,
-                        device=device
-                    )[:inputs_per_channel]
+                    idx = self._randperm(num_spatial)[:inputs_per_channel]
 
                     chosen = spatial_positions[idx]
 
@@ -591,7 +770,7 @@ class FixedConvConnections(Connections):
 
                 coords_k = torch.cat(channel_chunks, dim=0)
 
-                perm = torch.randperm(total_inputs, device=device)
+                perm = self._randperm(total_inputs)
                 coords_k = coords_k[perm]
 
                 coords_k = coords_k.view(sample_size, self.lut_rank, 3)
@@ -682,3 +861,19 @@ class FixedConvConnections(Connections):
             return x[(slice(None), c_idx) + spatial_idx]
         else:
             return x[..., self.indices[tree_level]]
+
+    def topology_metadata(self):
+        """Serializable convolutional channel-topology metadata."""
+        return {
+            "structure": "conv",
+            "strategy": self.strategy,
+            "topology_seed": self.topology_seed,
+            "layer_index": self.layer_index,
+            "channels": self.channels,
+            "num_kernels": self.num_kernels,
+            "channel_group_size": self.channel_group_size,
+            "construction_seconds": self.construction_seconds,
+            "generator_temporary_bytes": self.generator_temporary_bytes,
+            "swap_fraction": self.swap_fraction,
+            "novelty_weight": self.novelty_weight,
+        }

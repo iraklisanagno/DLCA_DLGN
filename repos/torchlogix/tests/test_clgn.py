@@ -8,6 +8,104 @@ import numpy as np
 import torch
 
 from torchlogix.layers import LogicConv2d, OrPooling2d, GroupSum, FixedBinarization, LearnableBinarization
+from torchlogix.topology import analyze_conv_channel_topology
+
+
+def _channel_schedule_layer(strategy, topology_seed=7):
+    return LogicConv2d(
+        in_dim=8,
+        device="cpu",
+        channels=8,
+        num_kernels=16,
+        tree_depth=3,
+        receptive_field_size=3,
+        connections_kwargs={
+            "init_method": strategy,
+            "channel_group_size": 2,
+            "topology_seed": topology_seed,
+            "layer_index": 2,
+            "candidate_pool_size": 8,
+            "swap_fraction": 0.25,
+            "novelty_weight": 1.0,
+        },
+        stride=1,
+        padding=1,
+        parametrization_kwargs={"weight_init": "random"},
+    )
+
+
+def test_semantic_channel_schedule_preserves_spatial_indexing_and_rng():
+    torch.manual_seed(123)
+    random_layer = _channel_schedule_layer("random")
+    random_next = torch.rand(4)
+    torch.manual_seed(123)
+    semantic_layer = _channel_schedule_layer("semantic_channel_hybrid")
+    semantic_next = torch.rand(4)
+
+    random_indices = random_layer.connections.indices[0]
+    semantic_indices = semantic_layer.connections.indices[0]
+    assert random_indices.shape == semantic_indices.shape
+    assert torch.equal(random_indices[..., :-1], semantic_indices[..., :-1])
+    assert not torch.equal(random_indices[..., -1], semantic_indices[..., -1])
+    assert torch.equal(random_next, semantic_next)
+    for random_weight, semantic_weight in zip(
+        random_layer.tree_weights, semantic_layer.tree_weights
+    ):
+        assert torch.equal(random_weight, semantic_weight)
+
+
+def test_semantic_channel_schedule_is_deterministic_balanced_and_exportable():
+    first = _channel_schedule_layer("semantic_channel_hybrid", topology_seed=11)
+    second = _channel_schedule_layer("semantic_channel_hybrid", topology_seed=11)
+    third = _channel_schedule_layer("semantic_channel_hybrid", topology_seed=12)
+    assert all(
+        torch.equal(left, right)
+        for left, right in zip(first.connections.indices, second.connections.indices)
+    )
+    assert not torch.equal(
+        first.connections.channel_pairs,
+        third.connections.channel_pairs,
+    )
+
+    pairs = first.connections.channel_pairs
+    assert pairs.shape == (2, 16)
+    assert torch.all(pairs[0] != pairs[1])
+    assert int(pairs.min()) >= 0
+    assert int(pairs.max()) < first.channels
+    fanout = torch.bincount(pairs.flatten(), minlength=first.channels)
+    assert int(fanout.max() - fanout.min()) == 0
+
+    inputs = torch.randint(0, 2, (2, 8, 8, 8), dtype=torch.bool)
+    first.set_export_mode()
+    with torch.inference_mode():
+        output_a = first(inputs)
+        output_b = first(inputs)
+    assert output_a.shape == (2, 16, 8, 8)
+    assert torch.equal(output_a, output_b)
+
+
+def test_semantic_channel_diagnostics_explain_the_routing_change():
+    random_layer = _channel_schedule_layer("random", topology_seed=11)
+    semantic_layer = _channel_schedule_layer(
+        "semantic_channel_hybrid", topology_seed=11
+    )
+    random_row = analyze_conv_channel_topology(
+        torch.nn.Sequential(random_layer)
+    )[0]
+    semantic_row = analyze_conv_channel_topology(
+        torch.nn.Sequential(semantic_layer)
+    )[0]
+    assert (
+        random_row["spatial_coordinates_sha256"]
+        == semantic_row["spatial_coordinates_sha256"]
+    )
+    assert semantic_row["channel_fanout_cv"] == 0.0
+    assert semantic_row["channel_fanout_cv"] < random_row["channel_fanout_cv"]
+    assert (
+        semantic_row["distinct_channel_groups"]
+        > random_row["distinct_channel_groups"]
+    )
+    assert semantic_row["unused_channels"] == 0
 
 
 @pytest.fixture

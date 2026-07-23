@@ -1,0 +1,42 @@
+{
+  "wall_seconds": 715.5875393841416,
+  "best_validation_hard_accuracy": 0.5185999882221222,
+  "final_metrics": {
+    "val_loss_discrete": 1.4095939302444458,
+    "val_acc_discrete": 0.5147999876737595,
+    "val_loss_relaxed": 1.4078939986228942,
+    "val_acc_relaxed": 0.517399987578392,
+    "train_loss": 0.57467333984375
+  },
+  "peak_gpu_memory_bytes": 113936896,
+  "topology": [
+    {
+      "strategy": "coverage_hybrid",
+      "topology_seed": 2,
+      "layer_index": 0,
+      "construction_seconds": 1.2055065361782908,
+      "generator_temporary_bytes": 24632832
+    },
+    {
+      "strategy": "coverage_hybrid",
+      "topology_seed": 2,
+      "layer_index": 1,
+      "construction_seconds": 1.2104143211618066,
+      "generator_temporary_bytes": 27840000
+    },
+    {
+      "strategy": "coverage_hybrid",
+      "topology_seed": 2,
+      "layer_index": 2,
+      "construction_seconds": 1.2160217971540987,
+      "generator_temporary_bytes": 27840000
+    },
+    {
+      "strategy": "coverage_hybrid",
+      "topology_seed": 2,
+      "layer_index": 3,
+      "construction_seconds": 1.2123312442563474,
+      "generator_temporary_bytes": 27840000
+    }
+  ]
+}
