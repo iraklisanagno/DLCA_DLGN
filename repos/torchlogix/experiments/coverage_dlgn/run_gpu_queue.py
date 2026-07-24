@@ -45,7 +45,7 @@ def main() -> int:
         output = Path(entry["output"])
         if is_complete(output):
             skipped.append(entry["name"])
-        elif output.exists():
+        elif output.exists() and any(output.iterdir()):
             raise RuntimeError(
                 f"incomplete output exists; classify it before retry: {output}"
             )

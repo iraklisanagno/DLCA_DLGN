@@ -27,3 +27,8 @@ This log records operational failures and protocol decisions made after commit
   softmax routing. Those artifacts were classified as failed protocol checks,
   the parser was corrected to an explicit boolean option defaulting to false,
   and every comparator configuration now records `connections_gumbel: false`.
+- The first 5K queue launch stopped before creating a process because the
+  config-parser validation pass had created empty output directories. The
+  restart guard was tightened to permit an existing directory only when it is
+  empty; a directory containing any partial artifact still requires manual
+  classification before retry.
