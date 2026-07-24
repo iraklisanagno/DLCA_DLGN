@@ -253,7 +253,9 @@ def save_metrics_csv(step: int, metrics: Dict[str, Any], output_path: Path, file
     fieldnames = ['step'] + sorted(metrics.keys())
     
     with open(filepath, 'a', newline='') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer = csv.DictWriter(
+            csvfile, fieldnames=fieldnames, lineterminator="\n"
+        )
         if not file_exists:
             writer.writeheader()
         writer.writerow(row)
@@ -303,7 +305,9 @@ def save_thresholds_csv(
     fieldnames = ['step'] + sorted([k for k in row.keys() if k != 'step'])
     
     with open(filepath, 'a', newline='') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer = csv.DictWriter(
+            csvfile, fieldnames=fieldnames, lineterminator="\n"
+        )
         if not file_exists:
             writer.writeheader()
         writer.writerow(row)

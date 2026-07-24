@@ -32,3 +32,14 @@ This log records operational failures and protocol decisions made after commit
   restart guard was tightened to permit an existing directory only when it is
   empty; a directory containing any partial artifact still requires manual
   classification before retry.
+- The committed MNIST 5K screen completed all 26 runs with no process failure.
+  Every run used source revision `51b1f52` and training implementation hash
+  `8dccfbbecf87e07e15256812a2cbd15551a26c22eaffd76f4eb7d5be33d02d8a`.
+  V3 incumbent achieved 96.58% hardened validation accuracy versus 96.00% for
+  fixed random. LILogicNet Top-32 depth 3 with GroupSum temperature 15 led the
+  comparator screen at 97.87%. These are seed-0 screening values, not final
+  estimates.
+- Python's default CSV dialect emitted CRLF records, which `git diff --check`
+  reports as trailing whitespace. The metric, threshold, and topology writers
+  now explicitly use LF records; existing screen CSVs were mechanically
+  normalized without changing values.

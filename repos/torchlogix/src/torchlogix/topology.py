@@ -2076,7 +2076,9 @@ def write_topology_report(
     if rows:
         fieldnames = sorted({key for row in rows for key in row})
         with (output_dir / f"{stem}.csv").open("w", newline="") as handle:
-            writer = csv.DictWriter(handle, fieldnames=fieldnames)
+            writer = csv.DictWriter(
+                handle, fieldnames=fieldnames, lineterminator="\n"
+            )
             writer.writeheader()
             writer.writerows(rows)
     payload = {"metadata": metadata or {}, "layers": list(rows)}
