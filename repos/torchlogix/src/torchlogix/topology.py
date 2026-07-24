@@ -36,8 +36,14 @@ STRATEGY_ALIASES = {
     "coverage_hybrid": "coverage_hybrid",
     "semantic-balanced-hybrid": "semantic_balanced_hybrid",
     "semantic_balanced_hybrid": "semantic_balanced_hybrid",
+    "semantic-classifier-hybrid": "semantic_classifier_hybrid",
+    "semantic_classifier_hybrid": "semantic_classifier_hybrid",
     "semantic-channel-hybrid": "semantic_channel_hybrid",
     "semantic_channel_hybrid": "semantic_channel_hybrid",
+    "ancestry-channel-hybrid": "ancestry_channel_hybrid",
+    "ancestry_channel_hybrid": "ancestry_channel_hybrid",
+    "coverage-reuse-hybrid": "coverage_reuse_hybrid",
+    "coverage_reuse_hybrid": "coverage_reuse_hybrid",
 }
 
 
@@ -98,6 +104,82 @@ def propagate_packed_ancestry(
         raise ValueError("connection index is outside input ancestry bounds")
     selected = input_ancestry[indices]
     return np.bitwise_or.reduce(selected, axis=0)
+
+
+def packed_identity_in_universe(
+    count: int,
+    universe_size: int,
+    *,
+    offset: int = 0,
+) -> np.ndarray:
+    """Create singleton ancestry rows inside a shared packed-bit universe."""
+    if count <= 0:
+        raise ValueError("count must be positive")
+    if universe_size < count + offset:
+        raise ValueError("universe_size is too small for count and offset")
+    if offset < 0:
+        raise ValueError("offset must be non-negative")
+    words = (universe_size + 63) // 64
+    ancestry = np.zeros((count, words), dtype=np.uint64)
+    positions = offset + np.arange(count, dtype=np.int64)
+    ancestry[np.arange(count), positions // 64] = np.left_shift(
+        np.uint64(1), (positions % 64).astype(np.uint64)
+    )
+    return ancestry
+
+
+def add_identity_to_ancestry(
+    ancestry: np.ndarray,
+    *,
+    offset: int,
+    universe_size: int,
+) -> np.ndarray:
+    """Add one stage-local identity bit to every ancestry row."""
+    ancestry = np.asarray(ancestry, dtype=np.uint64)
+    if ancestry.ndim != 2:
+        raise ValueError("ancestry must have shape (count, packed_words)")
+    identity = packed_identity_in_universe(
+        ancestry.shape[0],
+        universe_size,
+        offset=offset,
+    )
+    if ancestry.shape[1] > identity.shape[1]:
+        raise ValueError("ancestry uses a larger universe than requested")
+    result = np.zeros_like(identity)
+    result[:, :ancestry.shape[1]] = ancestry
+    result |= identity
+    return result
+
+
+def combine_channel_spatial_ancestry(
+    channel_ancestry: np.ndarray,
+    *,
+    spatial_positions: int,
+) -> np.ndarray:
+    """Expand channel ancestry to flattened channel-major spatial features.
+
+    Each flattened activation retains its upstream channel ancestry and gains
+    a unique source bit. This lets a dense classifier schedule jointly measure
+    feature-channel diversity and spatial-source coverage.
+    """
+    channel_ancestry = np.asarray(channel_ancestry, dtype=np.uint64)
+    if channel_ancestry.ndim != 2:
+        raise ValueError(
+            "channel_ancestry must have shape (channels, packed_words)"
+        )
+    if spatial_positions <= 0:
+        raise ValueError("spatial_positions must be positive")
+    channels = channel_ancestry.shape[0]
+    upstream_universe = channel_ancestry.shape[1] * 64
+    flattened = np.repeat(channel_ancestry, spatial_positions, axis=0)
+    unique = packed_identity_in_universe(
+        channels * spatial_positions,
+        upstream_universe + channels * spatial_positions,
+        offset=upstream_universe,
+    )
+    result = unique
+    result[:, :channel_ancestry.shape[1]] |= flattened
+    return result
 
 
 @dataclass(frozen=True)
@@ -749,6 +831,9 @@ def _balanced_gate_score(
     out_dim: int,
     output_groups: int,
     novelty_weight: float,
+    base_pair_counts: dict[tuple[int, int], int] | None = None,
+    max_base_pair_count: int = 1,
+    reuse_weight: float = 0.0,
 ) -> tuple[float, np.ndarray]:
     ancestry = np.bitwise_or(input_ancestry[left], input_ancestry[right])
     intersection = np.bitwise_and(input_ancestry[left], input_ancestry[right])
@@ -776,9 +861,16 @@ def _balanced_gate_score(
         ).mean())
     else:
         mean_jaccard = 0.0
+    pair_key = (min(left, right), max(left, right))
+    base_pair_support = (
+        base_pair_counts.get(pair_key, 0) / max(1, max_base_pair_count)
+        if base_pair_counts is not None
+        else 0.0
+    )
     return (
         union_efficiency - within_overlap
-        + novelty_weight * (1.0 - mean_jaccard),
+        + novelty_weight * (1.0 - mean_jaccard)
+        + reuse_weight * base_pair_support,
         ancestry,
     )
 
@@ -792,6 +884,8 @@ def _degree_preserving_coverage_swaps(
     candidate_pool_size: int,
     output_groups: int,
     novelty_weight: float,
+    base_pair_counts: dict[tuple[int, int], int] | None = None,
+    reuse_weight: float = 0.0,
 ) -> tuple[np.ndarray, np.ndarray, int]:
     """Improve semantic ancestry using accepted 2-edge swaps.
 
@@ -804,6 +898,8 @@ def _degree_preserving_coverage_swaps(
         raise ValueError("coverage_output_groups must be positive")
     if candidate_pool_size < 1:
         raise ValueError("candidate_pool_size must be positive")
+    if reuse_weight < 0.0:
+        raise ValueError("coverage_reuse_weight must be non-negative")
     indices = np.array(indices, dtype=np.int64, copy=True)
     out_dim = indices.shape[1]
     changed = np.zeros(out_dim, dtype=bool)
@@ -818,6 +914,11 @@ def _degree_preserving_coverage_swaps(
     for left, right in indices.T:
         key = (min(int(left), int(right)), max(int(left), int(right)))
         pair_counts[key] = pair_counts.get(key, 0) + 1
+    max_base_pair_count = (
+        max(base_pair_counts.values(), default=1)
+        if base_pair_counts is not None
+        else 1
+    )
 
     permutation = rng.permutation(out_dim)
     available = list(permutation[:target_gates])
@@ -835,6 +936,9 @@ def _degree_preserving_coverage_swaps(
             out_dim=out_dim,
             output_groups=output_groups,
             novelty_weight=novelty_weight,
+            base_pair_counts=base_pair_counts,
+            max_base_pair_count=max_base_pair_count,
+            reuse_weight=reuse_weight,
         )
         pool_count = min(candidate_pool_size, len(available))
         pool_positions = rng.choice(len(available), size=pool_count, replace=False)
@@ -855,6 +959,9 @@ def _degree_preserving_coverage_swaps(
                 out_dim=out_dim,
                 output_groups=output_groups,
                 novelty_weight=novelty_weight,
+                base_pair_counts=base_pair_counts,
+                max_base_pair_count=max_base_pair_count,
+                reuse_weight=reuse_weight,
             )
             for proposed_a, proposed_b in (
                 ((a, d), (c, b)),
@@ -868,8 +975,14 @@ def _degree_preserving_coverage_swaps(
                 ]
                 if new_keys[0] == new_keys[1]:
                     continue
-                if any(
+                if base_pair_counts is None and any(
                     pair_counts.get(key, 0) - old_keys.count(key) > 0
+                    for key in new_keys
+                ):
+                    continue
+                if base_pair_counts is not None and any(
+                    pair_counts.get(key, 0) - old_keys.count(key) > 0
+                    and base_pair_counts.get(key, 0) == 0
                     for key in new_keys
                 ):
                     continue
@@ -881,6 +994,9 @@ def _degree_preserving_coverage_swaps(
                     out_dim=out_dim,
                     output_groups=output_groups,
                     novelty_weight=novelty_weight,
+                    base_pair_counts=base_pair_counts,
+                    max_base_pair_count=max_base_pair_count,
+                    reuse_weight=reuse_weight,
                 )
                 new_score_b, ancestry_b = _balanced_gate_score(
                     *proposed_b,
@@ -890,6 +1006,9 @@ def _degree_preserving_coverage_swaps(
                     out_dim=out_dim,
                     output_groups=output_groups,
                     novelty_weight=novelty_weight,
+                    base_pair_counts=base_pair_counts,
+                    max_base_pair_count=max_base_pair_count,
+                    reuse_weight=reuse_weight,
                 )
                 improvement = (
                     new_score_a + new_score_b - old_score_a - old_score_b
@@ -942,6 +1061,261 @@ def _degree_preserving_coverage_swaps(
     return indices, changed, int(temporary_bytes)
 
 
+def coverage_reuse_refine(
+    base_indices: np.ndarray,
+    input_ancestry: np.ndarray,
+    *,
+    topology_seed: int = 0,
+    layer_index: int = 0,
+    change_fraction: float = 0.25,
+    candidate_pool_size: int = 8,
+    novelty_weight: float = 1.0,
+    reuse_weight: float = 1.0,
+    output_groups: int = 1,
+) -> DenseTopologyResult:
+    """Refine any rank-2 topology while balancing coverage and base reuse.
+
+    The transformation is architecture-independent: it accepts fixed integer
+    indices plus packed input ancestry. Accepted two-edge swaps preserve the
+    exact predecessor degree sequence. ``change_fraction`` bounds the fraction
+    of outputs that may differ, while ``reuse_weight`` rewards predecessor
+    motifs already present in the supplied base topology.
+    """
+    started = time.perf_counter()
+    base_indices = np.asarray(base_indices, dtype=np.int64)
+    input_ancestry = np.asarray(input_ancestry, dtype=np.uint64)
+    if base_indices.ndim != 2 or base_indices.shape[0] != 2:
+        raise ValueError("base_indices must have shape (2, out_dim)")
+    if input_ancestry.ndim != 2:
+        raise ValueError("input_ancestry must have shape (in_dim, packed_words)")
+    if base_indices.size and (
+        base_indices.min() < 0
+        or base_indices.max() >= input_ancestry.shape[0]
+    ):
+        raise ValueError("base_indices contain an out-of-bounds predecessor")
+    base_pair_counts: dict[tuple[int, int], int] = {}
+    for left, right in base_indices.T:
+        key = (min(int(left), int(right)), max(int(left), int(right)))
+        base_pair_counts[key] = base_pair_counts.get(key, 0) + 1
+    seed = (
+        int(topology_seed)
+        + 0x94D049BB * (int(layer_index) + 1)
+    ) % (1 << 63)
+    indices, changed, swap_bytes = _degree_preserving_coverage_swaps(
+        base_indices,
+        input_ancestry,
+        rng=np.random.default_rng(seed),
+        swap_fraction=change_fraction,
+        candidate_pool_size=candidate_pool_size,
+        output_groups=output_groups,
+        novelty_weight=novelty_weight,
+        base_pair_counts=base_pair_counts,
+        reuse_weight=reuse_weight,
+    )
+    output_ancestry = propagate_packed_ancestry(input_ancestry, indices)
+    temporary_bytes = max(
+        swap_bytes,
+        base_indices.nbytes + input_ancestry.nbytes + output_ancestry.nbytes,
+    )
+    return DenseTopologyResult(
+        indices=np.ascontiguousarray(indices, dtype=np.int64),
+        output_ancestry=np.ascontiguousarray(output_ancestry, dtype=np.uint64),
+        construction_seconds=time.perf_counter() - started,
+        temporary_bytes=int(temporary_bytes),
+        greedy_mask=changed,
+    )
+
+
+def _balanced_round_robin_pairs(
+    in_dim: int,
+    out_dim: int,
+    *,
+    layer_index: int,
+    topology_seed: int,
+    semantic_threshold_count: int | None = None,
+) -> np.ndarray:
+    """Return balanced, maximally distinct pairs via graph factorization.
+
+    Complete-graph rounds use every input at most once per round. Prefixes
+    therefore have tightly balanced fan-out, unlike truncating a shuffled list
+    of all pairs. For encoded RGB inputs, threshold-major player ordering makes
+    early rounds mix colors and thresholds rather than depend on flattened
+    channel adjacency.
+    """
+    if in_dim < 2:
+        raise ValueError("in_dim must be at least two")
+    if out_dim <= 0:
+        raise ValueError("out_dim must be positive")
+    if (
+        semantic_threshold_count is not None
+        and semantic_threshold_count > 0
+        and in_dim % semantic_threshold_count == 0
+    ):
+        colors = in_dim // semantic_threshold_count
+        players = [
+            color * semantic_threshold_count + threshold
+            for threshold in range(semantic_threshold_count)
+            for color in range(colors)
+        ]
+    else:
+        players = list(range(in_dim))
+
+    dummy = None
+    if len(players) % 2:
+        dummy = in_dim
+        players.append(dummy)
+    key = (
+        int(topology_seed)
+        + 0x9E3779B1 * (int(layer_index) + 1)
+    )
+    total_rounds = len(players) - 1
+    round_step = _coprime_step(total_rounds, key)
+    round_offset = key % total_rounds
+    pairs_per_round = in_dim // 2
+    rounds_needed = math.ceil(out_dim / max(1, pairs_per_round))
+    ordered: list[tuple[int, int]] = []
+    for sequence_index in range(rounds_needed):
+        cycle, position = divmod(sequence_index, total_rounds)
+        round_index = (
+            round_offset + round_step * position
+        ) % total_rounds
+        position_pairs = [(round_index, len(players) - 1)]
+        for pair_index in range(1, len(players) // 2):
+            position_pairs.append((
+                (round_index + pair_index) % total_rounds,
+                (round_index - pair_index) % total_rounds,
+            ))
+        round_pairs = []
+        for left_position, right_position in position_pairs:
+            left = players[left_position]
+            right = players[right_position]
+            if left == dummy or right == dummy:
+                continue
+            round_pairs.append((min(left, right), max(left, right)))
+        pair_key = key + 0x85EBCA77 * (round_index + 1 + cycle)
+        pair_step = _coprime_step(len(round_pairs), pair_key)
+        pair_offset = pair_key % len(round_pairs)
+        pair_order = (
+            pair_offset + pair_step * np.arange(len(round_pairs))
+        ) % len(round_pairs)
+        for pair_position in pair_order.tolist():
+            ordered.append(round_pairs[pair_position])
+            if len(ordered) == out_dim:
+                break
+    return np.asarray(ordered, dtype=np.int64).T
+
+
+def generate_conv_channel_topology(
+    in_dim: int,
+    out_dim: int,
+    *,
+    topology_seed: int = 0,
+    layer_index: int = 0,
+    input_ancestry: np.ndarray | None = None,
+    candidate_pool_size: int = 8,
+    swap_fraction: float = 0.25,
+    novelty_weight: float = 1.0,
+    semantic_threshold_count: int | None = None,
+) -> DenseTopologyResult:
+    """Construct a fixed, ancestry-aware convolutional channel schedule."""
+    started = time.perf_counter()
+    _validate_dimensions(in_dim, out_dim, 2)
+    if input_ancestry is None:
+        input_ancestry = packed_identity(in_dim)
+    input_ancestry = np.asarray(input_ancestry, dtype=np.uint64)
+    if input_ancestry.shape[0] != in_dim:
+        raise ValueError(
+            f"input_ancestry has {input_ancestry.shape[0]} rows, "
+            f"expected in_dim={in_dim}"
+        )
+    base = _balanced_round_robin_pairs(
+        in_dim,
+        out_dim,
+        layer_index=layer_index,
+        topology_seed=topology_seed,
+        semantic_threshold_count=semantic_threshold_count,
+    )
+    seed = (int(topology_seed) + 0xD1B54A32 * (int(layer_index) + 1)) % (1 << 63)
+    rng = np.random.default_rng(seed)
+    indices, changed, swap_bytes = _degree_preserving_coverage_swaps(
+        base,
+        input_ancestry,
+        rng=rng,
+        swap_fraction=swap_fraction,
+        candidate_pool_size=candidate_pool_size,
+        output_groups=1,
+        novelty_weight=novelty_weight,
+    )
+    output_ancestry = propagate_packed_ancestry(input_ancestry, indices)
+    temporary_bytes = max(
+        input_ancestry.nbytes + indices.nbytes + output_ancestry.nbytes,
+        swap_bytes,
+    )
+    return DenseTopologyResult(
+        indices=np.ascontiguousarray(indices, dtype=np.int64),
+        output_ancestry=np.ascontiguousarray(output_ancestry, dtype=np.uint64),
+        construction_seconds=time.perf_counter() - started,
+        temporary_bytes=int(temporary_bytes),
+        greedy_mask=changed,
+    )
+
+
+def generate_coverage_reuse_conv_topology(
+    in_dim: int,
+    out_dim: int,
+    *,
+    topology_seed: int = 0,
+    layer_index: int = 0,
+    input_ancestry: np.ndarray | None = None,
+    candidate_pool_size: int = 8,
+    base_swap_fraction: float = 0.25,
+    change_fraction: float = 0.25,
+    novelty_weight: float = 1.0,
+    reuse_weight: float = 1.0,
+) -> DenseTopologyResult:
+    """Apply generic coverage--reuse refinement to the frozen v4 base."""
+    started = time.perf_counter()
+    _validate_dimensions(in_dim, out_dim, 2)
+    if input_ancestry is None:
+        input_ancestry = packed_identity(in_dim)
+    input_ancestry = np.asarray(input_ancestry, dtype=np.uint64)
+    if input_ancestry.shape[0] != in_dim:
+        raise ValueError(
+            f"input_ancestry has {input_ancestry.shape[0]} rows, "
+            f"expected in_dim={in_dim}"
+        )
+    # This is exactly the frozen v4 channel topology. Its ancestry remains
+    # local to the current channel set; the refinement below receives the
+    # propagated cross-layer ancestry.
+    base = generate_dense_topology(
+        in_dim,
+        out_dim,
+        strategy="semantic_balanced_hybrid",
+        topology_seed=topology_seed,
+        layer_index=layer_index,
+        candidate_pool_size=candidate_pool_size,
+        swap_fraction=base_swap_fraction,
+        novelty_weight=novelty_weight,
+    )
+    refined = coverage_reuse_refine(
+        base.indices,
+        input_ancestry,
+        topology_seed=topology_seed,
+        layer_index=layer_index,
+        change_fraction=change_fraction,
+        candidate_pool_size=candidate_pool_size,
+        novelty_weight=novelty_weight,
+        reuse_weight=reuse_weight,
+    )
+    return DenseTopologyResult(
+        indices=refined.indices,
+        output_ancestry=refined.output_ancestry,
+        construction_seconds=time.perf_counter() - started,
+        temporary_bytes=max(base.temporary_bytes, refined.temporary_bytes),
+        greedy_mask=refined.greedy_mask,
+    )
+
+
 def generate_dense_topology(
     in_dim: int,
     out_dim: int,
@@ -963,13 +1337,15 @@ def generate_dense_topology(
     swap_fraction: float = 0.25,
     output_groups: int = 1,
     novelty_weight: float = 1.0,
+    reuse_change_fraction: float = 0.25,
+    reuse_weight: float = 1.0,
 ) -> DenseTopologyResult:
     """Construct a fixed dense topology and its packed output ancestry."""
     started = time.perf_counter()
     strategy = canonical_strategy(strategy)
-    if strategy == "semantic_channel_hybrid":
+    if strategy in {"semantic_channel_hybrid", "ancestry_channel_hybrid"}:
         raise ValueError(
-            "semantic_channel_hybrid is a convolutional channel schedule; "
+            f"{strategy} is a convolutional channel schedule; "
             "use semantic_balanced_hybrid for dense layers"
         )
     _validate_dimensions(in_dim, out_dim, lut_rank)
@@ -979,13 +1355,19 @@ def generate_dense_topology(
         "coverage_greedy",
         "coverage_hybrid",
         "semantic_balanced_hybrid",
+        "semantic_classifier_hybrid",
+        "coverage_reuse_hybrid",
     }:
         if lut_rank != 2:
             raise NotImplementedError(f"{strategy} currently supports rank-2 LUTs only")
     if input_ancestry is None:
         input_ancestry = (
             input_semantics.source_ancestry()
-            if strategy == "semantic_balanced_hybrid"
+            if strategy in {
+                "semantic_balanced_hybrid",
+                "semantic_classifier_hybrid",
+                "coverage_reuse_hybrid",
+            }
             and input_semantics is not None
             else packed_identity(in_dim)
         )
@@ -1070,6 +1452,81 @@ def generate_dense_topology(
             novelty_weight=novelty_weight,
         )
         temporary_bytes = max(temporary_bytes, swap_bytes)
+    elif strategy == "semantic_classifier_hybrid":
+        if input_semantics is not None:
+            if input_semantics.n_inputs != in_dim:
+                raise ValueError(
+                    "input semantics do not match the classifier input dimension"
+                )
+            base = _semantic_butterfly_indices(
+                input_semantics,
+                out_dim,
+                layer_index,
+                topology_seed,
+            )
+        else:
+            base = _balanced_round_robin_pairs(
+                in_dim,
+                out_dim,
+                layer_index=layer_index,
+                topology_seed=topology_seed,
+            )
+        indices, greedy_mask, swap_bytes = _degree_preserving_coverage_swaps(
+            base,
+            input_ancestry,
+            rng=rng,
+            swap_fraction=swap_fraction,
+            candidate_pool_size=candidate_pool_size,
+            output_groups=output_groups,
+            novelty_weight=novelty_weight,
+        )
+        temporary_bytes = max(temporary_bytes, swap_bytes)
+    elif strategy == "coverage_reuse_hybrid":
+        if input_semantics is not None:
+            if input_semantics.n_inputs != in_dim:
+                raise ValueError(
+                    "input semantics do not match the first-layer input dimension"
+                )
+            base = _semantic_butterfly_indices(
+                input_semantics,
+                out_dim,
+                layer_index,
+                topology_seed,
+            )
+        else:
+            base = _butterfly_indices(
+                in_dim,
+                out_dim,
+                layer_index,
+                topology_seed,
+            )
+        base, _, base_bytes = _degree_preserving_coverage_swaps(
+            base,
+            input_ancestry,
+            rng=rng,
+            swap_fraction=swap_fraction,
+            candidate_pool_size=candidate_pool_size,
+            output_groups=output_groups,
+            novelty_weight=novelty_weight,
+        )
+        refined = coverage_reuse_refine(
+            base,
+            input_ancestry,
+            topology_seed=topology_seed,
+            layer_index=layer_index,
+            change_fraction=reuse_change_fraction,
+            candidate_pool_size=candidate_pool_size,
+            novelty_weight=novelty_weight,
+            reuse_weight=reuse_weight,
+            output_groups=output_groups,
+        )
+        indices = refined.indices
+        greedy_mask = refined.greedy_mask
+        temporary_bytes = max(
+            temporary_bytes,
+            base_bytes,
+            refined.temporary_bytes,
+        )
     else:  # pragma: no cover - canonical_strategy has already validated this
         raise AssertionError(strategy)
 
@@ -1459,7 +1916,14 @@ def analyze_conv_channel_topology(
         and getattr(module.connections, "channel_group_size", None) is not None
     ]
     rows: list[dict[str, int | float | str]] = []
-    input_bits = getattr(model, "n_input_bits", None)
+    input_thresholds = (
+        getattr(model, "n_input_thresholds", None)
+        or getattr(model, "n_input_bits", None)
+    )
+    raw_ancestry = (
+        packed_identity(layers[0].channels) if layers else None
+    )
+    n_raw_channels = layers[0].channels if layers else 0
     for depth, layer in enumerate(layers):
         connections = layer.connections
         first_level = connections.indices[0].detach().cpu().numpy()
@@ -1528,13 +1992,62 @@ def analyze_conv_channel_topology(
                 getattr(connections, "generator_temporary_bytes", 0)
             ),
         }
-        if depth == 0 and input_bits:
+        if raw_ancestry is not None:
+            if raw_ancestry.shape[0] != layer.channels:
+                raise ValueError(
+                    "convolutional channel ancestry does not match the next "
+                    f"layer: {raw_ancestry.shape[0]} != {layer.channels}"
+                )
+            intersections = _row_popcount(
+                np.bitwise_and(
+                    raw_ancestry[groups[:, 0]],
+                    raw_ancestry[groups[:, 1]],
+                )
+            ).astype(np.float64)
+            unions = _row_popcount(
+                np.bitwise_or(
+                    raw_ancestry[groups[:, 0]],
+                    raw_ancestry[groups[:, 1]],
+                )
+            ).astype(np.float64)
+            predecessor_jaccard = np.divide(
+                intersections,
+                unions,
+                out=np.zeros_like(intersections),
+                where=unions != 0,
+            )
+            raw_ancestry = propagate_packed_ancestry(
+                raw_ancestry,
+                groups.T,
+            )
+            raw_sizes = _row_popcount(raw_ancestry).astype(np.float64)
+            covered = _row_popcount(
+                np.bitwise_or.reduce(
+                    raw_ancestry,
+                    axis=0,
+                    keepdims=True,
+                )
+            )[0]
+            row.update({
+                "raw_channel_ancestry_mean": float(raw_sizes.mean()),
+                "raw_channel_ancestry_min": int(raw_sizes.min()),
+                "raw_channel_ancestry_max": int(raw_sizes.max()),
+                "raw_channel_coverage_fraction": float(
+                    covered / n_raw_channels
+                ),
+                "raw_predecessor_jaccard_mean": float(
+                    predecessor_jaccard.mean()
+                ),
+            })
+        if depth == 0 and input_thresholds:
             row.update({
                 "same_input_channel_fraction": float(np.mean(
-                    groups[:, 0] // input_bits == groups[:, 1] // input_bits
+                    groups[:, 0] // input_thresholds
+                    == groups[:, 1] // input_thresholds
                 )),
                 "same_threshold_fraction": float(np.mean(
-                    groups[:, 0] % input_bits == groups[:, 1] % input_bits
+                    groups[:, 0] % input_thresholds
+                    == groups[:, 1] % input_thresholds
                 )),
             })
         rows.append(row)

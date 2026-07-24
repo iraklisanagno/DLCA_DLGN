@@ -5,6 +5,15 @@ follows the staged scope in `ideas/date_ideas/coverage_dlgn.md`: dense fixed
 connections and topology metrics were stabilized first, validated at two gate
 budgets and three depths, and only then extended across convolutional channels.
 
+The paper-architecture comparison is recorded in `ARCHITECTURE_AUDIT.md`.
+Published and independently reproduced CIFAR-10 accuracy values, together with
+their comparability restrictions, are recorded in
+`CIFAR10_BASELINE_REFERENCE.md`.
+Legacy convolutional classes and results are preserved; new
+`ClgnCifar10PaperSmall` and `ClgnCifar10PaperMedium` classes correct the
+published S/M input encoding to three thermometer thresholds without changing
+their gate budgets.
+
 ## Environment
 
 Use only the repository virtual environment.  The validated local stack is:
@@ -42,6 +51,15 @@ routing parameters:
 - `semantic_channel_hybrid`: the frozen v3 butterfly/swap rule applied only to
   convolutional channel groups; spatial receptive-field coordinates are left
   bit-identical to the matched random run.
+- `ancestry_channel_hybrid`: balanced convolutional channel pairs followed by
+  cross-block ancestry/novelty swaps; spatial coordinates remain bit-identical
+  to the matched control.
+- `semantic_classifier_hybrid`: a classifier-tail adaptation of v3 whose
+  shrinking layers use balanced round-robin matchings before ancestry swaps.
+- `coverage_reuse_hybrid`: a generic degree-preserving refinement of the
+  frozen v3/v4 base topology that trades ancestry novelty against reuse of
+  predecessor motifs. It is retained as an experimental negative result after
+  its CIFAR-10 M confirmation failed.
 
 The affine ordering is important.  It leaves the regular predecessor pair set
 and fan-out unchanged but prevents consecutive output/class groups from seeing
@@ -254,6 +272,87 @@ The mean changes from 55.42% to 57.42%; the paired 95% interval is
 The model has 83,552 learned gate functions and 874,496 spatial gate
 applications. Both variants have identical counts, tensor shapes, spatial
 hashes, and initial weights.
+
+## Paper-faithful convolutional S/M pilot
+
+The next convolutional stage uses the paper-specific S/M classes. Both retain
+the four depth-3 blocks, OR pooling, paper widths and temperatures, and the
+two-channel receptive-field restriction. Unlike the legacy pilot, 2-bit RGB
+is encoded by the three thresholds stated on page 6 of the paper.
+
+Paired smoke configurations have completed on CUDA:
+
+```bash
+venv/bin/python experiments/train.py \
+  --config experiments/coverage_dlgn/configs/smoke_conv_cifar10_paper_small_random_seed0.json
+venv/bin/python experiments/train.py \
+  --config experiments/coverage_dlgn/configs/smoke_conv_cifar10_paper_small_semantic_channel_v4_seed0.json
+venv/bin/python experiments/train.py \
+  --config experiments/coverage_dlgn/configs/smoke_conv_cifar10_paper_medium_random_seed0.json
+venv/bin/python experiments/train.py \
+  --config experiments/coverage_dlgn/configs/smoke_conv_cifar10_paper_medium_semantic_channel_v4_seed0.json
+```
+
+The three-seed, 20K-step paired pilots and frozen held-out evaluations run
+across both GPUs. Run S first, inspect its paired result, and then run M:
+
+```bash
+bash experiments/coverage_dlgn/run_conv_cifar10_paper_sm_pilot_two_gpus.sh small
+bash experiments/coverage_dlgn/run_conv_cifar10_paper_sm_evaluate_two_gpus.sh small
+bash experiments/coverage_dlgn/run_conv_cifar10_paper_sm_pilot_two_gpus.sh medium
+bash experiments/coverage_dlgn/run_conv_cifar10_paper_sm_evaluate_two_gpus.sh medium
+```
+
+Smoke accuracies are not evidence. Their acceptance criteria are successful
+CUDA forward/backward, hard evaluation for S, checkpoint creation, three saved
+thresholds, identical random/v4 tensor shapes, and identical spatial hashes.
+
+The S 20K pilot is complete. Mean hardened validation changes from 56.673% to
+57.187% (+0.513 pp), while held-out test changes from 56.140% to 56.367%
+(+0.227 pp). Three-seed confidence intervals include zero and individual test
+effects are mixed, so this is not paper-level evidence. Exact values are in
+`summary/paper_conv_small_pilot.json`. M remains necessary to test whether the
+stronger topology diversification at larger width translates into a stable
+accuracy gain.
+
+The complementary ancestry/classifier-tail revision is also complete on
+paper-S. A 5K seed-0 screen selected ancestry-only v5 (+2.84 pp) over random,
+v4+v3-tail (+1.42 pp), and ancestry-v5+v3-tail (+2.64 pp). The frozen 20K
+three-seed pilot did not confirm the screen: paired validation gains were
++1.88, -0.98, and -1.16 pp, for a mean of -0.087 pp and a 95% interval of
+[-4.324, +4.150]. V5 was therefore not evaluated on held-out test data.
+
+The exact paired pilot is launched on both GPUs with:
+
+```bash
+bash experiments/coverage_dlgn/run_conv_cifar10_paper_small_ancestry_v5_pilot_two_gpus.sh
+```
+
+The runner refuses to append to existing result directories.
+
+V5 nevertheless supplies the intended topology diagnostic: last-block mean
+raw-channel ancestry rises from 5.414 to 8.195 of nine inputs, distinct groups
+rise from 511 to 1,024, and predecessor overlap falls from 0.575 to 0.488 at
+identical gate and spatial-operation budgets. Frozen v4 remains the retained
+convolutional method, while V5 remains available as a documented
+negative-result mechanism. Exact values are in
+`summary/paper_conv_small_ancestry_v5_pilot.json`.
+
+The subsequent coverage--reuse-balanced revision is documented in
+`COVERAGE_REUSE_METHOD.md`. It preserved exact fan-out, spatial coordinates,
+gate budgets, routing storage, and training operations. On seed 0 it improved
+paper-S best hard validation from 54.92% to 55.40% in 5K steps (+0.48 pp).
+An early paper-M 1K screen showed +3.14 pp, but the decisive 5K confirmation
+reversed the outcome: frozen v4 reached 61.56% and coverage--reuse reached
+58.44% (-3.12 pp). No multi-seed or held-out test escalation was performed.
+The generic implementation remains available for controlled ablation, while
+v4 remains the selected convolutional method. Machine-readable values are in
+`summary/paper_conv_coverage_reuse_screen.json`.
+
+Paper B follows only after S/M. The existing `ClgnCifar10Large` is merely the
+same `k=512` scale: it lacks the doubled output layer, fixed edge/curvature
+preprocessing, and teacher protocol, so it must not be labeled a published B
+reproduction.
 
 ## Paper-architecture Fashion-MNIST and CIFAR-10 study
 

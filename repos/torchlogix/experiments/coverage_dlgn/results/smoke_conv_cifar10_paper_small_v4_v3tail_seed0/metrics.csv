@@ -1,0 +1,2 @@
+step,train_loss,val_acc_discrete,val_acc_relaxed,val_loss_discrete,val_loss_relaxed
+2,11.343709886074066,0.0958,0.106,2.429702669906616,2.3042965843200682

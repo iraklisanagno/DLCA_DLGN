@@ -1,15 +1,33 @@
+import json
+from argparse import Namespace
+from pathlib import Path
+
+import pytest
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 
 from experiments.train import (
+    report_connection_strategy,
     source_manifest_files,
     source_tree_sha256,
     training_implementation_sha256,
     training_manifest_files,
 )
-from experiments.utils import evaluate_model, split_permutation
-from torchlogix.layers import FixedBinarization, GroupSum, LogicDense
+from experiments.utils import (
+    evaluate_model,
+    input_threshold_count,
+    split_permutation,
+)
+from torchlogix.layers import (
+    FixedBinarization,
+    GroupSum,
+    LogicConv2d,
+    LogicDense,
+)
 from torchlogix.models import (
+    ClgnCifar10PaperMedium,
+    ClgnCifar10PaperSmall,
+    ClgnCifar10Small,
     DlgnCifar10Budget48kDepth8,
     DlgnCifar10Budget48kDepth12,
     DlgnCifar10Budget512kDepth8,
@@ -33,6 +51,28 @@ def _paper_model_kwargs(thresholds):
         "device": "cpu",
         "lut_rank": 2,
     }
+
+
+def test_topology_report_strategy_uses_component_override():
+    args = Namespace(
+        connections_init_method="random",
+        conv_connections_init_method="ancestry_channel_hybrid",
+        classifier_connections_init_method="semantic_classifier_hybrid",
+    )
+    assert (
+        report_connection_strategy(args, "conv")
+        == "ancestry_channel_hybrid"
+    )
+    assert (
+        report_connection_strategy(args, "classifier")
+        == "semantic_classifier_hybrid"
+    )
+    args.conv_connections_init_method = None
+    args.classifier_connections_init_method = None
+    assert report_connection_strategy(args, "conv") == "random"
+    assert report_connection_strategy(args, "classifier") == "random"
+    with pytest.raises(ValueError, match="Unknown topology-report component"):
+        report_connection_strategy(args, "unknown")
 
 
 def test_paper_mnist_small_has_reported_gate_budget():
@@ -79,6 +119,174 @@ def test_paper_cifar10_small_has_reported_gate_budget_and_encoding():
     assert all(layer.out_dim == 12_000 for layer in layers)
     assert all(layer.in_dim == 12_000 for layer in layers[1:])
     assert model[-1].tau == 1.0 / 0.03
+
+
+def test_paper_clgn_cifar10_small_matches_logic_tree_net_s():
+    thresholds = torch.tensor([0.25, 0.5, 0.75])
+    model = ClgnCifar10PaperSmall(**_paper_model_kwargs(thresholds))
+    conv_layers = [module for module in model if isinstance(module, LogicConv2d)]
+    dense_layers = [module for module in model if isinstance(module, LogicDense)]
+
+    assert input_threshold_count(ClgnCifar10PaperSmall) == 3
+    assert input_threshold_count(ClgnCifar10Small) == 2
+    assert ClgnCifar10PaperSmall.input_precision_bits == 2
+    assert ClgnCifar10PaperSmall.paper_model_identifier == "S"
+    assert isinstance(model[0], FixedBinarization)
+    assert torch.equal(model[0].get_thresholds(), thresholds)
+
+    assert [layer.channels for layer in conv_layers] == [9, 32, 128, 512]
+    assert [layer.num_kernels for layer in conv_layers] == [32, 128, 512, 1024]
+    assert [layer.tree_depth for layer in conv_layers] == [3, 3, 3, 3]
+    assert [layer.receptive_field_size for layer in conv_layers] == [
+        (3, 3),
+        (3, 3),
+        (3, 3),
+        (3, 3),
+    ]
+    assert [layer.padding for layer in conv_layers] == [1, 1, 1, 1]
+    assert [layer.kernel_positions for layer in conv_layers] == [
+        [32, 32],
+        [16, 16],
+        [8, 8],
+        [4, 4],
+    ]
+    assert [
+        layer.connections.channel_group_size for layer in conv_layers
+    ] == [2, 2, 2, 2]
+
+    assert [(layer.in_dim, layer.out_dim) for layer in dense_layers] == [
+        (4096, 40_960),
+        (40_960, 20_480),
+        (20_480, 10_240),
+    ]
+    learned_gate_functions = (
+        sum(layer.num_kernels * 7 for layer in conv_layers)
+        + sum(layer.out_dim for layer in dense_layers)
+    )
+    assert learned_gate_functions == 83_552
+    assert isinstance(model[-1], GroupSum)
+    assert model[-1].tau == 20
+    assert dense_layers[-1].out_dim // 10 == 1_024
+
+
+def test_paper_clgn_cifar10_medium_declares_logic_tree_net_m_scale():
+    assert ClgnCifar10PaperMedium.paper_model_identifier == "M"
+    assert ClgnCifar10PaperMedium.k_num == 256
+    assert ClgnCifar10PaperMedium.tau == 40
+    assert ClgnCifar10PaperMedium.input_precision_bits == 2
+    assert input_threshold_count(ClgnCifar10PaperMedium) == 3
+    assert ClgnCifar10PaperMedium.group_size == 2
+    assert ClgnCifar10PaperMedium.output_gate_factor == 1
+
+
+def test_paper_clgn_rejects_legacy_two_threshold_encoding():
+    with pytest.raises(AssertionError, match="requires 3 input thresholds"):
+        ClgnCifar10PaperSmall(
+            **_paper_model_kwargs(torch.tensor([1.0 / 3.0, 2.0 / 3.0]))
+        )
+
+
+def test_paper_clgn_supports_complementary_conv_and_classifier_schedules():
+    thresholds = torch.tensor([0.25, 0.5, 0.75])
+    kwargs = _paper_model_kwargs(thresholds)
+    kwargs["connections_kwargs"].update({
+        "conv_init_method": "ancestry_channel_hybrid",
+        "classifier_init_method": "semantic_classifier_hybrid",
+        "candidate_pool_size": 8,
+        "swap_fraction": 0.25,
+        "novelty_weight": 1.0,
+    })
+    model = ClgnCifar10PaperSmall(**kwargs)
+    conv_layers = [module for module in model if isinstance(module, LogicConv2d)]
+    dense_layers = [module for module in model if isinstance(module, LogicDense)]
+    assert [
+        layer.connections.strategy for layer in conv_layers
+    ] == ["ancestry_channel_hybrid"] * 4
+    assert [
+        layer.connections.strategy for layer in dense_layers
+    ] == ["semantic_classifier_hybrid"] * 3
+    assert [
+        torch.unique(
+            torch.sort(layer.connections.channel_pairs.T, dim=1).values,
+            dim=0,
+        ).shape[0]
+        for layer in conv_layers
+    ] == [32, 128, 512, 1024]
+    assert dense_layers[-1].connections.output_groups == 10
+    assert sum(
+        layer.num_kernels * 7 for layer in conv_layers
+    ) + sum(layer.out_dim for layer in dense_layers) == 83_552
+
+
+def test_paper_clgn_supports_generic_coverage_reuse_refinement():
+    thresholds = torch.tensor([0.25, 0.5, 0.75])
+    kwargs = _paper_model_kwargs(thresholds)
+    kwargs["connections_kwargs"].update({
+        "conv_init_method": "coverage_reuse_hybrid",
+        "candidate_pool_size": 8,
+        "swap_fraction": 0.25,
+        "novelty_weight": 1.0,
+        "reuse_change_fraction": 0.25,
+        "reuse_weight": 1.0,
+    })
+    model = ClgnCifar10PaperSmall(**kwargs)
+    conv_layers = [module for module in model if isinstance(module, LogicConv2d)]
+    dense_layers = [module for module in model if isinstance(module, LogicDense)]
+    assert [
+        layer.connections.strategy for layer in conv_layers
+    ] == ["coverage_reuse_hybrid"] * 4
+    assert [
+        layer.connections.strategy for layer in dense_layers
+    ] == ["random"] * 3
+    assert sum(
+        layer.num_kernels * 7 for layer in conv_layers
+    ) + sum(layer.out_dim for layer in dense_layers) == 83_552
+
+
+def test_paper_clgn_sm_pilot_pairs_differ_only_in_topology_controls():
+    config_dir = (
+        Path(__file__).parents[1]
+        / "experiments"
+        / "coverage_dlgn"
+        / "configs"
+    )
+    topology_only_keys = {
+        "connections_init_method",
+        "coverage_candidate_pool_size",
+        "coverage_swap_fraction",
+        "coverage_novelty_weight",
+        "output",
+    }
+    for scale in ("small", "medium"):
+        random_config = json.loads(
+            (
+                config_dir
+                / f"pilot_conv_cifar10_paper_{scale}_random_seed0.json"
+            ).read_text()
+        )
+        v4_config = json.loads(
+            (
+                config_dir
+                / (
+                    f"pilot_conv_cifar10_paper_{scale}_"
+                    "semantic_channel_v4_seed0.json"
+                )
+            ).read_text()
+        )
+        assert random_config["connections_init_method"] == "random"
+        assert (
+            v4_config["connections_init_method"]
+            == "semantic_channel_hybrid"
+        )
+        assert {
+            key: value
+            for key, value in random_config.items()
+            if key not in topology_only_keys
+        } == {
+            key: value
+            for key, value in v4_config.items()
+            if key not in topology_only_keys
+        }
 
 
 def test_controlled_cifar10_depth_models_hold_gate_budget_and_logit_scale():

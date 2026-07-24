@@ -1,0 +1,96 @@
+{
+  "wall_seconds": 1019.8991481009871,
+  "best_validation_hard_accuracy": 0.5796,
+  "final_metrics": {
+    "val_loss_discrete": 1.2145410440444946,
+    "val_acc_discrete": 0.5624,
+    "val_loss_relaxed": 1.1288487433433532,
+    "val_acc_relaxed": 0.601,
+    "train_loss": 0.3564036178588867
+  },
+  "peak_gpu_memory_bytes": 1965652480,
+  "topology": [
+    {
+      "structure": "conv",
+      "strategy": "random",
+      "topology_seed": 1,
+      "layer_index": 0,
+      "channels": 9,
+      "num_kernels": 32,
+      "channel_group_size": 2,
+      "construction_seconds": 0.039011621847748756,
+      "generator_temporary_bytes": 6144,
+      "swap_fraction": 0.25,
+      "novelty_weight": 1.0
+    },
+    {
+      "structure": "conv",
+      "strategy": "random",
+      "topology_seed": 1,
+      "layer_index": 1,
+      "channels": 32,
+      "num_kernels": 128,
+      "channel_group_size": 2,
+      "construction_seconds": 0.01096196100115776,
+      "generator_temporary_bytes": 24576,
+      "swap_fraction": 0.25,
+      "novelty_weight": 1.0
+    },
+    {
+      "structure": "conv",
+      "strategy": "random",
+      "topology_seed": 1,
+      "layer_index": 2,
+      "channels": 128,
+      "num_kernels": 512,
+      "channel_group_size": 2,
+      "construction_seconds": 0.04121900117024779,
+      "generator_temporary_bytes": 98304,
+      "swap_fraction": 0.25,
+      "novelty_weight": 1.0
+    },
+    {
+      "structure": "conv",
+      "strategy": "random",
+      "topology_seed": 1,
+      "layer_index": 3,
+      "channels": 512,
+      "num_kernels": 1024,
+      "channel_group_size": 2,
+      "construction_seconds": 0.08257124479860067,
+      "generator_temporary_bytes": 196608,
+      "swap_fraction": 0.25,
+      "novelty_weight": 1.0
+    },
+    {
+      "strategy": "random",
+      "topology_seed": 1,
+      "layer_index": 4,
+      "construction_seconds": 0.014215551782399416,
+      "generator_temporary_bytes": 23724032,
+      "swap_fraction": 0.25,
+      "output_groups": 1,
+      "novelty_weight": 1.0
+    },
+    {
+      "strategy": "random",
+      "topology_seed": 1,
+      "layer_index": 5,
+      "construction_seconds": 0.009373701177537441,
+      "generator_temporary_bytes": 31784960,
+      "swap_fraction": 0.25,
+      "output_groups": 1,
+      "novelty_weight": 1.0
+    },
+    {
+      "strategy": "random",
+      "topology_seed": 1,
+      "layer_index": 6,
+      "construction_seconds": 0.0027530589140951633,
+      "generator_temporary_bytes": 15892480,
+      "swap_fraction": 0.25,
+      "output_groups": 10,
+      "novelty_weight": 1.0
+    }
+  ]
+}

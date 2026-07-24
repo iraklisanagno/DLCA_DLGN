@@ -43,5 +43,7 @@ htmlcov/
 # Editor and operating-system noise
 **/.idea/
 **/.vscode/
+*.swp
+*.swo
 .DS_Store
 *~

@@ -5,12 +5,17 @@ from argparse import Namespace
 
 from torchlogix.connections import FixedDenseConnections
 from torchlogix.topology import (
+    add_identity_to_ancestry,
     analyze_dense_indices,
     canonical_strategy,
+    combine_channel_spatial_ancestry,
+    coverage_reuse_refine,
+    generate_conv_channel_topology,
     generate_dense_stack,
     generate_dense_topology,
     image_input_semantics,
     packed_identity,
+    packed_identity_in_universe,
     packed_popcount,
     propagate_packed_ancestry,
     semantic_first_layer_pair_metrics,
@@ -45,7 +50,10 @@ def _brute_force_stack(n_inputs, layers):
         ("coverage-greedy", "coverage_greedy"),
         ("coverage-hybrid", "coverage_hybrid"),
         ("semantic-balanced-hybrid", "semantic_balanced_hybrid"),
+        ("semantic-classifier-hybrid", "semantic_classifier_hybrid"),
         ("semantic-channel-hybrid", "semantic_channel_hybrid"),
+        ("ancestry-channel-hybrid", "ancestry_channel_hybrid"),
+        ("coverage-reuse-hybrid", "coverage_reuse_hybrid"),
     ],
 )
 def test_strategy_aliases(alias, canonical):
@@ -124,6 +132,84 @@ def test_topology_rng_does_not_change_torch_rng():
     )
     actual = torch.rand(5)
     assert torch.equal(actual, expected)
+
+
+def test_conv_channel_ancestry_schedule_is_deterministic_unique_and_balanced():
+    universe = 9 + 32 + 128
+    inputs = packed_identity_in_universe(9, universe)
+    first = generate_conv_channel_topology(
+        9,
+        32,
+        topology_seed=7,
+        layer_index=0,
+        input_ancestry=inputs,
+        semantic_threshold_count=3,
+    )
+    repeated = generate_conv_channel_topology(
+        9,
+        32,
+        topology_seed=7,
+        layer_index=0,
+        input_ancestry=inputs,
+        semantic_threshold_count=3,
+    )
+    assert np.array_equal(first.indices, repeated.indices)
+    assert first.indices.min() == 0
+    assert first.indices.max() == 8
+    assert np.all(first.indices[0] != first.indices[1])
+    assert np.unique(np.sort(first.indices.T, axis=1), axis=0).shape[0] == 32
+    fanout = np.bincount(first.indices.reshape(-1), minlength=9)
+    assert fanout.max() - fanout.min() <= 1
+
+    first_ancestry = add_identity_to_ancestry(
+        first.output_ancestry,
+        offset=9,
+        universe_size=universe,
+    )
+    second = generate_conv_channel_topology(
+        32,
+        128,
+        topology_seed=7,
+        layer_index=1,
+        input_ancestry=first_ancestry,
+    )
+    assert np.unique(
+        np.sort(second.indices.T, axis=1), axis=0
+    ).shape[0] == 128
+    fanout = np.bincount(second.indices.reshape(-1), minlength=32)
+    assert fanout.min() == fanout.max() == 8
+    assert packed_popcount(second.output_ancestry).min() >= 4
+
+
+def test_channel_spatial_ancestry_retains_upstream_and_unique_source_bits():
+    channels = packed_identity_in_universe(3, 5)
+    expanded = combine_channel_spatial_ancestry(
+        channels,
+        spatial_positions=4,
+    )
+    assert expanded.shape[0] == 12
+    rows = _unpack_rows(expanded, expanded.shape[1] * 64)
+    assert all(len(row) == 2 for row in rows)
+    assert [min(row) for row in rows[:4]] == [0, 0, 0, 0]
+    unique_bits = [max(row) for row in rows]
+    assert len(set(unique_bits)) == 12
+
+
+def test_classifier_hybrid_preserves_exact_compression_fanout():
+    result = generate_dense_topology(
+        32,
+        16,
+        strategy="semantic_classifier_hybrid",
+        topology_seed=4,
+        layer_index=5,
+        candidate_pool_size=8,
+        swap_fraction=0.5,
+    )
+    fanout = np.bincount(result.indices.reshape(-1), minlength=32)
+    assert fanout.min() == fanout.max() == 1
+    assert np.unique(
+        np.sort(result.indices.T, axis=1), axis=0
+    ).shape[0] == 16
 
 
 def test_hybrid_uses_exact_requested_greedy_fraction():
@@ -229,6 +315,94 @@ def test_semantic_swaps_preserve_exact_predecessor_degrees():
     assert np.array_equal(swapped_degree, base_degree)
     assert np.all(swapped.indices[0] != swapped.indices[1])
     assert swapped.greedy_mask.sum() % 2 == 0
+
+
+def test_coverage_reuse_refinement_is_bounded_degree_preserving_and_adaptive():
+    first = generate_dense_topology(
+        9,
+        32,
+        strategy="semantic_balanced_hybrid",
+        topology_seed=3,
+        candidate_pool_size=8,
+        swap_fraction=0.25,
+    )
+    ancestry = propagate_packed_ancestry(packed_identity(9), first.indices)
+    base = generate_dense_topology(
+        32,
+        128,
+        strategy="semantic_balanced_hybrid",
+        topology_seed=3,
+        layer_index=1,
+        candidate_pool_size=8,
+        swap_fraction=0.25,
+    )
+    no_reuse = coverage_reuse_refine(
+        base.indices,
+        ancestry,
+        topology_seed=3,
+        layer_index=1,
+        change_fraction=0.25,
+        candidate_pool_size=8,
+        reuse_weight=0.0,
+    )
+    balanced = coverage_reuse_refine(
+        base.indices,
+        ancestry,
+        topology_seed=3,
+        layer_index=1,
+        change_fraction=0.25,
+        candidate_pool_size=8,
+        reuse_weight=1.0,
+    )
+    repeated = coverage_reuse_refine(
+        base.indices,
+        ancestry,
+        topology_seed=3,
+        layer_index=1,
+        change_fraction=0.25,
+        candidate_pool_size=8,
+        reuse_weight=1.0,
+    )
+    base_degree = np.bincount(base.indices.reshape(-1), minlength=32)
+    balanced_degree = np.bincount(balanced.indices.reshape(-1), minlength=32)
+    changed = np.any(balanced.indices != base.indices, axis=0)
+    base_vocab = {
+        tuple(sorted(pair)) for pair in base.indices.T.tolist()
+    }
+    no_reuse_retained = sum(
+        tuple(sorted(pair)) in base_vocab
+        for pair in no_reuse.indices.T.tolist()
+    )
+    balanced_retained = sum(
+        tuple(sorted(pair)) in base_vocab
+        for pair in balanced.indices.T.tolist()
+    )
+    assert np.array_equal(balanced.indices, repeated.indices)
+    assert np.array_equal(base_degree, balanced_degree)
+    assert changed.sum() <= 32
+    assert changed.sum() % 2 == 0
+    assert 0 < changed.sum() < 32
+    assert balanced_retained > no_reuse_retained
+    assert np.all(balanced.indices[0] != balanced.indices[1])
+
+
+def test_coverage_reuse_zero_change_is_exact_base_and_validates_weight():
+    base = np.asarray([[0, 0, 1, 2], [1, 2, 3, 3]], dtype=np.int64)
+    ancestry = packed_identity(4)
+    unchanged = coverage_reuse_refine(
+        base,
+        ancestry,
+        change_fraction=0.0,
+    )
+    assert np.array_equal(unchanged.indices, base)
+    assert not unchanged.greedy_mask.any()
+    with pytest.raises(ValueError, match="must be non-negative"):
+        coverage_reuse_refine(
+            base,
+            ancestry,
+            change_fraction=0.5,
+            reuse_weight=-1.0,
+        )
 
 
 def test_semantic_stack_reports_source_and_group_diagnostics():

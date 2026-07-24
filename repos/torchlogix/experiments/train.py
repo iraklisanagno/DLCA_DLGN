@@ -31,12 +31,12 @@ from torchlogix.topology import (
 try:
     from .utils import (
         CreateFolder, save_metrics_csv, save_config, save_thresholds_csv,
-        evaluate_model, get_model, load_dataset, load_n
+        evaluate_model, get_model, input_threshold_count, load_dataset, load_n
     )
 except ImportError:  # Direct execution: python experiments/train.py
     from utils import (
         CreateFolder, save_metrics_csv, save_config, save_thresholds_csv,
-        evaluate_model, get_model, load_dataset, load_n
+        evaluate_model, get_model, input_threshold_count, load_dataset, load_n
     )
 
 def get_parser():
@@ -128,6 +128,26 @@ def get_parser():
         default="random", help="Connection initialization strategy"
     )
     parser.add_argument(
+        "--conv-connections-init-method",
+        type=str,
+        choices=strategy_choices(),
+        default=None,
+        help=(
+            "Optional convolution-only strategy override. This keeps the "
+            "classifier routing independently controllable."
+        ),
+    )
+    parser.add_argument(
+        "--classifier-connections-init-method",
+        type=str,
+        choices=strategy_choices(),
+        default=None,
+        help=(
+            "Optional dense-classifier strategy override for convolutional "
+            "models."
+        ),
+    )
+    parser.add_argument(
         "--topology-seed", type=int, default=None,
         help="Independent fixed-topology seed. Omit to preserve legacy random initialization."
     )
@@ -149,6 +169,24 @@ def get_parser():
     parser.add_argument(
         "--coverage-novelty-weight", type=float, default=1.0,
         help="Cross-gate semantic-ancestry novelty weight for balanced swaps",
+    )
+    parser.add_argument(
+        "--coverage-reuse-change-fraction",
+        type=float,
+        default=0.25,
+        help=(
+            "Maximum fraction of outputs eligible for generic coverage--reuse "
+            "refinement after constructing the frozen base topology"
+        ),
+    )
+    parser.add_argument(
+        "--coverage-reuse-weight",
+        type=float,
+        default=1.0,
+        help=(
+            "Reward for retaining predecessor-pair motifs from the supplied "
+            "base topology during coverage--reuse refinement"
+        ),
     )
     parser.add_argument("--coverage-alpha", type=float, default=1.0)
     parser.add_argument("--coverage-beta", type=float, default=1.0)
@@ -404,6 +442,20 @@ def save_environment_fingerprint(output_dir: Path):
         json.dump(payload, handle, indent=2, sort_keys=True)
 
 
+def report_connection_strategy(args, component: str) -> str:
+    """Resolve the effective strategy label used by topology reports."""
+    override_names = {
+        "conv": "conv_connections_init_method",
+        "classifier": "classifier_connections_init_method",
+    }
+    if component not in override_names:
+        raise ValueError(f"Unknown topology-report component: {component}")
+    return (
+        getattr(args, override_names[component], None)
+        or args.connections_init_method
+    )
+
+
 def run_training(args, callbacks=None):
     """Run the training loop."""
     if callbacks is None:
@@ -424,7 +476,7 @@ def run_training(args, callbacks=None):
     model_cls = torchlogix.models.__dict__[args.architecture]
     thresholds = torchlogix.layers.Binarization.get_initial_thresholds(
         data_set,
-        num_bits=model_cls.n_input_bits,
+        num_bits=input_threshold_count(model_cls),
         one_per=args.binarization_per,
         method=args.binarization_init
     )
@@ -443,7 +495,7 @@ def run_training(args, callbacks=None):
             args.output,
             metadata={
                 "architecture": args.architecture,
-                "strategy": args.connections_init_method,
+                "strategy": report_connection_strategy(args, "classifier"),
                 "topology_seed": args.topology_seed,
             },
         )
@@ -455,7 +507,7 @@ def run_training(args, callbacks=None):
             stem="conv_topology",
             metadata={
                 "architecture": args.architecture,
-                "strategy": args.connections_init_method,
+                "strategy": report_connection_strategy(args, "conv"),
                 "topology_seed": args.topology_seed,
                 "spatial_indexing": "unchanged",
             },

@@ -10,6 +10,8 @@ from torch.nn.modules.utils import _pair, _triple
 from .functional import softmax, take_tuples, get_combination_indices
 from .topology import (
     canonical_strategy,
+    generate_coverage_reuse_conv_topology,
+    generate_conv_channel_topology,
     generate_dense_topology,
     propagate_packed_ancestry,
 )
@@ -113,6 +115,8 @@ class FixedDenseConnections(Connections):
         swap_fraction=0.25,
         output_groups=1,
         novelty_weight=1.0,
+        reuse_change_fraction=0.25,
+        reuse_weight=1.0,
         **kwargs
         ):
         super().__init__(
@@ -139,6 +143,8 @@ class FixedDenseConnections(Connections):
         self.swap_fraction = swap_fraction
         self.output_groups = output_groups
         self.novelty_weight = novelty_weight
+        self.reuse_change_fraction = reuse_change_fraction
+        self.reuse_weight = reuse_weight
         self._output_ancestry = None
         self.construction_seconds = 0.0
         self.generator_temporary_bytes = 0
@@ -199,6 +205,8 @@ class FixedDenseConnections(Connections):
                 swap_fraction=self.swap_fraction,
                 output_groups=self.output_groups,
                 novelty_weight=self.novelty_weight,
+                reuse_change_fraction=self.reuse_change_fraction,
+                reuse_weight=self.reuse_weight,
             )
             c = torch.from_numpy(result.indices)
             self._output_ancestry = result.output_ancestry
@@ -228,6 +236,8 @@ class FixedDenseConnections(Connections):
             "swap_fraction": self.swap_fraction,
             "output_groups": self.output_groups,
             "novelty_weight": self.novelty_weight,
+            "reuse_change_fraction": self.reuse_change_fraction,
+            "reuse_weight": self.reuse_weight,
         }
     
     def forward(self, x):
@@ -412,6 +422,10 @@ class FixedConvConnections(Connections):
             candidate_pool_size: int = 8,
             swap_fraction: float = 0.25,
             novelty_weight: float = 1.0,
+            reuse_change_fraction: float = 0.25,
+            reuse_weight: float = 1.0,
+            input_channel_ancestry=None,
+            semantic_threshold_count: int = None,
             **kwargs
         ):
         super().__init__(
@@ -445,6 +459,11 @@ class FixedConvConnections(Connections):
         self.candidate_pool_size = candidate_pool_size
         self.swap_fraction = swap_fraction
         self.novelty_weight = novelty_weight
+        self.reuse_change_fraction = reuse_change_fraction
+        self.reuse_weight = reuse_weight
+        self.input_channel_ancestry = input_channel_ancestry
+        self.semantic_threshold_count = semantic_threshold_count
+        self._output_channel_ancestry = None
         self.strategy = canonical_strategy(init_method)
         self.construction_seconds = 0.0
         self.generator_temporary_bytes = 0
@@ -498,6 +517,76 @@ class FixedConvConnections(Connections):
             kernels = self._get_random_receptive_field_tensor(
                 channel_pairs=self.channel_pairs
             )
+            if self.input_channel_ancestry is not None:
+                self._output_channel_ancestry = propagate_packed_ancestry(
+                    self.input_channel_ancestry,
+                    channel_topology.indices,
+                )
+            self.generator_temporary_bytes = max(
+                channel_topology.temporary_bytes,
+                self.channel_pairs.numel() * self.channel_pairs.element_size(),
+            )
+        elif self.strategy == "ancestry_channel_hybrid":
+            if self.channel_group_size != 2:
+                raise ValueError(
+                    "ancestry_channel_hybrid currently requires "
+                    "channel_group_size=2"
+                )
+            if self.lut_rank != 2:
+                raise NotImplementedError(
+                    "ancestry_channel_hybrid currently supports rank-2 LUTs only"
+                )
+            channel_topology = generate_conv_channel_topology(
+                in_dim=self.channels,
+                out_dim=self.num_kernels,
+                topology_seed=0 if self.topology_seed is None else self.topology_seed,
+                layer_index=self.layer_index,
+                input_ancestry=self.input_channel_ancestry,
+                candidate_pool_size=self.candidate_pool_size,
+                swap_fraction=self.swap_fraction,
+                novelty_weight=self.novelty_weight,
+                semantic_threshold_count=self.semantic_threshold_count,
+            )
+            self.channel_pairs = torch.from_numpy(
+                channel_topology.indices
+            ).to(device=self.device, dtype=torch.int64)
+            kernels = self._get_random_receptive_field_tensor(
+                channel_pairs=self.channel_pairs
+            )
+            self._output_channel_ancestry = channel_topology.output_ancestry
+            self.generator_temporary_bytes = max(
+                channel_topology.temporary_bytes,
+                self.channel_pairs.numel() * self.channel_pairs.element_size(),
+            )
+        elif self.strategy == "coverage_reuse_hybrid":
+            if self.channel_group_size != 2:
+                raise ValueError(
+                    "coverage_reuse_hybrid currently requires "
+                    "channel_group_size=2"
+                )
+            if self.lut_rank != 2:
+                raise NotImplementedError(
+                    "coverage_reuse_hybrid currently supports rank-2 LUTs only"
+                )
+            channel_topology = generate_coverage_reuse_conv_topology(
+                in_dim=self.channels,
+                out_dim=self.num_kernels,
+                topology_seed=0 if self.topology_seed is None else self.topology_seed,
+                layer_index=self.layer_index,
+                input_ancestry=self.input_channel_ancestry,
+                candidate_pool_size=self.candidate_pool_size,
+                base_swap_fraction=self.swap_fraction,
+                change_fraction=self.reuse_change_fraction,
+                novelty_weight=self.novelty_weight,
+                reuse_weight=self.reuse_weight,
+            )
+            self.channel_pairs = torch.from_numpy(
+                channel_topology.indices
+            ).to(device=self.device, dtype=torch.int64)
+            kernels = self._get_random_receptive_field_tensor(
+                channel_pairs=self.channel_pairs
+            )
+            self._output_channel_ancestry = channel_topology.output_ancestry
             self.generator_temporary_bytes = max(
                 channel_topology.temporary_bytes,
                 self.channel_pairs.numel() * self.channel_pairs.element_size(),
@@ -514,9 +603,23 @@ class FixedConvConnections(Connections):
         del self._topology_generator
         return indices
 
+    def consume_output_channel_ancestry(self):
+        """Return and release construction-only channel ancestry."""
+        ancestry = self._output_channel_ancestry
+        self._output_channel_ancestry = None
+        self.input_channel_ancestry = None
+        return ancestry
+
     def _make_topology_generator(self):
         """Use an independent RNG when a topology seed was requested."""
-        if self.topology_seed is None and self.strategy != "semantic_channel_hybrid":
+        if (
+            self.topology_seed is None
+            and self.strategy not in {
+                "semantic_channel_hybrid",
+                "ancestry_channel_hybrid",
+                "coverage_reuse_hybrid",
+            }
+        ):
             return None
         seed = (
             int(0 if self.topology_seed is None else self.topology_seed)

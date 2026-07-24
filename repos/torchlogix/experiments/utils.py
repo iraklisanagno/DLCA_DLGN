@@ -116,6 +116,24 @@ def load_n(loader, n):
                 break
 
 
+def input_threshold_count(model_cls):
+    """Return the number of Boolean thresholds required by a model class.
+
+    Legacy TorchLogix models use ``n_input_bits`` for this quantity.  The
+    convolutional DLGN paper describes S/M as 2-bit inputs encoded by three
+    thermometer thresholds, so paper-faithful classes expose the unambiguous
+    ``n_input_thresholds`` attribute instead.
+    """
+    threshold_count = getattr(model_cls, "n_input_thresholds", None)
+    if threshold_count is None:
+        threshold_count = getattr(model_cls, "n_input_bits", None)
+    if threshold_count is None:
+        raise AttributeError(
+            f"{model_cls.__name__} does not declare an input threshold count"
+        )
+    return int(threshold_count)
+
+
 def get_model(thresholds, args):
     """
     Select model from the architecture.
@@ -125,6 +143,12 @@ def get_model(thresholds, args):
         "connections": args.connections,
         "connections_kwargs": {
             "init_method": args.connections_init_method,
+            "conv_init_method": getattr(
+                args, "conv_connections_init_method", None
+            ),
+            "classifier_init_method": getattr(
+                args, "classifier_connections_init_method", None
+            ),
             "temperature": args.connections_temperature,
             "gumbel": args.connections_gumbel,
             "topology_seed": getattr(args, "topology_seed", None),
@@ -138,6 +162,10 @@ def get_model(thresholds, args):
             "hybrid_base": getattr(args, "coverage_hybrid_base", "butterfly"),
             "swap_fraction": getattr(args, "coverage_swap_fraction", 0.25),
             "novelty_weight": getattr(args, "coverage_novelty_weight", 1.0),
+            "reuse_change_fraction": getattr(
+                args, "coverage_reuse_change_fraction", 0.25
+            ),
+            "reuse_weight": getattr(args, "coverage_reuse_weight", 1.0),
             },
         "parametrization": args.parametrization,
         "parametrization_kwargs": {

@@ -1,0 +1,67 @@
+{
+  "architecture": "ClgnCifar10PaperSmall",
+  "dataset": "cifar-10",
+  "iterations": 20000,
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "selection_metric": "hardened validation accuracy",
+  "paired_protocol_audit": "pass",
+  "spatial_coordinate_hash_audit": "pass",
+  "validation": {
+    "random_mean_percent": 56.67333333333333,
+    "v4_mean_percent": 57.18666666666666,
+    "paired_differences_percentage_points": [
+      1.4999999999999902,
+      0.40000000000000036,
+      -0.36000000000000476
+    ],
+    "paired_mean_percentage_points": 0.5133333333333286,
+    "paired_std_percentage_points": 0.9351648695996486,
+    "paired_t95_ci_percentage_points": [
+      -1.8097449860306036,
+      2.836411652697261
+    ]
+  },
+  "held_out_test": {
+    "random_mean_percent": 56.14,
+    "v4_mean_percent": 56.36666666666667,
+    "paired_differences_percentage_points": [
+      2.5800000000000045,
+      -0.13999999999999568,
+      -1.760000000000006
+    ],
+    "paired_mean_percentage_points": 0.2266666666666676,
+    "paired_std_percentage_points": 2.1931104243364845,
+    "paired_t95_ci_percentage_points": [
+      -5.221321644665249,
+      5.674654977998584
+    ]
+  },
+  "per_seed": [
+    {
+      "seed": 0,
+      "random_validation_hard": 0.561,
+      "v4_validation_hard": 0.576,
+      "random_test_hard": 0.5515,
+      "v4_test_hard": 0.5773
+    },
+    {
+      "seed": 1,
+      "random_validation_hard": 0.574,
+      "v4_validation_hard": 0.578,
+      "random_test_hard": 0.5635,
+      "v4_test_hard": 0.5621
+    },
+    {
+      "seed": 2,
+      "random_validation_hard": 0.5652,
+      "v4_validation_hard": 0.5616,
+      "random_test_hard": 0.5692,
+      "v4_test_hard": 0.5516
+    }
+  ],
+  "interpretation": "Positive mean validation gain, but mixed held-out effects and inconclusive three-seed intervals. This is pilot evidence, not a paper-level claim."
+}

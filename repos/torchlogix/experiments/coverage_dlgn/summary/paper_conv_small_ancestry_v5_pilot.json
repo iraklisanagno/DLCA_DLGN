@@ -1,0 +1,107 @@
+{
+  "architecture": "ClgnCifar10PaperSmall",
+  "dataset": "cifar-10",
+  "decision": {
+    "primary_convolutional_method": "semantic_channel_hybrid (v4)",
+    "reason": "ancestry v5 failed the frozen validation criterion and was mixed across seeds",
+    "status": "v5 retained as a reproducible diagnostic/negative-result mechanism",
+    "success_threshold_gain_percentage_points": 3.0,
+    "threshold_met": false
+  },
+  "paired_pilot": {
+    "data_split_seed": 2027,
+    "eval_frequency": 2000,
+    "iterations": 20000,
+    "mean_ancestry_v5_hard_validation_accuracy_percent": 57.05333333333333,
+    "mean_gain_percentage_points": -0.08666666666667193,
+    "mean_random_hard_validation_accuracy_percent": 57.14,
+    "paired_gain_95_percent_student_t_interval": [
+      -4.3235114316543735,
+      4.150178098321029
+    ],
+    "seeds": [
+      {
+        "ancestry_v5_hard_validation_accuracy_percent": 56.88,
+        "gain_percentage_points": 1.88,
+        "random_hard_validation_accuracy_percent": 55.0,
+        "seed": 0
+      },
+      {
+        "ancestry_v5_hard_validation_accuracy_percent": 56.98,
+        "gain_percentage_points": -0.98,
+        "random_hard_validation_accuracy_percent": 57.96,
+        "seed": 1
+      },
+      {
+        "ancestry_v5_hard_validation_accuracy_percent": 57.3,
+        "gain_percentage_points": -1.16,
+        "random_hard_validation_accuracy_percent": 58.46,
+        "seed": 2
+      }
+    ],
+    "test_evaluation": "not run because v5 failed validation selection"
+  },
+  "screen_seed0": {
+    "ancestry_v5_hard_validation_accuracy_percent": 55.36,
+    "combined_v5_v3_tail_hard_validation_accuracy_percent": 55.16,
+    "iterations": 5000,
+    "random_hard_validation_accuracy_percent": 52.52,
+    "v4_v3_tail_hard_validation_accuracy_percent": 53.94
+  },
+  "topology_mean_across_seeds": {
+    "ancestry_v5": {
+      "channel_fanout_cv": [
+        0.04419417382415923,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "conv_construction_seconds": 0.363185293816831,
+      "distinct_channel_groups": [
+        32,
+        128,
+        512,
+        1024
+      ],
+      "raw_channel_ancestry_mean": [
+        2.0,
+        3.703125,
+        6.067708333333333,
+        8.194986979166666
+      ],
+      "raw_predecessor_jaccard_mean": [
+        0.0,
+        0.09895833333333333,
+        0.24097067212301584,
+        0.4880049448164682
+      ]
+    },
+    "random_controlled": {
+      "channel_fanout_cv": [
+        0.23385358667337136,
+        0.13621559198564606,
+        0.06810779599282303,
+        0.034938562148434216
+      ],
+      "conv_construction_seconds": 0.1746195461591019,
+      "distinct_channel_groups": [
+        8,
+        31,
+        127,
+        511
+      ],
+      "raw_channel_ancestry_mean": [
+        2.0,
+        3.09375,
+        4.25,
+        5.4140625
+      ],
+      "raw_predecessor_jaccard_mean": [
+        0.0,
+        0.30208333333333326,
+        0.46562500000000007,
+        0.5747023809523808
+      ]
+    }
+  }
+}

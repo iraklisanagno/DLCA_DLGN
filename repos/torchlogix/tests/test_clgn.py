@@ -11,7 +11,11 @@ from torchlogix.layers import LogicConv2d, OrPooling2d, GroupSum, FixedBinarizat
 from torchlogix.topology import analyze_conv_channel_topology
 
 
-def _channel_schedule_layer(strategy, topology_seed=7):
+def _channel_schedule_layer(
+    strategy,
+    topology_seed=7,
+    **connection_overrides,
+):
     return LogicConv2d(
         in_dim=8,
         device="cpu",
@@ -27,7 +31,7 @@ def _channel_schedule_layer(strategy, topology_seed=7):
             "candidate_pool_size": 8,
             "swap_fraction": 0.25,
             "novelty_weight": 1.0,
-        },
+        } | connection_overrides,
         stride=1,
         padding=1,
         parametrization_kwargs={"weight_init": "random"},
@@ -106,6 +110,110 @@ def test_semantic_channel_diagnostics_explain_the_routing_change():
         > random_row["distinct_channel_groups"]
     )
     assert semantic_row["unused_channels"] == 0
+
+
+def test_ancestry_channel_schedule_preserves_spatial_rng_and_balances_pairs():
+    torch.manual_seed(321)
+    random_layer = _channel_schedule_layer("random", topology_seed=19)
+    random_next = torch.rand(4)
+    torch.manual_seed(321)
+    ancestry_layer = _channel_schedule_layer(
+        "ancestry_channel_hybrid", topology_seed=19
+    )
+    ancestry_next = torch.rand(4)
+
+    random_first = random_layer.connections.indices[0]
+    ancestry_first = ancestry_layer.connections.indices[0]
+    assert torch.equal(random_first[..., :-1], ancestry_first[..., :-1])
+    assert torch.equal(random_next, ancestry_next)
+    for random_weight, ancestry_weight in zip(
+        random_layer.tree_weights, ancestry_layer.tree_weights
+    ):
+        assert torch.equal(random_weight, ancestry_weight)
+
+    pairs = ancestry_layer.connections.channel_pairs
+    assert torch.unique(torch.sort(pairs.T, dim=1).values, dim=0).shape[0] == 16
+    fanout = torch.bincount(pairs.flatten(), minlength=8)
+    assert int(fanout.min()) == int(fanout.max()) == 4
+
+
+def test_coverage_reuse_schedule_preserves_v4_spatial_rng_weights_and_degree():
+    input_ancestry = np.asarray(
+        [[1], [2], [4], [8], [3], [12], [5], [10]],
+        dtype=np.uint64,
+    )
+    torch.manual_seed(987)
+    v4_layer = _channel_schedule_layer(
+        "semantic_channel_hybrid",
+        topology_seed=23,
+    )
+    v4_next = torch.rand(4)
+    torch.manual_seed(987)
+    refined_layer = _channel_schedule_layer(
+        "coverage_reuse_hybrid",
+        topology_seed=23,
+        input_channel_ancestry=input_ancestry,
+        reuse_change_fraction=0.5,
+        reuse_weight=1.0,
+    )
+    refined_next = torch.rand(4)
+    assert torch.equal(
+        v4_layer.connections.indices[0][..., :-1],
+        refined_layer.connections.indices[0][..., :-1],
+    )
+    assert torch.equal(v4_next, refined_next)
+    for v4_weight, refined_weight in zip(
+        v4_layer.tree_weights,
+        refined_layer.tree_weights,
+    ):
+        assert torch.equal(v4_weight, refined_weight)
+    v4_pairs = v4_layer.connections.channel_pairs
+    refined_pairs = refined_layer.connections.channel_pairs
+    v4_degree = torch.bincount(v4_pairs.flatten(), minlength=8)
+    refined_degree = torch.bincount(refined_pairs.flatten(), minlength=8)
+    changed = torch.any(v4_pairs != refined_pairs, dim=0)
+    assert torch.equal(v4_degree, refined_degree)
+    assert int(changed.sum()) <= 8
+
+
+def test_conv_diagnostics_use_paper_threshold_count_not_precision_bits():
+    class PaperThresholdModel(torch.nn.Module):
+        n_input_bits = 2
+        n_input_thresholds = 3
+
+        def __init__(self):
+            super().__init__()
+            self.layer = LogicConv2d(
+                in_dim=4,
+                device="cpu",
+                channels=9,
+                num_kernels=18,
+                tree_depth=3,
+                receptive_field_size=3,
+                connections_kwargs={
+                    "init_method": "ancestry_channel_hybrid",
+                    "channel_group_size": 2,
+                    "topology_seed": 5,
+                    "layer_index": 0,
+                    "semantic_threshold_count": 3,
+                },
+                padding=1,
+                parametrization_kwargs={"weight_init": "random"},
+            )
+
+    model = PaperThresholdModel()
+    row = analyze_conv_channel_topology(model)[0]
+    pairs = model.layer.connections.channel_pairs.detach().cpu().numpy()
+    expected_same_color = np.mean(
+        pairs[0] // 3 == pairs[1] // 3
+    )
+    expected_same_threshold = np.mean(
+        pairs[0] % 3 == pairs[1] % 3
+    )
+    assert row["same_input_channel_fraction"] == expected_same_color
+    assert row["same_threshold_fraction"] == expected_same_threshold
+    assert row["raw_channel_ancestry_mean"] == 2.0
+    assert row["raw_channel_coverage_fraction"] == 1.0
 
 
 @pytest.fixture

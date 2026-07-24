@@ -1,6 +1,6 @@
 # CoverageDLGN implementation and experiment history
 
-**Updated:** July 23, 2026
+**Updated:** July 24, 2026
 **Status:** Dense semantic-balanced v3 and convolutional semantic-channel v4
 are implemented. The original five-seed 48K study, a five-seed 512K
 escalation, a two-budget/three-depth study, and a three-seed convolutional
@@ -8,6 +8,171 @@ pilot have frozen validation/test artifacts. V3 improves 512K dense CIFAR-10
 held-out accuracy by **+4.256 pp**; v4 improves the convolutional pilot by
 **+2.000 pp**. Component ablations, long-training convolutional reproduction,
 and protocol-identical named-method comparisons remain before a DATE claim.
+
+## Paper-architecture convolutional correction
+
+An audit against pages 6, 14, and 15 of the convolutional DLGN paper found
+that the legacy `ClgnCifar10Small`/`Medium` classes use two thresholds (six RGB
+Boolean channels), while the paper states that its 2-bit S/M input is encoded
+with three thresholds (nine channels). Separate
+`ClgnCifar10PaperSmall`/`Medium` classes now implement the corrected encoding;
+legacy classes were not changed, preserving the original v4 pilot.
+
+The corrected S class still has exactly 83,552 learned gate functions and
+874,496 spatial gate applications. Thus, random and v4 receive the same
+architecture correction without changing their paired gate budget.
+
+Paired CUDA smoke runs passed for S and M. Both saved `[1, 3]` thresholds,
+random/v4 state tensor shapes were identical, and all four convolutional
+spatial-coordinate hashes matched. Peak memory was 508.25/508.27 MiB for S
+and 1178.63/1178.83 MiB for M (random/v4). S ran two updates plus hard
+validation; M ran one update without evaluation. These are execution tests,
+not accuracy measurements.
+
+A 20-step M timing run at batch 128 used 14.61 GiB peak GPU memory and took
+9.49 seconds (0.475 seconds/step including setup). A 20K M run is projected at
+about 2.6 hours before evaluation overhead, or roughly eight hours for the
+three-seed paired queue on two GPUs.
+
+The corrected S three-seed 20K pilot and frozen held-out evaluation are
+complete:
+
+| Seed | Random hard val | V4 hard val | Val gain | Random hard test | V4 hard test | Test gain |
+|---:|---:|---:|---:|---:|---:|---:|
+| 0 | 56.10% | 57.60% | +1.50 pp | 55.15% | 57.73% | +2.58 pp |
+| 1 | 57.40% | 57.80% | +0.40 pp | 56.35% | 56.21% | -0.14 pp |
+| 2 | 56.52% | 56.16% | -0.36 pp | 56.92% | 55.16% | -1.76 pp |
+| Mean | **56.673%** | **57.187%** | **+0.513 pp** | **56.140%** | **56.367%** | **+0.227 pp** |
+
+The paired 95% interval is [-1.810, +2.836] pp on validation and
+[-5.221, +5.675] pp on held-out test. Both are inconclusive. S therefore
+provides a positive mean validation signal but not a statistically supported
+accuracy claim. The published S result is 60.38%; this short 20K pilot is not
+a numerical reproduction of the paper's long schedule.
+
+### Ancestry-aware v5 and complementary classifier-tail study
+
+The next revision was intentionally topology-only and preserved v3 and v4 as
+separate strategies. `ancestry_channel_hybrid` propagates packed channel
+ancestry through all four convolution blocks, starts from balanced
+round-robin channel pairs, and applies degree-preserving swaps scored by
+ancestry and predecessor novelty. It never changes spatial coordinates,
+learned gates, or the paper-S architecture. `semantic_classifier_hybrid`
+adapts v3 to the shrinking dense classifier: its first classifier layer uses
+the semantic schedule, while later layers use exact balanced matchings before
+v3 ancestry swaps.
+
+A controlled seed-0 5K screen used identical initialization weights, data,
+training effort, and 83,552-gate budget:
+
+| Strategy | Best hard validation | Gain over random |
+|---|---:|---:|
+| Controlled random | 52.52% | — |
+| Frozen v4 + v3 classifier tail | 53.94% | +1.42 pp |
+| Ancestry v5, random classifier | **55.36%** | **+2.84 pp** |
+| Ancestry v5 + v3 classifier tail | 55.16% | +2.64 pp |
+
+The classifier tail was therefore not added to v5. The selected ancestry-only
+candidate was frozen and run for 20K steps on three paired seeds:
+
+| Seed | Random hard val | Ancestry v5 hard val | Paired gain |
+|---:|---:|---:|---:|
+| 0 | 55.00% | 56.88% | +1.88 pp |
+| 1 | 57.96% | 56.98% | -0.98 pp |
+| 2 | 58.46% | 57.30% | -1.16 pp |
+| Mean | **57.140%** | **57.053%** | **-0.087 pp** |
+
+The paired 95% Student-t interval is [-4.324, +4.150] pp. V5 therefore fails
+the requested +3 pp criterion and is effectively tied with random. It was not
+evaluated on held-out test data because it failed validation selection.
+Frozen v4 remains the primary convolutional mechanism; v3 remains the primary
+dense mechanism. V5 is retained as a reproducible negative-result/diagnostic
+extension rather than presented as an accuracy improvement.
+
+The topology hypothesis itself was achieved. Mean distinct channel groups
+changed from `[8, 31, 127, 511]` to `[32, 128, 512, 1024]`; mean raw-channel
+ancestry at the last block rose from 5.414 to 8.195 of nine inputs; and final
+predecessor Jaccard overlap fell from 0.575 to 0.488. Fan-out CV became zero
+after the first block. Mean convolutional topology construction increased
+from 0.175 to 0.363 seconds, an offline +0.189-second cost; peak training GPU
+allocation remained 1,874.6 MiB for both variants. The accuracy result shows
+that maximizing these diagnostics too aggressively can remove useful channel
+reuse.
+
+Exact values are in
+`summary/paper_conv_small_ancestry_v5_pilot.json`. Historical V5 artifacts
+have correct per-layer strategy labels, but their top-level
+`conv_topology.json` metadata says `random` because it used the global
+fallback label. This reporting-only defect was found after the runs and fixed
+with a regression test; model indices and all accuracy results are unaffected.
+The exact three-seed queue is reproduced with:
+
+```bash
+bash experiments/coverage_dlgn/run_conv_cifar10_paper_small_ancestry_v5_pilot_two_gpus.sh
+```
+
+### Coverage--reuse-balanced refinement
+
+V5 established that maximum ancestry diversity can remove useful repeated
+channel motifs. A generic follow-up, `coverage_reuse_hybrid`, therefore starts
+from the frozen v3/v4 topology and applies only score-improving two-edge swaps.
+Its score combines ancestry coverage, within-gate overlap, cross-gate novelty,
+and the frequency of predecessor pairs in the base topology. Every swap
+preserves the exact predecessor degree sequence. Convolutional use changes
+channel groups only and retains bit-identical spatial coordinates.
+
+One parameter set was frozen before the S/M screens: candidate pool 8, v4 base
+swap fraction 0.25, maximum refinement change fraction 0.25, novelty weight
+1.0, and reuse weight 1.0. No layer- or dataset-specific schedule was used.
+
+| Architecture / protocol | V4 best/current hard val | Coverage--reuse best/current hard val | Difference |
+|---|---:|---:|---:|
+| Paper S, 5K steps, best | 54.92% | **55.40%** | +0.48 pp |
+| Paper M, 1K steps, current; eval every 500 | 35.78% | **38.92%** | +3.14 pp |
+| Paper M confirmation, 5K steps, best/current | **61.56%** | 58.44% | -3.12 pp |
+
+The M confirmation learning curve was:
+
+| Step | V4 hard val | Coverage--reuse hard val | Difference |
+|---:|---:|---:|---:|
+| 1,000 | 35.98% | 35.52% | -0.46 pp |
+| 2,000 | 45.84% | 46.84% | +1.00 pp |
+| 3,000 | 52.86% | 50.04% | -2.82 pp |
+| 4,000 | 56.78% | 55.36% | -1.42 pp |
+| 5,000 | **61.56%** | 58.44% | **-3.12 pp** |
+
+The earlier +3.14 pp M observation was protocol-sensitive: that 1K screen
+evaluated every 500 steps, while the confirmatory run evaluated every 1,000
+steps. Only iteration count, evaluation frequency, and output directory
+differed between those protocols; each paired comparison itself remained
+controlled. The early observation is therefore not treated as confirmation.
+
+Paper M used 668,416 learned gates in both cases. Peak GPU allocation was
+identical at 15,692,077,568 bytes. Convolutional topology construction took
+4.884 seconds for v4 and 15.498 seconds for coverage--reuse, and total wall
+time was 2,314.5 versus 2,334.2 seconds. This is a modest one-time construction
+cost, but it was not justified by accuracy.
+
+The requested stable +3 pp success criterion was not met. The planned
+multi-seed 20K escalation and held-out test evaluation were stopped by design,
+preventing selection leakage and unnecessary computation. V4 remains the
+retained convolutional mechanism; the generic coverage--reuse implementation
+is preserved as a reproducible negative result. Exact values and artifact
+paths are in `summary/paper_conv_coverage_reuse_screen.json`.
+
+The legacy `ClgnCifar10Large` has `k=512`, so its scale corresponds to paper B,
+not L, but it is not a faithful B model. B additionally needs a doubled final
+output layer, fixed edge/curvature preprocessing, and teacher supervision.
+Because the PDF does not fully specify the detector implementation, no
+paper-exact B result is claimed.
+
+An attempt to detach the eight-hour M queue with `nohup` from the managed
+command sandbox was terminated when that command session exited; the sandbox
+uses parent-lifetime process cleanup. No training update or checkpoint was
+produced, so this is a launch-environment failure rather than a model result.
+The two startup logs and queue metadata are retained under
+`results/failed/paper_medium_async_launch_attempt/`. Run the documented M
+script in a persistent foreground terminal instead.
 
 ## Untouched baseline first
 
@@ -566,6 +731,20 @@ thereafter, compared with 0.285, 0.136, 0.068, and 0.035 for random.
     expects hardened Boolean activations; the first new test supplied floats
     and exposed the existing dtype contract. The test was corrected to use
     Boolean input. Training and export implementation were unchanged.
+23. **Naive v3 classifier-tail reuse broke balanced fan-out.** Directly applying
+    the equal-width dense schedule to paper-S's shrinking classifier produced
+    fan-out CVs of 0.240 and 0.285. The classifier-specific schedule now uses
+    exact round-robin matchings in shrinking layers; regression tests require
+    exact predecessor degree balance.
+24. **V5 top-level report label used the fallback strategy.** Per-layer
+    topology rows correctly recorded `ancestry_channel_hybrid`, but the JSON
+    metadata said `random` when a convolution-specific override was used.
+    Effective convolution and classifier strategies are now resolved
+    independently and covered by a regression test. This was reporting-only.
+25. **Coverage--reuse M early gain did not confirm.** A seed-0 1K screen with
+    evaluation every 500 steps showed +3.14 pp, but a preplanned 5K
+    confirmation with evaluation every 1,000 steps ended at -3.12 pp. The
+    method was not promoted to multi-seed or held-out-test evaluation.
 
 ## Implemented artifacts
 
@@ -575,6 +754,14 @@ thereafter, compared with 0.285, 0.136, 0.068, and 0.035 for random.
   pairing and degree-preserving deeper-layer swaps.
 - Semantic-channel v4 routing with paired independent RNGs and unchanged
   convolutional spatial coordinates.
+- Ancestry-channel v5 routing with cross-block packed ancestry, balanced
+  channel pairings, degree-preserving novelty swaps, and unchanged spatial
+  coordinates.
+- Generic coverage--reuse refinement with strictly improving,
+  degree-preserving swaps, shared S/M parameters, and both dense and
+  convolutional integration. Its failed M promotion result is retained.
+- A classifier-specific v3 extension for shrinking convolutional classifier
+  tails, without modifying or replacing the frozen dense v3 strategy.
 - Per-depth coverage, overlap, fan-out, distinct-pair, reachability, storage,
   construction-time, and temporary-memory metrics.
 - Image-semantic diagnostics for raw-source ancestry, spatial and semantic-axis
@@ -639,9 +826,10 @@ Final verification after regenerating the summary artifacts:
   cohorts;
 - the follow-up audit reports `pass` for 52 medium/depth/convolutional records,
   paired protocol equality, and bit-identical convolutional spatial hashes;
-- all **38** focused CoverageDLGN/protocol regression tests pass;
-- the complete TorchLogix suite passes with **3,289 passed, 3,038 skipped, and
-  one pre-existing warning** in 136.79 seconds;
+- the July 24 ancestry/classifier focused suite passes with **1,862 passed and
+  1,660 skipped**;
+- the complete TorchLogix suite passes with **3,302 passed, 3,038 skipped, and
+  one pre-existing warning** in 161.99 seconds;
 - all three generated SVGs parse as valid XML;
 - the pre-analysis source archive passes its recorded SHA-256 check; and
 - `nvidia-smi` reports both RTX PRO 6000 GPUs at 0% utilization with no running

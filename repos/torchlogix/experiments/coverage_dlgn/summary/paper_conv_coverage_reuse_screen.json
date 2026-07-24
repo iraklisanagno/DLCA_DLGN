@@ -1,0 +1,77 @@
+{
+  "status": "complete_not_promoted",
+  "selection_metric": "best_hardened_validation_accuracy",
+  "held_out_test_evaluated": false,
+  "promotion_criterion_percentage_points": 3.0,
+  "frozen_parameters": {
+    "candidate_pool_size": 8,
+    "base_swap_fraction": 0.25,
+    "change_fraction": 0.25,
+    "novelty_weight": 1.0,
+    "reuse_weight": 1.0
+  },
+  "paper_small_5000_steps_seed0": {
+    "evaluation_frequency": 1000,
+    "v4": {
+      "result_directory": "experiments/coverage_dlgn/results/screen_conv_cifar10_paper_small_v4_control_seed0",
+      "best_hard_validation_accuracy": 0.5492,
+      "wall_seconds": 256.725826,
+      "peak_gpu_memory_bytes": 1965679616,
+      "conv_topology_construction_seconds": 0.412926
+    },
+    "coverage_reuse": {
+      "result_directory": "experiments/coverage_dlgn/results/screen_conv_cifar10_paper_small_coverage_reuse_seed0",
+      "best_hard_validation_accuracy": 0.554,
+      "wall_seconds": 258.185466,
+      "peak_gpu_memory_bytes": 1965679616,
+      "conv_topology_construction_seconds": 0.782532
+    },
+    "paired_gain_percentage_points": 0.48
+  },
+  "paper_medium_1000_step_screen_seed0": {
+    "evaluation_frequency": 500,
+    "v4": {
+      "result_directory": "experiments/coverage_dlgn/results/screen_conv_cifar10_paper_medium_v4_control_seed0",
+      "hard_validation_accuracy_at_1000": 0.3578
+    },
+    "coverage_reuse": {
+      "result_directory": "experiments/coverage_dlgn/results/screen_conv_cifar10_paper_medium_coverage_reuse_seed0",
+      "hard_validation_accuracy_at_1000": 0.3892
+    },
+    "paired_gain_percentage_points": 3.14
+  },
+  "paper_medium_5000_step_confirmation_seed0": {
+    "evaluation_frequency": 1000,
+    "learned_gate_budget": 668416,
+    "v4": {
+      "result_directory": "experiments/coverage_dlgn/results/confirm_conv_cifar10_paper_medium_v4_control_seed0",
+      "best_hard_validation_accuracy": 0.6156,
+      "wall_seconds": 2314.535599,
+      "peak_gpu_memory_bytes": 15692077568,
+      "conv_topology_construction_seconds": 4.883599,
+      "hard_validation_curve": {
+        "1000": 0.3598,
+        "2000": 0.4584,
+        "3000": 0.5286,
+        "4000": 0.5678,
+        "5000": 0.6156
+      }
+    },
+    "coverage_reuse": {
+      "result_directory": "experiments/coverage_dlgn/results/confirm_conv_cifar10_paper_medium_coverage_reuse_seed0",
+      "best_hard_validation_accuracy": 0.5844,
+      "wall_seconds": 2334.169332,
+      "peak_gpu_memory_bytes": 15692077568,
+      "conv_topology_construction_seconds": 15.498334,
+      "hard_validation_curve": {
+        "1000": 0.3552,
+        "2000": 0.4684,
+        "3000": 0.5004,
+        "4000": 0.5536,
+        "5000": 0.5844
+      }
+    },
+    "paired_gain_percentage_points": -3.12
+  },
+  "decision": "Retain frozen v4 as the primary convolutional method; keep coverage_reuse_hybrid as a reproducible experimental negative result without multi-seed or held-out-test escalation."
+}
