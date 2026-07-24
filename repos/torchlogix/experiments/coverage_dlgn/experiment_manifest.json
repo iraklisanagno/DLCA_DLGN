@@ -1,0 +1,171 @@
+{
+  "manifest_version": 1,
+  "created_utc": "2026-07-24",
+  "source_checkpoint": "7332d91",
+  "purpose": "Locked search and reporting protocol for the five CoverageDLGN paper tables",
+  "global_protocol": {
+    "data_split_seed": 2027,
+    "selection_metric": "mean best hardened validation accuracy",
+    "test_policy": "held-out test remains locked until each row is frozen",
+    "topology_seed_policy": "topology seed equals paired training seed; no seed selection",
+    "pilot_seeds": [
+      0,
+      1,
+      2
+    ],
+    "final_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "fidelity": {
+      "smoke_iterations": 100,
+      "screen_iterations": 5000,
+      "selection_iterations": 20000,
+      "dense_full_iterations": 108000
+    },
+    "hardware": {
+      "required_device": "cuda",
+      "gpu_count": 2,
+      "parallelism": "one independent run per GPU",
+      "cpu_training_allowed": false
+    },
+    "reporting": [
+      "hardened_accuracy",
+      "soft_accuracy",
+      "soft_to_hard_gap",
+      "gate_count",
+      "trainable_parameters",
+      "deployed_routing_bits",
+      "topology_construction_seconds",
+      "wall_seconds",
+      "peak_gpu_memory_bytes",
+      "hardened_latency",
+      "learning_curve",
+      "source_and_environment_fingerprint"
+    ]
+  },
+  "table_1": {
+    "datasets": [
+      "mnist",
+      "fashion-mnist"
+    ],
+    "gate_budget": 48000,
+    "fixed_random_target": {
+      "depth": 6,
+      "width": 8000,
+      "lut_rank": 2,
+      "parametrization": "raw"
+    },
+    "coverage_dlgn": {
+      "method": "semantic_balanced_hybrid",
+      "mechanism_revision": "v3",
+      "mechanism_frozen": true,
+      "search_space": {
+        "candidate_pool_size": [
+          8,
+          16,
+          32
+        ],
+        "swap_fraction": [
+          0.125,
+          0.25,
+          0.5
+        ],
+        "novelty_weight": [
+          0.5,
+          1.0,
+          2.0
+        ],
+        "parametrization": [
+          "raw",
+          "light",
+          "warp"
+        ]
+      }
+    },
+    "comparators": {
+      "mommen": {
+        "candidate_counts": [
+          8,
+          16
+        ],
+        "depths_at_48k": [
+          2,
+          3,
+          6
+        ],
+        "routing_relaxation": "soft_mix",
+        "routing_logit_init": "normal",
+        "routing_temperature": {
+          "initial": 1.0,
+          "final": 0.0001,
+          "anneal_start_fraction": 0.6666666667,
+          "anneal_end_fraction": 0.8333333333
+        },
+        "gate_temperature": {
+          "initial": 1.0,
+          "final": 0.0001,
+          "anneal_start_fraction": 0.8333333333,
+          "anneal_end_fraction": 1.0
+        },
+        "deviation": "The paper uses 240 epochs for learned routing; the matched adaptation compresses both annealing stages into the common 200-effective-epoch budget."
+      },
+      "lilogic_top32": {
+        "candidate_count": 32,
+        "depths_at_48k": [
+          2,
+          3,
+          6
+        ],
+        "routing_relaxation": "soft_mix",
+        "routing_logit_init": "normal",
+        "optimizer": "Adam",
+        "learning_rate": 0.075,
+        "batch_size": 256,
+        "epochs": 200,
+        "group_sum_temperature_search": {
+          "mnist": [
+            10.0,
+            15.0,
+            20.0
+          ],
+          "fashion-mnist": [
+            15.0,
+            20.0,
+            25.0,
+            30.0
+          ]
+        }
+      },
+      "bitlogic_best_of_space": {
+        "depth": 2,
+        "width": 24000,
+        "lut_rank": 4,
+        "parametrization": "light",
+        "candidate_count": 16,
+        "routing_relaxation": "soft_mix",
+        "encoder": "four-threshold distributive thermometer",
+        "optimizer": "AdamW",
+        "learning_rate": 0.01,
+        "weight_decay": 0.0,
+        "batch_size": 128,
+        "epochs": 100
+      }
+    }
+  },
+  "promotion_order": [
+    "table_1",
+    "table_2",
+    "table_3",
+    "table_4",
+    "table_5"
+  ],
+  "promotion_constraints": {
+    "conv_cifar10_large": "only after a positive mean CoverageDLGN gain on medium",
+    "conv_cifar100_medium": "only after a positive signal on small",
+    "conv_cifar100_large": "only after a positive signal on medium"
+  }
+}

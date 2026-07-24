@@ -76,6 +76,64 @@ def test_learnable_gradients(lut_rank):
     assert torch.allclose(X.grad, input_grad, atol=1e-3, rtol=1e-3)
 
 
+def test_soft_mix_connections_use_probabilities_in_train_and_argmax_in_eval():
+    layer = LearnableDenseConnections(
+        in_dim=4,
+        out_dim=2,
+        lut_rank=2,
+        num_candidates=2,
+        device="cpu",
+        temperature=1.0,
+        forward_mode="soft_mix",
+        weights_init="zeros",
+    )
+    layer.indices.copy_(torch.tensor([
+        [[0, 1], [2, 3]],
+        [[1, 2], [3, 0]],
+    ]))
+    inputs = torch.tensor([[0.0, 0.25, 0.75, 1.0]])
+
+    layer.train()
+    mixed = layer(inputs)
+    expected_mixed = torch.tensor([[
+        [0.125, 0.5],
+        [0.875, 0.5],
+    ]])
+    assert torch.allclose(mixed, expected_mixed)
+
+    with torch.no_grad():
+        layer.weights.copy_(torch.tensor([
+            [[2.0, -2.0], [-2.0, 2.0]],
+            [[-2.0, 2.0], [2.0, -2.0]],
+        ]))
+    layer.eval()
+    hardened = layer(inputs)
+    expected_hardened = torch.tensor([[
+        [0.0, 0.75],
+        [1.0, 1.0],
+    ]])
+    assert torch.equal(hardened, expected_hardened)
+
+
+def test_soft_mix_connections_backpropagate_to_routing_logits():
+    layer = LearnableDenseConnections(
+        in_dim=8,
+        out_dim=4,
+        lut_rank=2,
+        num_candidates=4,
+        device="cpu",
+        temperature=0.7,
+        forward_mode="soft_mix",
+        weights_init="normal",
+    )
+    inputs = torch.rand(3, 8, requires_grad=True)
+    layer(inputs).square().sum().backward()
+    assert layer.weights.grad is not None
+    assert torch.isfinite(layer.weights.grad).all()
+    assert layer.weights.grad.abs().sum() > 0
+    assert inputs.grad is not None
+
+
 @pytest.mark.parametrize("channel_group_size", [None, 1, 2])
 def test_fixed_conv_connections(channel_group_size):
     """

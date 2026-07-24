@@ -1,0 +1,15 @@
+{
+  "wall_seconds": 7.261342235000029,
+  "best_validation_hard_accuracy": 0.7693333344459534,
+  "final_metrics": {
+    "val_loss_discrete": 1.229268737634023,
+    "val_acc_discrete": 0.7693333344459534,
+    "val_loss_relaxed": 0.7831273576418559,
+    "val_acc_relaxed": 0.8100000004768372,
+    "train_loss": 0.6541476464271545,
+    "connections_temperature": 1.0,
+    "parametrization_temperature": 1.0
+  },
+  "peak_gpu_memory_bytes": 3819600384,
+  "topology": []
+}

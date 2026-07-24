@@ -5,6 +5,7 @@ import argparse
 import hashlib
 import importlib.metadata
 import json
+import math
 import platform
 import random
 import subprocess
@@ -117,6 +118,16 @@ def get_parser():
     parser.add_argument(
         "--weight-decay", "-wd", type=float, default=None, help="Weight decay for optimizer"
     )
+    parser.add_argument(
+        "--group-sum-temperature",
+        type=float,
+        default=None,
+        help=(
+            "Optional output GroupSum temperature override. This supports "
+            "paper-derived comparator calibration without changing the "
+            "architecture class or CoverageDLGN defaults."
+        ),
+    )
 
     # Connection parameters
     parser.add_argument(
@@ -202,8 +213,45 @@ def get_parser():
         help="Temperature for softmax in learnable connections"
     )
     parser.add_argument(
-        "--connections-gumbel", action="store_false", 
-        help="Flag for using Gumbel sampling for softmax. "
+        "--connections-temperature-final", type=float, default=None,
+        help=(
+            "Optional final learnable-routing temperature. When set, the "
+            "temperature is log-linearly annealed between the configured "
+            "start and end fractions."
+        ),
+    )
+    parser.add_argument(
+        "--connections-temperature-anneal-start", type=float, default=0.0,
+        help="Fraction of training at which routing-temperature annealing starts",
+    )
+    parser.add_argument(
+        "--connections-temperature-anneal-end", type=float, default=1.0,
+        help="Fraction of training at which routing-temperature annealing ends",
+    )
+    parser.add_argument(
+        "--connections-num-candidates", type=int, default=-1,
+        help="Candidate predecessors per gate input for learnable routing",
+    )
+    parser.add_argument(
+        "--connections-forward-mode",
+        choices=["hard_st", "soft_mix"],
+        default="hard_st",
+        help=(
+            "Routing relaxation: legacy hard-forward straight-through or the "
+            "soft candidate mixture used by Mommen and LILogicNet"
+        ),
+    )
+    parser.add_argument(
+        "--connections-weights-init",
+        choices=["uniform", "normal", "zeros"],
+        default="uniform",
+        help="Initialization for learnable-routing logits",
+    )
+    parser.add_argument(
+        "--connections-gumbel",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable or disable Gumbel noise in learnable routing",
     )
 
     # Parametrization parameters
@@ -218,6 +266,18 @@ def get_parser():
     parser.add_argument(
         "--parametrization-temperature", type=float, default=1.0,
         help="Temperature for sigmoid/softmax in parametrization"
+    )
+    parser.add_argument(
+        "--parametrization-temperature-final", type=float, default=None,
+        help="Optional final gate-parameterization temperature",
+    )
+    parser.add_argument(
+        "--parametrization-temperature-anneal-start", type=float, default=0.0,
+        help="Fraction of training at which gate-temperature annealing starts",
+    )
+    parser.add_argument(
+        "--parametrization-temperature-anneal-end", type=float, default=1.0,
+        help="Fraction of training at which gate-temperature annealing ends",
     )
     parser.add_argument(
         "--forward-sampling", type=str, default="soft", choices=["soft", "hard", "gumbel_soft", "gumbel_hard"],
@@ -456,6 +516,110 @@ def report_connection_strategy(args, component: str) -> str:
     )
 
 
+def log_linear_schedule(
+    step: int,
+    total_steps: int,
+    initial: float,
+    final: float | None,
+    start_fraction: float,
+    end_fraction: float,
+) -> float:
+    """Return a positive log-linear temperature schedule."""
+    if initial <= 0:
+        raise ValueError("initial temperature must be positive")
+    if final is None:
+        return float(initial)
+    if final <= 0:
+        raise ValueError("final temperature must be positive")
+    if not 0.0 <= start_fraction < end_fraction <= 1.0:
+        raise ValueError(
+            "temperature anneal fractions must satisfy "
+            "0 <= start < end <= 1"
+        )
+    progress = step / max(1, total_steps)
+    if progress <= start_fraction:
+        return float(initial)
+    if progress >= end_fraction:
+        return float(final)
+    relative = (
+        (progress - start_fraction) / (end_fraction - start_fraction)
+    )
+    return float(
+        np.exp(
+            np.log(initial)
+            + relative * (np.log(final) - np.log(initial))
+        )
+    )
+
+
+def update_model_temperatures(model, args, step: int) -> tuple[float, float]:
+    """Update routing and LUT temperatures for the current optimization step."""
+    connection_temperature = log_linear_schedule(
+        step,
+        args.num_iterations,
+        args.connections_temperature,
+        args.connections_temperature_final,
+        args.connections_temperature_anneal_start,
+        args.connections_temperature_anneal_end,
+    )
+    parametrization_temperature = log_linear_schedule(
+        step,
+        args.num_iterations,
+        args.parametrization_temperature,
+        args.parametrization_temperature_final,
+        args.parametrization_temperature_anneal_start,
+        args.parametrization_temperature_anneal_end,
+    )
+    for module in model.modules():
+        connections = getattr(module, "connections", None)
+        if hasattr(connections, "update_temperature"):
+            connections.update_temperature(connection_temperature)
+        parametrization = getattr(module, "parametrization", None)
+        if hasattr(parametrization, "update_temperature"):
+            parametrization.update_temperature(parametrization_temperature)
+    return connection_temperature, parametrization_temperature
+
+
+def model_cost_summary(model) -> dict[str, int]:
+    """Return training and hardened dense-circuit cost accounting."""
+    dense_layers = [
+        module
+        for module in model.modules()
+        if isinstance(module, torchlogix.layers.LogicDense)
+    ]
+    deployed_routing_bits = 0
+    training_routing_parameters = 0
+    candidate_indices_tensor_bytes = 0
+    for layer in dense_layers:
+        connections = layer.connections
+        index_bits = max(1, math.ceil(math.log2(layer.in_dim)))
+        deployed_routing_bits += (
+            layer.lut_rank * layer.out_dim * index_bits
+        )
+        weights = getattr(connections, "weights", None)
+        if isinstance(weights, torch.Tensor):
+            training_routing_parameters += weights.numel()
+        indices = getattr(connections, "indices", None)
+        if isinstance(indices, torch.Tensor):
+            candidate_indices_tensor_bytes += (
+                indices.numel() * indices.element_size()
+            )
+    return {
+        "dense_gate_count": sum(layer.out_dim for layer in dense_layers),
+        "trainable_parameters": sum(
+            parameter.numel()
+            for parameter in model.parameters()
+            if parameter.requires_grad
+        ),
+        "training_routing_parameters": training_routing_parameters,
+        "deployed_routing_bits": deployed_routing_bits,
+        "deployed_routing_bytes_packed": math.ceil(
+            deployed_routing_bits / 8
+        ),
+        "candidate_indices_tensor_bytes": candidate_indices_tensor_bytes,
+    }
+
+
 def run_training(args, callbacks=None):
     """Run the training loop."""
     if callbacks is None:
@@ -596,6 +760,9 @@ def run_training(args, callbacks=None):
     )
     running_train_loss, n = 0.0, 0
     for i, (x, y) in pbar:
+        connection_temperature, parametrization_temperature = (
+            update_model_temperatures(model, args, i)
+        )
         x = x.to(args.device)
         y = y.to(args.device)
 
@@ -629,7 +796,15 @@ def run_training(args, callbacks=None):
             metrics = \
                 {f"val_{k}_discrete": v for k, v in discrete_metrics.items()} | \
                 {f"val_{k}_relaxed": v for k, v in relaxed_metrics.items()} | \
-                {"train_loss": running_train_loss.cpu().detach().item() / n * len(validation_loader)}
+                {
+                    "train_loss": (
+                        running_train_loss.cpu().detach().item()
+                        / n
+                        * len(validation_loader)
+                    ),
+                    "connections_temperature": connection_temperature,
+                    "parametrization_temperature": parametrization_temperature,
+                }
         
             print(f"Iteration {i + 1:6d} | " +
                   " | ".join([f"{k}: {v:.4f}" for k, v in metrics.items()]))
@@ -664,6 +839,7 @@ def run_training(args, callbacks=None):
                 torch.cuda.max_memory_allocated() if args.device == "cuda" else 0
             ),
             "topology": model_topology_metadata(model),
+            "cost": model_cost_summary(model),
         }
         with open(f"{args.output}/run_summary.json", "w") as handle:
             json.dump(summary, handle, indent=2, default=str)
@@ -704,6 +880,22 @@ def main(argv=None):
             f"Number of iterations ({args.num_iterations}) must be divisible by "
             f"evaluation frequency ({args.eval_freq})"
         )
+    log_linear_schedule(
+        0,
+        args.num_iterations,
+        args.connections_temperature,
+        args.connections_temperature_final,
+        args.connections_temperature_anneal_start,
+        args.connections_temperature_anneal_end,
+    )
+    log_linear_schedule(
+        0,
+        args.num_iterations,
+        args.parametrization_temperature,
+        args.parametrization_temperature_final,
+        args.parametrization_temperature_anneal_start,
+        args.parametrization_temperature_anneal_end,
+    )
 
     call_backs = [
         lambda ctx: save_best_model(ctx, args.output),

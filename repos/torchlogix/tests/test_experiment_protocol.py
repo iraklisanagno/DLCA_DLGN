@@ -7,6 +7,8 @@ import torch
 from torch.utils.data import DataLoader, TensorDataset
 
 from experiments.train import (
+    log_linear_schedule,
+    model_cost_summary,
     report_connection_strategy,
     source_manifest_files,
     source_tree_sha256,
@@ -34,9 +36,14 @@ from torchlogix.models import (
     DlgnCifar10Budget512kDepth12,
     DlgnCifar10Small,
     DlgnFashionMnistPaperSmall,
+    DlgnFashionMnistPaperSmallLearnable,
+    DlgnFashionMnistBitLogic48k,
+    DlgnMnistBitLogic48k,
     DlgnFashionMnistSmall,
     DlgnMnistPaperSmall,
+    DlgnMnistPaperSmallLearnable,
 )
+from torchlogix.connections import LearnableDenseConnections
 
 
 def _paper_model_kwargs(thresholds):
@@ -100,6 +107,108 @@ def test_paper_fashion_mnist_small_has_reported_gate_budget_and_encoding():
     assert all(layer.out_dim == 8_000 for layer in layers)
     assert all(layer.in_dim == 8_000 for layer in layers[1:])
     assert model[-1].tau == 10.0
+
+
+@pytest.mark.parametrize(
+    ("model_cls", "thresholds"),
+    [
+        (DlgnMnistPaperSmallLearnable, torch.tensor([0.5])),
+        (
+            DlgnFashionMnistPaperSmallLearnable,
+            torch.tensor([0.25, 0.5, 0.75]),
+        ),
+    ],
+)
+def test_table1_learnable_comparators_keep_48k_target(
+    model_cls, thresholds
+):
+    kwargs = _paper_model_kwargs(thresholds)
+    kwargs["connections_kwargs"].update({
+        "num_candidates": 16,
+        "forward_mode": "soft_mix",
+        "weights_init": "normal",
+    })
+    model = model_cls(**kwargs)
+    layers = [module for module in model if isinstance(module, LogicDense)]
+    assert len(layers) == 6
+    assert sum(layer.out_dim for layer in layers) == 48_000
+    assert all(
+        isinstance(layer.connections, LearnableDenseConnections)
+        for layer in layers
+    )
+    assert all(layer.connections.num_candidates == 16 for layer in layers)
+    assert all(
+        layer.connections.forward_mode == "soft_mix" for layer in layers
+    )
+
+
+@pytest.mark.parametrize(
+    ("model_cls", "thresholds"),
+    [
+        (DlgnMnistBitLogic48k, torch.tensor([0.2, 0.4, 0.6, 0.8])),
+        (
+            DlgnFashionMnistBitLogic48k,
+            torch.tensor([0.2, 0.4, 0.6, 0.8]),
+        ),
+    ],
+)
+def test_table1_bitlogic_coordinate_has_48k_rank4_gates(
+    model_cls, thresholds
+):
+    kwargs = _paper_model_kwargs(thresholds)
+    kwargs["lut_rank"] = 4
+    kwargs["parametrization"] = "light"
+    kwargs["connections_kwargs"].update({
+        "num_candidates": 16,
+        "forward_mode": "soft_mix",
+        "weights_init": "normal",
+    })
+    model = model_cls(**kwargs)
+    layers = [module for module in model if isinstance(module, LogicDense)]
+    assert len(layers) == 2
+    assert sum(layer.out_dim for layer in layers) == 48_000
+    assert all(layer.lut_rank == 4 for layer in layers)
+    assert all(layer.out_dim == 24_000 for layer in layers)
+    assert all(
+        isinstance(layer.connections, LearnableDenseConnections)
+        for layer in layers
+    )
+
+
+def test_log_linear_temperature_schedule_has_locked_endpoints():
+    assert log_linear_schedule(0, 100, 1.0, 1e-4, 0.5, 0.75) == 1.0
+    assert log_linear_schedule(50, 100, 1.0, 1e-4, 0.5, 0.75) == 1.0
+    assert log_linear_schedule(75, 100, 1.0, 1e-4, 0.5, 0.75) == 1e-4
+    assert log_linear_schedule(100, 100, 1.0, None, 0.5, 0.75) == 1.0
+    assert log_linear_schedule(62, 100, 1.0, 1e-4, 0.5, 0.75) == (
+        pytest.approx(10 ** -1.92)
+    )
+    with pytest.raises(ValueError, match="0 <= start < end <= 1"):
+        log_linear_schedule(0, 100, 1.0, 1e-4, 0.8, 0.2)
+
+
+def test_table1_cost_summary_separates_training_routing_from_deployment():
+    kwargs = _paper_model_kwargs(torch.tensor([0.5]))
+    kwargs["connections_kwargs"].update({
+        "num_candidates": 16,
+        "forward_mode": "soft_mix",
+        "weights_init": "normal",
+    })
+    model = DlgnMnistPaperSmallLearnable(**kwargs)
+    cost = model_cost_summary(model)
+    assert cost["dense_gate_count"] == 48_000
+    assert cost["training_routing_parameters"] == 6 * 16 * 2 * 8_000
+    assert cost["trainable_parameters"] == (
+        6 * 16 * 8_000 + cost["training_routing_parameters"]
+    )
+    expected_routing_bits = (
+        2 * 8_000 * 10
+        + 5 * 2 * 8_000 * 13
+    )
+    assert cost["deployed_routing_bits"] == expected_routing_bits
+    assert cost["deployed_routing_bytes_packed"] == (
+        expected_routing_bits + 7
+    ) // 8
 
 
 def test_legacy_fashion_mnist_small_accepts_fixed_binarization():

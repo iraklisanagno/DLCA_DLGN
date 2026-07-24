@@ -1,6 +1,7 @@
 from typing import Union
 from abc import ABC, abstractmethod
 import itertools
+import math
 import time
 
 import torch
@@ -303,6 +304,8 @@ class LearnableDenseConnections(Connections):
             temperature=0.001,
             num_candidates=-1, 
             gumbel=False,
+            forward_mode="hard_st",
+            weights_init="uniform",
             device=None,
             init_method="random",
             **kwargs
@@ -320,6 +323,18 @@ class LearnableDenseConnections(Connections):
         self.out_dim = out_dim
         self.device = device
         self.gumbel = gumbel
+        if forward_mode not in {"hard_st", "soft_mix"}:
+            raise ValueError(
+                "forward_mode must be one of {'hard_st', 'soft_mix'}, "
+                f"got {forward_mode!r}"
+            )
+        if weights_init not in {"uniform", "normal", "zeros"}:
+            raise ValueError(
+                "weights_init must be one of {'uniform', 'normal', 'zeros'}, "
+                f"got {weights_init!r}"
+            )
+        self.forward_mode = forward_mode
+        self.weights_init = weights_init
         if num_candidates == -1:
             num_candidates = in_dim
             self.num_candidates = num_candidates
@@ -329,13 +344,68 @@ class LearnableDenseConnections(Connections):
             assert num_candidates > 0, "num_candidates must be bigger than 0"
             self.num_candidates = num_candidates
             self.register_buffer('indices', self._init_connections())
-        self.weights = torch.nn.Parameter(torch.rand(
-            num_candidates, lut_rank, out_dim, dtype=torch.float32), requires_grad=True)
+        if weights_init == "uniform":
+            weights = torch.rand(
+                num_candidates, lut_rank, out_dim, dtype=torch.float32
+            )
+        elif weights_init == "normal":
+            weights = torch.randn(
+                num_candidates, lut_rank, out_dim, dtype=torch.float32
+            )
+        else:
+            weights = torch.zeros(
+                num_candidates, lut_rank, out_dim, dtype=torch.float32
+            )
+        self.weights = torch.nn.Parameter(weights, requires_grad=True)
         
     def update_temperature(self, temperature: float):
         self.temperature = temperature
+
+    def topology_metadata(self):
+        index_bits = max(1, math.ceil(math.log2(self.in_dim)))
+        return {
+            "strategy": "learnable_topk",
+            "init_method": self.init_method,
+            "num_candidates": self.num_candidates,
+            "forward_mode": self.forward_mode,
+            "gumbel": self.gumbel,
+            "temperature": self.temperature,
+            "training_routing_parameters": self.weights.numel(),
+            "candidate_indices_tensor_bytes": (
+                self.indices.numel() * self.indices.element_size()
+            ),
+            "deployed_index_bits": (
+                self.lut_rank * self.out_dim * index_bits
+            ),
+            "deployed_index_bytes_packed": math.ceil(
+                self.lut_rank * self.out_dim * index_bits / 8
+            ),
+        }
         
     def forward(self, x):
+        if self.forward_mode == "soft_mix":
+            candidate_values = x[:, self.indices]
+            if self.training:
+                logits = self.weights
+                if self.gumbel:
+                    uniform = torch.rand_like(logits)
+                    logits = logits - torch.log(
+                        -torch.log(uniform + 1e-20) + 1e-20
+                    )
+                probabilities = torch.softmax(
+                    logits / self.temperature, dim=0
+                )
+                return torch.einsum(
+                    "bclo,clo->blo", candidate_values, probabilities
+                )
+            selected = self.weights.argmax(dim=0)
+            rank = torch.arange(
+                self.lut_rank, device=x.device
+            ).unsqueeze(1)
+            output = torch.arange(
+                self.out_dim, device=x.device
+            ).unsqueeze(0)
+            return candidate_values[:, selected, rank, output]
         return LearnableConnectionFunction.apply(x, self.weights, torch.tensor(self.temperature), 
                                                  self.gumbel, self.indices)
     

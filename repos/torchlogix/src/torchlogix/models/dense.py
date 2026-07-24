@@ -24,6 +24,7 @@ class Dlgn(torch.nn.Sequential):
         neurons_per_layer: Union[int, list],
         class_count: int,
         tau: float,
+        group_sum_tau: float | None = None,
         input_shape: tuple[int, int, int] | None = None,
         input_layout: str = "pixel_interleaved",
         **llkw
@@ -102,6 +103,8 @@ class Dlgn(torch.nn.Sequential):
             layers.append(layer)
             if track_ancestry:
                 ancestry = layer.connections.consume_output_ancestry()
+        if group_sum_tau is not None:
+            tau = group_sum_tau
         super(Dlgn, self).__init__(*layers, GroupSum(class_count, tau))
         self.input_semantics = semantics
         self.class_count = class_count
@@ -147,6 +150,70 @@ class DlgnFashionMnistPaperSmall(Dlgn):
             in_dim=28 * 28 * self.n_input_bits,
             n_layers=6,
             neurons_per_layer=8000,
+            class_count=10,
+            tau=tau,
+            input_shape=(1, 28, 28),
+            input_layout="pixel_interleaved",
+            **llkw,
+        )
+
+
+class DlgnFashionMnistPaperSmallLearnable(DlgnFashionMnistPaperSmall):
+    """48K-gate Fashion-MNIST target with learnable routing in every layer."""
+
+    n_learnable_layers = 6
+
+
+class DlgnFashionMnistLearnable48kDepth2(Dlgn):
+    """Two learnable-routing layers with 48K total Fashion-MNIST gates."""
+
+    n_input_bits = 3
+    n_learnable_layers = 2
+
+    def __init__(self, **llkw):
+        super().__init__(
+            in_dim=28 * 28 * self.n_input_bits,
+            n_layers=2,
+            neurons_per_layer=24_000,
+            class_count=10,
+            tau=10.0,
+            input_shape=(1, 28, 28),
+            input_layout="pixel_interleaved",
+            **llkw,
+        )
+
+
+class DlgnFashionMnistLearnable48kDepth3(Dlgn):
+    """Three learnable-routing layers with 48K total Fashion-MNIST gates."""
+
+    n_input_bits = 3
+    n_learnable_layers = 3
+
+    def __init__(self, **llkw):
+        super().__init__(
+            in_dim=28 * 28 * self.n_input_bits,
+            n_layers=3,
+            neurons_per_layer=16_000,
+            class_count=10,
+            tau=10.0,
+            input_shape=(1, 28, 28),
+            input_layout="pixel_interleaved",
+            **llkw,
+        )
+
+
+class DlgnFashionMnistBitLogic48k(Dlgn):
+    """Two-by-24K, four-input BitLogic coordinate at 48K total gates."""
+
+    n_input_bits = 4
+    n_learnable_layers = 2
+
+    def __init__(self, **llkw):
+        tau = llkw.get("tau", 10.0)
+        super().__init__(
+            in_dim=28 * 28 * self.n_input_bits,
+            n_layers=2,
+            neurons_per_layer=24_000,
             class_count=10,
             tau=tau,
             input_shape=(1, 28, 28),
@@ -223,6 +290,70 @@ class DlgnMnistPaperSmall(Dlgn):
             in_dim=28 * 28,
             n_layers=6,
             neurons_per_layer=8000,
+            class_count=10,
+            tau=tau,
+            input_shape=(1, 28, 28),
+            input_layout="pixel_interleaved",
+            **llkw,
+        )
+
+
+class DlgnMnistPaperSmallLearnable(DlgnMnistPaperSmall):
+    """48K-gate MNIST target with learnable routing in every layer."""
+
+    n_learnable_layers = 6
+
+
+class DlgnMnistLearnable48kDepth2(Dlgn):
+    """Two learnable-routing layers with 48K total MNIST gates."""
+
+    n_input_bits = 1
+    n_learnable_layers = 2
+
+    def __init__(self, **llkw):
+        super().__init__(
+            in_dim=28 * 28,
+            n_layers=2,
+            neurons_per_layer=24_000,
+            class_count=10,
+            tau=10.0,
+            input_shape=(1, 28, 28),
+            input_layout="pixel_interleaved",
+            **llkw,
+        )
+
+
+class DlgnMnistLearnable48kDepth3(Dlgn):
+    """Three learnable-routing layers with 48K total MNIST gates."""
+
+    n_input_bits = 1
+    n_learnable_layers = 3
+
+    def __init__(self, **llkw):
+        super().__init__(
+            in_dim=28 * 28,
+            n_layers=3,
+            neurons_per_layer=16_000,
+            class_count=10,
+            tau=10.0,
+            input_shape=(1, 28, 28),
+            input_layout="pixel_interleaved",
+            **llkw,
+        )
+
+
+class DlgnMnistBitLogic48k(Dlgn):
+    """Two-by-24K, four-input BitLogic coordinate at 48K total gates."""
+
+    n_input_bits = 4
+    n_learnable_layers = 2
+
+    def __init__(self, **llkw):
+        tau = llkw.get("tau", 10.0)
+        super().__init__(
+            in_dim=28 * 28 * self.n_input_bits,
+            n_layers=2,
+            neurons_per_layer=24_000,
             class_count=10,
             tau=tau,
             input_shape=(1, 28, 28),

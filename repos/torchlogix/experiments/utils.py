@@ -151,6 +151,13 @@ def get_model(thresholds, args):
             ),
             "temperature": args.connections_temperature,
             "gumbel": args.connections_gumbel,
+            "num_candidates": getattr(args, "connections_num_candidates", -1),
+            "forward_mode": getattr(
+                args, "connections_forward_mode", "hard_st"
+            ),
+            "weights_init": getattr(
+                args, "connections_weights_init", "uniform"
+            ),
             "topology_seed": getattr(args, "topology_seed", None),
             "candidate_pool_size": getattr(args, "coverage_candidate_pool_size", 64),
             "long_range_fraction": getattr(args, "coverage_long_range_fraction", 0.25),
@@ -187,6 +194,18 @@ def get_model(thresholds, args):
     }
     model_cls = torchlogix.models.__dict__[args.architecture]
     model = model_cls(**llkw)
+    group_sum_temperature = getattr(args, "group_sum_temperature", None)
+    if group_sum_temperature is not None:
+        group_sums = [
+            module
+            for module in model.modules()
+            if isinstance(module, torchlogix.layers.GroupSum)
+        ]
+        if len(group_sums) != 1:
+            raise ValueError(
+                "group_sum_temperature requires exactly one GroupSum module"
+            )
+        group_sums[0].tau = float(group_sum_temperature)
     return model
 
 class CreateFolder(argparse.Action):
