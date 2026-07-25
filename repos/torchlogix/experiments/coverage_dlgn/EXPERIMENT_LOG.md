@@ -81,3 +81,13 @@ This log records operational failures and protocol decisions made after commit
   `/tmp/torchlogix-datasets/data-fashion-mnist` using the repository venv.
   A download-disabled read verified 60,000 training and 10,000 test examples.
   The held-out test set remains unused for screening and selection.
+- The next queue launch loaded Fashion-MNIST and calculated the expected
+  thresholds `[0.25, 0.5, 0.75]`, but every sandboxed child failed at CUDA
+  initialization with `No CUDA GPUs are available`. The queue was again
+  interrupted after 28 pre-training failures, with no checkpoints or metrics.
+  Tracebacks are preserved locally under
+  `logs/failed/table1_screen_fashion_no_cuda_attempt2/`; verified empty result
+  placeholders were removed.
+- An unsandboxed check using `venv/bin/python` then confirmed PyTorch
+  2.9.0+cu130, CUDA 13.0, both RTX PRO 6000 devices, and a finite CUDA tensor.
+  The queue therefore requires the same GPU-enabled execution context.
