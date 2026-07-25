@@ -1,0 +1,154 @@
+{
+  "phase": "table1_screen_fashion",
+  "implementation_parent": "44e6126",
+  "source_revision_policy": "exact launch revision is recorded by each environment.json",
+  "selection_metric": "best_validation_hard_accuracy",
+  "test_set_used": false,
+  "entries": [
+    {
+      "name": "screen_table1_fashion_random_48k_seed0",
+      "config": "experiments/coverage_dlgn/configs/table1_screen_fashion/screen_table1_fashion_random_48k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table1_fashion_random_48k_seed0"
+    },
+    {
+      "name": "screen_table1_fashion_v3_incumbent_48k_seed0",
+      "config": "experiments/coverage_dlgn/configs/table1_screen_fashion/screen_table1_fashion_v3_incumbent_48k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table1_fashion_v3_incumbent_48k_seed0"
+    },
+    {
+      "name": "screen_table1_fashion_v3_pool16_48k_seed0",
+      "config": "experiments/coverage_dlgn/configs/table1_screen_fashion/screen_table1_fashion_v3_pool16_48k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table1_fashion_v3_pool16_48k_seed0"
+    },
+    {
+      "name": "screen_table1_fashion_v3_pool32_48k_seed0",
+      "config": "experiments/coverage_dlgn/configs/table1_screen_fashion/screen_table1_fashion_v3_pool32_48k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table1_fashion_v3_pool32_48k_seed0"
+    },
+    {
+      "name": "screen_table1_fashion_v3_swap0125_48k_seed0",
+      "config": "experiments/coverage_dlgn/configs/table1_screen_fashion/screen_table1_fashion_v3_swap0125_48k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table1_fashion_v3_swap0125_48k_seed0"
+    },
+    {
+      "name": "screen_table1_fashion_v3_swap0500_48k_seed0",
+      "config": "experiments/coverage_dlgn/configs/table1_screen_fashion/screen_table1_fashion_v3_swap0500_48k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table1_fashion_v3_swap0500_48k_seed0"
+    },
+    {
+      "name": "screen_table1_fashion_v3_novelty050_48k_seed0",
+      "config": "experiments/coverage_dlgn/configs/table1_screen_fashion/screen_table1_fashion_v3_novelty050_48k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table1_fashion_v3_novelty050_48k_seed0"
+    },
+    {
+      "name": "screen_table1_fashion_v3_novelty200_48k_seed0",
+      "config": "experiments/coverage_dlgn/configs/table1_screen_fashion/screen_table1_fashion_v3_novelty200_48k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table1_fashion_v3_novelty200_48k_seed0"
+    },
+    {
+      "name": "screen_table1_fashion_v3_light_48k_seed0",
+      "config": "experiments/coverage_dlgn/configs/table1_screen_fashion/screen_table1_fashion_v3_light_48k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table1_fashion_v3_light_48k_seed0"
+    },
+    {
+      "name": "screen_table1_fashion_v3_warp_48k_seed0",
+      "config": "experiments/coverage_dlgn/configs/table1_screen_fashion/screen_table1_fashion_v3_warp_48k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table1_fashion_v3_warp_48k_seed0"
+    },
+    {
+      "name": "screen_table1_fashion_mommen_nc8_depth2_48k_seed0",
+      "config": "experiments/coverage_dlgn/configs/table1_screen_fashion/screen_table1_fashion_mommen_nc8_depth2_48k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table1_fashion_mommen_nc8_depth2_48k_seed0"
+    },
+    {
+      "name": "screen_table1_fashion_mommen_nc8_depth3_48k_seed0",
+      "config": "experiments/coverage_dlgn/configs/table1_screen_fashion/screen_table1_fashion_mommen_nc8_depth3_48k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table1_fashion_mommen_nc8_depth3_48k_seed0"
+    },
+    {
+      "name": "screen_table1_fashion_mommen_nc8_depth6_48k_seed0",
+      "config": "experiments/coverage_dlgn/configs/table1_screen_fashion/screen_table1_fashion_mommen_nc8_depth6_48k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table1_fashion_mommen_nc8_depth6_48k_seed0"
+    },
+    {
+      "name": "screen_table1_fashion_mommen_nc16_depth2_48k_seed0",
+      "config": "experiments/coverage_dlgn/configs/table1_screen_fashion/screen_table1_fashion_mommen_nc16_depth2_48k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table1_fashion_mommen_nc16_depth2_48k_seed0"
+    },
+    {
+      "name": "screen_table1_fashion_mommen_nc16_depth3_48k_seed0",
+      "config": "experiments/coverage_dlgn/configs/table1_screen_fashion/screen_table1_fashion_mommen_nc16_depth3_48k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table1_fashion_mommen_nc16_depth3_48k_seed0"
+    },
+    {
+      "name": "screen_table1_fashion_mommen_nc16_depth6_48k_seed0",
+      "config": "experiments/coverage_dlgn/configs/table1_screen_fashion/screen_table1_fashion_mommen_nc16_depth6_48k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table1_fashion_mommen_nc16_depth6_48k_seed0"
+    },
+    {
+      "name": "screen_table1_fashion_lilogic_top32_depth2_tau15_48k_seed0",
+      "config": "experiments/coverage_dlgn/configs/table1_screen_fashion/screen_table1_fashion_lilogic_top32_depth2_tau15_48k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table1_fashion_lilogic_top32_depth2_tau15_48k_seed0"
+    },
+    {
+      "name": "screen_table1_fashion_lilogic_top32_depth2_tau20_48k_seed0",
+      "config": "experiments/coverage_dlgn/configs/table1_screen_fashion/screen_table1_fashion_lilogic_top32_depth2_tau20_48k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table1_fashion_lilogic_top32_depth2_tau20_48k_seed0"
+    },
+    {
+      "name": "screen_table1_fashion_lilogic_top32_depth2_tau25_48k_seed0",
+      "config": "experiments/coverage_dlgn/configs/table1_screen_fashion/screen_table1_fashion_lilogic_top32_depth2_tau25_48k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table1_fashion_lilogic_top32_depth2_tau25_48k_seed0"
+    },
+    {
+      "name": "screen_table1_fashion_lilogic_top32_depth2_tau30_48k_seed0",
+      "config": "experiments/coverage_dlgn/configs/table1_screen_fashion/screen_table1_fashion_lilogic_top32_depth2_tau30_48k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table1_fashion_lilogic_top32_depth2_tau30_48k_seed0"
+    },
+    {
+      "name": "screen_table1_fashion_lilogic_top32_depth3_tau15_48k_seed0",
+      "config": "experiments/coverage_dlgn/configs/table1_screen_fashion/screen_table1_fashion_lilogic_top32_depth3_tau15_48k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table1_fashion_lilogic_top32_depth3_tau15_48k_seed0"
+    },
+    {
+      "name": "screen_table1_fashion_lilogic_top32_depth3_tau20_48k_seed0",
+      "config": "experiments/coverage_dlgn/configs/table1_screen_fashion/screen_table1_fashion_lilogic_top32_depth3_tau20_48k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table1_fashion_lilogic_top32_depth3_tau20_48k_seed0"
+    },
+    {
+      "name": "screen_table1_fashion_lilogic_top32_depth3_tau25_48k_seed0",
+      "config": "experiments/coverage_dlgn/configs/table1_screen_fashion/screen_table1_fashion_lilogic_top32_depth3_tau25_48k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table1_fashion_lilogic_top32_depth3_tau25_48k_seed0"
+    },
+    {
+      "name": "screen_table1_fashion_lilogic_top32_depth3_tau30_48k_seed0",
+      "config": "experiments/coverage_dlgn/configs/table1_screen_fashion/screen_table1_fashion_lilogic_top32_depth3_tau30_48k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table1_fashion_lilogic_top32_depth3_tau30_48k_seed0"
+    },
+    {
+      "name": "screen_table1_fashion_lilogic_top32_depth6_tau15_48k_seed0",
+      "config": "experiments/coverage_dlgn/configs/table1_screen_fashion/screen_table1_fashion_lilogic_top32_depth6_tau15_48k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table1_fashion_lilogic_top32_depth6_tau15_48k_seed0"
+    },
+    {
+      "name": "screen_table1_fashion_lilogic_top32_depth6_tau20_48k_seed0",
+      "config": "experiments/coverage_dlgn/configs/table1_screen_fashion/screen_table1_fashion_lilogic_top32_depth6_tau20_48k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table1_fashion_lilogic_top32_depth6_tau20_48k_seed0"
+    },
+    {
+      "name": "screen_table1_fashion_lilogic_top32_depth6_tau25_48k_seed0",
+      "config": "experiments/coverage_dlgn/configs/table1_screen_fashion/screen_table1_fashion_lilogic_top32_depth6_tau25_48k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table1_fashion_lilogic_top32_depth6_tau25_48k_seed0"
+    },
+    {
+      "name": "screen_table1_fashion_lilogic_top32_depth6_tau30_48k_seed0",
+      "config": "experiments/coverage_dlgn/configs/table1_screen_fashion/screen_table1_fashion_lilogic_top32_depth6_tau30_48k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table1_fashion_lilogic_top32_depth6_tau30_48k_seed0"
+    },
+    {
+      "name": "screen_table1_fashion_bitlogic_48k_seed0",
+      "config": "experiments/coverage_dlgn/configs/table1_screen_fashion/screen_table1_fashion_bitlogic_48k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table1_fashion_bitlogic_48k_seed0"
+    }
+  ]
+}
