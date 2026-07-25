@@ -209,6 +209,12 @@ for every cell, but the implemented CoverageDLGN mechanism must not change.
    source paper's frozen recipe. Do not give CoverageDLGN more selection seeds
    or optimizer updates than a matched trainable comparator without reporting
    the difference.
+10. After the Table 1 Fashion-MNIST cell, use a paper-prescribed fixed
+    LILogicNet recipe when directly applicable. Otherwise use the short screen
+    to choose one LILogicNet setting and run three paired 20K seeds only for
+    that setting. Report this smaller comparator-search budget explicitly;
+    do not multiply or reduce the trainable-parameter count based on the
+    number of independent runs.
 
 ### Plan for Table 1: Dense MNIST and Fashion-MNIST
 

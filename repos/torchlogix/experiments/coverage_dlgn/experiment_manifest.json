@@ -156,6 +156,20 @@
       }
     }
   },
+  "future_lilogic_selection_policy": {
+    "effective_after": "table_1_fashion_mnist",
+    "paper_recipe_policy": "use a fixed paper-prescribed recipe when directly applicable",
+    "fallback_screen_policy": "run the short screen and advance only the single best setting",
+    "selection_seeds": [
+      0,
+      1,
+      2
+    ],
+    "selection_iterations": 20000,
+    "long_runs_per_cell": 3,
+    "report_search_budget_difference": true,
+    "parameter_accounting": "per-model trainable parameters are independent of the number of repeated runs"
+  },
   "promotion_order": [
     "table_1",
     "table_2",

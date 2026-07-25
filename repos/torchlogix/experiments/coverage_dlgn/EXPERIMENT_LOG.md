@@ -106,3 +106,25 @@ This log records operational failures and protocol decisions made after commit
   runs: seeds 0/1/2 for fixed random, each of the three candidates per
   tunable method, and BitLogic. Topology seed equals training seed, Gumbel is
   disabled, and the held-out test set remains locked.
+- The committed Fashion-MNIST 20K selection queue completed all 33 runs with
+  no failures, skips, or nonzero return codes in 15,160 seconds using two
+  GPUs. All artifacts use source revision `47bb631` and training
+  implementation hash
+  `f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444`.
+- Mean best hardened validation accuracy over seeds 0/1/2 selected fixed
+  random at 86.928% +/- 0.271%; CoverageDLGN v3 with swap fraction 0.5 at
+  87.911% +/- 0.460%; Mommen `Nc=8`, depth 3, at 88.106% +/- 0.149%;
+  LILogicNet Top-32, depth 2, GroupSum temperature 30, at 89.594% +/-
+  0.035%; and BitLogic at 89.956% +/- 0.302%. Values after `+/-` are sample
+  standard deviations. V3 improves its matched random baseline by 0.983
+  percentage points without trainable routing parameters.
+- The Fashion winner-selection source of truth is
+  `summary/table1_fashion_selection.json`. These are validation-selection
+  values, not final five-seed or held-out-test results.
+- The nine long LILogicNet selection runs were retained for the already-frozen
+  Fashion protocol. Starting with the next dataset/architecture cell, use a
+  paper-prescribed fixed LILogicNet recipe when directly applicable;
+  otherwise run the short screen and advance only its single best setting to
+  three paired 20K seeds. This reduces long LILogicNet selection from nine
+  runs to three per cell. The reduced search effort must remain visible in
+  the protocol and does not change per-model trainable-parameter accounting.

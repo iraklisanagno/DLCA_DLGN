@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Aggregate the locked three-seed, 20K Table 1 MNIST selection runs."""
+"""Aggregate a locked three-seed, 20K Table 1 selection phase."""
 
 from __future__ import annotations
 
@@ -14,8 +14,13 @@ from pathlib import Path
 
 RESULT_ROOT = Path("experiments/coverage_dlgn/results")
 SUMMARY_ROOT = Path("experiments/coverage_dlgn/summary")
-QUEUE_SUMMARY = Path(
-    "experiments/coverage_dlgn/logs/table1_select_mnist/queue_summary.json"
+QUEUE_PHASE = "table1_select_mnist"
+RESULT_PREFIX = "select_table1_mnist"
+SUMMARY_STEM = "table1_mnist_selection"
+QUEUE_SUMMARY = (
+    Path("experiments/coverage_dlgn/logs")
+    / QUEUE_PHASE
+    / "queue_summary.json"
 )
 EXPECTED_RUNS = 33
 EXPECTED_SEEDS = [0, 1, 2]
@@ -65,7 +70,7 @@ def main() -> None:
     training_hashes = Counter()
     grouped = defaultdict(list)
     for summary_path in sorted(
-        RESULT_ROOT.glob("select_table1_mnist_*/run_summary.json")
+        RESULT_ROOT.glob(f"{RESULT_PREFIX}_*/run_summary.json")
     ):
         run_dir = summary_path.parent
         candidate, seed = candidate_and_seed(run_dir.name)
@@ -215,7 +220,7 @@ def main() -> None:
         ),
     )
     SUMMARY_ROOT.mkdir(parents=True, exist_ok=True)
-    csv_path = SUMMARY_ROOT / "table1_mnist_selection.csv"
+    csv_path = SUMMARY_ROOT / f"{SUMMARY_STEM}.csv"
     with csv_path.open("w", newline="") as handle:
         writer = csv.DictWriter(
             handle, fieldnames=list(ranked[0]), lineterminator="\n"
@@ -224,7 +229,7 @@ def main() -> None:
         writer.writerows(ranked)
 
     payload = {
-        "phase": "table1_select_mnist",
+        "phase": QUEUE_PHASE,
         "selection_metric": "mean best hardened validation accuracy",
         "test_set_used": False,
         "run_count": len(runs),
@@ -249,7 +254,7 @@ def main() -> None:
         ),
         "runs": sorted(runs, key=lambda row: row["name"]),
     }
-    json_path = SUMMARY_ROOT / "table1_mnist_selection.json"
+    json_path = SUMMARY_ROOT / f"{SUMMARY_STEM}.json"
     json_path.write_text(json.dumps(payload, indent=2) + "\n")
 
     print(json_path)
