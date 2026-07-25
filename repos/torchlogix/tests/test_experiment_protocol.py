@@ -6,6 +6,7 @@ import pytest
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 
+from experiments.coverage_dlgn.prepare_table1_final import final_eval_freq
 from experiments.train import (
     log_linear_schedule,
     model_cost_summary,
@@ -44,6 +45,22 @@ from torchlogix.models import (
     DlgnMnistPaperSmallLearnable,
 )
 from torchlogix.connections import LearnableDenseConnections
+
+
+@pytest.mark.parametrize(
+    ("num_iterations", "steps_per_epoch", "expected"),
+    [
+        (108_000, 540, 2_000),
+        (84_400, 422, 1_688),
+        (42_200, 211, 844),
+    ],
+)
+def test_table1_final_eval_frequency_divides_training(
+    num_iterations, steps_per_epoch, expected
+):
+    eval_freq = final_eval_freq(num_iterations, steps_per_epoch)
+    assert eval_freq == expected
+    assert num_iterations % eval_freq == 0
 
 
 def _paper_model_kwargs(thresholds):

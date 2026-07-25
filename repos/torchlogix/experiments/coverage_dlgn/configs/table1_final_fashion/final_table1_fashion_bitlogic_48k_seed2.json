@@ -16,7 +16,7 @@
   "data_split_seed": 2027,
   "dataset": "fashion-mnist",
   "device": "cuda",
-  "eval_freq": 2000,
+  "eval_freq": 1688,
   "forward_sampling": "soft",
   "learning_rate": 0.01,
   "lut_rank": 4,

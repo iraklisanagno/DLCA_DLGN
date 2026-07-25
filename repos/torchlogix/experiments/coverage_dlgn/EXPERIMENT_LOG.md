@@ -136,3 +136,29 @@ This log records operational failures and protocol decisions made after commit
   passes while preserving its selected batch size. Validation remains the
   only evaluation source during training; held-out test evaluation is still
   locked.
+
+## July 25, 2026: Table 1 final-queue divisibility recovery
+
+- The first MNIST final queue completed all five fixed-random, all five
+  CoverageDLGN v3, and all five Mommen runs successfully. The five LILogicNet
+  and five BitLogic entries then failed before model or dataset construction:
+  the generator assigned every method `eval_freq=2000`, but their batch-size
+  specific totals of 42,200 and 84,400 iterations are not divisible by 2,000.
+  The trainer's protocol assertion rejected each invalid configuration after
+  about five seconds. These are configuration failures, not training results;
+  their empty output directories are safe to reuse.
+- The final-queue generator now preserves the 2,000-step cadence when it
+  divides the run length and otherwise evaluates every four effective epochs.
+  This produces valid intervals of 844 steps for batch size 256 and 1,688
+  steps for batch size 128, with 50 validations over 200 epochs. A regression
+  test covers all three Table 1 batch sizes, and both MNIST and Fashion final
+  queues were regenerated before further launches.
+- Corrected LILogicNet seeds 0 and 1 were recovered on separate GPUs without
+  changing the training implementation. They completed all 42,200 iterations
+  with best hardened validation accuracies of 97.900% and 97.883%,
+  respectively. Each used about 4.50 GB peak allocated GPU memory and
+  4,898--4,950 seconds of wall time. The held-out test set remains unused.
+- A temporary internet interruption occurred after these jobs had launched.
+  It did not affect either run because MNIST was already cached locally. A
+  post-interruption audit found both corrected artifacts complete, both GPUs
+  healthy, and no partial trained checkpoint.

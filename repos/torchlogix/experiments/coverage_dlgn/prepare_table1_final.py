@@ -14,6 +14,20 @@ RESULT_ROOT = Path("experiments/coverage_dlgn/results")
 TRAIN_EXAMPLES = 54_000
 FINAL_EPOCHS = 200
 FINAL_SEEDS = range(5)
+PREFERRED_EVAL_FREQ = 2_000
+FALLBACK_EVAL_EPOCHS = 4
+
+
+def final_eval_freq(num_iterations: int, steps_per_epoch: int) -> int:
+    """Choose a valid final-evaluation interval near the frozen cadence."""
+    if num_iterations % PREFERRED_EVAL_FREQ == 0:
+        return PREFERRED_EVAL_FREQ
+    eval_freq = steps_per_epoch * FALLBACK_EVAL_EPOCHS
+    if num_iterations % eval_freq != 0:
+        raise ValueError(
+            f"{num_iterations=} is not divisible by {eval_freq=}"
+        )
+    return eval_freq
 
 
 def parse_args() -> argparse.Namespace:
@@ -50,6 +64,7 @@ def main() -> None:
         batch_size = source["batch_size"]
         steps_per_epoch = math.ceil(TRAIN_EXAMPLES / batch_size)
         num_iterations = steps_per_epoch * FINAL_EPOCHS
+        eval_freq = final_eval_freq(num_iterations, steps_per_epoch)
         for seed in FINAL_SEEDS:
             name = f"final_{candidate}_seed{seed}"
             config = dict(source)
@@ -57,7 +72,7 @@ def main() -> None:
                 "seed": seed,
                 "topology_seed": seed,
                 "num_iterations": num_iterations,
-                "eval_freq": 2000,
+                "eval_freq": eval_freq,
                 "output": str(RESULT_ROOT / name),
             })
             path = final_dir / f"{name}.json"
@@ -76,6 +91,8 @@ def main() -> None:
                 "train_examples": TRAIN_EXAMPLES,
                 "steps_per_epoch": steps_per_epoch,
                 "epochs": FINAL_EPOCHS,
+                "eval_freq": eval_freq,
+                "num_evaluations": num_iterations // eval_freq,
                 "config": str(path.relative_to(ROOT.parent.parent)),
                 "output": config["output"],
             })
