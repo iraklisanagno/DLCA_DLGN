@@ -1,0 +1,211 @@
+{
+  "phase": "table1_screen_fashion",
+  "wall_seconds": 4375.129145186998,
+  "skipped": [],
+  "finished": [
+    {
+      "name": "screen_table1_fashion_random_48k_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 50.00701149299857,
+      "log": "experiments/coverage_dlgn/logs/table1_screen_fashion/screen_table1_fashion_random_48k_seed0.log"
+    },
+    {
+      "name": "screen_table1_fashion_v3_incumbent_48k_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 55.007402023002214,
+      "log": "experiments/coverage_dlgn/logs/table1_screen_fashion/screen_table1_fashion_v3_incumbent_48k_seed0.log"
+    },
+    {
+      "name": "screen_table1_fashion_v3_pool16_48k_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 60.00217111299935,
+      "log": "experiments/coverage_dlgn/logs/table1_screen_fashion/screen_table1_fashion_v3_pool16_48k_seed0.log"
+    },
+    {
+      "name": "screen_table1_fashion_v3_pool32_48k_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 65.00689199699991,
+      "log": "experiments/coverage_dlgn/logs/table1_screen_fashion/screen_table1_fashion_v3_pool32_48k_seed0.log"
+    },
+    {
+      "name": "screen_table1_fashion_v3_swap0125_48k_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 50.00199758900271,
+      "log": "experiments/coverage_dlgn/logs/table1_screen_fashion/screen_table1_fashion_v3_swap0125_48k_seed0.log"
+    },
+    {
+      "name": "screen_table1_fashion_v3_swap0500_48k_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 60.00159995300055,
+      "log": "experiments/coverage_dlgn/logs/table1_screen_fashion/screen_table1_fashion_v3_swap0500_48k_seed0.log"
+    },
+    {
+      "name": "screen_table1_fashion_v3_novelty050_48k_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 55.00474046200179,
+      "log": "experiments/coverage_dlgn/logs/table1_screen_fashion/screen_table1_fashion_v3_novelty050_48k_seed0.log"
+    },
+    {
+      "name": "screen_table1_fashion_v3_novelty200_48k_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 55.001469095001084,
+      "log": "experiments/coverage_dlgn/logs/table1_screen_fashion/screen_table1_fashion_v3_novelty200_48k_seed0.log"
+    },
+    {
+      "name": "screen_table1_fashion_v3_light_48k_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 35.001150452997535,
+      "log": "experiments/coverage_dlgn/logs/table1_screen_fashion/screen_table1_fashion_v3_light_48k_seed0.log"
+    },
+    {
+      "name": "screen_table1_fashion_v3_warp_48k_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 35.00114423500054,
+      "log": "experiments/coverage_dlgn/logs/table1_screen_fashion/screen_table1_fashion_v3_warp_48k_seed0.log"
+    },
+    {
+      "name": "screen_table1_fashion_mommen_nc8_depth2_48k_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 60.00157921999926,
+      "log": "experiments/coverage_dlgn/logs/table1_screen_fashion/screen_table1_fashion_mommen_nc8_depth2_48k_seed0.log"
+    },
+    {
+      "name": "screen_table1_fashion_mommen_nc8_depth3_48k_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 75.00191658100084,
+      "log": "experiments/coverage_dlgn/logs/table1_screen_fashion/screen_table1_fashion_mommen_nc8_depth3_48k_seed0.log"
+    },
+    {
+      "name": "screen_table1_fashion_mommen_nc8_depth6_48k_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 90.00388980500065,
+      "log": "experiments/coverage_dlgn/logs/table1_screen_fashion/screen_table1_fashion_mommen_nc8_depth6_48k_seed0.log"
+    },
+    {
+      "name": "screen_table1_fashion_mommen_nc16_depth2_48k_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 110.00426299299943,
+      "log": "experiments/coverage_dlgn/logs/table1_screen_fashion/screen_table1_fashion_mommen_nc16_depth2_48k_seed0.log"
+    },
+    {
+      "name": "screen_table1_fashion_mommen_nc16_depth3_48k_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 130.00799324800028,
+      "log": "experiments/coverage_dlgn/logs/table1_screen_fashion/screen_table1_fashion_mommen_nc16_depth3_48k_seed0.log"
+    },
+    {
+      "name": "screen_table1_fashion_mommen_nc16_depth6_48k_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 155.00896911900054,
+      "log": "experiments/coverage_dlgn/logs/table1_screen_fashion/screen_table1_fashion_mommen_nc16_depth6_48k_seed0.log"
+    },
+    {
+      "name": "screen_table1_fashion_lilogic_top32_depth2_tau15_48k_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 510.0121579229999,
+      "log": "experiments/coverage_dlgn/logs/table1_screen_fashion/screen_table1_fashion_lilogic_top32_depth2_tau15_48k_seed0.log"
+    },
+    {
+      "name": "screen_table1_fashion_lilogic_top32_depth2_tau20_48k_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 515.0114665069996,
+      "log": "experiments/coverage_dlgn/logs/table1_screen_fashion/screen_table1_fashion_lilogic_top32_depth2_tau20_48k_seed0.log"
+    },
+    {
+      "name": "screen_table1_fashion_lilogic_top32_depth2_tau25_48k_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 510.00955094000165,
+      "log": "experiments/coverage_dlgn/logs/table1_screen_fashion/screen_table1_fashion_lilogic_top32_depth2_tau25_48k_seed0.log"
+    },
+    {
+      "name": "screen_table1_fashion_lilogic_top32_depth2_tau30_48k_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 515.0096538020007,
+      "log": "experiments/coverage_dlgn/logs/table1_screen_fashion/screen_table1_fashion_lilogic_top32_depth2_tau30_48k_seed0.log"
+    },
+    {
+      "name": "screen_table1_fashion_lilogic_top32_depth3_tau15_48k_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 590.0149083230026,
+      "log": "experiments/coverage_dlgn/logs/table1_screen_fashion/screen_table1_fashion_lilogic_top32_depth3_tau15_48k_seed0.log"
+    },
+    {
+      "name": "screen_table1_fashion_lilogic_top32_depth3_tau20_48k_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 595.0150098839986,
+      "log": "experiments/coverage_dlgn/logs/table1_screen_fashion/screen_table1_fashion_lilogic_top32_depth3_tau20_48k_seed0.log"
+    },
+    {
+      "name": "screen_table1_fashion_lilogic_top32_depth3_tau25_48k_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 590.0120975740028,
+      "log": "experiments/coverage_dlgn/logs/table1_screen_fashion/screen_table1_fashion_lilogic_top32_depth3_tau25_48k_seed0.log"
+    },
+    {
+      "name": "screen_table1_fashion_lilogic_top32_depth3_tau30_48k_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 595.0121649020002,
+      "log": "experiments/coverage_dlgn/logs/table1_screen_fashion/screen_table1_fashion_lilogic_top32_depth3_tau30_48k_seed0.log"
+    },
+    {
+      "name": "screen_table1_fashion_lilogic_top32_depth6_tau15_48k_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 660.0168884510022,
+      "log": "experiments/coverage_dlgn/logs/table1_screen_fashion/screen_table1_fashion_lilogic_top32_depth6_tau15_48k_seed0.log"
+    },
+    {
+      "name": "screen_table1_fashion_lilogic_top32_depth6_tau20_48k_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 670.0170845449975,
+      "log": "experiments/coverage_dlgn/logs/table1_screen_fashion/screen_table1_fashion_lilogic_top32_depth6_tau20_48k_seed0.log"
+    },
+    {
+      "name": "screen_table1_fashion_lilogic_top32_depth6_tau25_48k_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 660.0168988860023,
+      "log": "experiments/coverage_dlgn/logs/table1_screen_fashion/screen_table1_fashion_lilogic_top32_depth6_tau25_48k_seed0.log"
+    },
+    {
+      "name": "screen_table1_fashion_lilogic_top32_depth6_tau30_48k_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 670.0169180400007,
+      "log": "experiments/coverage_dlgn/logs/table1_screen_fashion/screen_table1_fashion_lilogic_top32_depth6_tau30_48k_seed0.log"
+    },
+    {
+      "name": "screen_table1_fashion_bitlogic_48k_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 325.00551909299975,
+      "log": "experiments/coverage_dlgn/logs/table1_screen_fashion/screen_table1_fashion_bitlogic_48k_seed0.log"
+    }
+  ],
+  "failed": []
+}

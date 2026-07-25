@@ -1,0 +1,96 @@
+{
+  "wall_seconds": 664.7252141529971,
+  "best_validation_hard_accuracy": 0.8046666674613953,
+  "final_metrics": {
+    "val_loss_discrete": 0.5850703403155009,
+    "val_acc_discrete": 0.7943333334922791,
+    "val_loss_relaxed": 0.42774937431017557,
+    "val_acc_relaxed": 0.8481666671435039,
+    "train_loss": 0.0358102912902832,
+    "connections_temperature": 1.0,
+    "parametrization_temperature": 1.0
+  },
+  "peak_gpu_memory_bytes": 3979425280,
+  "topology": [
+    {
+      "strategy": "learnable_topk",
+      "init_method": "random",
+      "num_candidates": 32,
+      "forward_mode": "soft_mix",
+      "gumbel": false,
+      "temperature": 1.0,
+      "training_routing_parameters": 512000,
+      "candidate_indices_tensor_bytes": 4096000,
+      "deployed_index_bits": 192000,
+      "deployed_index_bytes_packed": 24000
+    },
+    {
+      "strategy": "learnable_topk",
+      "init_method": "random",
+      "num_candidates": 32,
+      "forward_mode": "soft_mix",
+      "gumbel": false,
+      "temperature": 1.0,
+      "training_routing_parameters": 512000,
+      "candidate_indices_tensor_bytes": 4096000,
+      "deployed_index_bits": 208000,
+      "deployed_index_bytes_packed": 26000
+    },
+    {
+      "strategy": "learnable_topk",
+      "init_method": "random",
+      "num_candidates": 32,
+      "forward_mode": "soft_mix",
+      "gumbel": false,
+      "temperature": 1.0,
+      "training_routing_parameters": 512000,
+      "candidate_indices_tensor_bytes": 4096000,
+      "deployed_index_bits": 208000,
+      "deployed_index_bytes_packed": 26000
+    },
+    {
+      "strategy": "learnable_topk",
+      "init_method": "random",
+      "num_candidates": 32,
+      "forward_mode": "soft_mix",
+      "gumbel": false,
+      "temperature": 1.0,
+      "training_routing_parameters": 512000,
+      "candidate_indices_tensor_bytes": 4096000,
+      "deployed_index_bits": 208000,
+      "deployed_index_bytes_packed": 26000
+    },
+    {
+      "strategy": "learnable_topk",
+      "init_method": "random",
+      "num_candidates": 32,
+      "forward_mode": "soft_mix",
+      "gumbel": false,
+      "temperature": 1.0,
+      "training_routing_parameters": 512000,
+      "candidate_indices_tensor_bytes": 4096000,
+      "deployed_index_bits": 208000,
+      "deployed_index_bytes_packed": 26000
+    },
+    {
+      "strategy": "learnable_topk",
+      "init_method": "random",
+      "num_candidates": 32,
+      "forward_mode": "soft_mix",
+      "gumbel": false,
+      "temperature": 1.0,
+      "training_routing_parameters": 512000,
+      "candidate_indices_tensor_bytes": 4096000,
+      "deployed_index_bits": 208000,
+      "deployed_index_bytes_packed": 26000
+    }
+  ],
+  "cost": {
+    "dense_gate_count": 48000,
+    "trainable_parameters": 3840000,
+    "training_routing_parameters": 3072000,
+    "deployed_routing_bits": 1232000,
+    "deployed_routing_bytes_packed": 154000,
+    "candidate_indices_tensor_bytes": 24576000
+  }
+}

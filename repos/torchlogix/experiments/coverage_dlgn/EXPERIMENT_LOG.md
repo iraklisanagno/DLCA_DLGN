@@ -91,3 +91,18 @@ This log records operational failures and protocol decisions made after commit
 - An unsandboxed check using `venv/bin/python` then confirmed PyTorch
   2.9.0+cu130, CUDA 13.0, both RTX PRO 6000 devices, and a finite CUDA tensor.
   The queue therefore requires the same GPU-enabled execution context.
+- The GPU-enabled Fashion-MNIST screen then completed all 29 predeclared 5K
+  runs with no failures, skips, or nonzero return codes in 4,375 seconds.
+  Every valid artifact uses source revision `bbabe4d` and training
+  implementation hash
+  `f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444`.
+- The one-seed screen selected V3 swap fractions 0.125 (87.23%) and 0.5
+  (87.18%) plus the 0.25 incumbent (86.97%); Mommen `Nc=8` depth 3 (87.82%),
+  `Nc=16` depth 3 (87.68%), and `Nc=16` depth 2 (87.52%); and LILogicNet
+  Top-32 depth 2/tau 30 (89.22%), depth 3/tau 15 (89.22%), and depth 3/tau
+  20 (89.08%). Fixed random reached 85.37% and BitLogic reached 87.90%.
+  These values only determine which candidates enter paired selection.
+- The resulting Fashion-MNIST selection queue contains 33 predeclared 20K
+  runs: seeds 0/1/2 for fixed random, each of the three candidates per
+  tunable method, and BitLogic. Topology seed equals training seed, Gumbel is
+  disabled, and the held-out test set remains locked.
