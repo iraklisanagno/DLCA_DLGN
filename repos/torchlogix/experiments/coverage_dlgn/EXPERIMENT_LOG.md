@@ -64,3 +64,20 @@ This log records operational failures and protocol decisions made after commit
   candidate means, standard deviations, costs, runtimes, memory measurements,
   and hardened/relaxed metrics. These are validation-selection values, not
   final five-seed or held-out-test results.
+
+## July 24, 2026: Table 1 Fashion-MNIST startup
+
+- The first launch of the committed 29-run Fashion-MNIST screen failed before
+  model construction because the machine restart had cleared the temporary
+  dataset cache. `torchvision` attempted to download Fashion-MNIST, but the
+  sandbox could not resolve the dataset host. The queue was interrupted after
+  28 identical pre-training failures; the final BitLogic entry had not
+  launched. No checkpoint, metric, or partial training artifact was created.
+- The 28 tracebacks are preserved locally under
+  `logs/failed/table1_screen_fashion_missing_cache_attempt1/`. The 28 verified
+  empty result placeholders were removed so the queue restart guard can
+  distinguish the clean retry.
+- Fashion-MNIST was then downloaded once into
+  `/tmp/torchlogix-datasets/data-fashion-mnist` using the repository venv.
+  A download-disabled read verified 60,000 training and 10,000 test examples.
+  The held-out test set remains unused for screening and selection.
