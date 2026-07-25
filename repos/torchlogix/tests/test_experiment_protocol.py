@@ -6,7 +6,12 @@ import pytest
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 
-from experiments.coverage_dlgn.prepare_table1_final import final_eval_freq
+from experiments.coverage_dlgn.prepare_table1_final import (
+    final_eval_freq,
+    final_seeds_for,
+)
+from experiments.coverage_dlgn.evaluate_table1_final import round_robin
+from experiments.coverage_dlgn.summarize_table1_final import mean_ci_95
 from experiments.train import (
     log_linear_schedule,
     model_cost_summary,
@@ -61,6 +66,33 @@ def test_table1_final_eval_frequency_divides_training(
     eval_freq = final_eval_freq(num_iterations, steps_per_epoch)
     assert eval_freq == expected
     assert num_iterations % eval_freq == 0
+
+
+def test_table1_final_seed_policy_keeps_only_mnist_exception():
+    for family in ["random", "coverage_v3"]:
+        assert final_seeds_for("mnist", family) == [0, 1, 2, 3, 4]
+        assert final_seeds_for("fashion", family) == [0, 1, 2, 3, 4]
+    for family in ["mommen", "lilogic", "bitlogic"]:
+        assert final_seeds_for("mnist", family) == [0, 1, 2, 3, 4]
+        assert final_seeds_for("fashion", family) == [0, 1, 2]
+    with pytest.raises(ValueError, match="unknown Table 1 cell"):
+        final_seeds_for("cifar10", "random")
+
+
+def test_mean_ci_95_uses_student_t_for_five_paired_seeds():
+    mean, low, high = mean_ci_95([0.1, 0.2, 0.3, 0.4, 0.5])
+    assert mean == pytest.approx(0.3)
+    assert low == pytest.approx(0.1036757)
+    assert high == pytest.approx(0.4963243)
+
+
+def test_table1_test_queue_assigns_every_run_once():
+    paths = [Path(f"run-{index}") for index in range(5)]
+    assignments = round_robin(paths, 2)
+    assert assignments == [
+        [Path("run-0"), Path("run-2"), Path("run-4")],
+        [Path("run-1"), Path("run-3")],
+    ]
 
 
 def _paper_model_kwargs(thresholds):

@@ -162,3 +162,29 @@ This log records operational failures and protocol decisions made after commit
   It did not affect either run because MNIST was already cached locally. A
   post-interruption audit found both corrected artifacts complete, both GPUs
   healthy, and no partial trained checkpoint.
+- The corrected recovery queue then skipped the 17 complete artifacts and
+  finished exactly the remaining eight runs with zero failures in 21,110
+  seconds. All 25 MNIST final artifacts use the same training implementation
+  hash,
+  `f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444`.
+  Their source revisions are split 17/2/6 across `6c06d0d`, `93a956b`, and
+  `9dcf7e7`; the later commits changed queue/protocol documentation and the
+  evaluation-cadence generator, not the hashed training implementation.
+- At 200 effective epochs, five-seed mean best hardened validation accuracy
+  is fixed random 97.157% +/- 0.043%, CoverageDLGN v3 97.403% +/- 0.114%,
+  Mommen 97.947% +/- 0.121%, LILogicNet 97.927% +/- 0.143%, and BitLogic
+  98.123% +/- 0.042%. V3 improves its paired fixed-random baseline by 0.247
+  percentage points with a 95% Student-t interval of [+0.078, +0.416] pp.
+  The machine-readable source of truth is
+  `summary/table1_mnist_final.json`; the held-out test set was still unused
+  when this validation summary was frozen.
+- Mean training wall time per final seed is 15.0 minutes for fixed random and
+  V3, 35.9 minutes for Mommen, 82.0 minutes for LILogicNet, and 89.2 minutes
+  for BitLogic. Peak allocated GPU memory is 0.099, 0.099, 1.002, 4.187, and
+  3.557 GiB, respectively. V3 therefore preserves the random model's training
+  and deployment cost while the adapted trainable-routing comparators trade
+  substantial training cost for higher raw validation accuracy.
+- The post-MNIST run-count policy reduces the Fashion final queue from 25 to
+  19 entries: five paired seeds for fixed random and CoverageDLGN v3 and
+  three seeds for each adapted comparator. The six unlaunched superseded
+  seed-3/4 comparator configs were removed before the queue was committed.
