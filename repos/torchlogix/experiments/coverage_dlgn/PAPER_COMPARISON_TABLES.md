@@ -10,12 +10,32 @@ TorchLogix protocol from numbers reported under other papers' protocols.
 
 ## Notation and comparison rules
 
-- `A` is hardened accuracy achieved by our TorchLogix experiment.
-- `R` is hardened accuracy reported by the cited paper.
-- `TBD` means that the matched experiment has not been run.
-- `R-only` means that the reported architecture or protocol is not an exact
-  match and its value is context, not evidence that one method beats another.
-- `—` means that no paper-reported result exists for that method and cell.
+Every accuracy value must carry one of these provenance labels directly in
+its table cell:
+
+- `[TRIED]` is a valid local exploratory, pilot, short-schedule, or superseded
+  result that is not eligible as the final comparison value.
+- `[REPRODUCED]` is a local result from a paper-faithful implementation and
+  protocol.
+- `[ADAPTED]` is a local result from a published method adapted to our common
+  target architecture or protocol.
+- `[OUR-FINAL]` is a frozen final CoverageDLGN result.
+- `[REPORTED]` is copied from the cited paper and was not produced locally.
+- `[PENDING]` means that the planned local experiment has not finished.
+- `[N/A]` means that no valid value exists for that side of the comparison.
+
+`A / R` columns retain the achieved-local/reported-paper ordering, but the
+labels are mandatory even when that ordering appears obvious. A local failed
+or interrupted attempt is recorded in the experiment log and never receives
+an accuracy value. Each `[REPRODUCED]`, `[ADAPTED]`, or `[OUR-FINAL]` value
+must point to its machine-readable run summary when populated. Each
+`[REPORTED]` value must point to a PDF table or figure in the provenance
+ledger.
+
+- A reported architecture or protocol that is not an exact match is context,
+  not evidence that one method beats another.
+- `[N/A]` on the reported side means that no paper-reported result exists for
+  that method and cell.
 - Gate count means total deployed logic gates or, for convolutional networks,
   spatially instantiated gate operations. It never means layer width.
 - A primary improvement claim may compare only `A` values produced with the
@@ -40,11 +60,11 @@ logits during training.
 
 | Method | Matched gates | MNIST A / R | Fashion-MNIST A / R | Match status |
 |---|---:|---:|---:|---|
-| Deep DLGN fixed random | 48K | **97.18 / 97.69%** | **86.31 / 87.17%** | Exact architecture; different training protocols |
-| Mommen, \(N_c=16\) | 48K | TBD / 98.14% `[12K, R-only]` | TBD / 87.16% `[8K, R-only]` | Adapt to 48K |
-| LILogicNet Top-32 | 48K | TBD / 98.95 +/- 0.09% `[32K, R-only]` | TBD / 90.26 +/- 0.11% `[64K, R-only]` | Adapt to 48K |
-| BitLogic best-of-space | 48K | TBD / 97.84 +/- 0.04% `[128K total, R-only]` | TBD / 89.16 +/- 0.08% `[128K total, R-only]` | Different two-layer, rank-4 architecture |
-| **CoverageDLGN** | **48K** | TBD / — | **87.16% / —** | Exact target; new method |
+| Deep DLGN fixed random | 48K | **[TRIED] 97.18% / [REPORTED] 97.69%** | **[TRIED] 86.31% / [REPORTED] 87.17%** | Exact architecture; different training protocols |
+| Mommen, \(N_c=16\) | 48K | [PENDING] / [REPORTED] 98.14% `[12K, nonmatched]` | [PENDING] / [REPORTED] 87.16% `[8K, nonmatched]` | Adapt to 48K |
+| LILogicNet Top-32 | 48K | [PENDING] / [REPORTED] 98.95 +/- 0.09% `[32K, nonmatched]` | [PENDING] / [REPORTED] 90.26 +/- 0.11% `[64K, nonmatched]` | Adapt to 48K |
+| BitLogic best-of-space | 48K | [PENDING] / [REPORTED] 97.84 +/- 0.04% `[128K total, nonmatched]` | [PENDING] / [REPORTED] 89.16 +/- 0.08% `[128K total, nonmatched]` | Different two-layer, rank-4 architecture |
+| **CoverageDLGN** | **48K** | [PENDING] / [N/A] | **[TRIED] 87.16% / [N/A]** | Exact target; new method |
 
 Mommen \(N_c=16\) adds approximately 32 routing logits per gate during
 training but retains one hard predecessor per gate input after training.
@@ -53,21 +73,21 @@ training but retains one hard predecessor per gate input after training.
 
 | Architecture | Target gates | Raw training parameters | Method | A / R accuracy | Reported configuration |
 |---|---:|---:|---|---:|---|
-| S: 4 x 12K | 48K | 0.768M | Deep DLGN random | **49.06 / 51.27%** | Exact 48K architecture |
-|  |  |  | LILogicNet | TBD / 55.11% | 8K gates, R-only |
-|  |  |  | WARP-LUT | TBD / 52.12 +/- 0.01% | 128K total gates under the BitLogic protocol, R-only |
-|  |  |  | BitLogic best-of-space | TBD / 58.06 +/- 0.14% | 128K total rank-4 gates, R-only |
-|  |  |  | **CoverageDLGN** | **52.36% / —** | Exact 48K target |
-| M: 4 x 128K | 512K | 8.192M | Deep DLGN random | **54.03 / 57.39%** | Exact 512K architecture |
-|  |  |  | LILogicNet | TBD / 57.66 +/- 0.17% | 64K gates, R-only |
-|  |  |  | WARP-LUT | TBD / 52.12 +/- 0.01% | 128K total gates, R-only |
-|  |  |  | BitLogic best-of-space | TBD / 58.06 +/- 0.14% | 128K total rank-4 gates, R-only |
-|  |  |  | **CoverageDLGN** | **58.28% / —** | Exact 512K target |
-| L: 5 x 256K | 1.28M | 20.48M | Deep DLGN random | TBD / **60.78%** | Exact 1.28M architecture |
-|  |  |  | LILogicNet-L | TBD / 60.98 +/- 0.19% | 256K gates, R-only |
-|  |  |  | WARP-LUT | TBD / 52.12 +/- 0.01% | 128K total gates, R-only |
-|  |  |  | BitLogic best-of-space | TBD / 58.06 +/- 0.14% | 128K total rank-4 gates, R-only |
-|  |  |  | **CoverageDLGN** | TBD / — | Exact 1.28M target |
+| S: 4 x 12K | 48K | 0.768M | Deep DLGN random | **[TRIED] 49.06% / [REPORTED] 51.27%** | Exact 48K architecture |
+|  |  |  | LILogicNet | [PENDING] / [REPORTED] 55.11% | 8K gates, nonmatched |
+|  |  |  | WARP-LUT | [PENDING] / [REPORTED] 52.12 +/- 0.01% | 128K total gates under the BitLogic protocol, nonmatched |
+|  |  |  | BitLogic best-of-space | [PENDING] / [REPORTED] 58.06 +/- 0.14% | 128K total rank-4 gates, nonmatched |
+|  |  |  | **CoverageDLGN** | **[TRIED] 52.36% / [N/A]** | Exact 48K target |
+| M: 4 x 128K | 512K | 8.192M | Deep DLGN random | **[TRIED] 54.03% / [REPORTED] 57.39%** | Exact 512K architecture |
+|  |  |  | LILogicNet | [PENDING] / [REPORTED] 57.66 +/- 0.17% | 64K gates, nonmatched |
+|  |  |  | WARP-LUT | [PENDING] / [REPORTED] 52.12 +/- 0.01% | 128K total gates, nonmatched |
+|  |  |  | BitLogic best-of-space | [PENDING] / [REPORTED] 58.06 +/- 0.14% | 128K total rank-4 gates, nonmatched |
+|  |  |  | **CoverageDLGN** | **[TRIED] 58.28% / [N/A]** | Exact 512K target |
+| L: 5 x 256K | 1.28M | 20.48M | Deep DLGN random | [PENDING] / **[REPORTED] 60.78%** | Exact 1.28M architecture |
+|  |  |  | LILogicNet-L | [PENDING] / [REPORTED] 60.98 +/- 0.19% | 256K gates, nonmatched |
+|  |  |  | WARP-LUT | [PENDING] / [REPORTED] 52.12 +/- 0.01% | 128K total gates, nonmatched |
+|  |  |  | BitLogic best-of-space | [PENDING] / [REPORTED] 58.06 +/- 0.14% | 128K total rank-4 gates, nonmatched |
+|  |  |  | **CoverageDLGN** | [PENDING] / [N/A] | Exact 1.28M target |
 
 The 128K, 256K, and 384K compression points will be reported in a separate
 Pareto table after their validation sweep.
@@ -79,25 +99,25 @@ operation accounting.
 
 | Architecture | Gate operations | Method | A / R accuracy | Match status |
 |---|---:|---|---:|---|
-| LogicTreeNet-S | 0.40M | Original fixed routing | 56.14% pilot / **60.38%** | Exact architecture; pilot is short |
-|  | 0.40M | Two-stage unit tying, 30% | TBD / 56.70 +/- 0.08% | Exact S; approximately 0.70 x gates after tying |
-|  | 0.57M | Conv. TTNet-S | R-only / 50.10% | Different truth-table architecture |
-|  | 0.40M | Light/IWP-LogicTreeNet | TBD / — | Exact adaptation; no published S result |
-|  | 0.40M | WARP-LogicTreeNet | TBD / — | Exact adaptation; no published S result |
-|  | **0.40M** | **CoverageDLGN-Channel** | 56.37% pilot / — | Exact architecture; pilot is short |
-| LogicTreeNet-M | 3.08M | Original fixed routing | TBD / **71.01%** | Exact architecture |
-|  | 3.08M | Two-stage unit tying, 30% | TBD / 70.77 +/- 0.07% | Exact M; approximately 0.70 x after tying |
-|  | approximately 3.08M | Scalability-boundaries CDLGN-M | R-only / 65.23% | Minimally modified M protocol |
-|  | 189M | Conv. TTNet-L | R-only / 70.75% | Different, much larger architecture |
-|  | 3.08M | Light/IWP-LogicTreeNet | TBD / — | Exact adaptation |
-|  | 3.08M | WARP-LogicTreeNet | TBD / — | Exact adaptation |
-|  | **3.08M** | **CoverageDLGN-Channel** | TBD / — | Existing 61.56% is 5K validation only |
-| LogicTreeNet-L | 28.9M | Original fixed routing | TBD / **84.99%** | Exact replication requires 5-bit input and teacher |
-|  | 189M | Conv. TTNet-L | R-only / 70.75% | Different architecture |
-|  | 3.08M | Scalability-boundaries CDLGN-M | R-only / 65.23% | M architecture, not L |
-|  | 28.9M | Light/IWP-LogicTreeNet | TBD / — | New L adaptation |
-|  | 28.9M | WARP-LogicTreeNet | TBD / — | New L adaptation |
-|  | **28.9M** | **CoverageDLGN-Channel** | TBD / — | Requires a paper-faithful L baseline first |
+| LogicTreeNet-S | 0.40M | Original fixed routing | [TRIED] 56.14% pilot / **[REPORTED] 60.38%** | Exact architecture; pilot is short |
+|  | 0.40M | Two-stage unit tying, 30% | [PENDING] / [REPORTED] 56.70 +/- 0.08% | Exact S; approximately 0.70 x gates after tying |
+|  | 0.57M | Conv. TTNet-S | [N/A] / [REPORTED] 50.10% | Different truth-table architecture |
+|  | 0.40M | Light/IWP-LogicTreeNet | [PENDING] / [N/A] | Exact adaptation; no published S result |
+|  | 0.40M | WARP-LogicTreeNet | [PENDING] / [N/A] | Exact adaptation; no published S result |
+|  | **0.40M** | **CoverageDLGN-Channel** | [TRIED] 56.37% pilot / [N/A] | Exact architecture; pilot is short |
+| LogicTreeNet-M | 3.08M | Original fixed routing | [PENDING] / **[REPORTED] 71.01%** | Exact architecture |
+|  | 3.08M | Two-stage unit tying, 30% | [PENDING] / [REPORTED] 70.77 +/- 0.07% | Exact M; approximately 0.70 x after tying |
+|  | approximately 3.08M | Scalability-boundaries CDLGN-M | [N/A] / [REPORTED] 65.23% | Minimally modified M protocol |
+|  | 189M | Conv. TTNet-L | [N/A] / [REPORTED] 70.75% | Different, much larger architecture |
+|  | 3.08M | Light/IWP-LogicTreeNet | [PENDING] / [N/A] | Exact adaptation |
+|  | 3.08M | WARP-LogicTreeNet | [PENDING] / [N/A] | Exact adaptation |
+|  | **3.08M** | **CoverageDLGN-Channel** | [PENDING] / [N/A] | Existing 61.56% is `[TRIED]` 5K validation only |
+| LogicTreeNet-L | 28.9M | Original fixed routing | [PENDING] / **[REPORTED] 84.99%** | Exact replication requires 5-bit input and teacher |
+|  | 189M | Conv. TTNet-L | [N/A] / [REPORTED] 70.75% | Different architecture |
+|  | 3.08M | Scalability-boundaries CDLGN-M | [N/A] / [REPORTED] 65.23% | M architecture, not L |
+|  | 28.9M | Light/IWP-LogicTreeNet | [PENDING] / [N/A] | New L adaptation |
+|  | 28.9M | WARP-LogicTreeNet | [PENDING] / [N/A] | New L adaptation |
+|  | **28.9M** | **CoverageDLGN-Channel** | [PENDING] / [N/A] | Requires a paper-faithful L baseline first |
 
 ## Table 4: Dense CIFAR-100 S/M/L
 
@@ -107,30 +127,30 @@ reported width.
 
 | Architecture | Total gates | Fan-in | Method | A / R accuracy | Source status |
 |---|---:|---:|---|---:|---|
-| S: 2 x 4K | 8K | 2 | DiffLogic | TBD / 7.49 +/- 0.21% | BitLogic common-protocol reproduction |
-|  | 8K | 2 | WARP-LUT | TBD / 7.00 +/- 0.04% | BitLogic reproduction; C100 extrapolation |
-|  | 8K | 2 | LILogicNet | TBD / 7.63 +/- 0.01% | BitLogic reproduction; C100 extrapolation |
-|  | 8K | 4 | BitLogic best-of-space | TBD / **10.19 +/- 0.06%** | Exact BitLogic configuration |
-|  | **8K** | **2** | **CoverageDLGN** | TBD / — | Matched gates; lower fan-in |
-| M: 2 x 16K | 32K | 2 | DiffLogic | TBD / 10.61 +/- 0.08% | BitLogic reproduction |
-|  | 32K | 2 | WARP-LUT | TBD / 10.46 +/- 0.00% | BitLogic reproduction |
-|  | 32K | 2 | LILogicNet | TBD / 10.62 +/- 0.12% | BitLogic reproduction |
-|  | 32K | 4 | BitLogic best-of-space | TBD / **14.06 +/- 0.04%** | Exact BitLogic configuration |
-|  | **32K** | **2** | **CoverageDLGN** | TBD / — | Matched gates |
-| L: 2 x 64K | 128K | 2 | DiffLogic | TBD / 14.64 +/- 0.09% | BitLogic reproduction |
-|  | 128K | 2 | WARP-LUT | TBD / 14.43% | Single seed in BitLogic |
-|  | 128K | 2 | LILogicNet | TBD / 14.54 +/- 0.04% | BitLogic reproduction |
-|  | 128K | 4 | BitLogic best-of-space | TBD / **18.82 +/- 0.09%** | Exact BitLogic configuration |
-|  | **128K** | **2** | **CoverageDLGN** | TBD / — | Matched gates |
+| S: 2 x 4K | 8K | 2 | DiffLogic | [PENDING] / [REPORTED] 7.49 +/- 0.21% | BitLogic common-protocol reproduction |
+|  | 8K | 2 | WARP-LUT | [PENDING] / [REPORTED] 7.00 +/- 0.04% | BitLogic reproduction; C100 extrapolation |
+|  | 8K | 2 | LILogicNet | [PENDING] / [REPORTED] 7.63 +/- 0.01% | BitLogic reproduction; C100 extrapolation |
+|  | 8K | 4 | BitLogic best-of-space | [PENDING] / **[REPORTED] 10.19 +/- 0.06%** | Exact BitLogic configuration |
+|  | **8K** | **2** | **CoverageDLGN** | [PENDING] / [N/A] | Matched gates; lower fan-in |
+| M: 2 x 16K | 32K | 2 | DiffLogic | [PENDING] / [REPORTED] 10.61 +/- 0.08% | BitLogic reproduction |
+|  | 32K | 2 | WARP-LUT | [PENDING] / [REPORTED] 10.46 +/- 0.00% | BitLogic reproduction |
+|  | 32K | 2 | LILogicNet | [PENDING] / [REPORTED] 10.62 +/- 0.12% | BitLogic reproduction |
+|  | 32K | 4 | BitLogic best-of-space | [PENDING] / **[REPORTED] 14.06 +/- 0.04%** | Exact BitLogic configuration |
+|  | **32K** | **2** | **CoverageDLGN** | [PENDING] / [N/A] | Matched gates |
+| L: 2 x 64K | 128K | 2 | DiffLogic | [PENDING] / [REPORTED] 14.64 +/- 0.09% | BitLogic reproduction |
+|  | 128K | 2 | WARP-LUT | [PENDING] / [REPORTED] 14.43% | Single seed in BitLogic |
+|  | 128K | 2 | LILogicNet | [PENDING] / [REPORTED] 14.54 +/- 0.04% | BitLogic reproduction |
+|  | 128K | 4 | BitLogic best-of-space | [PENDING] / **[REPORTED] 18.82 +/- 0.09%** | Exact BitLogic configuration |
+|  | **128K** | **2** | **CoverageDLGN** | [PENDING] / [N/A] | Matched gates |
 
 Additional reported-only dense CIFAR-100 references:
 
 | Method | Accuracy | Gates or parameters | Status |
 |---|---:|---:|---|
-| Scalability-boundaries dense DLGN | 22.54 +/- 0.26% | 6 x 64K = 384K gates | R-only |
-| Multilinear Soft-Mix | 27.92 +/- 0.43% | 6 x 256K = 1.536M gates; 16 parameters/gate | R-only |
-| Multilinear-CovJac | 28.37 +/- 0.22% | 1.536M gates; 4 parameters/gate | R-only |
-| Multilinear-CovJac large | 32.72 +/- 0.09% | 6 x 1.28M = 7.68M gates; 4 parameters/gate | R-only |
+| Scalability-boundaries dense DLGN | [REPORTED] 22.54 +/- 0.26% | 6 x 64K = 384K gates | Reported only |
+| Multilinear Soft-Mix | [REPORTED] 27.92 +/- 0.43% | 6 x 256K = 1.536M gates; 16 parameters/gate | Reported only |
+| Multilinear-CovJac | [REPORTED] 28.37 +/- 0.22% | 1.536M gates; 4 parameters/gate | Reported only |
+| Multilinear-CovJac large | [REPORTED] 32.72 +/- 0.09% | 6 x 1.28M = 7.68M gates; 4 parameters/gate | Reported only |
 
 ## Table 5: Convolutional CIFAR-100 S/M/L
 
@@ -140,19 +160,19 @@ final-layer expansion for 100 classes to the rounded CIFAR-10 gate counts.
 
 | Architecture | Estimated gate operations | Method | A / R accuracy | Status |
 |---|---:|---|---:|---|
-| C100 LogicTreeNet-S | approximately 0.49M | Original/Soft-Mix routing | TBD / — | New S transfer |
-|  | approximately 0.49M | Light/IWP | TBD / — | No published C100-S result |
-|  | approximately 0.49M | WARP | TBD / — | No published C100-S result |
-|  | **approximately 0.49M** | **CoverageDLGN-Channel** | TBD / — | New matched experiment |
-| C100 LogicTreeNet-M | approximately 3.82M | Original/Soft-Mix | TBD / 29.0 +/- 0.6% | R value is fivefold-depth M, not base M |
-|  | approximately 5 x M depth | Light/IWP | TBD / **38.2 +/- 0.3%** | Fivefold-depth M, R-only |
-|  | M-derived | Scalability-boundaries CDLGN | R-only / 30.96% | Minimally modified M |
-|  | approximately 3.82M | WARP | TBD / — | No published exact M result |
-|  | **approximately 3.82M** | **CoverageDLGN-Channel** | TBD / — | New matched experiment |
-| C100 LogicTreeNet-L | approximately 34.8M | Original/Soft-Mix | TBD / — | New L transfer |
-|  | approximately 34.8M | Light/IWP | TBD / — | No published C100-L result |
-|  | approximately 34.8M | WARP | TBD / — | No published C100-L result |
-|  | **approximately 34.8M** | **CoverageDLGN-Channel** | TBD / — | Requires teacher/input protocol decision |
+| C100 LogicTreeNet-S | approximately 0.49M | Original/Soft-Mix routing | [PENDING] / [N/A] | New S transfer |
+|  | approximately 0.49M | Light/IWP | [PENDING] / [N/A] | No published C100-S result |
+|  | approximately 0.49M | WARP | [PENDING] / [N/A] | No published C100-S result |
+|  | **approximately 0.49M** | **CoverageDLGN-Channel** | [PENDING] / [N/A] | New matched experiment |
+| C100 LogicTreeNet-M | approximately 3.82M | Original/Soft-Mix | [PENDING] / [REPORTED] 29.0 +/- 0.6% | R value is fivefold-depth M, not base M |
+|  | approximately 5 x M depth | Light/IWP | [PENDING] / **[REPORTED] 38.2 +/- 0.3%** | Fivefold-depth M, nonmatched |
+|  | M-derived | Scalability-boundaries CDLGN | [N/A] / [REPORTED] 30.96% | Minimally modified M |
+|  | approximately 3.82M | WARP | [PENDING] / [N/A] | No published exact M result |
+|  | **approximately 3.82M** | **CoverageDLGN-Channel** | [PENDING] / [N/A] | New matched experiment |
+| C100 LogicTreeNet-L | approximately 34.8M | Original/Soft-Mix | [PENDING] / [N/A] | New L transfer |
+|  | approximately 34.8M | Light/IWP | [PENDING] / [N/A] | No published C100-L result |
+|  | approximately 34.8M | WARP | [PENDING] / [N/A] | No published C100-L result |
+|  | **approximately 34.8M** | **CoverageDLGN-Channel** | [PENDING] / [N/A] | Requires teacher/input protocol decision |
 
 Convolutional CIFAR-100 S/L therefore cannot yet contain three exact
 paper-reported architecture matches. Any dense reported numbers shown beside
