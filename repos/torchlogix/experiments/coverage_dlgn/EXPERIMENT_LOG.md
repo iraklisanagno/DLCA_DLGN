@@ -128,3 +128,11 @@ This log records operational failures and protocol decisions made after commit
   three paired 20K seeds. This reduces long LILogicNet selection from nine
   runs to three per cell. The reduced search effort must remain visible in
   the protocol and does not change per-model trainable-parameter accounting.
+- The frozen Table 1 winners were expanded into separate MNIST and
+  Fashion-MNIST final queues with five seeds per method. Final training effort
+  is matched at 200 effective epochs over the 54,000-example training split:
+  108,000 iterations for batch size 100, 84,400 for batch size 128, and
+  42,200 for batch size 256. This gives every method the same number of data
+  passes while preserving its selected batch size. Validation remains the
+  only evaluation source during training; held-out test evaluation is still
+  locked.
