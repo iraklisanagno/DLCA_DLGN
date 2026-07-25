@@ -43,3 +43,24 @@ This log records operational failures and protocol decisions made after commit
   reports as trailing whitespace. The metric, threshold, and topology writers
   now explicitly use LF records; existing screen CSVs were mechanically
   normalized without changing values.
+- The committed MNIST 20K selection queue completed all 33 predeclared runs
+  with no failures, skips, or nonzero return codes in 14,975 seconds using two
+  GPUs. All 33 artifacts use source revision `2e499f2` and training
+  implementation hash
+  `f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444`.
+  The held-out test set was not used.
+- Mean best hardened validation accuracy over paired seeds 0, 1, and 2 selected
+  the following frozen MNIST candidates: fixed random 96.894% +/- 0.042%;
+  CoverageDLGN v3 incumbent 97.233% +/- 0.101%; Mommen `Nc=16`, depth 2,
+  97.756% +/- 0.134%; LILogicNet Top-32, depth 3, GroupSum temperature 15,
+  97.956% +/- 0.142%; and BitLogic 98.083% +/- 0.060%. The `+/-` values are
+  sample standard deviations, not confidence intervals.
+- CoverageDLGN v3 incumbent and the pool-16 candidate were numerically tied at
+  97.233330% to six decimal places. The incumbent was retained because the
+  exact difference was below `1e-8` and it has the smaller routing/search
+  representation. No V3 score, topology rule, or implementation was changed.
+- The MNIST winner-selection source of truth is
+  `summary/table1_mnist_selection.json`; its CSV companion preserves all
+  candidate means, standard deviations, costs, runtimes, memory measurements,
+  and hardened/relaxed metrics. These are validation-selection values, not
+  final five-seed or held-out-test results.
