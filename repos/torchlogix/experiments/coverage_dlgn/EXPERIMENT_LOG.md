@@ -188,3 +188,24 @@ This log records operational failures and protocol decisions made after commit
   19 entries: five paired seeds for fixed random and CoverageDLGN v3 and
   three seeds for each adapted comparator. The six unlaunched superseded
   seed-3/4 comparator configs were removed before the queue was committed.
+
+## July 25, 2026: Table 1 MNIST held-out final evaluation
+
+- The guarded evaluator preflighted all 25 frozen best-validation checkpoints,
+  confirmed that no prior test metric existed, and distributed the one-time
+  held-out evaluation across both GPUs. All 25 commands completed successfully
+  with zero failures or missing artifacts. The execution audit is
+  `logs/table1_final_mnist/test/test_evaluation_summary.json`.
+- Five-seed mean hardened test accuracy is fixed random `[REPRODUCED]`
+  97.090% +/- 0.180%, CoverageDLGN v3 `[OUR-FINAL]` 97.500% +/- 0.099%,
+  Mommen `[ADAPTED]` 98.084% +/- 0.066%, LILogicNet `[ADAPTED]`
+  98.124% +/- 0.029%, and BitLogic `[ADAPTED]` 98.204% +/- 0.042%.
+  Values after `+/-` are sample standard deviations.
+- CoverageDLGN v3 improves its paired fixed-random baseline by 0.410
+  percentage points on the held-out test set. The 95% Student-t confidence
+  interval is [+0.108, +0.712] pp, and all five per-seed differences are
+  positive. V3 and random have identical 48K deployed-gate budgets, 768K
+  trainable gate logits, and no trainable routing parameters.
+- `summary/table1_mnist_final.json` and its CSV export are now the final
+  machine-readable sources of truth with `test_set_used=true`. The held-out
+  test set will not be queried again for this Table 1 MNIST experiment.

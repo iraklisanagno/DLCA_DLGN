@@ -1,8 +1,7 @@
 # CoverageDLGN paper comparison tables and experiment plan
 
 **Created:** July 24, 2026  
-**Status:** pre-experiment table specification; populate in place as matched
-runs finish
+**Status:** active experiment ledger; populate in place as matched runs finish
 
 This is the canonical working document for the accuracy tables planned for the
 CoverageDLGN paper. It distinguishes results produced by our controlled
@@ -60,14 +59,18 @@ logits during training.
 
 | Method | Matched gates | MNIST A / R | Fashion-MNIST A / R | Match status |
 |---|---:|---:|---:|---|
-| Deep DLGN fixed random | 48K | **[TRIED] 97.18% / [REPORTED] 97.69%** | **[TRIED] 86.31% / [REPORTED] 87.17%** | Exact architecture; different training protocols |
-| Mommen, \(N_c=16\) | 48K | [PENDING] / [REPORTED] 98.14% `[12K, nonmatched]` | [PENDING] / [REPORTED] 87.16% `[8K, nonmatched]` | Adapt to 48K |
-| LILogicNet Top-32 | 48K | [PENDING] / [REPORTED] 98.95 +/- 0.09% `[32K, nonmatched]` | [PENDING] / [REPORTED] 90.26 +/- 0.11% `[64K, nonmatched]` | Adapt to 48K |
-| BitLogic best-of-space | 48K | [PENDING] / [REPORTED] 97.84 +/- 0.04% `[128K total, nonmatched]` | [PENDING] / [REPORTED] 89.16 +/- 0.08% `[128K total, nonmatched]` | Different two-layer, rank-4 architecture |
-| **CoverageDLGN** | **48K** | [PENDING] / [N/A] | **[TRIED] 87.16% / [N/A]** | Exact target; new method |
+| Deep DLGN fixed random | 48K | **[REPRODUCED] 97.090 +/- 0.180% (n=5) / [REPORTED] 97.69%** | **[TRIED] 86.31% / [REPORTED] 87.17%** | Exact architecture; MNIST source: `summary/table1_mnist_final.json` |
+| Mommen, \(N_c=16\) | 48K | [ADAPTED] 98.084 +/- 0.066% (n=5) / [REPORTED] 98.14% `[12K, nonmatched]` | [PENDING] / [REPORTED] 87.16% `[8K, nonmatched]` | Adapted to 48K; MNIST source: `summary/table1_mnist_final.json` |
+| LILogicNet Top-32 | 48K | [ADAPTED] 98.124 +/- 0.029% (n=5) / [REPORTED] 98.95 +/- 0.09% `[32K, nonmatched]` | [PENDING] / [REPORTED] 90.26 +/- 0.11% `[64K, nonmatched]` | Adapted to 48K; MNIST source: `summary/table1_mnist_final.json` |
+| BitLogic best-of-space | 48K | [ADAPTED] 98.204 +/- 0.042% (n=5) / [REPORTED] 97.84 +/- 0.04% `[128K total, nonmatched]` | [PENDING] / [REPORTED] 89.16 +/- 0.08% `[128K total, nonmatched]` | Adapted to 48K; MNIST source: `summary/table1_mnist_final.json` |
+| **CoverageDLGN** | **48K** | **[OUR-FINAL] 97.500 +/- 0.099% (n=5) / [N/A]** | **[TRIED] 87.16% / [N/A]** | Exact target; MNIST source: `summary/table1_mnist_final.json` |
 
 Mommen \(N_c=16\) adds approximately 32 routing logits per gate during
 training but retains one hard predecessor per gate input after training.
+On the locked MNIST test set, CoverageDLGN improves its paired fixed-random
+baseline by 0.410 percentage points (95% Student-t confidence interval
+[+0.108, +0.712] pp). All five methods were evaluated once using the
+checkpoint selected solely by hardened validation accuracy.
 
 ## Table 2: Dense CIFAR-10 S/M/L
 
