@@ -20,6 +20,23 @@
       3,
       4
     ],
+    "final_seed_policy": {
+      "primary_fixed_random_and_coverage_dlgn": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "local_paper_derived_comparators": [
+        0,
+        1,
+        2
+      ],
+      "locked_mnist_exception": "The already-running Table 1 MNIST protocol retains five final seeds for every method.",
+      "reported_only_comparator_runs": 0,
+      "table_value_provenance_required": true
+    },
     "final_training_effort": {
       "policy": "equal effective epochs",
       "epochs": 200,
@@ -176,6 +193,54 @@
     "long_runs_per_cell": 3,
     "report_search_budget_difference": true,
     "parameter_accounting": "per-model trainable parameters are independent of the number of repeated runs"
+  },
+  "dataset_method_matrix": {
+    "table_1_mnist": {
+      "fixed_random": 5,
+      "coverage_dlgn": 5,
+      "mommen": 5,
+      "lilogic": 5,
+      "bitlogic": 5,
+      "reason": "locked exception already in progress"
+    },
+    "table_1_fashion_mnist": {
+      "fixed_random": 5,
+      "coverage_dlgn": 5,
+      "mommen": 3,
+      "lilogic": 3,
+      "bitlogic": 3
+    },
+    "dense_cifar10_each_scale": {
+      "fixed_random": 5,
+      "coverage_dlgn": 5,
+      "mommen": 3,
+      "lilogic": "3 on S; reported-only on M/L",
+      "bitlogic": "reported-only",
+      "warp_lut": "reported-only"
+    },
+    "convolutional_cifar10_each_promoted_scale": {
+      "fixed_random": 5,
+      "coverage_dlgn": 5,
+      "light_iwp": 3,
+      "warp": 3,
+      "two_stage_unit_tying": "reported-only",
+      "mommen_lilogic_bitlogic": "not applicable"
+    },
+    "dense_cifar100_each_scale": {
+      "fixed_random": 5,
+      "coverage_dlgn": 5,
+      "mommen": 3,
+      "lilogic": "3 on S; reported-only on M/L",
+      "bitlogic": "reported-only",
+      "difflogic_and_warp_lut": "reported-only"
+    },
+    "convolutional_cifar100_each_promoted_scale": {
+      "fixed_random": 5,
+      "coverage_dlgn": 5,
+      "light_iwp": 3,
+      "warp": 3,
+      "mommen_lilogic_bitlogic": "not applicable"
+    }
   },
   "promotion_order": [
     "table_1",

@@ -200,6 +200,28 @@ The goal is one best CoverageDLGN result per dataset and architecture, not
 multiple reporting variants. Hyperparameters may be selected independently
 for every cell, but the implemented CoverageDLGN mechanism must not change.
 
+### Frozen run-count policy
+
+- Fixed random and CoverageDLGN use five full seeds on every promoted central
+  cell.
+- Locally reproduced or adapted paper-derived comparators use three full
+  seeds. A paper-prescribed recipe is preferred; otherwise a one-seed short
+  screen advances only one setting to the three long runs.
+- The already-running MNIST Table 1 queue is the only locked exception: all
+  five methods retain five final seeds. Fashion-MNIST uses five seeds for
+  random/CoverageDLGN and three for Mommen/LILogicNet/BitLogic.
+- Dense CIFAR-10 and CIFAR-100 run Mommen for three seeds at each feasible
+  S/M/L scale. LILogicNet is run locally for three seeds on S and is
+  reported-only on M/L. BitLogic and WARP-LUT use reported values.
+- Promoted convolutional cells run fixed random and CoverageDLGN for five
+  seeds and Light/IWP and WARP for three seeds. Mommen, LILogicNet, and
+  BitLogic are not treated as convolutional comparators unless a separately
+  justified generic extension is implemented.
+- CIFAR-10 compression points use three paired random/CoverageDLGN seeds.
+  Only the selected Pareto crossing is extended to five final seeds.
+- Convolutional L and CIFAR-100 M/L obey the promotion/kill conditions below.
+- Every numeric table value carries the provenance labels defined above.
+
 ### Selection protocol used for every CoverageDLGN cell
 
 1. Rebuild the topology for the exact dataset, encoding, width, depth, and
@@ -246,7 +268,9 @@ for every cell, but the implemented CoverageDLGN mechanism must not change.
 4. Search CoverageDLGN independently on MNIST 48K and Fashion-MNIST 48K using
    the common selection protocol above.
 5. Run the same pilot and selection effort for the reproduced comparators.
-6. Train five final seeds for each frozen row on both datasets.
+6. Retain five final seeds for every frozen MNIST row. On Fashion-MNIST,
+   train five final random/CoverageDLGN seeds and three final
+   Mommen/LILogicNet/BitLogic seeds.
 7. Evaluate test once and replace the current CoverageDLGN values only when
    the newly selected configurations are protocol-complete.
 
@@ -259,17 +283,19 @@ configuration.
 1. Retain the existing S and M results as incumbent CoverageDLGN candidates.
 2. Add and test 128K, 256K, and 384K four-layer compression architectures.
 3. Search CoverageDLGN independently for S, 128K, 256K, 384K, M, and L.
-4. Populate matched achieved rows for fixed random, LILogicNet, WARP-LUT, and
-   BitLogic; add Mommen if its CIFAR-10 implementation is feasible.
+4. Run fixed random/CoverageDLGN for five seeds and Mommen for three seeds at
+   each feasible S/M/L scale. Run LILogicNet for three seeds on S; retain
+   LILogicNet M/L, WARP-LUT, and BitLogic as explicitly reported-only values.
 5. Use three paired 20K seeds for selection at every budget.
-6. Run five full seeds for S, M, the selected compression crossing, and L
-   after a timing/memory feasibility run.
+6. Run five full fixed-random/CoverageDLGN seeds for S, M, the selected
+   compression crossing, and L after a timing/memory feasibility run.
 7. Select the smallest CoverageDLGN budget that matches the larger random
    model within a predeclared 0.3-percentage-point non-inferiority margin.
 
-**Completion condition:** S/M/L contain at least three achieved
-paper-derived comparisons, and the table or companion figure demonstrates
-the best observed accuracy--gate-count Pareto frontier.
+**Completion condition:** S/M/L contain the five-seed local primary
+comparison, the three-seed Mommen adaptation, and at least three clearly
+labelled local or reported paper-derived comparisons. The table or companion
+figure demonstrates the best observed accuracy--gate-count Pareto frontier.
 
 ### Plan for Table 3: Convolutional CIFAR-10 S/M/L
 
@@ -279,9 +305,12 @@ the best observed accuracy--gate-count Pareto frontier.
    separate negative methods and are not candidate configurations.
 3. Compare raw, Light/IWP, and WARP parameterizations within the allowed
    CoverageDLGN search and record the winning choice.
-4. Reproduce Light/IWP-LogicTreeNet and WARP-LogicTreeNet as comparator rows.
-5. Apply two-stage unit tying only after the untied checkpoints are frozen.
-6. Run three paired 20K selection seeds and five final seeds for S and M.
+4. Reproduce Light/IWP-LogicTreeNet and WARP-LogicTreeNet for three final
+   seeds on each promoted scale.
+5. Retain two-stage unit tying as a clearly labelled reported value unless a
+   later paper need justifies local reproduction.
+6. Run three paired 20K selection seeds, five final random/CoverageDLGN
+   seeds, and three final Light/IWP/WARP seeds for S and M.
 7. Start L only after reproducing its 5-bit input, preprocessing, teacher
    supervision, and gate accounting, followed by a timing/memory feasibility
    run.
@@ -291,18 +320,21 @@ over its matched fixed-routing baseline. Otherwise L remains reported-only.
 
 ### Plan for Table 4: Dense CIFAR-100 S/M/L
 
-1. Reproduce the BitLogic two-layer S/M/L common protocol and gate accounting.
-2. Reproduce DiffLogic, WARP-LUT, LILogicNet, and BitLogic best-of-space at
-   the published widths.
+1. Audit the BitLogic two-layer S/M/L common protocol and gate accounting.
+2. Retain DiffLogic, WARP-LUT, and BitLogic best-of-space as reported values;
+   run a three-seed local LILogicNet adaptation on S and retain its M/L
+   reported values.
 3. Search rank-2 CoverageDLGN independently at 8K, 32K, and 128K total gates.
 4. Keep fan-in and operation count visible because BitLogic best-of-space is
    rank 4.
-5. Use three paired selection seeds and five final seeds for each scale.
+5. Use five final seeds for fixed random/CoverageDLGN and three for Mommen at
+   each scale, subject to timing feasibility.
 6. Retain the 384K and Multilinear-CovJac values as reported-only unless their
    exact architectures are separately reproduced.
 
-**Completion condition:** all S/M/L rows contain at least three achieved
-paper-derived comparators and one validation-selected CoverageDLGN result.
+**Completion condition:** all S/M/L rows contain a five-seed local primary
+comparison, a three-seed Mommen adaptation, and at least three clearly
+labelled local or reported paper-derived comparators.
 
 ### Plan for Table 5: Convolutional CIFAR-100 S/M/L
 
@@ -311,10 +343,11 @@ paper-derived comparators and one validation-selected CoverageDLGN result.
 2. Implement and smoke-test the transferred S architecture.
 3. Search CoverageDLGN independently for S using random, raw/Light/WARP
    parameterization candidates and three paired 20K validation seeds.
-4. Populate fixed-routing, Light/IWP, and WARP achieved comparator rows.
+4. Populate five-seed fixed-routing/CoverageDLGN rows and three-seed
+   Light/IWP/WARP adapted comparator rows.
 5. Promote M only after S produces a positive signal; promote L only after M.
-6. For every promoted scale, run five final seeds and one locked test
-   evaluation after selection.
+6. For every promoted scale, run five final random/CoverageDLGN seeds, three
+   final Light/IWP/WARP seeds, and one locked test evaluation after selection.
 7. Leave unpromoted scales and nonmatching literature results explicitly
    reported-only.
 
