@@ -42,6 +42,8 @@ from torchlogix.models import (
     DlgnCifar10Budget128k,
     DlgnCifar10Budget256k,
     DlgnCifar10Budget384k,
+    DlgnCifar10MediumLearnable,
+    DlgnCifar10SmallLearnable,
     DlgnCifar10Budget48kDepth8,
     DlgnCifar10Budget48kDepth12,
     DlgnCifar10Budget512kDepth8,
@@ -489,6 +491,35 @@ def test_cifar10_compression_models_hold_depth_budget_and_logit_scale():
         assert layers[-1].out_dim % 10 == 0
         max_logit = (layers[-1].out_dim / 10) / model[-1].tau
         assert max_logit == 128.0
+
+
+@pytest.mark.parametrize(
+    ("model_cls", "budget", "width", "tau"),
+    [
+        (DlgnCifar10SmallLearnable, 48_000, 12_000, 1.0 / 0.03),
+        (DlgnCifar10MediumLearnable, 512_000, 128_000, 1.0 / 0.01),
+    ],
+)
+def test_cifar10_learnable_comparators_preserve_exact_sm_architecture(
+    model_cls, budget, width, tau
+):
+    thresholds = torch.tensor([0.25, 0.5, 0.75])
+    kwargs = _paper_model_kwargs(thresholds)
+    kwargs["connections_kwargs"].update({
+        "num_candidates": 8,
+        "forward_mode": "soft_mix",
+        "weights_init": "normal",
+    })
+    model = model_cls(**kwargs)
+    layers = [module for module in model if isinstance(module, LogicDense)]
+    assert len(layers) == 4
+    assert sum(layer.out_dim for layer in layers) == budget
+    assert all(layer.out_dim == width for layer in layers)
+    assert all(
+        isinstance(layer.connections, LearnableDenseConnections)
+        for layer in layers
+    )
+    assert model[-1].tau == tau
 
 
 def test_compression_screen_advances_ties_and_incumbent():

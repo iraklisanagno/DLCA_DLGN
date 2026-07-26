@@ -547,6 +547,12 @@ class DlgnCifar10Small(DlgnCifar10):
         )
 
 
+class DlgnCifar10SmallLearnable(DlgnCifar10Small):
+    """Exact 48K CIFAR-10 S target with learnable routing in all layers."""
+
+    n_learnable_layers = 4
+
+
 class DlgnCifar10SmallRank4(DlgnCifar10):
     n_input_bits = 3
     def __init__(self, **llkw):
@@ -572,6 +578,12 @@ class DlgnCifar10Medium(DlgnCifar10):
         super(DlgnCifar10Medium, self).__init__(
             n_layers=4, neurons_per_layer=128_000, tau=tau, **llkw
         )
+
+
+class DlgnCifar10MediumLearnable(DlgnCifar10Medium):
+    """Exact 512K CIFAR-10 M target with learnable routing in all layers."""
+
+    n_learnable_layers = 4
 
 
 class DlgnCifar10Budget128k(DlgnCifar10):

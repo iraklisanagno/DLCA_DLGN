@@ -1,0 +1,29 @@
+{
+  "phase": "table2_s_comparator_screen",
+  "selection_metric": "best hardened validation accuracy",
+  "heldout_test_used": false,
+  "reduced_search_policy": {
+    "mommen": "one seed each for Nc=8 and Nc=16",
+    "lilogic": "one fixed paper-derived matched-budget recipe"
+  },
+  "entries": [
+    {
+      "name": "screen_table2_cifar10_s_mommen_nc8_seed0",
+      "family": "mommen",
+      "config": "experiments/coverage_dlgn/configs/table2_s_comparator_screen/screen_table2_cifar10_s_mommen_nc8_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_s_mommen_nc8_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_s_mommen_nc16_seed0",
+      "family": "mommen",
+      "config": "experiments/coverage_dlgn/configs/table2_s_comparator_screen/screen_table2_cifar10_s_mommen_nc16_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_s_mommen_nc16_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_s_lilogic_top32_tau30_seed0",
+      "family": "lilogic",
+      "config": "experiments/coverage_dlgn/configs/table2_s_comparator_screen/screen_table2_cifar10_s_lilogic_top32_tau30_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_s_lilogic_top32_tau30_seed0"
+    }
+  ]
+}
