@@ -462,3 +462,17 @@ This log records operational failures and protocol decisions made after commit
 - `summary/table2_s_comparator_final.json` and its CSV export now have
   `test_set_used=true` and are the final machine-readable sources. These six
   comparator checkpoints will not be queried on the held-out test again.
+
+## July 26, 2026: dense CIFAR-10 L feasibility
+
+- The paper-faithful `DlgnCifar10Large` architecture was audited as five
+  layers of 256K rank-2 gates, 1.28M gates total, five input bits per channel,
+  and output temperature 100. The focused protocol suite now tests these
+  properties explicitly.
+- A timing-only fixed-random run completed 1K steps in 64 seconds of measured
+  training time and peaked at 2,917,583,360 allocated GPU bytes. Its short-run
+  accuracy is not eligible for any comparison table.
+- L advances to a reduced one-seed 5K screen containing fixed random and five
+  unchanged V3 configurations: incumbent, pool 4, swap 0.50, Light, and WARP.
+  These vary only existing topology controls or gate parameterization; the
+  frozen V3 mechanism is unchanged and the held-out test remains locked.
