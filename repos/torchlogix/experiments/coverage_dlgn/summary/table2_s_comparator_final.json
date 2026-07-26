@@ -1,7 +1,7 @@
 {
   "phase": "table2_s_comparator_final",
   "validation_metric": "hardened validation accuracy",
-  "test_set_used": false,
+  "test_set_used": true,
   "run_count": 6,
   "source_revisions": {
     "e4327c6473eb2175c05883198d8847d9581a7ea4": 6
@@ -33,7 +33,10 @@
       "deployed_routing_bits": 1344000,
       "architecture": "DlgnCifar10SmallLearnable",
       "connections_num_candidates": 8,
-      "group_sum_temperature": null
+      "group_sum_temperature": null,
+      "mean_test_hard_accuracy": 0.5094999864697456,
+      "std_test_hard_accuracy": 0.0024433587039063348,
+      "mean_test_relaxed_accuracy": 0.5115666536490122
     },
     {
       "family": "lilogic",
@@ -54,7 +57,10 @@
       "deployed_routing_bits": 1344000,
       "architecture": "DlgnCifar10SmallLearnable",
       "connections_num_candidates": 32,
-      "group_sum_temperature": 30.0
+      "group_sum_temperature": 30.0,
+      "mean_test_hard_accuracy": 0.5074333333333333,
+      "std_test_hard_accuracy": 0.00573527099040081,
+      "mean_test_relaxed_accuracy": 0.5083333333333333
     }
   ],
   "runs": [
@@ -75,7 +81,12 @@
       "connections_num_candidates": 32,
       "group_sum_temperature": 30.0,
       "source_revision": "e4327c6473eb2175c05883198d8847d9581a7ea4",
-      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5",
+      "test_hard_accuracy": 0.5067,
+      "test_relaxed_accuracy": 0.5081,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 11816
     },
     {
       "name": "final_table2_cifar10_s_lilogic_top32_tau30_seed1",
@@ -94,7 +105,12 @@
       "connections_num_candidates": 32,
       "group_sum_temperature": 30.0,
       "source_revision": "e4327c6473eb2175c05883198d8847d9581a7ea4",
-      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5",
+      "test_hard_accuracy": 0.5021,
+      "test_relaxed_accuracy": 0.5032,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 23632
     },
     {
       "name": "final_table2_cifar10_s_lilogic_top32_tau30_seed2",
@@ -113,7 +129,12 @@
       "connections_num_candidates": 32,
       "group_sum_temperature": 30.0,
       "source_revision": "e4327c6473eb2175c05883198d8847d9581a7ea4",
-      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5",
+      "test_hard_accuracy": 0.5135,
+      "test_relaxed_accuracy": 0.5137,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 38824
     },
     {
       "name": "final_table2_cifar10_s_mommen_nc8_seed0",
@@ -132,7 +153,12 @@
       "connections_num_candidates": 8,
       "group_sum_temperature": null,
       "source_revision": "e4327c6473eb2175c05883198d8847d9581a7ea4",
-      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5",
+      "test_hard_accuracy": 0.5111999854445457,
+      "test_relaxed_accuracy": 0.5131999859213829,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 74000
     },
     {
       "name": "final_table2_cifar10_s_mommen_nc8_seed1",
@@ -151,7 +177,12 @@
       "connections_num_candidates": 8,
       "group_sum_temperature": null,
       "source_revision": "e4327c6473eb2175c05883198d8847d9581a7ea4",
-      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5",
+      "test_hard_accuracy": 0.5066999858617782,
+      "test_relaxed_accuracy": 0.5098999866843223,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 84000
     },
     {
       "name": "final_table2_cifar10_s_mommen_nc8_seed2",
@@ -170,7 +201,12 @@
       "connections_num_candidates": 8,
       "group_sum_temperature": null,
       "source_revision": "e4327c6473eb2175c05883198d8847d9581a7ea4",
-      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5",
+      "test_hard_accuracy": 0.5105999881029128,
+      "test_relaxed_accuracy": 0.5115999883413315,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 60000
     }
   ]
 }

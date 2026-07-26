@@ -448,3 +448,17 @@ This log records operational failures and protocol decisions made after commit
 - `summary/table2_s_comparator_final.json` and its CSV export are the frozen
   validation sources with `test_set_used=false`. The held-out test remains
   locked until this validation state is committed.
+
+## July 26, 2026: dense CIFAR-10 S comparator held-out test
+
+- Commit `6d63a4b` froze all six comparator validation checkpoints before
+  test evaluation. Every checkpoint was then evaluated exactly once with
+  zero failures.
+- Held-out hardened test accuracy is Mommen `[ADAPTED]`
+  50.950% +/- 0.244% and LILogicNet `[ADAPTED]` 50.743% +/- 0.574%, with
+  three seeds per method. The existing exact-48K CoverageDLGN v3 result is
+  53.116% (n=5), 2.166 and 2.373 percentage points higher respectively;
+  these cross-method differences are not paired confidence intervals.
+- `summary/table2_s_comparator_final.json` and its CSV export now have
+  `test_set_used=true` and are the final machine-readable sources. These six
+  comparator checkpoints will not be queried on the held-out test again.
