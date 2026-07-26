@@ -1,0 +1,17 @@
+{
+  "phase": "table2_m_mommen_final",
+  "selection_source": "CIFAR-10 S frozen winner Nc=8",
+  "selection_metric": "one full seed under conditional promotion policy",
+  "heldout_test_used": false,
+  "seeds": [
+    0
+  ],
+  "entries": [
+    {
+      "name": "final_table2_cifar10_m_mommen_nc8_seed0",
+      "family": "mommen",
+      "config": "experiments/coverage_dlgn/configs/table2_m_mommen_final/final_table2_cifar10_m_mommen_nc8_seed0.json",
+      "output": "experiments/coverage_dlgn/results/final_table2_cifar10_m_mommen_nc8_seed0"
+    }
+  ]
+}
