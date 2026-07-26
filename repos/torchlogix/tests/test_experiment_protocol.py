@@ -48,6 +48,7 @@ from torchlogix.models import (
     DlgnCifar10Budget48kDepth12,
     DlgnCifar10Budget512kDepth8,
     DlgnCifar10Budget512kDepth12,
+    DlgnCifar10Large,
     DlgnCifar10Small,
     DlgnFashionMnistPaperSmall,
     DlgnFashionMnistPaperSmallLearnable,
@@ -491,6 +492,19 @@ def test_cifar10_compression_models_hold_depth_budget_and_logit_scale():
         assert layers[-1].out_dim % 10 == 0
         max_logit = (layers[-1].out_dim / 10) / model[-1].tau
         assert max_logit == 128.0
+
+
+def test_cifar10_large_matches_paper_architecture_and_five_bit_input():
+    thresholds = torch.tensor([1 / 6, 2 / 6, 3 / 6, 4 / 6, 5 / 6])
+    model = DlgnCifar10Large(**_paper_model_kwargs(thresholds))
+    layers = [module for module in model if isinstance(module, LogicDense)]
+    assert model.n_input_bits == 5
+    assert len(layers) == 5
+    assert all(layer.out_dim == 256_000 for layer in layers)
+    assert sum(layer.out_dim for layer in layers) == 1_280_000
+    assert layers[0].in_dim == 3 * 32 * 32 * 5
+    assert layers[-1].out_dim % 10 == 0
+    assert model[-1].tau == 100.0
 
 
 @pytest.mark.parametrize(

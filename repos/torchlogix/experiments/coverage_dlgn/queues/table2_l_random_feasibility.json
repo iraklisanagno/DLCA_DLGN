@@ -1,0 +1,13 @@
+{
+  "phase": "table2_l_random_feasibility",
+  "purpose": "timing and memory feasibility only; not an accuracy result",
+  "heldout_test_used": false,
+  "entries": [
+    {
+      "name": "timing_table2_cifar10_l_random_seed0",
+      "family": "random",
+      "config": "experiments/coverage_dlgn/configs/table2_l_feasibility/timing_table2_cifar10_l_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/timing_table2_cifar10_l_random_seed0"
+    }
+  ]
+}
