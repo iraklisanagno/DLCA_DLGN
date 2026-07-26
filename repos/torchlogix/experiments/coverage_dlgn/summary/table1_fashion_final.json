@@ -1,7 +1,7 @@
 {
   "phase": "table1_final_fashion",
   "validation_metric": "hardened validation accuracy",
-  "test_set_used": false,
+  "test_set_used": true,
   "run_count": 19,
   "source_revisions": {
     "dd194c0eb1c5acb9da783f1dc4dcd7e6d9463a54": 19
@@ -48,6 +48,20 @@
         0.0015066403457627713,
         0.007093362181474211
       ]
+    },
+    "test_hard_accuracy_difference": {
+      "per_seed": [
+        0.008999996781349107,
+        0.006600000262260486,
+        0.005199996829032827,
+        0.007000002861022869,
+        0.011899999380111659
+      ],
+      "mean": 0.00793999922275539,
+      "ci_95": [
+        0.004714539505012865,
+        0.011165458940497915
+      ]
     }
   },
   "methods": [
@@ -75,7 +89,10 @@
       "std_final_validation_hard_accuracy": 0.0012560968994788648,
       "mean_final_validation_relaxed_accuracy": 0.8739999800920487,
       "mean_wall_seconds": 898.4899810695991,
-      "max_peak_gpu_memory_bytes": 106689536
+      "max_peak_gpu_memory_bytes": 106689536,
+      "mean_test_hard_accuracy": 0.8630799812078476,
+      "std_test_hard_accuracy": 0.0018646708405997837,
+      "mean_test_relaxed_accuracy": 0.8669599794149399
     },
     {
       "family": "coverage_v3",
@@ -101,7 +118,10 @@
       "std_final_validation_hard_accuracy": 0.0027973206035478734,
       "mean_final_validation_relaxed_accuracy": 0.8792999782164892,
       "mean_wall_seconds": 901.1853520189994,
-      "max_peak_gpu_memory_bytes": 106689536
+      "max_peak_gpu_memory_bytes": 106689536,
+      "mean_test_hard_accuracy": 0.871019980430603,
+      "std_test_hard_accuracy": 0.0035702936939775343,
+      "mean_test_relaxed_accuracy": 0.8753599796295166
     },
     {
       "family": "mommen",
@@ -125,7 +145,10 @@
       "std_final_validation_hard_accuracy": 0.0007876331195017337,
       "mean_final_validation_relaxed_accuracy": 0.8816110922230614,
       "mean_wall_seconds": 1442.2040259433318,
-      "max_peak_gpu_memory_bytes": 535149568
+      "max_peak_gpu_memory_bytes": 535149568,
+      "mean_test_hard_accuracy": 0.8725999808311462,
+      "std_test_hard_accuracy": 0.0028213461531390012,
+      "mean_test_relaxed_accuracy": 0.8773999794324239
     },
     {
       "family": "lilogic",
@@ -149,7 +172,10 @@
       "std_final_validation_hard_accuracy": 0.0022194426146515483,
       "mean_final_validation_relaxed_accuracy": 0.89483333407508,
       "mean_wall_seconds": 4250.142340604328,
-      "max_peak_gpu_memory_bytes": 5020596736
+      "max_peak_gpu_memory_bytes": 5020596736,
+      "mean_test_hard_accuracy": 0.8843666666666666,
+      "std_test_hard_accuracy": 0.0015947831618540805,
+      "mean_test_relaxed_accuracy": 0.8844333333333333
     },
     {
       "family": "bitlogic",
@@ -173,7 +199,10 @@
       "std_final_validation_hard_accuracy": 0.002694301623287689,
       "mean_final_validation_relaxed_accuracy": 0.9050000008477105,
       "mean_wall_seconds": 5336.104597888329,
-      "max_peak_gpu_memory_bytes": 3819600384
+      "max_peak_gpu_memory_bytes": 3819600384,
+      "mean_test_hard_accuracy": 0.8974,
+      "std_test_hard_accuracy": 0.0024269322199023287,
+      "mean_test_relaxed_accuracy": 0.8996000000000001
     }
   ],
   "runs": [
@@ -195,7 +224,12 @@
       "architecture": "DlgnFashionMnistBitLogic48k",
       "parametrization": "light",
       "source_revision": "dd194c0eb1c5acb9da783f1dc4dcd7e6d9463a54",
-      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444"
+      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444",
+      "test_hard_accuracy": 0.8954,
+      "test_relaxed_accuracy": 0.8968,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 84400
     },
     {
       "name": "final_table1_fashion_bitlogic_48k_seed1",
@@ -215,7 +249,12 @@
       "architecture": "DlgnFashionMnistBitLogic48k",
       "parametrization": "light",
       "source_revision": "dd194c0eb1c5acb9da783f1dc4dcd7e6d9463a54",
-      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444"
+      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444",
+      "test_hard_accuracy": 0.8967,
+      "test_relaxed_accuracy": 0.9001,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 75960
     },
     {
       "name": "final_table1_fashion_bitlogic_48k_seed2",
@@ -235,7 +274,12 @@
       "architecture": "DlgnFashionMnistBitLogic48k",
       "parametrization": "light",
       "source_revision": "dd194c0eb1c5acb9da783f1dc4dcd7e6d9463a54",
-      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444"
+      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444",
+      "test_hard_accuracy": 0.9001,
+      "test_relaxed_accuracy": 0.9019,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 79336
     },
     {
       "name": "final_table1_fashion_lilogic_top32_depth2_tau30_48k_seed0",
@@ -255,7 +299,12 @@
       "architecture": "DlgnFashionMnistLearnable48kDepth2",
       "parametrization": "raw",
       "source_revision": "dd194c0eb1c5acb9da783f1dc4dcd7e6d9463a54",
-      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444"
+      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444",
+      "test_hard_accuracy": 0.8862,
+      "test_relaxed_accuracy": 0.8865,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 18568
     },
     {
       "name": "final_table1_fashion_lilogic_top32_depth2_tau30_48k_seed1",
@@ -275,7 +324,12 @@
       "architecture": "DlgnFashionMnistLearnable48kDepth2",
       "parametrization": "raw",
       "source_revision": "dd194c0eb1c5acb9da783f1dc4dcd7e6d9463a54",
-      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444"
+      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444",
+      "test_hard_accuracy": 0.8836,
+      "test_relaxed_accuracy": 0.8834,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 32916
     },
     {
       "name": "final_table1_fashion_lilogic_top32_depth2_tau30_48k_seed2",
@@ -295,7 +349,12 @@
       "architecture": "DlgnFashionMnistLearnable48kDepth2",
       "parametrization": "raw",
       "source_revision": "dd194c0eb1c5acb9da783f1dc4dcd7e6d9463a54",
-      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444"
+      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444",
+      "test_hard_accuracy": 0.8833,
+      "test_relaxed_accuracy": 0.8834,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 27852
     },
     {
       "name": "final_table1_fashion_mommen_nc8_depth3_48k_seed0",
@@ -315,7 +374,12 @@
       "architecture": "DlgnFashionMnistLearnable48kDepth3",
       "parametrization": "raw",
       "source_revision": "dd194c0eb1c5acb9da783f1dc4dcd7e6d9463a54",
-      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444"
+      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444",
+      "test_hard_accuracy": 0.8755999791622162,
+      "test_relaxed_accuracy": 0.8782999783754348,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 88000
     },
     {
       "name": "final_table1_fashion_mommen_nc8_depth3_48k_seed1",
@@ -335,7 +399,12 @@
       "architecture": "DlgnFashionMnistLearnable48kDepth3",
       "parametrization": "raw",
       "source_revision": "dd194c0eb1c5acb9da783f1dc4dcd7e6d9463a54",
-      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444"
+      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444",
+      "test_hard_accuracy": 0.8699999809265136,
+      "test_relaxed_accuracy": 0.8764999806880951,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 32000
     },
     {
       "name": "final_table1_fashion_mommen_nc8_depth3_48k_seed2",
@@ -355,7 +424,12 @@
       "architecture": "DlgnFashionMnistLearnable48kDepth3",
       "parametrization": "raw",
       "source_revision": "dd194c0eb1c5acb9da783f1dc4dcd7e6d9463a54",
-      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444"
+      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444",
+      "test_hard_accuracy": 0.8721999824047089,
+      "test_relaxed_accuracy": 0.8773999792337418,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 50000
     },
     {
       "name": "final_table1_fashion_random_48k_seed0",
@@ -375,7 +449,12 @@
       "architecture": "DlgnFashionMnistPaperSmall",
       "parametrization": "raw",
       "source_revision": "dd194c0eb1c5acb9da783f1dc4dcd7e6d9463a54",
-      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444"
+      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444",
+      "test_hard_accuracy": 0.8657999819517136,
+      "test_relaxed_accuracy": 0.8670999771356582,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 52000
     },
     {
       "name": "final_table1_fashion_random_48k_seed1",
@@ -395,7 +474,12 @@
       "architecture": "DlgnFashionMnistPaperSmall",
       "parametrization": "raw",
       "source_revision": "dd194c0eb1c5acb9da783f1dc4dcd7e6d9463a54",
-      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444"
+      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444",
+      "test_hard_accuracy": 0.8621999830007553,
+      "test_relaxed_accuracy": 0.8663999789953232,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 106000
     },
     {
       "name": "final_table1_fashion_random_48k_seed2",
@@ -415,7 +499,12 @@
       "architecture": "DlgnFashionMnistPaperSmall",
       "parametrization": "raw",
       "source_revision": "dd194c0eb1c5acb9da783f1dc4dcd7e6d9463a54",
-      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444"
+      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444",
+      "test_hard_accuracy": 0.8610999822616577,
+      "test_relaxed_accuracy": 0.8665999805927277,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 102000
     },
     {
       "name": "final_table1_fashion_random_48k_seed3",
@@ -435,7 +524,12 @@
       "architecture": "DlgnFashionMnistPaperSmall",
       "parametrization": "raw",
       "source_revision": "dd194c0eb1c5acb9da783f1dc4dcd7e6d9463a54",
-      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444"
+      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444",
+      "test_hard_accuracy": 0.8640999776124955,
+      "test_relaxed_accuracy": 0.867299981713295,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 90000
     },
     {
       "name": "final_table1_fashion_random_48k_seed4",
@@ -455,7 +549,12 @@
       "architecture": "DlgnFashionMnistPaperSmall",
       "parametrization": "raw",
       "source_revision": "dd194c0eb1c5acb9da783f1dc4dcd7e6d9463a54",
-      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444"
+      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444",
+      "test_hard_accuracy": 0.862199981212616,
+      "test_relaxed_accuracy": 0.8673999786376954,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 52000
     },
     {
       "name": "final_table1_fashion_v3_swap0500_48k_seed0",
@@ -475,7 +574,12 @@
       "architecture": "DlgnFashionMnistPaperSmall",
       "parametrization": "raw",
       "source_revision": "dd194c0eb1c5acb9da783f1dc4dcd7e6d9463a54",
-      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444"
+      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444",
+      "test_hard_accuracy": 0.8747999787330627,
+      "test_relaxed_accuracy": 0.8783999782800674,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 32000
     },
     {
       "name": "final_table1_fashion_v3_swap0500_48k_seed1",
@@ -495,7 +599,12 @@
       "architecture": "DlgnFashionMnistPaperSmall",
       "parametrization": "raw",
       "source_revision": "dd194c0eb1c5acb9da783f1dc4dcd7e6d9463a54",
-      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444"
+      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444",
+      "test_hard_accuracy": 0.8687999832630158,
+      "test_relaxed_accuracy": 0.8709999805688858,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 44000
     },
     {
       "name": "final_table1_fashion_v3_swap0500_48k_seed2",
@@ -515,7 +624,12 @@
       "architecture": "DlgnFashionMnistPaperSmall",
       "parametrization": "raw",
       "source_revision": "dd194c0eb1c5acb9da783f1dc4dcd7e6d9463a54",
-      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444"
+      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444",
+      "test_hard_accuracy": 0.8662999790906906,
+      "test_relaxed_accuracy": 0.8746999782323838,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 14000
     },
     {
       "name": "final_table1_fashion_v3_swap0500_48k_seed3",
@@ -535,7 +649,12 @@
       "architecture": "DlgnFashionMnistPaperSmall",
       "parametrization": "raw",
       "source_revision": "dd194c0eb1c5acb9da783f1dc4dcd7e6d9463a54",
-      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444"
+      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444",
+      "test_hard_accuracy": 0.8710999804735183,
+      "test_relaxed_accuracy": 0.8753999823331833,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 84000
     },
     {
       "name": "final_table1_fashion_v3_swap0500_48k_seed4",
@@ -555,7 +674,12 @@
       "architecture": "DlgnFashionMnistPaperSmall",
       "parametrization": "raw",
       "source_revision": "dd194c0eb1c5acb9da783f1dc4dcd7e6d9463a54",
-      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444"
+      "training_implementation_sha256": "f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444",
+      "test_hard_accuracy": 0.8740999805927276,
+      "test_relaxed_accuracy": 0.8772999787330628,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 44000
     }
   ]
 }

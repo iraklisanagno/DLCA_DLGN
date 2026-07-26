@@ -239,3 +239,30 @@ This log records operational failures and protocol decisions made after commit
   `test_set_used=false`. The held-out Fashion-MNIST test set remains locked
   until this validation summary is committed and then will be evaluated once
   using the guarded evaluator.
+
+## July 26, 2026: Table 1 Fashion-MNIST held-out final evaluation
+
+- Validation results and the checkpoint-selection state were frozen in commit
+  `354ed1a` before test evaluation. The guarded evaluator preflighted all 19
+  best-validation checkpoints, verified that no Fashion test metric existed,
+  and distributed the exactly-once evaluation across both GPUs. All 19
+  commands completed successfully with zero failures or missing artifacts.
+- Mean hardened test accuracy is fixed random `[REPRODUCED]`
+  86.308% +/- 0.186% (n=5), CoverageDLGN v3 `[OUR-FINAL]`
+  87.102% +/- 0.357% (n=5), Mommen `[ADAPTED]`
+  87.260% +/- 0.282% (n=3), LILogicNet `[ADAPTED]`
+  88.437% +/- 0.159% (n=3), and BitLogic `[ADAPTED]`
+  89.740% +/- 0.243% (n=3).
+- CoverageDLGN v3 improves its paired fixed-random test baseline by 0.794
+  percentage points. The 95% Student-t confidence interval is
+  [+0.471, +1.117] pp, and all five per-seed differences are positive. The
+  test gain is larger than the frozen validation gain of 0.397 pp.
+- Mommen is 0.158 pp above V3 in the unpaired method means but uses twice
+  the trainable parameters, 1.60 times the mean training time, and 5.02 times
+  the peak allocated GPU memory. LILogicNet and BitLogic achieve higher raw
+  accuracy but use five times the trainable parameters and approximately
+  4.72/5.92 times the training time and 47.1/35.8 times the peak memory.
+- `summary/table1_fashion_final.json` and its CSV export are now the final
+  machine-readable sources of truth with `test_set_used=true`. The held-out
+  Fashion-MNIST test set will not be queried again for this Table 1
+  experiment.
