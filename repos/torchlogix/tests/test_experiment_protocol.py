@@ -36,6 +36,9 @@ from torchlogix.models import (
     ClgnCifar10PaperMedium,
     ClgnCifar10PaperSmall,
     ClgnCifar10Small,
+    DlgnCifar10Budget128k,
+    DlgnCifar10Budget256k,
+    DlgnCifar10Budget384k,
     DlgnCifar10Budget48kDepth8,
     DlgnCifar10Budget48kDepth12,
     DlgnCifar10Budget512kDepth8,
@@ -464,6 +467,25 @@ def test_controlled_cifar10_depth_models_hold_gate_budget_and_logit_scale():
         assert layers[-1].out_dim % 10 == 0
         max_logit = (layers[-1].out_dim / 10) / model[-1].tau
         assert max_logit == expected_max_logit
+
+
+def test_cifar10_compression_models_hold_depth_budget_and_logit_scale():
+    thresholds = torch.tensor([0.25, 0.5, 0.75])
+    cases = (
+        (DlgnCifar10Budget128k, 128_000),
+        (DlgnCifar10Budget256k, 256_000),
+        (DlgnCifar10Budget384k, 384_000),
+    )
+    for model_cls, budget in cases:
+        model = model_cls(**_paper_model_kwargs(thresholds))
+        layers = [module for module in model if isinstance(module, LogicDense)]
+        assert len(layers) == 4
+        assert sum(layer.out_dim for layer in layers) == budget
+        assert layers[0].in_dim == 3 * 32 * 32 * 3
+        assert len({layer.out_dim for layer in layers}) == 1
+        assert layers[-1].out_dim % 10 == 0
+        max_logit = (layers[-1].out_dim / 10) / model[-1].tau
+        assert max_logit == 128.0
 
 
 def test_seeded_split_is_deterministic_and_rng_independent():

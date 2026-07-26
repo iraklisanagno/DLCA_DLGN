@@ -574,6 +574,45 @@ class DlgnCifar10Medium(DlgnCifar10):
         )
 
 
+class DlgnCifar10Budget128k(DlgnCifar10):
+    """Four-layer CIFAR-10 DLGN with 128K total rank-2 gates."""
+    n_input_bits = 3
+
+    def __init__(self, **llkw):
+        # Preserve the medium model's maximum GroupSum logit of 128:
+        # (32_000 / 10 outputs) / tau = 128.
+        tau = llkw.get("tau", 25.0)
+        super(DlgnCifar10Budget128k, self).__init__(
+            n_layers=4, neurons_per_layer=32_000, tau=tau, **llkw
+        )
+
+
+class DlgnCifar10Budget256k(DlgnCifar10):
+    """Four-layer CIFAR-10 DLGN with 256K total rank-2 gates."""
+    n_input_bits = 3
+
+    def __init__(self, **llkw):
+        # Preserve the medium model's maximum GroupSum logit of 128:
+        # (64_000 / 10 outputs) / tau = 128.
+        tau = llkw.get("tau", 50.0)
+        super(DlgnCifar10Budget256k, self).__init__(
+            n_layers=4, neurons_per_layer=64_000, tau=tau, **llkw
+        )
+
+
+class DlgnCifar10Budget384k(DlgnCifar10):
+    """Four-layer CIFAR-10 DLGN with 384K total rank-2 gates."""
+    n_input_bits = 3
+
+    def __init__(self, **llkw):
+        # Preserve the medium model's maximum GroupSum logit of 128:
+        # (96_000 / 10 outputs) / tau = 128.
+        tau = llkw.get("tau", 75.0)
+        super(DlgnCifar10Budget384k, self).__init__(
+            n_layers=4, neurons_per_layer=96_000, tau=tau, **llkw
+        )
+
+
 class DlgnCifar10Budget48kDepth8(DlgnCifar10):
     """Eight-layer CIFAR-10 DLGN with the small model's 48K-gate budget."""
     n_input_bits = 3

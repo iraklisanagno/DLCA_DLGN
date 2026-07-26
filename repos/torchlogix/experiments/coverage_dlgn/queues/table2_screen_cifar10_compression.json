@@ -1,0 +1,278 @@
+{
+  "phase": "table2_screen_cifar10_compression",
+  "protocol": "experiments/coverage_dlgn/protocols/table2_dense_cifar10.json",
+  "selection_metric": "mean best hardened validation accuracy",
+  "heldout_test_used": false,
+  "entries": [
+    {
+      "name": "screen_table2_cifar10_128k_random_seed0",
+      "family": "random",
+      "cell": "128k",
+      "gate_count": 128000,
+      "candidate": "random",
+      "config": "experiments/coverage_dlgn/configs/table2_screen_cifar10_compression/screen_table2_cifar10_128k_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_128k_random_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_128k_v3_incumbent_seed0",
+      "family": "coverage_v3",
+      "cell": "128k",
+      "gate_count": 128000,
+      "candidate": "incumbent",
+      "config": "experiments/coverage_dlgn/configs/table2_screen_cifar10_compression/screen_table2_cifar10_128k_v3_incumbent_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_128k_v3_incumbent_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_128k_v3_pool4_seed0",
+      "family": "coverage_v3",
+      "cell": "128k",
+      "gate_count": 128000,
+      "candidate": "pool4",
+      "config": "experiments/coverage_dlgn/configs/table2_screen_cifar10_compression/screen_table2_cifar10_128k_v3_pool4_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_128k_v3_pool4_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_128k_v3_pool16_seed0",
+      "family": "coverage_v3",
+      "cell": "128k",
+      "gate_count": 128000,
+      "candidate": "pool16",
+      "config": "experiments/coverage_dlgn/configs/table2_screen_cifar10_compression/screen_table2_cifar10_128k_v3_pool16_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_128k_v3_pool16_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_128k_v3_swap0125_seed0",
+      "family": "coverage_v3",
+      "cell": "128k",
+      "gate_count": 128000,
+      "candidate": "swap0125",
+      "config": "experiments/coverage_dlgn/configs/table2_screen_cifar10_compression/screen_table2_cifar10_128k_v3_swap0125_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_128k_v3_swap0125_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_128k_v3_swap0500_seed0",
+      "family": "coverage_v3",
+      "cell": "128k",
+      "gate_count": 128000,
+      "candidate": "swap0500",
+      "config": "experiments/coverage_dlgn/configs/table2_screen_cifar10_compression/screen_table2_cifar10_128k_v3_swap0500_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_128k_v3_swap0500_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_128k_v3_novelty050_seed0",
+      "family": "coverage_v3",
+      "cell": "128k",
+      "gate_count": 128000,
+      "candidate": "novelty050",
+      "config": "experiments/coverage_dlgn/configs/table2_screen_cifar10_compression/screen_table2_cifar10_128k_v3_novelty050_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_128k_v3_novelty050_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_128k_v3_novelty200_seed0",
+      "family": "coverage_v3",
+      "cell": "128k",
+      "gate_count": 128000,
+      "candidate": "novelty200",
+      "config": "experiments/coverage_dlgn/configs/table2_screen_cifar10_compression/screen_table2_cifar10_128k_v3_novelty200_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_128k_v3_novelty200_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_128k_v3_light_seed0",
+      "family": "coverage_v3",
+      "cell": "128k",
+      "gate_count": 128000,
+      "candidate": "light",
+      "config": "experiments/coverage_dlgn/configs/table2_screen_cifar10_compression/screen_table2_cifar10_128k_v3_light_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_128k_v3_light_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_128k_v3_warp_seed0",
+      "family": "coverage_v3",
+      "cell": "128k",
+      "gate_count": 128000,
+      "candidate": "warp",
+      "config": "experiments/coverage_dlgn/configs/table2_screen_cifar10_compression/screen_table2_cifar10_128k_v3_warp_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_128k_v3_warp_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_256k_random_seed0",
+      "family": "random",
+      "cell": "256k",
+      "gate_count": 256000,
+      "candidate": "random",
+      "config": "experiments/coverage_dlgn/configs/table2_screen_cifar10_compression/screen_table2_cifar10_256k_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_256k_random_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_256k_v3_incumbent_seed0",
+      "family": "coverage_v3",
+      "cell": "256k",
+      "gate_count": 256000,
+      "candidate": "incumbent",
+      "config": "experiments/coverage_dlgn/configs/table2_screen_cifar10_compression/screen_table2_cifar10_256k_v3_incumbent_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_256k_v3_incumbent_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_256k_v3_pool4_seed0",
+      "family": "coverage_v3",
+      "cell": "256k",
+      "gate_count": 256000,
+      "candidate": "pool4",
+      "config": "experiments/coverage_dlgn/configs/table2_screen_cifar10_compression/screen_table2_cifar10_256k_v3_pool4_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_256k_v3_pool4_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_256k_v3_pool16_seed0",
+      "family": "coverage_v3",
+      "cell": "256k",
+      "gate_count": 256000,
+      "candidate": "pool16",
+      "config": "experiments/coverage_dlgn/configs/table2_screen_cifar10_compression/screen_table2_cifar10_256k_v3_pool16_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_256k_v3_pool16_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_256k_v3_swap0125_seed0",
+      "family": "coverage_v3",
+      "cell": "256k",
+      "gate_count": 256000,
+      "candidate": "swap0125",
+      "config": "experiments/coverage_dlgn/configs/table2_screen_cifar10_compression/screen_table2_cifar10_256k_v3_swap0125_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_256k_v3_swap0125_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_256k_v3_swap0500_seed0",
+      "family": "coverage_v3",
+      "cell": "256k",
+      "gate_count": 256000,
+      "candidate": "swap0500",
+      "config": "experiments/coverage_dlgn/configs/table2_screen_cifar10_compression/screen_table2_cifar10_256k_v3_swap0500_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_256k_v3_swap0500_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_256k_v3_novelty050_seed0",
+      "family": "coverage_v3",
+      "cell": "256k",
+      "gate_count": 256000,
+      "candidate": "novelty050",
+      "config": "experiments/coverage_dlgn/configs/table2_screen_cifar10_compression/screen_table2_cifar10_256k_v3_novelty050_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_256k_v3_novelty050_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_256k_v3_novelty200_seed0",
+      "family": "coverage_v3",
+      "cell": "256k",
+      "gate_count": 256000,
+      "candidate": "novelty200",
+      "config": "experiments/coverage_dlgn/configs/table2_screen_cifar10_compression/screen_table2_cifar10_256k_v3_novelty200_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_256k_v3_novelty200_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_256k_v3_light_seed0",
+      "family": "coverage_v3",
+      "cell": "256k",
+      "gate_count": 256000,
+      "candidate": "light",
+      "config": "experiments/coverage_dlgn/configs/table2_screen_cifar10_compression/screen_table2_cifar10_256k_v3_light_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_256k_v3_light_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_256k_v3_warp_seed0",
+      "family": "coverage_v3",
+      "cell": "256k",
+      "gate_count": 256000,
+      "candidate": "warp",
+      "config": "experiments/coverage_dlgn/configs/table2_screen_cifar10_compression/screen_table2_cifar10_256k_v3_warp_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_256k_v3_warp_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_384k_random_seed0",
+      "family": "random",
+      "cell": "384k",
+      "gate_count": 384000,
+      "candidate": "random",
+      "config": "experiments/coverage_dlgn/configs/table2_screen_cifar10_compression/screen_table2_cifar10_384k_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_384k_random_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_384k_v3_incumbent_seed0",
+      "family": "coverage_v3",
+      "cell": "384k",
+      "gate_count": 384000,
+      "candidate": "incumbent",
+      "config": "experiments/coverage_dlgn/configs/table2_screen_cifar10_compression/screen_table2_cifar10_384k_v3_incumbent_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_384k_v3_incumbent_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_384k_v3_pool4_seed0",
+      "family": "coverage_v3",
+      "cell": "384k",
+      "gate_count": 384000,
+      "candidate": "pool4",
+      "config": "experiments/coverage_dlgn/configs/table2_screen_cifar10_compression/screen_table2_cifar10_384k_v3_pool4_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_384k_v3_pool4_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_384k_v3_pool16_seed0",
+      "family": "coverage_v3",
+      "cell": "384k",
+      "gate_count": 384000,
+      "candidate": "pool16",
+      "config": "experiments/coverage_dlgn/configs/table2_screen_cifar10_compression/screen_table2_cifar10_384k_v3_pool16_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_384k_v3_pool16_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_384k_v3_swap0125_seed0",
+      "family": "coverage_v3",
+      "cell": "384k",
+      "gate_count": 384000,
+      "candidate": "swap0125",
+      "config": "experiments/coverage_dlgn/configs/table2_screen_cifar10_compression/screen_table2_cifar10_384k_v3_swap0125_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_384k_v3_swap0125_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_384k_v3_swap0500_seed0",
+      "family": "coverage_v3",
+      "cell": "384k",
+      "gate_count": 384000,
+      "candidate": "swap0500",
+      "config": "experiments/coverage_dlgn/configs/table2_screen_cifar10_compression/screen_table2_cifar10_384k_v3_swap0500_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_384k_v3_swap0500_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_384k_v3_novelty050_seed0",
+      "family": "coverage_v3",
+      "cell": "384k",
+      "gate_count": 384000,
+      "candidate": "novelty050",
+      "config": "experiments/coverage_dlgn/configs/table2_screen_cifar10_compression/screen_table2_cifar10_384k_v3_novelty050_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_384k_v3_novelty050_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_384k_v3_novelty200_seed0",
+      "family": "coverage_v3",
+      "cell": "384k",
+      "gate_count": 384000,
+      "candidate": "novelty200",
+      "config": "experiments/coverage_dlgn/configs/table2_screen_cifar10_compression/screen_table2_cifar10_384k_v3_novelty200_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_384k_v3_novelty200_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_384k_v3_light_seed0",
+      "family": "coverage_v3",
+      "cell": "384k",
+      "gate_count": 384000,
+      "candidate": "light",
+      "config": "experiments/coverage_dlgn/configs/table2_screen_cifar10_compression/screen_table2_cifar10_384k_v3_light_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_384k_v3_light_seed0"
+    },
+    {
+      "name": "screen_table2_cifar10_384k_v3_warp_seed0",
+      "family": "coverage_v3",
+      "cell": "384k",
+      "gate_count": 384000,
+      "candidate": "warp",
+      "config": "experiments/coverage_dlgn/configs/table2_screen_cifar10_compression/screen_table2_cifar10_384k_v3_warp_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table2_cifar10_384k_v3_warp_seed0"
+    }
+  ]
+}

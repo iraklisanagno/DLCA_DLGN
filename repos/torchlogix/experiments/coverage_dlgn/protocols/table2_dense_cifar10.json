@@ -1,0 +1,90 @@
+{
+  "phase": "table2_dense_cifar10",
+  "dataset": "cifar-10",
+  "architecture_family": "four-layer dense rank-2 DLGN",
+  "data": {
+    "input_encoding": "3-bit RGB using fixed uniform thresholds",
+    "data_split_seed": 2027,
+    "validation_fraction": 0.1,
+    "augmentation": "none",
+    "heldout_test_policy": "locked until the winner and comparators are frozen"
+  },
+  "training": {
+    "batch_size": 100,
+    "learning_rate": 0.01,
+    "selection_iterations": 20000,
+    "final_iterations": 108000,
+    "selection_seeds": [0, 1, 2],
+    "primary_final_seeds": [0, 1, 2, 3, 4],
+    "comparator_final_seeds": [0, 1, 2],
+    "note": "Matches the existing frozen CIFAR-10 S/M local protocol: 240 effective epochs over the 45K training split."
+  },
+  "cells": {
+    "S": {
+      "architecture": "DlgnCifar10Small",
+      "gate_count": 48000,
+      "status": "existing frozen five-seed result; do not retune after test"
+    },
+    "128k": {
+      "architecture": "DlgnCifar10Budget128k",
+      "gate_count": 128000,
+      "group_sum_max_logit": 128
+    },
+    "256k": {
+      "architecture": "DlgnCifar10Budget256k",
+      "gate_count": 256000,
+      "group_sum_max_logit": 128
+    },
+    "384k": {
+      "architecture": "DlgnCifar10Budget384k",
+      "gate_count": 384000,
+      "group_sum_max_logit": 128
+    },
+    "M": {
+      "architecture": "DlgnCifar10Medium",
+      "gate_count": 512000,
+      "status": "existing frozen five-seed result; do not retune after test"
+    },
+    "L": {
+      "architecture": "DlgnCifar10Large",
+      "gate_count": 1280000,
+      "status": "requires timing and memory feasibility before final launch"
+    }
+  },
+  "selection": {
+    "metric": "mean best hardened validation accuracy",
+    "screen": {
+      "iterations": 5000,
+      "seeds": [0],
+      "advance_rule": "top two V3 candidates plus the incumbent when it is not already in the top two; at most three candidates"
+    },
+    "paired_selection": {
+      "iterations": 20000,
+      "seeds": [0, 1, 2],
+      "winner_rule": "highest mean best hardened validation accuracy"
+    },
+    "coverage_candidates": [
+      {"label": "incumbent", "candidate_pool": 8, "swap_fraction": 0.25, "novelty_weight": 1.0, "parametrization": "raw"},
+      {"label": "pool4", "candidate_pool": 4, "swap_fraction": 0.25, "novelty_weight": 1.0, "parametrization": "raw"},
+      {"label": "pool16", "candidate_pool": 16, "swap_fraction": 0.25, "novelty_weight": 1.0, "parametrization": "raw"},
+      {"label": "swap0125", "candidate_pool": 8, "swap_fraction": 0.125, "novelty_weight": 1.0, "parametrization": "raw"},
+      {"label": "swap0500", "candidate_pool": 8, "swap_fraction": 0.5, "novelty_weight": 1.0, "parametrization": "raw"},
+      {"label": "novelty050", "candidate_pool": 8, "swap_fraction": 0.25, "novelty_weight": 0.5, "parametrization": "raw"},
+      {"label": "novelty200", "candidate_pool": 8, "swap_fraction": 0.25, "novelty_weight": 2.0, "parametrization": "raw"},
+      {"label": "light", "candidate_pool": 8, "swap_fraction": 0.25, "novelty_weight": 1.0, "parametrization": "light"},
+      {"label": "warp", "candidate_pool": 8, "swap_fraction": 0.25, "novelty_weight": 1.0, "parametrization": "warp"}
+    ]
+  },
+  "compression_promotion": {
+    "paired_seeds_per_point": 3,
+    "selected_crossing_final_seeds": 5,
+    "noninferiority_margin_percentage_points": 0.3,
+    "rule": "select the smallest CoverageDLGN budget whose mean hardened validation accuracy is no more than 0.3 pp below the 512K random baseline"
+  },
+  "comparators": {
+    "Mommen": "three local seeds at feasible S/M/L scales",
+    "LILogicNet": "three local seeds on S only; reported-only on M/L",
+    "WARP-LUT": "reported-only",
+    "BitLogic": "reported-only"
+  }
+}
