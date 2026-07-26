@@ -322,3 +322,26 @@ This log records operational failures and protocol decisions made after commit
   paired seeds at each budget (18 runs total). Only after this full-effort
   validation stage will the predeclared compression noninferiority crossing
   be determined and extended from three to five seeds.
+
+## July 26, 2026: dense CIFAR-10 compression full-effort validation
+
+- All 18 frozen 108,000-step runs completed successfully with zero failures
+  or skips. At 128K gates, fixed random reached 50.460% +/- 0.240% and
+  CoverageDLGN reached 54.927% +/- 0.153% mean best hardened validation
+  accuracy. The paired gain is +4.467 pp with a three-seed 95% Student-t
+  interval of [+3.495, +5.438] pp.
+- At 256K gates, random reached 53.073% +/- 0.341% and CoverageDLGN reached
+  57.800% +/- 0.410%. The paired gain is +4.727 pp with 95% interval
+  [+3.120, +6.333] pp.
+- At 384K gates, random reached 54.920% +/- 0.251% and CoverageDLGN reached
+  59.313% +/- 0.397%. The paired gain is +4.393 pp with 95% interval
+  [+3.184, +5.603] pp.
+  Exact per-seed values, standard deviations, costs, and timings are stored
+  in `summary/table2_cifar10_compression_final3.json`.
+- The predeclared reference is the existing five-seed 512K random validation
+  mean of 55.084%, giving a 54.784% noninferiority threshold. The 128K
+  CoverageDLGN mean of 54.927% exceeds that threshold by 0.143 pp and is the
+  smallest evaluated budget to qualify. It is therefore the frozen
+  compression crossing and will be extended from three to five paired seeds.
+- The held-out CIFAR-10 test set remains locked. All values in this section
+  are `[TRIED]` validation results.

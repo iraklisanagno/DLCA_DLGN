@@ -1,0 +1,134 @@
+{
+  "phase": "table2_final_cifar10_compression",
+  "wall_seconds": 11550.328929758005,
+  "skipped": [],
+  "finished": [
+    {
+      "name": "final_table2_cifar10_128k_random_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 755.0237586610019,
+      "log": "experiments/coverage_dlgn/logs/table2_final_cifar10_compression/final_table2_cifar10_128k_random_seed0.log"
+    },
+    {
+      "name": "final_table2_cifar10_128k_random_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 755.0238320870121,
+      "log": "experiments/coverage_dlgn/logs/table2_final_cifar10_compression/final_table2_cifar10_128k_random_seed1.log"
+    },
+    {
+      "name": "final_table2_cifar10_128k_random_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 750.0374240339879,
+      "log": "experiments/coverage_dlgn/logs/table2_final_cifar10_compression/final_table2_cifar10_128k_random_seed2.log"
+    },
+    {
+      "name": "final_table2_cifar10_128k_v3_swap0500_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 805.0382570029906,
+      "log": "experiments/coverage_dlgn/logs/table2_final_cifar10_compression/final_table2_cifar10_128k_v3_swap0500_seed0.log"
+    },
+    {
+      "name": "final_table2_cifar10_128k_v3_swap0500_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 800.0155937859963,
+      "log": "experiments/coverage_dlgn/logs/table2_final_cifar10_compression/final_table2_cifar10_128k_v3_swap0500_seed1.log"
+    },
+    {
+      "name": "final_table2_cifar10_128k_v3_swap0500_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 810.0157900619961,
+      "log": "experiments/coverage_dlgn/logs/table2_final_cifar10_compression/final_table2_cifar10_128k_v3_swap0500_seed2.log"
+    },
+    {
+      "name": "final_table2_cifar10_256k_random_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 1155.0258201209945,
+      "log": "experiments/coverage_dlgn/logs/table2_final_cifar10_compression/final_table2_cifar10_256k_random_seed0.log"
+    },
+    {
+      "name": "final_table2_cifar10_256k_random_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 1165.031444904991,
+      "log": "experiments/coverage_dlgn/logs/table2_final_cifar10_compression/final_table2_cifar10_256k_random_seed1.log"
+    },
+    {
+      "name": "final_table2_cifar10_256k_random_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 1155.0369578800019,
+      "log": "experiments/coverage_dlgn/logs/table2_final_cifar10_compression/final_table2_cifar10_256k_random_seed2.log"
+    },
+    {
+      "name": "final_table2_cifar10_256k_v3_incumbent_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 1215.0326667790068,
+      "log": "experiments/coverage_dlgn/logs/table2_final_cifar10_compression/final_table2_cifar10_256k_v3_incumbent_seed0.log"
+    },
+    {
+      "name": "final_table2_cifar10_256k_v3_incumbent_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 1200.0306029180065,
+      "log": "experiments/coverage_dlgn/logs/table2_final_cifar10_compression/final_table2_cifar10_256k_v3_incumbent_seed1.log"
+    },
+    {
+      "name": "final_table2_cifar10_256k_v3_incumbent_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 1215.0315486019972,
+      "log": "experiments/coverage_dlgn/logs/table2_final_cifar10_compression/final_table2_cifar10_256k_v3_incumbent_seed2.log"
+    },
+    {
+      "name": "final_table2_cifar10_384k_random_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 1795.0472207060084,
+      "log": "experiments/coverage_dlgn/logs/table2_final_cifar10_compression/final_table2_cifar10_384k_random_seed0.log"
+    },
+    {
+      "name": "final_table2_cifar10_384k_random_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 1820.047132570995,
+      "log": "experiments/coverage_dlgn/logs/table2_final_cifar10_compression/final_table2_cifar10_384k_random_seed1.log"
+    },
+    {
+      "name": "final_table2_cifar10_384k_random_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 1800.0371319910046,
+      "log": "experiments/coverage_dlgn/logs/table2_final_cifar10_compression/final_table2_cifar10_384k_random_seed2.log"
+    },
+    {
+      "name": "final_table2_cifar10_384k_v3_incumbent_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 1885.0392765900033,
+      "log": "experiments/coverage_dlgn/logs/table2_final_cifar10_compression/final_table2_cifar10_384k_v3_incumbent_seed0.log"
+    },
+    {
+      "name": "final_table2_cifar10_384k_v3_incumbent_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 1865.0593447639985,
+      "log": "experiments/coverage_dlgn/logs/table2_final_cifar10_compression/final_table2_cifar10_384k_v3_incumbent_seed1.log"
+    },
+    {
+      "name": "final_table2_cifar10_384k_v3_incumbent_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 1880.059992220995,
+      "log": "experiments/coverage_dlgn/logs/table2_final_cifar10_compression/final_table2_cifar10_384k_v3_incumbent_seed2.log"
+    }
+  ],
+  "failed": []
+}

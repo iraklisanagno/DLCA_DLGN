@@ -1,0 +1,48 @@
+{
+  "phase": "table2_crossing_extension_cifar10",
+  "validation_summary": "experiments/coverage_dlgn/summary/table2_cifar10_compression_final3.json",
+  "selected_crossing": "128k",
+  "heldout_test_used": false,
+  "extension_seeds": [
+    3,
+    4
+  ],
+  "entries": [
+    {
+      "name": "final_table2_cifar10_128k_random_seed3",
+      "family": "random",
+      "cell": "128k",
+      "candidate": "random",
+      "extension_of": "final_table2_cifar10_128k_random_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_final_cifar10_compression/final_table2_cifar10_128k_random_seed3.json",
+      "output": "experiments/coverage_dlgn/results/final_table2_cifar10_128k_random_seed3"
+    },
+    {
+      "name": "final_table2_cifar10_128k_random_seed4",
+      "family": "random",
+      "cell": "128k",
+      "candidate": "random",
+      "extension_of": "final_table2_cifar10_128k_random_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_final_cifar10_compression/final_table2_cifar10_128k_random_seed4.json",
+      "output": "experiments/coverage_dlgn/results/final_table2_cifar10_128k_random_seed4"
+    },
+    {
+      "name": "final_table2_cifar10_128k_v3_swap0500_seed3",
+      "family": "coverage_v3",
+      "cell": "128k",
+      "candidate": "v3_swap0500",
+      "extension_of": "final_table2_cifar10_128k_v3_swap0500_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_final_cifar10_compression/final_table2_cifar10_128k_v3_swap0500_seed3.json",
+      "output": "experiments/coverage_dlgn/results/final_table2_cifar10_128k_v3_swap0500_seed3"
+    },
+    {
+      "name": "final_table2_cifar10_128k_v3_swap0500_seed4",
+      "family": "coverage_v3",
+      "cell": "128k",
+      "candidate": "v3_swap0500",
+      "extension_of": "final_table2_cifar10_128k_v3_swap0500_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_final_cifar10_compression/final_table2_cifar10_128k_v3_swap0500_seed4.json",
+      "output": "experiments/coverage_dlgn/results/final_table2_cifar10_128k_v3_swap0500_seed4"
+    }
+  ]
+}
