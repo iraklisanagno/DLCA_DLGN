@@ -12,6 +12,9 @@ from experiments.coverage_dlgn.prepare_table1_final import (
 )
 from experiments.coverage_dlgn.evaluate_table1_final import round_robin
 from experiments.coverage_dlgn.summarize_table1_final import mean_ci_95
+from experiments.coverage_dlgn.summarize_table2_compression_screen import (
+    select_coverage_candidates,
+)
 from experiments.train import (
     log_linear_schedule,
     model_cost_summary,
@@ -486,6 +489,40 @@ def test_cifar10_compression_models_hold_depth_budget_and_logit_scale():
         assert layers[-1].out_dim % 10 == 0
         max_logit = (layers[-1].out_dim / 10) / model[-1].tau
         assert max_logit == 128.0
+
+
+def test_compression_screen_advances_ties_and_incumbent():
+    def row(candidate, accuracy):
+        return {
+            "name": candidate,
+            "family": "coverage_v3",
+            "candidate": candidate,
+            "best_validation_hard_accuracy": accuracy,
+        }
+
+    tied = [
+        row("incumbent", 0.55),
+        row("novelty050", 0.55),
+        row("novelty200", 0.55),
+        row("pool4", 0.54),
+    ]
+    assert select_coverage_candidates(tied) == [
+        "incumbent",
+        "novelty050",
+        "novelty200",
+    ]
+
+    incumbent_third = [
+        row("pool4", 0.56),
+        row("swap0500", 0.55),
+        row("incumbent", 0.54),
+        row("novelty050", 0.53),
+    ]
+    assert select_coverage_candidates(incumbent_third) == [
+        "pool4",
+        "swap0500",
+        "incumbent",
+    ]
 
 
 def test_seeded_split_is_deterministic_and_rng_independent():

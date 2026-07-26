@@ -56,7 +56,7 @@
     "screen": {
       "iterations": 5000,
       "seeds": [0],
-      "advance_rule": "top two V3 candidates plus the incumbent when it is not already in the top two; at most three candidates"
+      "advance_rule": "top two V3 validation candidates including ties at the second-place boundary, plus the incumbent when absent; at most three candidates"
     },
     "paired_selection": {
       "iterations": 20000,

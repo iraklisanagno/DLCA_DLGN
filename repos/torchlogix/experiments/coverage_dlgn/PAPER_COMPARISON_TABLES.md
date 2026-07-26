@@ -90,24 +90,38 @@ exactly-once test evaluation.
 
 | Architecture | Target gates | Raw training parameters | Method | A / R accuracy | Reported configuration |
 |---|---:|---:|---|---:|---|
-| S: 4 x 12K | 48K | 0.768M | Deep DLGN random | **[TRIED] 49.06% / [REPORTED] 51.27%** | Exact 48K architecture |
+| S: 4 x 12K | 48K | 0.768M | Deep DLGN random | **[REPRODUCED] 49.692% (n=5) / [REPORTED] 51.27%** | Exact 48K architecture; one-time held-out test |
+|  |  | 1.536M--2.304M, screen pending | Mommen learned connectivity | [PENDING] / [N/A] | Three-seed adaptation to exact 48K architecture |
 |  |  |  | LILogicNet | [PENDING] / [REPORTED] 55.11% | 8K gates, nonmatched |
 |  |  |  | WARP-LUT | [PENDING] / [REPORTED] 52.12 +/- 0.01% | 128K total gates under the BitLogic protocol, nonmatched |
 |  |  |  | BitLogic best-of-space | [PENDING] / [REPORTED] 58.06 +/- 0.14% | 128K total rank-4 gates, nonmatched |
-|  |  |  | **CoverageDLGN** | **[TRIED] 52.36% / [N/A]** | Exact 48K target |
-| M: 4 x 128K | 512K | 8.192M | Deep DLGN random | **[TRIED] 54.03% / [REPORTED] 57.39%** | Exact 512K architecture |
+|  |  |  | **CoverageDLGN** | **[OUR-FINAL] 53.116% (n=5) / [N/A]** | Exact 48K target; +3.424 pp paired test gain |
+| M: 4 x 128K | 512K | 8.192M | Deep DLGN random | **[REPRODUCED] 54.028% (n=5) / [REPORTED] 57.39%** | Exact 512K architecture; one-time held-out test |
+|  |  | screen pending | Mommen learned connectivity | [PENDING] / [N/A] | Three-seed adaptation to exact 512K architecture |
 |  |  |  | LILogicNet | [PENDING] / [REPORTED] 57.66 +/- 0.17% | 64K gates, nonmatched |
 |  |  |  | WARP-LUT | [PENDING] / [REPORTED] 52.12 +/- 0.01% | 128K total gates, nonmatched |
 |  |  |  | BitLogic best-of-space | [PENDING] / [REPORTED] 58.06 +/- 0.14% | 128K total rank-4 gates, nonmatched |
-|  |  |  | **CoverageDLGN** | **[TRIED] 58.28% / [N/A]** | Exact 512K target |
+|  |  |  | **CoverageDLGN** | **[OUR-FINAL] 58.284% (n=5) / [N/A]** | Exact 512K target; +4.256 pp paired test gain |
 | L: 5 x 256K | 1.28M | 20.48M | Deep DLGN random | [PENDING] / **[REPORTED] 60.78%** | Exact 1.28M architecture |
+|  |  | feasibility pending | Mommen learned connectivity | [PENDING] / [N/A] | Three-seed adaptation if timing/memory feasibility passes |
 |  |  |  | LILogicNet-L | [PENDING] / [REPORTED] 60.98 +/- 0.19% | 256K gates, nonmatched |
 |  |  |  | WARP-LUT | [PENDING] / [REPORTED] 52.12 +/- 0.01% | 128K total gates, nonmatched |
 |  |  |  | BitLogic best-of-space | [PENDING] / [REPORTED] 58.06 +/- 0.14% | 128K total rank-4 gates, nonmatched |
 |  |  |  | **CoverageDLGN** | [PENDING] / [N/A] | Exact 1.28M target |
 
-The 128K, 256K, and 384K compression points will be reported in a separate
-Pareto table after their validation sweep.
+The one-seed 5K compression screen is complete; these are validation
+selection values, not held-out test or paper-final values:
+
+| Target gates | Random screen | Best CoverageDLGN screen | Advanced to paired 20K selection |
+|---:|---:|---:|---|
+| 128K | [TRIED] 49.780% | [TRIED] 54.300% (raw, pool 4) | pool 4; swap 0.50; raw incumbent |
+| 256K | [TRIED] 51.600% | [TRIED] 55.940% (three-way raw tie) | raw incumbent; novelty 0.5; novelty 2.0 |
+| 384K | [TRIED] 52.280% | [TRIED] 57.520% (WARP) | WARP; raw incumbent; novelty 0.5 |
+
+The machine-readable source is
+`summary/table2_cifar10_compression_screen.json`. All 36 advanced
+random/CoverageDLGN runs use three paired seeds and 20K iterations. The
+held-out CIFAR-10 test set remains locked throughout selection.
 
 ## Table 3: Convolutional CIFAR-10 S/M/L
 

@@ -266,3 +266,35 @@ This log records operational failures and protocol decisions made after commit
   machine-readable sources of truth with `test_set_used=true`. The held-out
   Fashion-MNIST test set will not be queried again for this Table 1
   experiment.
+
+## July 26, 2026: dense CIFAR-10 compression screen
+
+- The first two-GPU launch began before the CIFAR-10 cache existed. Both
+  workers therefore attempted to download the same official archive into the
+  same path. They were stopped before model construction or training to avoid
+  a corrupted shared cache. The two pre-training logs are preserved under
+  `logs/failed/table2_screen_cifar10_duplicate_download_attempt1/`; the
+  incomplete 8.8 MB archive was quarantined in the dataset cache with the
+  suffix `.duplicate-download-partial`.
+- CIFAR-10 was then downloaded exactly once through torchvision. The official
+  archive checksum passed, extraction completed, and the cache was verified
+  to contain 50,000 training and 10,000 test objects. Only dataset lengths
+  were inspected; no model was evaluated on the held-out test set.
+- The clean one-seed, 5K-step screen completed all 30 declared runs on two
+  GPUs with zero failures in 1,880 seconds. At 128K gates, fixed random
+  reached 49.780% best hardened validation accuracy and the best V3 candidate
+  reached 54.300% (raw parameterization, candidate pool 4). The frozen
+  advancement rule retained pool 4, swap fraction 0.50, and the raw
+  incumbent.
+- At 256K gates, fixed random reached 51.600%. The raw incumbent and novelty
+  weights 0.5 and 2.0 tied at 55.940%, so all three advance under the
+  predeclared second-place-tie rule. At 384K gates, fixed random reached
+  52.280%, WARP-V3 reached 57.520%, and the raw incumbent and novelty-0.5
+  variants tied at 57.420%; those three advance.
+- Light parameterization was not competitive in this screen
+  (44.24--44.58%). This is retained as a negative result. The screen source of
+  truth is `summary/table2_cifar10_compression_screen.json`; all values are
+  `[TRIED]` validation-selection measurements, not paper-final results.
+- The next queue contains 36 paired 20K runs: random plus three advanced V3
+  candidates at each of 128K, 256K, and 384K, each with seeds 0, 1, and 2.
+  The held-out CIFAR-10 test set remains locked.

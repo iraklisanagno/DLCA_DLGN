@@ -1,0 +1,337 @@
+{
+  "phase": "table2_select_cifar10_compression",
+  "screen_summary": "experiments/coverage_dlgn/summary/table2_cifar10_compression_screen.json",
+  "selection_metric": "mean best hardened validation accuracy",
+  "heldout_test_used": false,
+  "paired_seeds": [
+    0,
+    1,
+    2
+  ],
+  "entries": [
+    {
+      "name": "select_table2_cifar10_128k_random_seed0",
+      "family": "random",
+      "cell": "128k",
+      "candidate": "random",
+      "screen_source": "screen_table2_cifar10_128k_random_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_128k_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_128k_random_seed0"
+    },
+    {
+      "name": "select_table2_cifar10_128k_random_seed1",
+      "family": "random",
+      "cell": "128k",
+      "candidate": "random",
+      "screen_source": "screen_table2_cifar10_128k_random_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_128k_random_seed1.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_128k_random_seed1"
+    },
+    {
+      "name": "select_table2_cifar10_128k_random_seed2",
+      "family": "random",
+      "cell": "128k",
+      "candidate": "random",
+      "screen_source": "screen_table2_cifar10_128k_random_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_128k_random_seed2.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_128k_random_seed2"
+    },
+    {
+      "name": "select_table2_cifar10_128k_v3_pool4_seed0",
+      "family": "coverage_v3",
+      "cell": "128k",
+      "candidate": "v3_pool4",
+      "screen_source": "screen_table2_cifar10_128k_v3_pool4_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_128k_v3_pool4_seed0.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_128k_v3_pool4_seed0"
+    },
+    {
+      "name": "select_table2_cifar10_128k_v3_pool4_seed1",
+      "family": "coverage_v3",
+      "cell": "128k",
+      "candidate": "v3_pool4",
+      "screen_source": "screen_table2_cifar10_128k_v3_pool4_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_128k_v3_pool4_seed1.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_128k_v3_pool4_seed1"
+    },
+    {
+      "name": "select_table2_cifar10_128k_v3_pool4_seed2",
+      "family": "coverage_v3",
+      "cell": "128k",
+      "candidate": "v3_pool4",
+      "screen_source": "screen_table2_cifar10_128k_v3_pool4_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_128k_v3_pool4_seed2.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_128k_v3_pool4_seed2"
+    },
+    {
+      "name": "select_table2_cifar10_128k_v3_swap0500_seed0",
+      "family": "coverage_v3",
+      "cell": "128k",
+      "candidate": "v3_swap0500",
+      "screen_source": "screen_table2_cifar10_128k_v3_swap0500_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_128k_v3_swap0500_seed0.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_128k_v3_swap0500_seed0"
+    },
+    {
+      "name": "select_table2_cifar10_128k_v3_swap0500_seed1",
+      "family": "coverage_v3",
+      "cell": "128k",
+      "candidate": "v3_swap0500",
+      "screen_source": "screen_table2_cifar10_128k_v3_swap0500_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_128k_v3_swap0500_seed1.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_128k_v3_swap0500_seed1"
+    },
+    {
+      "name": "select_table2_cifar10_128k_v3_swap0500_seed2",
+      "family": "coverage_v3",
+      "cell": "128k",
+      "candidate": "v3_swap0500",
+      "screen_source": "screen_table2_cifar10_128k_v3_swap0500_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_128k_v3_swap0500_seed2.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_128k_v3_swap0500_seed2"
+    },
+    {
+      "name": "select_table2_cifar10_128k_v3_incumbent_seed0",
+      "family": "coverage_v3",
+      "cell": "128k",
+      "candidate": "v3_incumbent",
+      "screen_source": "screen_table2_cifar10_128k_v3_incumbent_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_128k_v3_incumbent_seed0.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_128k_v3_incumbent_seed0"
+    },
+    {
+      "name": "select_table2_cifar10_128k_v3_incumbent_seed1",
+      "family": "coverage_v3",
+      "cell": "128k",
+      "candidate": "v3_incumbent",
+      "screen_source": "screen_table2_cifar10_128k_v3_incumbent_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_128k_v3_incumbent_seed1.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_128k_v3_incumbent_seed1"
+    },
+    {
+      "name": "select_table2_cifar10_128k_v3_incumbent_seed2",
+      "family": "coverage_v3",
+      "cell": "128k",
+      "candidate": "v3_incumbent",
+      "screen_source": "screen_table2_cifar10_128k_v3_incumbent_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_128k_v3_incumbent_seed2.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_128k_v3_incumbent_seed2"
+    },
+    {
+      "name": "select_table2_cifar10_256k_random_seed0",
+      "family": "random",
+      "cell": "256k",
+      "candidate": "random",
+      "screen_source": "screen_table2_cifar10_256k_random_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_256k_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_256k_random_seed0"
+    },
+    {
+      "name": "select_table2_cifar10_256k_random_seed1",
+      "family": "random",
+      "cell": "256k",
+      "candidate": "random",
+      "screen_source": "screen_table2_cifar10_256k_random_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_256k_random_seed1.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_256k_random_seed1"
+    },
+    {
+      "name": "select_table2_cifar10_256k_random_seed2",
+      "family": "random",
+      "cell": "256k",
+      "candidate": "random",
+      "screen_source": "screen_table2_cifar10_256k_random_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_256k_random_seed2.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_256k_random_seed2"
+    },
+    {
+      "name": "select_table2_cifar10_256k_v3_incumbent_seed0",
+      "family": "coverage_v3",
+      "cell": "256k",
+      "candidate": "v3_incumbent",
+      "screen_source": "screen_table2_cifar10_256k_v3_incumbent_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_256k_v3_incumbent_seed0.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_256k_v3_incumbent_seed0"
+    },
+    {
+      "name": "select_table2_cifar10_256k_v3_incumbent_seed1",
+      "family": "coverage_v3",
+      "cell": "256k",
+      "candidate": "v3_incumbent",
+      "screen_source": "screen_table2_cifar10_256k_v3_incumbent_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_256k_v3_incumbent_seed1.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_256k_v3_incumbent_seed1"
+    },
+    {
+      "name": "select_table2_cifar10_256k_v3_incumbent_seed2",
+      "family": "coverage_v3",
+      "cell": "256k",
+      "candidate": "v3_incumbent",
+      "screen_source": "screen_table2_cifar10_256k_v3_incumbent_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_256k_v3_incumbent_seed2.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_256k_v3_incumbent_seed2"
+    },
+    {
+      "name": "select_table2_cifar10_256k_v3_novelty050_seed0",
+      "family": "coverage_v3",
+      "cell": "256k",
+      "candidate": "v3_novelty050",
+      "screen_source": "screen_table2_cifar10_256k_v3_novelty050_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_256k_v3_novelty050_seed0.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_256k_v3_novelty050_seed0"
+    },
+    {
+      "name": "select_table2_cifar10_256k_v3_novelty050_seed1",
+      "family": "coverage_v3",
+      "cell": "256k",
+      "candidate": "v3_novelty050",
+      "screen_source": "screen_table2_cifar10_256k_v3_novelty050_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_256k_v3_novelty050_seed1.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_256k_v3_novelty050_seed1"
+    },
+    {
+      "name": "select_table2_cifar10_256k_v3_novelty050_seed2",
+      "family": "coverage_v3",
+      "cell": "256k",
+      "candidate": "v3_novelty050",
+      "screen_source": "screen_table2_cifar10_256k_v3_novelty050_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_256k_v3_novelty050_seed2.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_256k_v3_novelty050_seed2"
+    },
+    {
+      "name": "select_table2_cifar10_256k_v3_novelty200_seed0",
+      "family": "coverage_v3",
+      "cell": "256k",
+      "candidate": "v3_novelty200",
+      "screen_source": "screen_table2_cifar10_256k_v3_novelty200_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_256k_v3_novelty200_seed0.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_256k_v3_novelty200_seed0"
+    },
+    {
+      "name": "select_table2_cifar10_256k_v3_novelty200_seed1",
+      "family": "coverage_v3",
+      "cell": "256k",
+      "candidate": "v3_novelty200",
+      "screen_source": "screen_table2_cifar10_256k_v3_novelty200_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_256k_v3_novelty200_seed1.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_256k_v3_novelty200_seed1"
+    },
+    {
+      "name": "select_table2_cifar10_256k_v3_novelty200_seed2",
+      "family": "coverage_v3",
+      "cell": "256k",
+      "candidate": "v3_novelty200",
+      "screen_source": "screen_table2_cifar10_256k_v3_novelty200_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_256k_v3_novelty200_seed2.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_256k_v3_novelty200_seed2"
+    },
+    {
+      "name": "select_table2_cifar10_384k_random_seed0",
+      "family": "random",
+      "cell": "384k",
+      "candidate": "random",
+      "screen_source": "screen_table2_cifar10_384k_random_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_384k_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_384k_random_seed0"
+    },
+    {
+      "name": "select_table2_cifar10_384k_random_seed1",
+      "family": "random",
+      "cell": "384k",
+      "candidate": "random",
+      "screen_source": "screen_table2_cifar10_384k_random_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_384k_random_seed1.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_384k_random_seed1"
+    },
+    {
+      "name": "select_table2_cifar10_384k_random_seed2",
+      "family": "random",
+      "cell": "384k",
+      "candidate": "random",
+      "screen_source": "screen_table2_cifar10_384k_random_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_384k_random_seed2.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_384k_random_seed2"
+    },
+    {
+      "name": "select_table2_cifar10_384k_v3_warp_seed0",
+      "family": "coverage_v3",
+      "cell": "384k",
+      "candidate": "v3_warp",
+      "screen_source": "screen_table2_cifar10_384k_v3_warp_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_384k_v3_warp_seed0.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_384k_v3_warp_seed0"
+    },
+    {
+      "name": "select_table2_cifar10_384k_v3_warp_seed1",
+      "family": "coverage_v3",
+      "cell": "384k",
+      "candidate": "v3_warp",
+      "screen_source": "screen_table2_cifar10_384k_v3_warp_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_384k_v3_warp_seed1.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_384k_v3_warp_seed1"
+    },
+    {
+      "name": "select_table2_cifar10_384k_v3_warp_seed2",
+      "family": "coverage_v3",
+      "cell": "384k",
+      "candidate": "v3_warp",
+      "screen_source": "screen_table2_cifar10_384k_v3_warp_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_384k_v3_warp_seed2.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_384k_v3_warp_seed2"
+    },
+    {
+      "name": "select_table2_cifar10_384k_v3_incumbent_seed0",
+      "family": "coverage_v3",
+      "cell": "384k",
+      "candidate": "v3_incumbent",
+      "screen_source": "screen_table2_cifar10_384k_v3_incumbent_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_384k_v3_incumbent_seed0.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_384k_v3_incumbent_seed0"
+    },
+    {
+      "name": "select_table2_cifar10_384k_v3_incumbent_seed1",
+      "family": "coverage_v3",
+      "cell": "384k",
+      "candidate": "v3_incumbent",
+      "screen_source": "screen_table2_cifar10_384k_v3_incumbent_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_384k_v3_incumbent_seed1.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_384k_v3_incumbent_seed1"
+    },
+    {
+      "name": "select_table2_cifar10_384k_v3_incumbent_seed2",
+      "family": "coverage_v3",
+      "cell": "384k",
+      "candidate": "v3_incumbent",
+      "screen_source": "screen_table2_cifar10_384k_v3_incumbent_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_384k_v3_incumbent_seed2.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_384k_v3_incumbent_seed2"
+    },
+    {
+      "name": "select_table2_cifar10_384k_v3_novelty050_seed0",
+      "family": "coverage_v3",
+      "cell": "384k",
+      "candidate": "v3_novelty050",
+      "screen_source": "screen_table2_cifar10_384k_v3_novelty050_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_384k_v3_novelty050_seed0.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_384k_v3_novelty050_seed0"
+    },
+    {
+      "name": "select_table2_cifar10_384k_v3_novelty050_seed1",
+      "family": "coverage_v3",
+      "cell": "384k",
+      "candidate": "v3_novelty050",
+      "screen_source": "screen_table2_cifar10_384k_v3_novelty050_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_384k_v3_novelty050_seed1.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_384k_v3_novelty050_seed1"
+    },
+    {
+      "name": "select_table2_cifar10_384k_v3_novelty050_seed2",
+      "family": "coverage_v3",
+      "cell": "384k",
+      "candidate": "v3_novelty050",
+      "screen_source": "screen_table2_cifar10_384k_v3_novelty050_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_select_cifar10_compression/select_table2_cifar10_384k_v3_novelty050_seed2.json",
+      "output": "experiments/coverage_dlgn/results/select_table2_cifar10_384k_v3_novelty050_seed2"
+    }
+  ]
+}

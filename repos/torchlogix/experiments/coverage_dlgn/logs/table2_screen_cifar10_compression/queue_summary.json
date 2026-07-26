@@ -1,0 +1,218 @@
+{
+  "phase": "table2_screen_cifar10_compression",
+  "wall_seconds": 1880.0771872009936,
+  "skipped": [],
+  "finished": [
+    {
+      "name": "screen_table2_cifar10_128k_random_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 45.00107072600804,
+      "log": "experiments/coverage_dlgn/logs/table2_screen_cifar10_compression/screen_table2_cifar10_128k_random_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_128k_v3_incumbent_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 70.00541969899496,
+      "log": "experiments/coverage_dlgn/logs/table2_screen_cifar10_compression/screen_table2_cifar10_128k_v3_incumbent_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_128k_v3_pool4_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 60.00210474799678,
+      "log": "experiments/coverage_dlgn/logs/table2_screen_cifar10_compression/screen_table2_cifar10_128k_v3_pool4_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_128k_v3_pool16_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 95.00252642900159,
+      "log": "experiments/coverage_dlgn/logs/table2_screen_cifar10_compression/screen_table2_cifar10_128k_v3_pool16_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_128k_v3_swap0125_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 60.001738209000905,
+      "log": "experiments/coverage_dlgn/logs/table2_screen_cifar10_compression/screen_table2_cifar10_128k_v3_swap0125_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_128k_v3_novelty050_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 70.00153968000086,
+      "log": "experiments/coverage_dlgn/logs/table2_screen_cifar10_compression/screen_table2_cifar10_128k_v3_novelty050_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_128k_v3_swap0500_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 95.00323819399637,
+      "log": "experiments/coverage_dlgn/logs/table2_screen_cifar10_compression/screen_table2_cifar10_128k_v3_swap0500_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_128k_v3_novelty200_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 70.00214455199603,
+      "log": "experiments/coverage_dlgn/logs/table2_screen_cifar10_compression/screen_table2_cifar10_128k_v3_novelty200_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_128k_v3_light_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 60.00185521300591,
+      "log": "experiments/coverage_dlgn/logs/table2_screen_cifar10_compression/screen_table2_cifar10_128k_v3_light_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_128k_v3_warp_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 60.00213859300129,
+      "log": "experiments/coverage_dlgn/logs/table2_screen_cifar10_compression/screen_table2_cifar10_128k_v3_warp_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_256k_random_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 65.00199789600447,
+      "log": "experiments/coverage_dlgn/logs/table2_screen_cifar10_compression/screen_table2_cifar10_256k_random_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_256k_v3_incumbent_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 115.0035798260069,
+      "log": "experiments/coverage_dlgn/logs/table2_screen_cifar10_compression/screen_table2_cifar10_256k_v3_incumbent_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_256k_v3_pool4_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 95.00297490700905,
+      "log": "experiments/coverage_dlgn/logs/table2_screen_cifar10_compression/screen_table2_cifar10_256k_v3_pool4_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_256k_v3_swap0125_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 95.00222249899525,
+      "log": "experiments/coverage_dlgn/logs/table2_screen_cifar10_compression/screen_table2_cifar10_256k_v3_swap0125_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_256k_v3_pool16_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 160.00472881000314,
+      "log": "experiments/coverage_dlgn/logs/table2_screen_cifar10_compression/screen_table2_cifar10_256k_v3_pool16_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_256k_v3_swap0500_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 165.00363932999608,
+      "log": "experiments/coverage_dlgn/logs/table2_screen_cifar10_compression/screen_table2_cifar10_256k_v3_swap0500_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_256k_v3_novelty050_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 115.00266514199029,
+      "log": "experiments/coverage_dlgn/logs/table2_screen_cifar10_compression/screen_table2_cifar10_256k_v3_novelty050_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_256k_v3_novelty200_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 115.00256018099026,
+      "log": "experiments/coverage_dlgn/logs/table2_screen_cifar10_compression/screen_table2_cifar10_256k_v3_novelty200_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_256k_v3_light_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 120.00283492699964,
+      "log": "experiments/coverage_dlgn/logs/table2_screen_cifar10_compression/screen_table2_cifar10_256k_v3_light_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_256k_v3_warp_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 115.00575100400602,
+      "log": "experiments/coverage_dlgn/logs/table2_screen_cifar10_compression/screen_table2_cifar10_256k_v3_warp_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_384k_random_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 100.00235804000113,
+      "log": "experiments/coverage_dlgn/logs/table2_screen_cifar10_compression/screen_table2_cifar10_384k_random_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_384k_v3_pool4_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 140.00245068199,
+      "log": "experiments/coverage_dlgn/logs/table2_screen_cifar10_compression/screen_table2_cifar10_384k_v3_pool4_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_384k_v3_incumbent_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 175.0040880079905,
+      "log": "experiments/coverage_dlgn/logs/table2_screen_cifar10_compression/screen_table2_cifar10_384k_v3_incumbent_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_384k_v3_swap0125_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 140.00263337900105,
+      "log": "experiments/coverage_dlgn/logs/table2_screen_cifar10_compression/screen_table2_cifar10_384k_v3_swap0125_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_384k_v3_pool16_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 245.0054722269997,
+      "log": "experiments/coverage_dlgn/logs/table2_screen_cifar10_compression/screen_table2_cifar10_384k_v3_pool16_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_384k_v3_swap0500_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 250.01120103200083,
+      "log": "experiments/coverage_dlgn/logs/table2_screen_cifar10_compression/screen_table2_cifar10_384k_v3_swap0500_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_384k_v3_novelty050_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 175.00951194600202,
+      "log": "experiments/coverage_dlgn/logs/table2_screen_cifar10_compression/screen_table2_cifar10_384k_v3_novelty050_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_384k_v3_novelty200_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 175.00633048900636,
+      "log": "experiments/coverage_dlgn/logs/table2_screen_cifar10_compression/screen_table2_cifar10_384k_v3_novelty200_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_384k_v3_light_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 180.00660402700305,
+      "log": "experiments/coverage_dlgn/logs/table2_screen_cifar10_compression/screen_table2_cifar10_384k_v3_light_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_384k_v3_warp_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 170.00793344499834,
+      "log": "experiments/coverage_dlgn/logs/table2_screen_cifar10_compression/screen_table2_cifar10_384k_v3_warp_seed0.log"
+    }
+  ],
+  "failed": []
+}
