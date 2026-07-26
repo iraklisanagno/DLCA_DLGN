@@ -91,8 +91,8 @@ exactly-once test evaluation.
 | Architecture | Target gates | Raw training parameters | Method | A / R accuracy | Reported configuration |
 |---|---:|---:|---|---:|---|
 | S: 4 x 12K | 48K | 0.768M | Deep DLGN random | **[REPRODUCED] 49.692% (n=5) / [REPORTED] 51.27%** | Exact 48K architecture; one-time held-out test |
-|  |  | 1.536M | Mommen learned connectivity | [TRIED] 49.00% 5K screen; final pending / [N/A] | \(N_c=8\) selected for three-seed exact-48K adaptation |
-|  |  | 3.840M | LILogicNet | [TRIED] 50.46% 5K screen; final pending / [REPORTED] 55.11% | Local exact-48K Top-32 adaptation; reported value uses 8K nonmatched gates |
+|  |  | 1.536M | Mommen learned connectivity | [ADAPTED] 51.753 +/- 0.386% validation (n=3; test pending) / [N/A] | Exact-48K \(N_c=8\) adaptation; source: `summary/table2_s_comparator_final.json` |
+|  |  | 3.840M | LILogicNet | [ADAPTED] 51.013 +/- 0.450% validation (n=3; test pending) / [REPORTED] 55.11% | Exact-48K Top-32 adaptation; reported value uses 8K nonmatched gates; local source as above |
 |  |  |  | WARP-LUT | [PENDING] / [REPORTED] 52.12 +/- 0.01% | 128K total gates under the BitLogic protocol, nonmatched |
 |  |  |  | BitLogic best-of-space | [PENDING] / [REPORTED] 58.06 +/- 0.14% | 128K total rank-4 gates, nonmatched |
 |  |  |  | **CoverageDLGN** | **[OUR-FINAL] 53.116% (n=5) / [N/A]** | Exact 48K target; +3.424 pp paired test gain |
@@ -243,14 +243,24 @@ for every cell, but the implemented CoverageDLGN mechanism must not change.
 - Fixed random and CoverageDLGN use five full seeds on every promoted central
   cell.
 - Locally reproduced or adapted paper-derived comparators use three full
-  seeds. A paper-prescribed recipe is preferred; otherwise a one-seed short
-  screen advances only one setting to the three long runs.
+  seeds on S/M cells. A paper-prescribed recipe is preferred; otherwise a
+  one-seed short screen advances only one setting to the three long runs.
+- On deep/L cells, an expensive locally adapted comparator initially receives
+  one full seed and is labelled `[TRIED, n=1]`. It is promoted to three full
+  seeds only when that run is competitive with the central fixed-routing
+  methods or is scientifically necessary for a paper claim. Otherwise the
+  one-seed local value is retained alongside the clearly labelled
+  `[REPORTED]` paper value.
 - The already-running MNIST Table 1 queue is the only locked exception: all
   five methods retain five final seeds. Fashion-MNIST uses five seeds for
   random/CoverageDLGN and three for Mommen/LILogicNet/BitLogic.
 - Dense CIFAR-10 and CIFAR-100 run Mommen for three seeds at each feasible
-  S/M/L scale. LILogicNet is run locally for three seeds on S and is
-  reported-only on M/L. BitLogic and WARP-LUT use reported values.
+  S scale. CIFAR-10 M uses one full Mommen seed first and promotes it to
+  three only if competitive or scientifically necessary; the conditional
+  one-to-three-seed policy above also applies to L. LILogicNet is run locally
+  for three seeds on S and is reported-only on M/L. BitLogic and WARP-LUT use
+  reported values. CIFAR-100 promotion decisions remain subject to its
+  dataset-specific plan and timing feasibility.
 - Promoted convolutional cells run fixed random and CoverageDLGN for five
   seeds and Light/IWP and WARP for three seeds. Mommen, LILogicNet, and
   BitLogic are not treated as convolutional comparators unless a separately
@@ -321,9 +331,11 @@ configuration.
 1. Retain the existing S and M results as incumbent CoverageDLGN candidates.
 2. Add and test 128K, 256K, and 384K four-layer compression architectures.
 3. Search CoverageDLGN independently for S, 128K, 256K, 384K, M, and L.
-4. Run fixed random/CoverageDLGN for five seeds and Mommen for three seeds at
-   each feasible S/M/L scale. Run LILogicNet for three seeds on S; retain
-   LILogicNet M/L, WARP-LUT, and BitLogic as explicitly reported-only values.
+4. Run fixed random/CoverageDLGN for five seeds. Run Mommen for three seeds
+   on S; on M and L, start with one full seed and promote to three only when
+   competitive or scientifically necessary. Run LILogicNet for three seeds
+   on S; retain LILogicNet M/L, WARP-LUT, and BitLogic as explicitly
+   reported-only values.
 5. Use three paired 20K seeds for selection at every budget.
 6. Run five full fixed-random/CoverageDLGN seeds for S, M, the selected
    compression crossing, and L after a timing/memory feasibility run.
@@ -331,9 +343,10 @@ configuration.
    model within a predeclared 0.3-percentage-point non-inferiority margin.
 
 **Completion condition:** S/M/L contain the five-seed local primary
-comparison, the three-seed Mommen adaptation, and at least three clearly
-labelled local or reported paper-derived comparisons. The table or companion
-figure demonstrates the best observed accuracy--gate-count Pareto frontier.
+comparison, the policy-compliant Mommen adaptation, and at least three
+clearly labelled local or reported paper-derived comparisons. The table or
+companion figure demonstrates the best observed accuracy--gate-count Pareto
+frontier.
 
 ### Plan for Table 3: Convolutional CIFAR-10 S/M/L
 

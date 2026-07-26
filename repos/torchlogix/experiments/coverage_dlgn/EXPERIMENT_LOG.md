@@ -406,3 +406,45 @@ This log records operational failures and protocol decisions made after commit
   three full seeds each; no three-candidate 20K comparator selection is run.
   This reduced search budget is explicit and does not change per-model
   parameter accounting. The held-out test remains locked.
+
+## July 26, 2026: conditional seed policy for deep comparators
+
+- Future expensive deep/L comparator adaptations start with one full seed,
+  reported as `[TRIED, n=1]` without a variance estimate. They are extended
+  to three seeds only if competitive with the central fixed-routing methods
+  or required for a specific scientific claim.
+- This change does not affect already completed or running S/M experiments.
+  Central fixed-random and frozen CoverageDLGN v3 comparisons retain five
+  seeds. The CoverageDLGN v3 mechanism is unchanged.
+
+## July 26, 2026: CIFAR-10 M Mommen seed decision
+
+- The exact-512K CIFAR-10 M Mommen adaptation starts with one full seed
+  because its trainable routing and runtime scale substantially beyond S.
+  It advances to three seeds only if competitive with the completed matched
+  fixed-routing results or required for a specific paper claim.
+- LILogicNet and BitLogic remain clearly labelled reported-only comparisons
+  on CIFAR-10 M. This decision does not alter any model or CoverageDLGN v3.
+
+## July 26, 2026: dense CIFAR-10 S comparator validation
+
+- All six frozen full-schedule comparator runs completed successfully:
+  three Mommen \(N_c=8\) seeds and three LILogicNet Top-32, tau-30 seeds.
+  Every run used source revision `e4327c6` and training implementation hash
+  `7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5`.
+- Mean best hardened validation accuracy is Mommen `[ADAPTED]`
+  51.753% +/- 0.386% and LILogicNet `[ADAPTED]` 51.013% +/- 0.450%, with
+  three seeds per method. Values after `+/-` are sample standard deviations.
+- Mommen averaged 1,587 seconds per seed and peaked at 515,224,576 allocated
+  GPU bytes. LILogicNet averaged 5,212 seconds per seed and peaked at
+  4,239,894,016 bytes. Both deploy the same exact 48K rank-2 gate circuit,
+  but use 0.768M and 3.072M training-only routing parameters respectively.
+- An accidental Ctrl+C interrupted the first LILogic attempts at recorded
+  steps 34,604 and 21,944. Their partial artifacts and logs are preserved
+  under the `failed/table2_s_lilogic_interrupted_ctrl_c_attempt1` directories.
+  Exact resume was not used because equivalence is unproven. The three
+  completed Mommen runs were skipped, and only unfinished LILogic work was
+  restarted.
+- `summary/table2_s_comparator_final.json` and its CSV export are the frozen
+  validation sources with `test_set_used=false`. The held-out test remains
+  locked until this validation state is committed.

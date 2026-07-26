@@ -1,0 +1,3 @@
+family,provenance,seed_count,seeds,mean_best_validation_hard_accuracy,std_best_validation_hard_accuracy,mean_wall_seconds,max_peak_gpu_memory_bytes,dense_gate_count,trainable_parameters,training_routing_parameters,deployed_routing_bits,architecture,connections_num_candidates,group_sum_temperature
+mommen,ADAPTED,3,"0,1,2",0.5175333215792974,0.0038591882944188365,1587.001473846661,515224576,48000,1536000,768000,1344000,DlgnCifar10SmallLearnable,8,
+lilogic,ADAPTED,3,"0,1,2",0.5101333333651225,0.004500370029494733,5212.442314880328,4239894016,48000,3840000,3072000,1344000,DlgnCifar10SmallLearnable,32,30.0

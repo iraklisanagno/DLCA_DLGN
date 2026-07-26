@@ -1,0 +1,27 @@
+{
+  "date_utc": "2026-07-26",
+  "phase": "table2_s_comparator_final",
+  "cause": "User accidentally pressed Ctrl+C, terminating the queue runner and its two active child training processes.",
+  "resume_used": false,
+  "completed_runs_preserved": [
+    "final_table2_cifar10_s_mommen_nc8_seed0",
+    "final_table2_cifar10_s_mommen_nc8_seed1",
+    "final_table2_cifar10_s_mommen_nc8_seed2"
+  ],
+  "interrupted_runs": [
+    {
+      "name": "final_table2_cifar10_s_lilogic_top32_tau30_seed0",
+      "last_recorded_step": 34604,
+      "planned_steps": 42200
+    },
+    {
+      "name": "final_table2_cifar10_s_lilogic_top32_tau30_seed1",
+      "last_recorded_step": 21944,
+      "planned_steps": 42200
+    }
+  ],
+  "never_started": [
+    "final_table2_cifar10_s_lilogic_top32_tau30_seed2"
+  ],
+  "recovery": "Partial artifacts and logs were archived. Because exact checkpoint resume equivalence has not been proven, only the two incomplete LILogic runs are restarted from step zero; seed 2 starts normally. Completed Mommen runs are skipped by run_summary.json."
+}
