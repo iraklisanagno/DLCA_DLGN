@@ -112,11 +112,11 @@ exactly-once test evaluation.
 The one-seed 5K compression screen is complete; these are validation
 selection values, not held-out test or paper-final values:
 
-| Target gates | Random screen | Best CoverageDLGN screen | Paired 20K selection | Full 108K validation |
-|---:|---:|---:|---|---|
-| 128K | [TRIED] 49.780% | [TRIED] 54.300% (raw, pool 4) | [TRIED] raw swap 0.50: 54.853% vs random 50.000% (n=3) | **[OUR-FINAL] 55.140% vs [REPRODUCED] 50.760% (n=5, +4.380 pp, 95% CI [+3.989, +4.771])** |
-| 256K | [TRIED] 51.600% | [TRIED] 55.940% (three-way raw tie) | [TRIED] raw incumbent: 57.513% vs random 52.567% (n=3) | **[TRIED] 57.800% vs 53.073% (n=3, +4.727 pp, 95% CI [+3.120, +6.333])** |
-| 384K | [TRIED] 52.280% | [TRIED] 57.520% (WARP) | [TRIED] raw incumbent: 58.980% vs random 54.400% (n=3) | **[TRIED] 59.313% vs 54.920% (n=3, +4.393 pp, 95% CI [+3.184, +5.603])** |
+| Target gates | Random screen | Best CoverageDLGN screen | Paired 20K selection | Full 108K validation | Held-out test |
+|---:|---:|---:|---|---|---|
+| 128K | [TRIED] 49.780% | [TRIED] 54.300% (raw, pool 4) | [TRIED] raw swap 0.50: 54.853% vs random 50.000% (n=3) | [OUR-FINAL] 55.140% vs [REPRODUCED] 50.760% (n=5, +4.380 pp) | **[OUR-FINAL] 53.910% vs [REPRODUCED] 49.748% (n=5, +4.162 pp, 95% CI [+3.759, +4.565])** |
+| 256K | [TRIED] 51.600% | [TRIED] 55.940% (three-way raw tie) | [TRIED] raw incumbent: 57.513% vs random 52.567% (n=3) | **[TRIED] 57.800% vs 53.073% (n=3, +4.727 pp, 95% CI [+3.120, +6.333])** | [PENDING] |
+| 384K | [TRIED] 52.280% | [TRIED] 57.520% (WARP) | [TRIED] raw incumbent: 58.980% vs random 54.400% (n=3) | **[TRIED] 59.313% vs 54.920% (n=3, +4.393 pp, 95% CI [+3.184, +5.603])** | [PENDING] |
 
 The screen and selection machine-readable sources are
 `summary/table2_cifar10_compression_screen.json` and
@@ -127,8 +127,8 @@ test set remains locked while the winners receive full matched training.
 The crossing was selected using the predeclared three-seed result: 128K
 CoverageDLGN reached 54.927% validation, only 0.157 pp below the existing
 512K random reference of 55.084%, satisfying the frozen 0.3 pp
-noninferiority rule. Its subsequent five-seed validation result is 55.140%;
-the held-out test remains locked until this validation state is committed.
+noninferiority rule. Its subsequent five-seed validation result is 55.140%.
+The frozen checkpoints were then evaluated exactly once on the held-out test.
 
 ## Table 3: Convolutional CIFAR-10 S/M/L
 

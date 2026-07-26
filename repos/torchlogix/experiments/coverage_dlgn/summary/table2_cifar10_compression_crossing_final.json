@@ -2,7 +2,7 @@
   "phase": "table2_cifar10_compression_crossing_final",
   "cell": "128k",
   "validation_metric": "hardened validation accuracy",
-  "test_set_used": false,
+  "test_set_used": true,
   "run_count": 10,
   "source_revisions": {
     "6cc6afda38baf802dd75b4a11553c24d78ca5055": 6,
@@ -37,6 +37,20 @@
         0.039893197915501055,
         0.047706801989131575
       ]
+    },
+    "test_hard_accuracy_difference": {
+      "per_seed": [
+        0.03889999896287921,
+        0.04040000170469282,
+        0.047199999988079056,
+        0.041399997174739855,
+        0.04020000070333485
+      ],
+      "mean": 0.04161999970674516,
+      "ci_95": [
+        0.03759233563655633,
+        0.04564766377693399
+      ]
     }
   },
   "methods": [
@@ -61,7 +75,10 @@
       "training_routing_parameters": 0,
       "deployed_routing_bits": 3776000,
       "architecture": "DlgnCifar10Budget128k",
-      "parametrization": "raw"
+      "parametrization": "raw",
+      "mean_test_hard_accuracy": 0.49747998869419097,
+      "std_test_hard_accuracy": 0.0014131517311500596,
+      "mean_test_relaxed_accuracy": 0.5041399880051612
     },
     {
       "family": "coverage_v3",
@@ -84,7 +101,10 @@
       "training_routing_parameters": 0,
       "deployed_routing_bits": 3776000,
       "architecture": "DlgnCifar10Budget128k",
-      "parametrization": "raw"
+      "parametrization": "raw",
+      "mean_test_hard_accuracy": 0.5390999884009361,
+      "std_test_hard_accuracy": 0.00281513829412062,
+      "mean_test_relaxed_accuracy": 0.5462999866604805
     }
   ],
   "runs": [
@@ -105,7 +125,12 @@
       "architecture": "DlgnCifar10Budget128k",
       "parametrization": "raw",
       "source_revision": "6cc6afda38baf802dd75b4a11553c24d78ca5055",
-      "training_implementation_sha256": "8fb5c87348571cc98a89d0bfca9222e42fdd7b26e39a7e181462b6d61979a652"
+      "training_implementation_sha256": "8fb5c87348571cc98a89d0bfca9222e42fdd7b26e39a7e181462b6d61979a652",
+      "test_hard_accuracy": 0.4983999872207642,
+      "test_relaxed_accuracy": 0.5071999877691269,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 22000
     },
     {
       "name": "final_table2_cifar10_128k_random_seed1",
@@ -124,7 +149,12 @@
       "architecture": "DlgnCifar10Budget128k",
       "parametrization": "raw",
       "source_revision": "6cc6afda38baf802dd75b4a11553c24d78ca5055",
-      "training_implementation_sha256": "8fb5c87348571cc98a89d0bfca9222e42fdd7b26e39a7e181462b6d61979a652"
+      "training_implementation_sha256": "8fb5c87348571cc98a89d0bfca9222e42fdd7b26e39a7e181462b6d61979a652",
+      "test_hard_accuracy": 0.499499988257885,
+      "test_relaxed_accuracy": 0.5064999875426293,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 88000
     },
     {
       "name": "final_table2_cifar10_128k_random_seed2",
@@ -143,7 +173,12 @@
       "architecture": "DlgnCifar10Budget128k",
       "parametrization": "raw",
       "source_revision": "6cc6afda38baf802dd75b4a11553c24d78ca5055",
-      "training_implementation_sha256": "8fb5c87348571cc98a89d0bfca9222e42fdd7b26e39a7e181462b6d61979a652"
+      "training_implementation_sha256": "8fb5c87348571cc98a89d0bfca9222e42fdd7b26e39a7e181462b6d61979a652",
+      "test_hard_accuracy": 0.49649998903274534,
+      "test_relaxed_accuracy": 0.5033999878168106,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 28000
     },
     {
       "name": "final_table2_cifar10_128k_random_seed3",
@@ -162,7 +197,12 @@
       "architecture": "DlgnCifar10Budget128k",
       "parametrization": "raw",
       "source_revision": "7b572e6e88ef9d42f292dd1c1716e7a29b7539c4",
-      "training_implementation_sha256": "8fb5c87348571cc98a89d0bfca9222e42fdd7b26e39a7e181462b6d61979a652"
+      "training_implementation_sha256": "8fb5c87348571cc98a89d0bfca9222e42fdd7b26e39a7e181462b6d61979a652",
+      "test_hard_accuracy": 0.4961999899148941,
+      "test_relaxed_accuracy": 0.5013999879360199,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 38000
     },
     {
       "name": "final_table2_cifar10_128k_random_seed4",
@@ -181,7 +221,12 @@
       "architecture": "DlgnCifar10Budget128k",
       "parametrization": "raw",
       "source_revision": "7b572e6e88ef9d42f292dd1c1716e7a29b7539c4",
-      "training_implementation_sha256": "8fb5c87348571cc98a89d0bfca9222e42fdd7b26e39a7e181462b6d61979a652"
+      "training_implementation_sha256": "8fb5c87348571cc98a89d0bfca9222e42fdd7b26e39a7e181462b6d61979a652",
+      "test_hard_accuracy": 0.49679998904466627,
+      "test_relaxed_accuracy": 0.5021999889612198,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 88000
     },
     {
       "name": "final_table2_cifar10_128k_v3_swap0500_seed0",
@@ -200,7 +245,12 @@
       "architecture": "DlgnCifar10Budget128k",
       "parametrization": "raw",
       "source_revision": "6cc6afda38baf802dd75b4a11553c24d78ca5055",
-      "training_implementation_sha256": "8fb5c87348571cc98a89d0bfca9222e42fdd7b26e39a7e181462b6d61979a652"
+      "training_implementation_sha256": "8fb5c87348571cc98a89d0bfca9222e42fdd7b26e39a7e181462b6d61979a652",
+      "test_hard_accuracy": 0.5372999861836434,
+      "test_relaxed_accuracy": 0.5386999851465225,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 54000
     },
     {
       "name": "final_table2_cifar10_128k_v3_swap0500_seed1",
@@ -219,7 +269,12 @@
       "architecture": "DlgnCifar10Budget128k",
       "parametrization": "raw",
       "source_revision": "6cc6afda38baf802dd75b4a11553c24d78ca5055",
-      "training_implementation_sha256": "8fb5c87348571cc98a89d0bfca9222e42fdd7b26e39a7e181462b6d61979a652"
+      "training_implementation_sha256": "8fb5c87348571cc98a89d0bfca9222e42fdd7b26e39a7e181462b6d61979a652",
+      "test_hard_accuracy": 0.5398999899625778,
+      "test_relaxed_accuracy": 0.5514999869465828,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 14000
     },
     {
       "name": "final_table2_cifar10_128k_v3_swap0500_seed2",
@@ -238,7 +293,12 @@
       "architecture": "DlgnCifar10Budget128k",
       "parametrization": "raw",
       "source_revision": "6cc6afda38baf802dd75b4a11553c24d78ca5055",
-      "training_implementation_sha256": "8fb5c87348571cc98a89d0bfca9222e42fdd7b26e39a7e181462b6d61979a652"
+      "training_implementation_sha256": "8fb5c87348571cc98a89d0bfca9222e42fdd7b26e39a7e181462b6d61979a652",
+      "test_hard_accuracy": 0.5436999890208244,
+      "test_relaxed_accuracy": 0.5484999844431877,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 50000
     },
     {
       "name": "final_table2_cifar10_128k_v3_swap0500_seed3",
@@ -257,7 +317,12 @@
       "architecture": "DlgnCifar10Budget128k",
       "parametrization": "raw",
       "source_revision": "7b572e6e88ef9d42f292dd1c1716e7a29b7539c4",
-      "training_implementation_sha256": "8fb5c87348571cc98a89d0bfca9222e42fdd7b26e39a7e181462b6d61979a652"
+      "training_implementation_sha256": "8fb5c87348571cc98a89d0bfca9222e42fdd7b26e39a7e181462b6d61979a652",
+      "test_hard_accuracy": 0.537599987089634,
+      "test_relaxed_accuracy": 0.5486999881267548,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 30000
     },
     {
       "name": "final_table2_cifar10_128k_v3_swap0500_seed4",
@@ -276,7 +341,12 @@
       "architecture": "DlgnCifar10Budget128k",
       "parametrization": "raw",
       "source_revision": "7b572e6e88ef9d42f292dd1c1716e7a29b7539c4",
-      "training_implementation_sha256": "8fb5c87348571cc98a89d0bfca9222e42fdd7b26e39a7e181462b6d61979a652"
+      "training_implementation_sha256": "8fb5c87348571cc98a89d0bfca9222e42fdd7b26e39a7e181462b6d61979a652",
+      "test_hard_accuracy": 0.5369999897480011,
+      "test_relaxed_accuracy": 0.5440999886393547,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 24000
     }
   ]
 }

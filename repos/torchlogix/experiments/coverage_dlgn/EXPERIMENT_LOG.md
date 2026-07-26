@@ -369,3 +369,18 @@ This log records operational failures and protocol decisions made after commit
   `summary/table2_cifar10_compression_crossing_final.json` with
   `test_set_used=false`. The held-out test will be evaluated exactly once
   only after this validation result is committed.
+
+## July 26, 2026: 128K compression-crossing held-out evaluation
+
+- The five-seed validation state was frozen in commit `b4a1f5f` before test
+  evaluation. The guarded evaluator verified all 10 checkpoints, rejected
+  any pre-existing test output, and distributed the exactly-once evaluation
+  across both GPUs. All commands completed successfully with zero failures
+  or missing artifacts.
+- Fixed random reaches `[REPRODUCED]` 49.748% +/- 0.141% hardened test
+  accuracy and CoverageDLGN reaches `[OUR-FINAL]` 53.910% +/- 0.282%.
+  CoverageDLGN's paired test gain is +4.162 pp with a 95% Student-t interval
+  of [+3.759, +4.565] pp. All five per-seed test differences are positive.
+- `summary/table2_cifar10_compression_crossing_final.json` and its CSV export
+  are now the final machine-readable sources with `test_set_used=true`.
+  This crossing's held-out test set will not be queried again.
