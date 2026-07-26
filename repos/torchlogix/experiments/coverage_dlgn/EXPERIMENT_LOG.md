@@ -209,3 +209,33 @@ This log records operational failures and protocol decisions made after commit
 - `summary/table1_mnist_final.json` and its CSV export are now the final
   machine-readable sources of truth with `test_set_used=true`. The held-out
   test set will not be queried again for this Table 1 MNIST experiment.
+
+## July 25--26, 2026: Table 1 Fashion-MNIST final validation
+
+- The reduced final queue completed all 19 predeclared runs with zero
+  failures or skips in 22,275 seconds using two GPUs: five fixed-random
+  seeds, five CoverageDLGN v3 seeds, and three seeds each for Mommen,
+  LILogicNet, and BitLogic. Every artifact uses source revision `dd194c0`
+  and training implementation hash
+  `f5bef4c78c6540e5c783bfa8c1033e61dd89bf9a50e2bb52897aa0d8272ac444`.
+- Mean best hardened validation accuracy is fixed random `[REPRODUCED]`
+  87.477% +/- 0.183% (n=5), CoverageDLGN v3 `[OUR-FINAL]`
+  87.873% +/- 0.271% (n=5), Mommen `[ADAPTED]`
+  88.361% +/- 0.107% (n=3), LILogicNet `[ADAPTED]`
+  89.606% +/- 0.118% (n=3), and BitLogic `[ADAPTED]`
+  90.450% +/- 0.277% (n=3). Values after `+/-` are sample standard
+  deviations.
+- V3 improves its paired fixed-random validation baseline by 0.397
+  percentage points with a 95% Student-t confidence interval of
+  [+0.111, +0.683] pp. All five per-seed differences are positive.
+- Mean training wall time is 14.97 minutes for random, 15.02 for V3, 24.04
+  for Mommen, 70.84 for LILogicNet, and 88.94 for BitLogic. Peak allocated
+  GPU memory is 0.099, 0.099, 0.498, 4.676, and 3.557 GiB, respectively.
+  V3 preserves the random model's 768K trainable parameters and zero
+  training-routing parameters; the adapted comparators use 1.536M/768K,
+  3.84M/3.072M, and 3.84M/3.072M total/routing parameters.
+- The validation source of truth is
+  `summary/table1_fashion_final.json` and its CSV export with
+  `test_set_used=false`. The held-out Fashion-MNIST test set remains locked
+  until this validation summary is committed and then will be evaluated once
+  using the guarded evaluator.

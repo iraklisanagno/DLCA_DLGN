@@ -59,14 +59,23 @@ logits during training.
 
 | Method | Matched gates | MNIST A / R | Fashion-MNIST A / R | Match status |
 |---|---:|---:|---:|---|
-| Deep DLGN fixed random | 48K | **[REPRODUCED] 97.090 +/- 0.180% (n=5) / [REPORTED] 97.69%** | **[TRIED] 86.31% / [REPORTED] 87.17%** | Exact architecture; MNIST source: `summary/table1_mnist_final.json` |
-| Mommen, \(N_c=16\) | 48K | [ADAPTED] 98.084 +/- 0.066% (n=5) / [REPORTED] 98.14% `[12K, nonmatched]` | [PENDING] / [REPORTED] 87.16% `[8K, nonmatched]` | Adapted to 48K; MNIST source: `summary/table1_mnist_final.json` |
-| LILogicNet Top-32 | 48K | [ADAPTED] 98.124 +/- 0.029% (n=5) / [REPORTED] 98.95 +/- 0.09% `[32K, nonmatched]` | [PENDING] / [REPORTED] 90.26 +/- 0.11% `[64K, nonmatched]` | Adapted to 48K; MNIST source: `summary/table1_mnist_final.json` |
-| BitLogic best-of-space | 48K | [ADAPTED] 98.204 +/- 0.042% (n=5) / [REPORTED] 97.84 +/- 0.04% `[128K total, nonmatched]` | [PENDING] / [REPORTED] 89.16 +/- 0.08% `[128K total, nonmatched]` | Adapted to 48K; MNIST source: `summary/table1_mnist_final.json` |
-| **CoverageDLGN** | **48K** | **[OUR-FINAL] 97.500 +/- 0.099% (n=5) / [N/A]** | **[TRIED] 87.16% / [N/A]** | Exact target; MNIST source: `summary/table1_mnist_final.json` |
+| Deep DLGN fixed random | 48K | **[REPRODUCED] 97.090 +/- 0.180% (n=5) / [REPORTED] 97.69%** | **[TRIED] frozen validation 87.477 +/- 0.183% (n=5; test pending) / [REPORTED] 87.17%** | Exact architecture; MNIST source: `summary/table1_mnist_final.json`; Fashion final validation complete |
+| Mommen, \(N_c=16\) | 48K | [ADAPTED] 98.084 +/- 0.066% (n=5) / [REPORTED] 98.14% `[12K, nonmatched]` | [TRIED] frozen validation 88.361 +/- 0.107% (n=3; test pending) / [REPORTED] 87.16% `[8K, nonmatched]` | Adapted to 48K; MNIST source: `summary/table1_mnist_final.json`; Fashion selected \(N_c=8\), depth 3, final validation complete |
+| LILogicNet Top-32 | 48K | [ADAPTED] 98.124 +/- 0.029% (n=5) / [REPORTED] 98.95 +/- 0.09% `[32K, nonmatched]` | [TRIED] frozen validation 89.606 +/- 0.118% (n=3; test pending) / [REPORTED] 90.26 +/- 0.11% `[64K, nonmatched]` | Adapted to 48K; MNIST source: `summary/table1_mnist_final.json`; Fashion Top-32, depth 2, tau 30 final validation complete |
+| BitLogic best-of-space | 48K | [ADAPTED] 98.204 +/- 0.042% (n=5) / [REPORTED] 97.84 +/- 0.04% `[128K total, nonmatched]` | [TRIED] frozen validation 90.450 +/- 0.277% (n=3; test pending) / [REPORTED] 89.16 +/- 0.08% `[128K total, nonmatched]` | Adapted to 48K; MNIST source: `summary/table1_mnist_final.json`; Fashion final validation complete |
+| **CoverageDLGN** | **48K** | **[OUR-FINAL] 97.500 +/- 0.099% (n=5) / [N/A]** | **[TRIED] frozen validation 87.873 +/- 0.271% (n=5; test pending) / [N/A]** | Exact target; MNIST source: `summary/table1_mnist_final.json`; Fashion paired validation gain +0.397 pp, 95% CI [+0.111, +0.683] |
 
 Mommen \(N_c=16\) adds approximately 32 routing logits per gate during
 training but retains one hard predecessor per gate input after training.
+The selected Fashion-MNIST \(N_c=8\) variant uses 1.536M total trainable
+parameters, including 768K training-only routing parameters; its three final
+seeds averaged 24.04 minutes and peaked at 0.498 GiB allocated GPU memory.
+The selected Fashion-MNIST LILogicNet variant uses 3.84M total trainable
+parameters, including 3.072M training-only routing parameters; its three
+final seeds averaged 70.84 minutes and peaked at 4.676 GiB.
+The adapted Fashion-MNIST BitLogic variant also uses 3.84M total trainable
+parameters, including 3.072M training-only routing parameters; its three
+final seeds averaged 88.94 minutes and peaked at 3.557 GiB.
 On the locked MNIST test set, CoverageDLGN improves its paired fixed-random
 baseline by 0.410 percentage points (95% Student-t confidence interval
 [+0.108, +0.712] pp). All five methods were evaluated once using the
