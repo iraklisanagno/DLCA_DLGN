@@ -345,3 +345,27 @@ This log records operational failures and protocol decisions made after commit
   compression crossing and will be extended from three to five paired seeds.
 - The held-out CIFAR-10 test set remains locked. All values in this section
   are `[TRIED]` validation results.
+
+## July 26, 2026: 128K compression-crossing extension
+
+- The first extension attempt was interrupted after random seeds 3 and 4
+  reached completed validation step 98,000 but before either produced a final
+  `run_summary.json`. No V3 extension run had started. The incomplete
+  artifacts were archived under
+  `results/failed/table2_crossing_extension_interrupted_attempt1/`, and a
+  compact failure record is preserved under
+  `logs/failed/table2_crossing_extension_interrupted_attempt1/`.
+- Exact resume equivalence had not been proven, so the partial checkpoints
+  were not resumed or counted. Only the two incomplete random seeds were
+  restarted from step zero; completed seeds 0--2 were not rerun. V3 seeds
+  3--4 then ran for the first time. The clean recovery queue completed all
+  four declared runs with zero failures or skips.
+- Across five paired seeds, fixed random reaches
+  `[REPRODUCED]` 50.760% +/- 0.446% and CoverageDLGN reaches
+  `[OUR-FINAL]` 55.140% +/- 0.336% mean best hardened validation accuracy.
+  The paired gain is +4.380 pp with 95% Student-t interval
+  [+3.989, +4.771] pp; all five per-seed differences are positive.
+- The frozen source of truth is
+  `summary/table2_cifar10_compression_crossing_final.json` with
+  `test_set_used=false`. The held-out test will be evaluated exactly once
+  only after this validation result is committed.

@@ -1,0 +1,3 @@
+family,candidate,provenance,seed_count,seeds,mean_best_validation_hard_accuracy,std_best_validation_hard_accuracy,mean_wall_seconds,max_peak_gpu_memory_bytes,dense_gate_count,trainable_parameters,training_routing_parameters,deployed_routing_bits,architecture,parametrization
+random,random,REPRODUCED,5,"0,1,2,3,4",0.5075999864339829,0.004458698171085269,746.4599162848056,302201344,128000,2048000,0,3776000,DlgnCifar10Budget128k,raw
+coverage_v3,v3_swap0500,OUR-FINAL,5,"0,1,2,3,4",0.5513999863862992,0.003364520774984895,746.2096240491985,302201344,128000,2048000,0,3776000,DlgnCifar10Budget128k,raw

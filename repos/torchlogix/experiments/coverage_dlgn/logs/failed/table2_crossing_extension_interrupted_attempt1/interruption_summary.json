@@ -1,0 +1,24 @@
+{
+  "phase": "table2_crossing_extension_cifar10",
+  "status": "interrupted_incomplete_attempt",
+  "reason": "The controlling tool session was interrupted before either run produced run_summary.json.",
+  "heldout_test_used": false,
+  "runs": [
+    {
+      "name": "final_table2_cifar10_128k_random_seed3",
+      "last_completed_validation_step": 98000,
+      "last_observed_training_step": 99077,
+      "target_training_step": 108000,
+      "reused_or_resumed": false
+    },
+    {
+      "name": "final_table2_cifar10_128k_random_seed4",
+      "last_completed_validation_step": 98000,
+      "last_observed_training_step": 98571,
+      "target_training_step": 108000,
+      "reused_or_resumed": false
+    }
+  ],
+  "recovery": "Partial artifacts were archived. Both incomplete runs were restarted from step zero with the unchanged committed configuration because exact resume equivalence had not been proven.",
+  "completed_runs_rerun": false
+}
