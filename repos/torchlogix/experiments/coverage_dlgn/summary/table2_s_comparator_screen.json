@@ -1,0 +1,53 @@
+{
+  "phase": "table2_s_comparator_screen",
+  "selection_metric": "best hardened validation accuracy",
+  "test_set_used": false,
+  "run_count": 3,
+  "source_revision": "afb787d0c1e9dfd9a71ea3073c3dcdd52d41d0bb",
+  "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5",
+  "selected_for_full_training": {
+    "mommen": "screen_table2_cifar10_s_mommen_nc8_seed0",
+    "lilogic": "screen_table2_cifar10_s_lilogic_top32_tau30_seed0"
+  },
+  "rows": [
+    {
+      "name": "screen_table2_cifar10_s_lilogic_top32_tau30_seed0",
+      "family": "lilogic",
+      "best_validation_hard_accuracy": 0.5046000002384186,
+      "wall_seconds": 617.9022784729896,
+      "peak_gpu_memory_bytes": 4239894016,
+      "dense_gate_count": 48000,
+      "trainable_parameters": 3840000,
+      "training_routing_parameters": 3072000,
+      "architecture": "DlgnCifar10SmallLearnable",
+      "connections_num_candidates": 32,
+      "config": "experiments/coverage_dlgn/configs/table2_s_comparator_screen/screen_table2_cifar10_s_lilogic_top32_tau30_seed0.json"
+    },
+    {
+      "name": "screen_table2_cifar10_s_mommen_nc8_seed0",
+      "family": "mommen",
+      "best_validation_hard_accuracy": 0.48999998390674593,
+      "wall_seconds": 76.91691573298885,
+      "peak_gpu_memory_bytes": 515224576,
+      "dense_gate_count": 48000,
+      "trainable_parameters": 1536000,
+      "training_routing_parameters": 768000,
+      "architecture": "DlgnCifar10SmallLearnable",
+      "connections_num_candidates": 8,
+      "config": "experiments/coverage_dlgn/configs/table2_s_comparator_screen/screen_table2_cifar10_s_mommen_nc8_seed0.json"
+    },
+    {
+      "name": "screen_table2_cifar10_s_mommen_nc16_seed0",
+      "family": "mommen",
+      "best_validation_hard_accuracy": 0.4857999843358993,
+      "wall_seconds": 135.735825330019,
+      "peak_gpu_memory_bytes": 918443008,
+      "dense_gate_count": 48000,
+      "trainable_parameters": 2304000,
+      "training_routing_parameters": 1536000,
+      "architecture": "DlgnCifar10SmallLearnable",
+      "connections_num_candidates": 16,
+      "config": "experiments/coverage_dlgn/configs/table2_s_comparator_screen/screen_table2_cifar10_s_mommen_nc16_seed0.json"
+    }
+  ]
+}

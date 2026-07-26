@@ -1,0 +1,29 @@
+{
+  "phase": "table2_s_comparator_screen",
+  "wall_seconds": 710.0243162249972,
+  "skipped": [],
+  "finished": [
+    {
+      "name": "screen_table2_cifar10_s_mommen_nc8_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 85.00495929899625,
+      "log": "experiments/coverage_dlgn/logs/table2_s_comparator_screen/screen_table2_cifar10_s_mommen_nc8_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_s_mommen_nc16_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 140.00650869999663,
+      "log": "experiments/coverage_dlgn/logs/table2_s_comparator_screen/screen_table2_cifar10_s_mommen_nc16_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_s_lilogic_top32_tau30_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 625.0119154150016,
+      "log": "experiments/coverage_dlgn/logs/table2_s_comparator_screen/screen_table2_cifar10_s_lilogic_top32_tau30_seed0.log"
+    }
+  ],
+  "failed": []
+}

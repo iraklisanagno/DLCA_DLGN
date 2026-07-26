@@ -384,3 +384,25 @@ This log records operational failures and protocol decisions made after commit
 - `summary/table2_cifar10_compression_crossing_final.json` and its CSV export
   are now the final machine-readable sources with `test_set_used=true`.
   This crossing's held-out test set will not be queried again.
+
+## July 26, 2026: dense CIFAR-10 S comparator screen
+
+- Two comparator-only model wrappers expose learnable routing on the exact
+  existing 48K S and 512K M architectures. Tests verify that their gate
+  counts, four-layer depths, widths, output temperatures, and three-threshold
+  input encoding are unchanged. No fixed-topology random or CoverageDLGN V3
+  implementation was modified.
+- The reduced S screen contained only three one-seed, 5K runs. Mommen
+  \(N_c=8\) reached 49.000% best hardened validation accuracy using 1.536M
+  total trainable parameters and 0.768M routing parameters. \(N_c=16\)
+  reached 48.580% using 2.304M/1.536M total/routing parameters. The frozen
+  winner is \(N_c=8\).
+- The single fixed LILogicNet Top-32, tau-30 matched-48K adaptation reached
+  50.460%, using 3.840M total and 3.072M routing parameters. It required
+  618 seconds and 3.95 GiB peak allocated GPU memory for the 5K screen,
+  compared with 77 seconds and 0.48 GiB for Mommen \(N_c=8\).
+- These values are `[TRIED]` validation screens only. The selected Mommen
+  configuration and the sole LILogicNet configuration advance directly to
+  three full seeds each; no three-candidate 20K comparator selection is run.
+  This reduced search budget is explicit and does not change per-model
+  parameter accounting. The held-out test remains locked.

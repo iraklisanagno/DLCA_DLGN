@@ -91,8 +91,8 @@ exactly-once test evaluation.
 | Architecture | Target gates | Raw training parameters | Method | A / R accuracy | Reported configuration |
 |---|---:|---:|---|---:|---|
 | S: 4 x 12K | 48K | 0.768M | Deep DLGN random | **[REPRODUCED] 49.692% (n=5) / [REPORTED] 51.27%** | Exact 48K architecture; one-time held-out test |
-|  |  | 1.536M--2.304M, screen pending | Mommen learned connectivity | [PENDING] / [N/A] | Three-seed adaptation to exact 48K architecture |
-|  |  |  | LILogicNet | [PENDING] / [REPORTED] 55.11% | 8K gates, nonmatched |
+|  |  | 1.536M | Mommen learned connectivity | [TRIED] 49.00% 5K screen; final pending / [N/A] | \(N_c=8\) selected for three-seed exact-48K adaptation |
+|  |  | 3.840M | LILogicNet | [TRIED] 50.46% 5K screen; final pending / [REPORTED] 55.11% | Local exact-48K Top-32 adaptation; reported value uses 8K nonmatched gates |
 |  |  |  | WARP-LUT | [PENDING] / [REPORTED] 52.12 +/- 0.01% | 128K total gates under the BitLogic protocol, nonmatched |
 |  |  |  | BitLogic best-of-space | [PENDING] / [REPORTED] 58.06 +/- 0.14% | 128K total rank-4 gates, nonmatched |
 |  |  |  | **CoverageDLGN** | **[OUR-FINAL] 53.116% (n=5) / [N/A]** | Exact 48K target; +3.424 pp paired test gain |

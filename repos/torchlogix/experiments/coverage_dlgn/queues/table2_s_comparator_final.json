@@ -1,0 +1,60 @@
+{
+  "phase": "table2_s_comparator_final",
+  "screen_summary": "experiments/coverage_dlgn/summary/table2_s_comparator_screen.json",
+  "selection_metric": "frozen best hardened validation checkpoint",
+  "heldout_test_used": false,
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "matched_training_examples": {
+    "mommen": 10800000,
+    "lilogic": 10803200,
+    "relative_difference": 0.0002962963
+  },
+  "entries": [
+    {
+      "name": "final_table2_cifar10_s_mommen_nc8_seed0",
+      "family": "mommen",
+      "screen_source": "screen_table2_cifar10_s_mommen_nc8_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_s_comparator_final/final_table2_cifar10_s_mommen_nc8_seed0.json",
+      "output": "experiments/coverage_dlgn/results/final_table2_cifar10_s_mommen_nc8_seed0"
+    },
+    {
+      "name": "final_table2_cifar10_s_mommen_nc8_seed1",
+      "family": "mommen",
+      "screen_source": "screen_table2_cifar10_s_mommen_nc8_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_s_comparator_final/final_table2_cifar10_s_mommen_nc8_seed1.json",
+      "output": "experiments/coverage_dlgn/results/final_table2_cifar10_s_mommen_nc8_seed1"
+    },
+    {
+      "name": "final_table2_cifar10_s_mommen_nc8_seed2",
+      "family": "mommen",
+      "screen_source": "screen_table2_cifar10_s_mommen_nc8_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_s_comparator_final/final_table2_cifar10_s_mommen_nc8_seed2.json",
+      "output": "experiments/coverage_dlgn/results/final_table2_cifar10_s_mommen_nc8_seed2"
+    },
+    {
+      "name": "final_table2_cifar10_s_lilogic_top32_tau30_seed0",
+      "family": "lilogic",
+      "screen_source": "screen_table2_cifar10_s_lilogic_top32_tau30_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_s_comparator_final/final_table2_cifar10_s_lilogic_top32_tau30_seed0.json",
+      "output": "experiments/coverage_dlgn/results/final_table2_cifar10_s_lilogic_top32_tau30_seed0"
+    },
+    {
+      "name": "final_table2_cifar10_s_lilogic_top32_tau30_seed1",
+      "family": "lilogic",
+      "screen_source": "screen_table2_cifar10_s_lilogic_top32_tau30_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_s_comparator_final/final_table2_cifar10_s_lilogic_top32_tau30_seed1.json",
+      "output": "experiments/coverage_dlgn/results/final_table2_cifar10_s_lilogic_top32_tau30_seed1"
+    },
+    {
+      "name": "final_table2_cifar10_s_lilogic_top32_tau30_seed2",
+      "family": "lilogic",
+      "screen_source": "screen_table2_cifar10_s_lilogic_top32_tau30_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_s_comparator_final/final_table2_cifar10_s_lilogic_top32_tau30_seed2.json",
+      "output": "experiments/coverage_dlgn/results/final_table2_cifar10_s_lilogic_top32_tau30_seed2"
+    }
+  ]
+}
