@@ -112,16 +112,17 @@ exactly-once test evaluation.
 The one-seed 5K compression screen is complete; these are validation
 selection values, not held-out test or paper-final values:
 
-| Target gates | Random screen | Best CoverageDLGN screen | Advanced to paired 20K selection |
+| Target gates | Random screen | Best CoverageDLGN screen | Paired 20K selection |
 |---:|---:|---:|---|
-| 128K | [TRIED] 49.780% | [TRIED] 54.300% (raw, pool 4) | pool 4; swap 0.50; raw incumbent |
-| 256K | [TRIED] 51.600% | [TRIED] 55.940% (three-way raw tie) | raw incumbent; novelty 0.5; novelty 2.0 |
-| 384K | [TRIED] 52.280% | [TRIED] 57.520% (WARP) | WARP; raw incumbent; novelty 0.5 |
+| 128K | [TRIED] 49.780% | [TRIED] 54.300% (raw, pool 4) | **[TRIED] raw swap 0.50: 54.853% vs random 50.000% (n=3, +4.853 pp)** |
+| 256K | [TRIED] 51.600% | [TRIED] 55.940% (three-way raw tie) | **[TRIED] raw incumbent: 57.513% vs random 52.567% (n=3, +4.947 pp)** |
+| 384K | [TRIED] 52.280% | [TRIED] 57.520% (WARP) | **[TRIED] raw incumbent: 58.980% vs random 54.400% (n=3, +4.580 pp)** |
 
-The machine-readable source is
-`summary/table2_cifar10_compression_screen.json`. All 36 advanced
-random/CoverageDLGN runs use three paired seeds and 20K iterations. The
-held-out CIFAR-10 test set remains locked throughout selection.
+The screen and selection machine-readable sources are
+`summary/table2_cifar10_compression_screen.json` and
+`summary/table2_cifar10_compression_selection.json`. The 20K stage is
+complete; its values select topology settings only. The held-out CIFAR-10
+test set remains locked while the winners receive full matched training.
 
 ## Table 3: Convolutional CIFAR-10 S/M/L
 

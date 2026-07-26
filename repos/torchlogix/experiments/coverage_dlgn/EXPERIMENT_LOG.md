@@ -298,3 +298,27 @@ This log records operational failures and protocol decisions made after commit
 - The next queue contains 36 paired 20K runs: random plus three advanced V3
   candidates at each of 128K, 256K, and 384K, each with seeds 0, 1, and 2.
   The held-out CIFAR-10 test set remains locked.
+
+## July 26, 2026: dense CIFAR-10 compression selection
+
+- The paired 20K selection completed all 36 declared runs on two GPUs with
+  zero failures or skips in 5,020 seconds. At 128K gates, raw V3 with swap
+  fraction 0.50 won at 54.853% +/- 0.234% mean best hardened validation
+  accuracy, versus 50.000% +/- 0.390% for fixed random. Its paired mean gain
+  is +4.853 percentage points.
+- At 256K, the raw incumbent won at 57.513% +/- 0.609%, versus
+  52.567% +/- 0.031% random, for a +4.947 pp paired gain. Novelty weights
+  0.5, 1.0, and 2.0 generated exactly identical per-seed accuracies, showing
+  that this weight did not alter the discrete selected topology in this cell.
+  The deterministic tie-break therefore retained the incumbent.
+- At 384K, the raw incumbent and novelty-0.5 again generated identical
+  results, 58.980% +/- 0.485%. The incumbent was retained by the tie-break.
+  WARP reached 57.433% +/- 0.546%, while fixed random reached
+  54.400% +/- 0.242%; the selected incumbent's paired gain is +4.580 pp.
+- These are `[TRIED]` validation-selection values, not held-out test results
+  or paper-final accuracies. The source of truth is
+  `summary/table2_cifar10_compression_selection.json`.
+- The frozen winners advance to 108,000-step matched training with three
+  paired seeds at each budget (18 runs total). Only after this full-effort
+  validation stage will the predeclared compression noninferiority crossing
+  be determined and extended from three to five seeds.

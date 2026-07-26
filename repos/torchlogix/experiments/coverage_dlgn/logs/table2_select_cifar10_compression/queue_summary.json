@@ -1,0 +1,260 @@
+{
+  "phase": "table2_select_cifar10_compression",
+  "wall_seconds": 5020.172601925005,
+  "skipped": [],
+  "finished": [
+    {
+      "name": "select_table2_cifar10_128k_random_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 145.00370121200103,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_128k_random_seed0.log"
+    },
+    {
+      "name": "select_table2_cifar10_128k_random_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 150.00492586600012,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_128k_random_seed1.log"
+    },
+    {
+      "name": "select_table2_cifar10_128k_random_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 145.00781521499448,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_128k_random_seed2.log"
+    },
+    {
+      "name": "select_table2_cifar10_128k_v3_pool4_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 160.00729700899683,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_128k_v3_pool4_seed0.log"
+    },
+    {
+      "name": "select_table2_cifar10_128k_v3_pool4_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 160.01189013499243,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_128k_v3_pool4_seed1.log"
+    },
+    {
+      "name": "select_table2_cifar10_128k_v3_pool4_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 160.01548149400332,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_128k_v3_pool4_seed2.log"
+    },
+    {
+      "name": "select_table2_cifar10_128k_v3_swap0500_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 195.0060450410092,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_128k_v3_swap0500_seed0.log"
+    },
+    {
+      "name": "select_table2_cifar10_128k_v3_swap0500_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 195.00607968799886,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_128k_v3_swap0500_seed1.log"
+    },
+    {
+      "name": "select_table2_cifar10_128k_v3_incumbent_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 170.0058644709934,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_128k_v3_incumbent_seed0.log"
+    },
+    {
+      "name": "select_table2_cifar10_128k_v3_swap0500_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 195.00732464100292,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_128k_v3_swap0500_seed2.log"
+    },
+    {
+      "name": "select_table2_cifar10_128k_v3_incumbent_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 170.0049102040066,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_128k_v3_incumbent_seed1.log"
+    },
+    {
+      "name": "select_table2_cifar10_128k_v3_incumbent_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 170.00485980999656,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_128k_v3_incumbent_seed2.log"
+    },
+    {
+      "name": "select_table2_cifar10_256k_random_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 225.01506392100418,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_256k_random_seed0.log"
+    },
+    {
+      "name": "select_table2_cifar10_256k_random_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 225.01519517799898,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_256k_random_seed1.log"
+    },
+    {
+      "name": "select_table2_cifar10_256k_random_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 225.00706301200262,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_256k_random_seed2.log"
+    },
+    {
+      "name": "select_table2_cifar10_256k_v3_incumbent_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 275.00778758600063,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_256k_v3_incumbent_seed0.log"
+    },
+    {
+      "name": "select_table2_cifar10_256k_v3_incumbent_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 275.00580359499145,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_256k_v3_incumbent_seed1.log"
+    },
+    {
+      "name": "select_table2_cifar10_256k_v3_incumbent_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 275.0057082380081,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_256k_v3_incumbent_seed2.log"
+    },
+    {
+      "name": "select_table2_cifar10_256k_v3_novelty050_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 275.01418050500797,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_256k_v3_novelty050_seed0.log"
+    },
+    {
+      "name": "select_table2_cifar10_256k_v3_novelty050_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 275.01160413000616,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_256k_v3_novelty050_seed1.log"
+    },
+    {
+      "name": "select_table2_cifar10_256k_v3_novelty050_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 275.00809237899375,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_256k_v3_novelty050_seed2.log"
+    },
+    {
+      "name": "select_table2_cifar10_256k_v3_novelty200_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 275.00718808500096,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_256k_v3_novelty200_seed0.log"
+    },
+    {
+      "name": "select_table2_cifar10_256k_v3_novelty200_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 275.0055615129968,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_256k_v3_novelty200_seed1.log"
+    },
+    {
+      "name": "select_table2_cifar10_256k_v3_novelty200_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 270.0054749809933,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_256k_v3_novelty200_seed2.log"
+    },
+    {
+      "name": "select_table2_cifar10_384k_random_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 350.01004217599984,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_384k_random_seed0.log"
+    },
+    {
+      "name": "select_table2_cifar10_384k_random_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 345.0067951629899,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_384k_random_seed1.log"
+    },
+    {
+      "name": "select_table2_cifar10_384k_random_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 350.00715848499385,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_384k_random_seed2.log"
+    },
+    {
+      "name": "select_table2_cifar10_384k_v3_warp_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 405.0080275750079,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_384k_v3_warp_seed0.log"
+    },
+    {
+      "name": "select_table2_cifar10_384k_v3_warp_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 410.00833120300376,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_384k_v3_warp_seed1.log"
+    },
+    {
+      "name": "select_table2_cifar10_384k_v3_warp_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 405.0082564490003,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_384k_v3_warp_seed2.log"
+    },
+    {
+      "name": "select_table2_cifar10_384k_v3_incumbent_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 420.0104966180079,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_384k_v3_incumbent_seed0.log"
+    },
+    {
+      "name": "select_table2_cifar10_384k_v3_incumbent_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 420.01048145699315,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_384k_v3_incumbent_seed1.log"
+    },
+    {
+      "name": "select_table2_cifar10_384k_v3_incumbent_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 425.009465102994,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_384k_v3_incumbent_seed2.log"
+    },
+    {
+      "name": "select_table2_cifar10_384k_v3_novelty050_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 420.00996224200935,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_384k_v3_novelty050_seed0.log"
+    },
+    {
+      "name": "select_table2_cifar10_384k_v3_novelty050_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 420.01345146300446,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_384k_v3_novelty050_seed1.log"
+    },
+    {
+      "name": "select_table2_cifar10_384k_v3_novelty050_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 420.00933347598766,
+      "log": "experiments/coverage_dlgn/logs/table2_select_cifar10_compression/select_table2_cifar10_384k_v3_novelty050_seed2.log"
+    }
+  ],
+  "failed": []
+}
