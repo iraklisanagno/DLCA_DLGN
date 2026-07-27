@@ -1,0 +1,95 @@
+{
+  "phase": "table2_l_final",
+  "selection_summary": "experiments/coverage_dlgn/summary/table2_l_selection.json",
+  "validation_metric": "best hardened validation accuracy",
+  "heldout_test_used": false,
+  "paired_seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "entries": [
+    {
+      "name": "final_table2_cifar10_l_random_seed0",
+      "family": "random",
+      "seed": 0,
+      "selection_source": "select_table2_cifar10_l_raw_random_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_l_final/final_table2_cifar10_l_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/final_table2_cifar10_l_random_seed0"
+    },
+    {
+      "name": "final_table2_cifar10_l_random_seed1",
+      "family": "random",
+      "seed": 1,
+      "selection_source": "select_table2_cifar10_l_raw_random_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_l_final/final_table2_cifar10_l_random_seed1.json",
+      "output": "experiments/coverage_dlgn/results/final_table2_cifar10_l_random_seed1"
+    },
+    {
+      "name": "final_table2_cifar10_l_random_seed2",
+      "family": "random",
+      "seed": 2,
+      "selection_source": "select_table2_cifar10_l_raw_random_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_l_final/final_table2_cifar10_l_random_seed2.json",
+      "output": "experiments/coverage_dlgn/results/final_table2_cifar10_l_random_seed2"
+    },
+    {
+      "name": "final_table2_cifar10_l_random_seed3",
+      "family": "random",
+      "seed": 3,
+      "selection_source": "select_table2_cifar10_l_raw_random_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_l_final/final_table2_cifar10_l_random_seed3.json",
+      "output": "experiments/coverage_dlgn/results/final_table2_cifar10_l_random_seed3"
+    },
+    {
+      "name": "final_table2_cifar10_l_random_seed4",
+      "family": "random",
+      "seed": 4,
+      "selection_source": "select_table2_cifar10_l_raw_random_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_l_final/final_table2_cifar10_l_random_seed4.json",
+      "output": "experiments/coverage_dlgn/results/final_table2_cifar10_l_random_seed4"
+    },
+    {
+      "name": "final_table2_cifar10_l_v3_swap0500_seed0",
+      "family": "coverage_v3",
+      "seed": 0,
+      "selection_source": "select_table2_cifar10_l_raw_v3_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_l_final/final_table2_cifar10_l_v3_swap0500_seed0.json",
+      "output": "experiments/coverage_dlgn/results/final_table2_cifar10_l_v3_swap0500_seed0"
+    },
+    {
+      "name": "final_table2_cifar10_l_v3_swap0500_seed1",
+      "family": "coverage_v3",
+      "seed": 1,
+      "selection_source": "select_table2_cifar10_l_raw_v3_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_l_final/final_table2_cifar10_l_v3_swap0500_seed1.json",
+      "output": "experiments/coverage_dlgn/results/final_table2_cifar10_l_v3_swap0500_seed1"
+    },
+    {
+      "name": "final_table2_cifar10_l_v3_swap0500_seed2",
+      "family": "coverage_v3",
+      "seed": 2,
+      "selection_source": "select_table2_cifar10_l_raw_v3_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_l_final/final_table2_cifar10_l_v3_swap0500_seed2.json",
+      "output": "experiments/coverage_dlgn/results/final_table2_cifar10_l_v3_swap0500_seed2"
+    },
+    {
+      "name": "final_table2_cifar10_l_v3_swap0500_seed3",
+      "family": "coverage_v3",
+      "seed": 3,
+      "selection_source": "select_table2_cifar10_l_raw_v3_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_l_final/final_table2_cifar10_l_v3_swap0500_seed3.json",
+      "output": "experiments/coverage_dlgn/results/final_table2_cifar10_l_v3_swap0500_seed3"
+    },
+    {
+      "name": "final_table2_cifar10_l_v3_swap0500_seed4",
+      "family": "coverage_v3",
+      "seed": 4,
+      "selection_source": "select_table2_cifar10_l_raw_v3_seed0",
+      "config": "experiments/coverage_dlgn/configs/table2_l_final/final_table2_cifar10_l_v3_swap0500_seed4.json",
+      "output": "experiments/coverage_dlgn/results/final_table2_cifar10_l_v3_swap0500_seed4"
+    }
+  ]
+}
