@@ -692,6 +692,12 @@ class DlgnCifar10Large(DlgnCifar10):
         )
 
 
+class DlgnCifar10LargeLearnable(DlgnCifar10Large):
+    """Exact 1.28M CIFAR-10 L target with learnable routing in all layers."""
+
+    n_learnable_layers = 5
+
+
 class DlgnCifar10Large2(DlgnCifar10):
     n_input_bits = 5
     def __init__(self, **llkw):

@@ -49,6 +49,7 @@ from torchlogix.models import (
     DlgnCifar10Budget512kDepth8,
     DlgnCifar10Budget512kDepth12,
     DlgnCifar10Large,
+    DlgnCifar10LargeLearnable,
     DlgnCifar10Small,
     DlgnFashionMnistPaperSmall,
     DlgnFashionMnistPaperSmallLearnable,
@@ -504,6 +505,27 @@ def test_cifar10_large_matches_paper_architecture_and_five_bit_input():
     assert sum(layer.out_dim for layer in layers) == 1_280_000
     assert layers[0].in_dim == 3 * 32 * 32 * 5
     assert layers[-1].out_dim % 10 == 0
+    assert model[-1].tau == 100.0
+
+
+def test_cifar10_large_mommen_wrapper_preserves_exact_architecture():
+    thresholds = torch.tensor([1 / 6, 2 / 6, 3 / 6, 4 / 6, 5 / 6])
+    kwargs = _paper_model_kwargs(thresholds)
+    kwargs["connections_kwargs"].update({
+        "num_candidates": 8,
+        "forward_mode": "soft_mix",
+        "weights_init": "normal",
+    })
+    model = DlgnCifar10LargeLearnable(**kwargs)
+    layers = [module for module in model if isinstance(module, LogicDense)]
+    assert len(layers) == 5
+    assert all(layer.out_dim == 256_000 for layer in layers)
+    assert sum(layer.out_dim for layer in layers) == 1_280_000
+    assert layers[0].in_dim == 3 * 32 * 32 * 5
+    assert all(
+        isinstance(layer.connections, LearnableDenseConnections)
+        for layer in layers
+    )
     assert model[-1].tau == 100.0
 
 
