@@ -1,0 +1,121 @@
+{
+  "phase": "table2_l_screen",
+  "provenance": "TRIED",
+  "validation_metric": "best hardened validation accuracy",
+  "test_set_used": false,
+  "run_count": 6,
+  "architecture": {
+    "name": "DlgnCifar10Large",
+    "depth": 5,
+    "width": 256000,
+    "gate_count": 1280000,
+    "input_bits": 5
+  },
+  "raw_random": "screen_table2_cifar10_l_random_seed0",
+  "selected_raw_v3": "screen_table2_cifar10_l_v3_swap0500_seed0",
+  "selected_combined_v3": "screen_table2_cifar10_l_v3_warp_seed0",
+  "selected_warp_v3": "screen_table2_cifar10_l_v3_warp_seed0",
+  "advance_to_20k": {
+    "raw": [
+      "screen_table2_cifar10_l_random_seed0",
+      "screen_table2_cifar10_l_v3_swap0500_seed0"
+    ],
+    "warp": [
+      "matched random-topology WARP control generated for 20K",
+      "screen_table2_cifar10_l_v3_warp_seed0"
+    ]
+  },
+  "raw_screen_gain_pp": 5.739999592304235,
+  "rows": [
+    {
+      "name": "screen_table2_cifar10_l_random_seed0",
+      "family": "random",
+      "candidate": "random",
+      "parametrization": "raw",
+      "seed": 0,
+      "best_validation_hard_accuracy": 0.5303999900817871,
+      "wall_seconds": 328.4799087669817,
+      "peak_gpu_memory_bytes": 2917583360,
+      "dense_gate_count": 1280000,
+      "coverage_candidate_pool_size": 64,
+      "coverage_swap_fraction": 0.25,
+      "source_revision": "b17f6a2fe56afdd2ad9b85cdcefb8084e4ef2d26",
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+    },
+    {
+      "name": "screen_table2_cifar10_l_v3_incumbent_seed0",
+      "family": "coverage_v3",
+      "candidate": "incumbent",
+      "parametrization": "raw",
+      "seed": 0,
+      "best_validation_hard_accuracy": 0.5683999860286713,
+      "wall_seconds": 328.30229790799785,
+      "peak_gpu_memory_bytes": 2917583360,
+      "dense_gate_count": 1280000,
+      "coverage_candidate_pool_size": 8,
+      "coverage_swap_fraction": 0.25,
+      "source_revision": "b17f6a2fe56afdd2ad9b85cdcefb8084e4ef2d26",
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+    },
+    {
+      "name": "screen_table2_cifar10_l_v3_light_seed0",
+      "family": "coverage_v3",
+      "candidate": "light",
+      "parametrization": "light",
+      "seed": 0,
+      "best_validation_hard_accuracy": 0.36019999146461484,
+      "wall_seconds": 374.759816441976,
+      "peak_gpu_memory_bytes": 5057595904,
+      "dense_gate_count": 1280000,
+      "coverage_candidate_pool_size": 8,
+      "coverage_swap_fraction": 0.25,
+      "source_revision": "b17f6a2fe56afdd2ad9b85cdcefb8084e4ef2d26",
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+    },
+    {
+      "name": "screen_table2_cifar10_l_v3_pool4_seed0",
+      "family": "coverage_v3",
+      "candidate": "pool4",
+      "parametrization": "raw",
+      "seed": 0,
+      "best_validation_hard_accuracy": 0.5651999896764756,
+      "wall_seconds": 327.33732428000076,
+      "peak_gpu_memory_bytes": 2917583360,
+      "dense_gate_count": 1280000,
+      "coverage_candidate_pool_size": 4,
+      "coverage_swap_fraction": 0.25,
+      "source_revision": "b17f6a2fe56afdd2ad9b85cdcefb8084e4ef2d26",
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+    },
+    {
+      "name": "screen_table2_cifar10_l_v3_swap0500_seed0",
+      "family": "coverage_v3",
+      "candidate": "swap0500",
+      "parametrization": "raw",
+      "seed": 0,
+      "best_validation_hard_accuracy": 0.5877999860048294,
+      "wall_seconds": 328.58172367999214,
+      "peak_gpu_memory_bytes": 2917583360,
+      "dense_gate_count": 1280000,
+      "coverage_candidate_pool_size": 8,
+      "coverage_swap_fraction": 0.5,
+      "source_revision": "b17f6a2fe56afdd2ad9b85cdcefb8084e4ef2d26",
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+    },
+    {
+      "name": "screen_table2_cifar10_l_v3_warp_seed0",
+      "family": "coverage_v3",
+      "candidate": "warp",
+      "parametrization": "warp",
+      "seed": 0,
+      "best_validation_hard_accuracy": 0.5907999849319459,
+      "wall_seconds": 354.09563271299703,
+      "peak_gpu_memory_bytes": 3187919360,
+      "dense_gate_count": 1280000,
+      "coverage_candidate_pool_size": 8,
+      "coverage_swap_fraction": 0.25,
+      "source_revision": "b17f6a2fe56afdd2ad9b85cdcefb8084e4ef2d26",
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "phase": "table2_m_mommen_final",
+  "policy": "one full seed; no promotion because it is not competitive with five-seed CoverageDLGN V3",
+  "provenance": "TRIED",
+  "test_set_used": false,
+  "run_count": 1,
+  "queue_audit": {
+    "finished_count": 1,
+    "skipped_count": 0,
+    "failed_count": 0,
+    "wall_seconds": 17445.36894825002
+  },
+  "run": {
+    "name": "final_table2_cifar10_m_mommen_nc8_seed0",
+    "family": "mommen",
+    "provenance": "TRIED",
+    "seed": 0,
+    "seed_count": 1,
+    "best_validation_hard_accuracy": 0.5499999839067459,
+    "final_validation_hard_accuracy": 0.5469999873638153,
+    "wall_seconds": 17440.602808197,
+    "peak_gpu_memory_bytes": 5280565760,
+    "dense_gate_count": 512000,
+    "trainable_parameters": 16384000,
+    "training_routing_parameters": 8192000,
+    "deployed_routing_bits": 16640000,
+    "architecture": "DlgnCifar10MediumLearnable",
+    "connections_num_candidates": 8,
+    "source_revision": "0c0a46241b6a932f3375ac07ad5de7e258714f0b",
+    "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+  }
+}

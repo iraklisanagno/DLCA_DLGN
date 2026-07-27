@@ -97,20 +97,27 @@ exactly-once test evaluation.
 |  |  |  | BitLogic best-of-space | [PENDING] / [REPORTED] 58.06 +/- 0.14% | 128K total rank-4 gates, nonmatched |
 |  |  |  | **CoverageDLGN** | **[OUR-FINAL] 53.116% (n=5) / [N/A]** | Exact 48K target; +3.424 pp paired test gain |
 | M: 4 x 128K | 512K | 8.192M | Deep DLGN random | **[REPRODUCED] 54.028% (n=5) / [REPORTED] 57.39%** | Exact 512K architecture; one-time held-out test |
-|  |  | screen pending | Mommen learned connectivity | [PENDING] / [N/A] | Three-seed adaptation to exact 512K architecture |
+|  |  | 16.384M | Mommen learned connectivity | [TRIED] 55.000% validation (n=1; test pending) / [N/A] | Exact-512K \(N_c=8\) adaptation; conditional policy stops at one seed |
 |  |  |  | LILogicNet | [PENDING] / [REPORTED] 57.66 +/- 0.17% | 64K gates, nonmatched |
 |  |  |  | WARP-LUT | [PENDING] / [REPORTED] 52.12 +/- 0.01% | 128K total gates, nonmatched |
 |  |  |  | BitLogic best-of-space | [PENDING] / [REPORTED] 58.06 +/- 0.14% | 128K total rank-4 gates, nonmatched |
 |  |  |  | **CoverageDLGN** | **[OUR-FINAL] 58.284% (n=5) / [N/A]** | Exact 512K target; +4.256 pp paired test gain |
-| L: 5 x 256K | 1.28M | 20.48M | Deep DLGN random | [PENDING] / **[REPORTED] 60.78%** | Exact 1.28M architecture |
+| L: 5 x 256K | 1.28M | 20.48M | Deep DLGN random | [TRIED] 53.040% 5K validation screen / **[REPORTED] 60.78%** | Exact 1.28M architecture; final pending |
 |  |  | feasibility pending | Mommen learned connectivity | [PENDING] / [N/A] | Three-seed adaptation if timing/memory feasibility passes |
 |  |  |  | LILogicNet-L | [PENDING] / [REPORTED] 60.98 +/- 0.19% | 256K gates, nonmatched |
 |  |  |  | WARP-LUT | [PENDING] / [REPORTED] 52.12 +/- 0.01% | 128K total gates, nonmatched |
 |  |  |  | BitLogic best-of-space | [PENDING] / [REPORTED] 58.06 +/- 0.14% | 128K total rank-4 gates, nonmatched |
-|  |  |  | **CoverageDLGN** | [PENDING] / [N/A] | Exact 1.28M target |
+|  |  |  | **CoverageDLGN** | [TRIED] raw V3 swap-0.50 58.780% 5K validation screen / [N/A] | Exact 1.28M target; paired selection pending |
 
 The one-seed 5K compression screen is complete; these are validation
 selection values, not held-out test or paper-final values:
+
+The dense L one-seed 5K screen selected raw V3 swap-0.50 for the primary
+topology-only comparison: 58.780% versus 53.040% raw random (+5.740 pp).
+V3+WARP reached 59.080%, but it advances only with a newly generated matched
+random-topology+WARP control and remains a secondary combined configuration.
+Light reached 36.020% and was rejected. Source:
+`summary/table2_l_screen.json`.
 
 | Target gates | Random screen | Best CoverageDLGN screen | Paired 20K selection | Full 108K validation | Held-out test |
 |---:|---:|---:|---|---|---|

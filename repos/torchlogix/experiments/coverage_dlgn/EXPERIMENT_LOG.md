@@ -476,3 +476,22 @@ This log records operational failures and protocol decisions made after commit
   unchanged V3 configurations: incumbent, pool 4, swap 0.50, Light, and WARP.
   These vary only existing topology controls or gate parameterization; the
   frozen V3 mechanism is unchanged and the held-out test remains locked.
+
+## July 27, 2026: dense CIFAR-10 M Mommen and L screen validation
+
+- The conditional exact-512K Mommen \(N_c=8\) run completed its single
+  predeclared full seed in 17,441 seconds, peaked at 5,280,565,760 allocated
+  GPU bytes, and reached 55.000% best hardened validation accuracy.
+- Existing exact-512K validation references are fixed random
+  55.084% +/- 0.279% (n=5) and CoverageDLGN v3
+  59.560% +/- 0.246% (n=5). Mommen is effectively level with random but
+  4.560 pp below V3, so it is not promoted to three seeds.
+- All six exact-1.28M L screen runs completed without failures. Raw random
+  reached 53.040%; raw V3 incumbent 56.840%; pool-4 56.520%; raw swap-0.50
+  58.780%; Light 36.020%; and V3+WARP 59.080%.
+- Raw swap-0.50 advances as the primary V3 topology-only candidate. WARP
+  advances only as a secondary matched pair that adds a random-topology+WARP
+  control at 20K. The V3 algorithm is unchanged and the held-out test remains
+  locked.
+- Machine-readable sources are `summary/table2_m_mommen_final.json` and
+  `summary/table2_l_screen.json`, both with `test_set_used=false`.
