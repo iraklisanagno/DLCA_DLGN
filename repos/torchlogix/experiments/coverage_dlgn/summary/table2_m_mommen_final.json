@@ -2,7 +2,7 @@
   "phase": "table2_m_mommen_final",
   "policy": "one full seed; no promotion because it is not competitive with five-seed CoverageDLGN V3",
   "provenance": "TRIED",
-  "test_set_used": false,
+  "test_set_used": true,
   "run_count": 1,
   "queue_audit": {
     "finished_count": 1,
@@ -27,6 +27,11 @@
     "architecture": "DlgnCifar10MediumLearnable",
     "connections_num_candidates": 8,
     "source_revision": "0c0a46241b6a932f3375ac07ad5de7e258714f0b",
-    "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+    "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5",
+    "test_hard_accuracy": 0.5441999876499176,
+    "test_relaxed_accuracy": 0.5443999874591827,
+    "test_examples": 10000,
+    "test_checkpoint": "best_checkpoint.pt",
+    "test_validation_selection_step": 72000
   }
 }

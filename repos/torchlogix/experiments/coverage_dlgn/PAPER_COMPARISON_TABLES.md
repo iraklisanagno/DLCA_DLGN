@@ -97,7 +97,7 @@ exactly-once test evaluation.
 |  |  |  | BitLogic best-of-space | [PENDING] / [REPORTED] 58.06 +/- 0.14% | 128K total rank-4 gates, nonmatched |
 |  |  |  | **CoverageDLGN** | **[OUR-FINAL] 53.116% (n=5) / [N/A]** | Exact 48K target; +3.424 pp paired test gain |
 | M: 4 x 128K | 512K | 8.192M | Deep DLGN random | **[REPRODUCED] 54.028% (n=5) / [REPORTED] 57.39%** | Exact 512K architecture; one-time held-out test |
-|  |  | 16.384M | Mommen learned connectivity | [TRIED] 55.000% validation (n=1; test pending) / [N/A] | Exact-512K \(N_c=8\) adaptation; conditional policy stops at one seed |
+|  |  | 16.384M | Mommen learned connectivity | **[TRIED] 54.420% test (n=1) / [N/A]** | Exact-512K \(N_c=8\) adaptation; conditional policy stops at one seed; one-time held-out test |
 |  |  |  | LILogicNet | [PENDING] / [REPORTED] 57.66 +/- 0.17% | 64K gates, nonmatched |
 |  |  |  | WARP-LUT | [PENDING] / [REPORTED] 52.12 +/- 0.01% | 128K total gates, nonmatched |
 |  |  |  | BitLogic best-of-space | [PENDING] / [REPORTED] 58.06 +/- 0.14% | 128K total rank-4 gates, nonmatched |

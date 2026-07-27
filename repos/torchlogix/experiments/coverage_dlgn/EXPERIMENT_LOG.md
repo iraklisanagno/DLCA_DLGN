@@ -495,3 +495,14 @@ This log records operational failures and protocol decisions made after commit
   locked.
 - Machine-readable sources are `summary/table2_m_mommen_final.json` and
   `summary/table2_l_screen.json`, both with `test_set_used=false`.
+
+## July 27, 2026: dense CIFAR-10 M Mommen held-out test
+
+- Commit `c4c1c4a` froze the one-seed Mommen M validation checkpoint before
+  test evaluation, and commit `54e2140` froze the exactly-once guard.
+- The checkpoint reached `[TRIED]` 54.420% hardened held-out test accuracy.
+  This is a single-seed adapted result without a variance estimate. The
+  existing exact-512K five-seed results are fixed random 54.028% and
+  CoverageDLGN v3 58.284%.
+- `summary/table2_m_mommen_final.json` and its CSV export now have
+  `test_set_used=true`. This checkpoint will not be queried on test again.
