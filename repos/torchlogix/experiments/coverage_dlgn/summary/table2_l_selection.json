@@ -1,0 +1,249 @@
+{
+  "phase": "table2_l_selection",
+  "provenance": "TRIED",
+  "validation_metric": "best hardened validation accuracy",
+  "test_set_used": false,
+  "run_count": 12,
+  "primary_raw_comparison": {
+    "paired_seed_differences_pp": [
+      5.680000066757196,
+      5.579999566078186,
+      4.580000102519987
+    ],
+    "mean_gain_pp": 5.279999911785124,
+    "ci95_pp": [
+      3.7689582902408816,
+      6.791041533329365
+    ],
+    "all_positive": true
+  },
+  "secondary_warp_comparison": {
+    "paired_seed_differences_pp": [
+      5.760000228881834,
+      5.839999437332155,
+      5.219999969005585
+    ],
+    "mean_gain_pp": 5.606666545073191,
+    "ci95_pp": [
+      4.768906987775298,
+      6.444426102371084
+    ],
+    "all_positive": true
+  },
+  "frozen_primary_finalists": [
+    "raw_random",
+    "raw_v3"
+  ],
+  "methods": [
+    {
+      "family": "raw_random",
+      "seed_count": 3,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "mean_best_validation_hard_accuracy": 0.5562666541337967,
+      "std_best_validation_hard_accuracy": 0.005021287571262877,
+      "mean_wall_seconds": 1261.165614807668,
+      "max_peak_gpu_memory_bytes": 2917583360
+    },
+    {
+      "family": "raw_v3",
+      "seed_count": 3,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "mean_best_validation_hard_accuracy": 0.6090666532516479,
+      "std_best_validation_hard_accuracy": 0.0031005363033780806,
+      "mean_wall_seconds": 1261.4354121563374,
+      "max_peak_gpu_memory_bytes": 2917583360
+    },
+    {
+      "family": "warp_random",
+      "seed_count": 3,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "mean_best_validation_hard_accuracy": 0.5420666555563609,
+      "std_best_validation_hard_accuracy": 0.0013316631153752884,
+      "mean_wall_seconds": 1358.5417184219987,
+      "max_peak_gpu_memory_bytes": 3187919360
+    },
+    {
+      "family": "warp_v3",
+      "seed_count": 3,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "mean_best_validation_hard_accuracy": 0.5981333210070928,
+      "std_best_validation_hard_accuracy": 0.0024193677538853703,
+      "mean_wall_seconds": 1359.3835304759948,
+      "max_peak_gpu_memory_bytes": 3187919360
+    }
+  ],
+  "runs": [
+    {
+      "name": "select_table2_cifar10_l_raw_random_seed0",
+      "family": "raw_random",
+      "topology": "random",
+      "parametrization": "raw",
+      "seed": 0,
+      "best_validation_hard_accuracy": 0.5509999871253968,
+      "wall_seconds": 1255.8864676459925,
+      "peak_gpu_memory_bytes": 2917583360,
+      "dense_gate_count": 1280000,
+      "source_revision": "21c572638894b85957856b4acd213ee78c1c2762",
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+    },
+    {
+      "name": "select_table2_cifar10_l_raw_random_seed1",
+      "family": "raw_random",
+      "topology": "random",
+      "parametrization": "raw",
+      "seed": 1,
+      "best_validation_hard_accuracy": 0.5567999893426895,
+      "wall_seconds": 1270.9942931540136,
+      "peak_gpu_memory_bytes": 2917583360,
+      "dense_gate_count": 1280000,
+      "source_revision": "21c572638894b85957856b4acd213ee78c1c2762",
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+    },
+    {
+      "name": "select_table2_cifar10_l_raw_random_seed2",
+      "family": "raw_random",
+      "topology": "random",
+      "parametrization": "raw",
+      "seed": 2,
+      "best_validation_hard_accuracy": 0.5609999859333038,
+      "wall_seconds": 1256.6160836229974,
+      "peak_gpu_memory_bytes": 2917583360,
+      "dense_gate_count": 1280000,
+      "source_revision": "21c572638894b85957856b4acd213ee78c1c2762",
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+    },
+    {
+      "name": "select_table2_cifar10_l_raw_v3_seed0",
+      "family": "raw_v3",
+      "topology": "coverage_v3",
+      "parametrization": "raw",
+      "seed": 0,
+      "best_validation_hard_accuracy": 0.6077999877929687,
+      "wall_seconds": 1264.83674878499,
+      "peak_gpu_memory_bytes": 2917583360,
+      "dense_gate_count": 1280000,
+      "source_revision": "21c572638894b85957856b4acd213ee78c1c2762",
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+    },
+    {
+      "name": "select_table2_cifar10_l_raw_v3_seed1",
+      "family": "raw_v3",
+      "topology": "coverage_v3",
+      "parametrization": "raw",
+      "seed": 1,
+      "best_validation_hard_accuracy": 0.6125999850034713,
+      "wall_seconds": 1253.0201038610248,
+      "peak_gpu_memory_bytes": 2917583360,
+      "dense_gate_count": 1280000,
+      "source_revision": "21c572638894b85957856b4acd213ee78c1c2762",
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+    },
+    {
+      "name": "select_table2_cifar10_l_raw_v3_seed2",
+      "family": "raw_v3",
+      "topology": "coverage_v3",
+      "parametrization": "raw",
+      "seed": 2,
+      "best_validation_hard_accuracy": 0.6067999869585037,
+      "wall_seconds": 1266.4493838229973,
+      "peak_gpu_memory_bytes": 2917583360,
+      "dense_gate_count": 1280000,
+      "source_revision": "21c572638894b85957856b4acd213ee78c1c2762",
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+    },
+    {
+      "name": "select_table2_cifar10_l_warp_random_seed0",
+      "family": "warp_random",
+      "topology": "random",
+      "parametrization": "warp",
+      "seed": 0,
+      "best_validation_hard_accuracy": 0.5423999881744385,
+      "wall_seconds": 1351.5597170699912,
+      "peak_gpu_memory_bytes": 3187919360,
+      "dense_gate_count": 1280000,
+      "source_revision": "21c572638894b85957856b4acd213ee78c1c2762",
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+    },
+    {
+      "name": "select_table2_cifar10_l_warp_random_seed1",
+      "family": "warp_random",
+      "topology": "random",
+      "parametrization": "warp",
+      "seed": 1,
+      "best_validation_hard_accuracy": 0.5405999916791916,
+      "wall_seconds": 1369.8461024629942,
+      "peak_gpu_memory_bytes": 3187919360,
+      "dense_gate_count": 1280000,
+      "source_revision": "21c572638894b85957856b4acd213ee78c1c2762",
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+    },
+    {
+      "name": "select_table2_cifar10_l_warp_random_seed2",
+      "family": "warp_random",
+      "topology": "random",
+      "parametrization": "warp",
+      "seed": 2,
+      "best_validation_hard_accuracy": 0.5431999868154526,
+      "wall_seconds": 1354.2193357330107,
+      "peak_gpu_memory_bytes": 3187919360,
+      "dense_gate_count": 1280000,
+      "source_revision": "21c572638894b85957856b4acd213ee78c1c2762",
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+    },
+    {
+      "name": "select_table2_cifar10_l_warp_v3_seed0",
+      "family": "warp_v3",
+      "topology": "coverage_v3",
+      "parametrization": "warp",
+      "seed": 0,
+      "best_validation_hard_accuracy": 0.5999999904632568,
+      "wall_seconds": 1366.056574960996,
+      "peak_gpu_memory_bytes": 3187919360,
+      "dense_gate_count": 1280000,
+      "source_revision": "21c572638894b85957856b4acd213ee78c1c2762",
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+    },
+    {
+      "name": "select_table2_cifar10_l_warp_v3_seed1",
+      "family": "warp_v3",
+      "topology": "coverage_v3",
+      "parametrization": "warp",
+      "seed": 1,
+      "best_validation_hard_accuracy": 0.5989999860525131,
+      "wall_seconds": 1349.4697220149974,
+      "peak_gpu_memory_bytes": 3187919360,
+      "dense_gate_count": 1280000,
+      "source_revision": "21c572638894b85957856b4acd213ee78c1c2762",
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+    },
+    {
+      "name": "select_table2_cifar10_l_warp_v3_seed2",
+      "family": "warp_v3",
+      "topology": "coverage_v3",
+      "parametrization": "warp",
+      "seed": 2,
+      "best_validation_hard_accuracy": 0.5953999865055084,
+      "wall_seconds": 1362.6242944519909,
+      "peak_gpu_memory_bytes": 3187919360,
+      "dense_gate_count": 1280000,
+      "source_revision": "21c572638894b85957856b4acd213ee78c1c2762",
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+    }
+  ]
+}

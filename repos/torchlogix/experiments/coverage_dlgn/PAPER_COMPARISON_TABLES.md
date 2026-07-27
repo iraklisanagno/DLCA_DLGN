@@ -102,12 +102,12 @@ exactly-once test evaluation.
 |  |  |  | WARP-LUT | [PENDING] / [REPORTED] 52.12 +/- 0.01% | 128K total gates, nonmatched |
 |  |  |  | BitLogic best-of-space | [PENDING] / [REPORTED] 58.06 +/- 0.14% | 128K total rank-4 gates, nonmatched |
 |  |  |  | **CoverageDLGN** | **[OUR-FINAL] 58.284% (n=5) / [N/A]** | Exact 512K target; +4.256 pp paired test gain |
-| L: 5 x 256K | 1.28M | 20.48M | Deep DLGN random | [TRIED] 53.040% 5K validation screen / **[REPORTED] 60.78%** | Exact 1.28M architecture; final pending |
+| L: 5 x 256K | 1.28M | 20.48M | Deep DLGN random | [TRIED] 55.627 +/- 0.502% 20K validation (n=3) / **[REPORTED] 60.78%** | Exact 1.28M architecture; full final pending |
 |  |  | feasibility pending | Mommen learned connectivity | [PENDING] / [N/A] | Three-seed adaptation if timing/memory feasibility passes |
 |  |  |  | LILogicNet-L | [PENDING] / [REPORTED] 60.98 +/- 0.19% | 256K gates, nonmatched |
 |  |  |  | WARP-LUT | [PENDING] / [REPORTED] 52.12 +/- 0.01% | 128K total gates, nonmatched |
 |  |  |  | BitLogic best-of-space | [PENDING] / [REPORTED] 58.06 +/- 0.14% | 128K total rank-4 gates, nonmatched |
-|  |  |  | **CoverageDLGN** | [TRIED] raw V3 swap-0.50 58.780% 5K validation screen / [N/A] | Exact 1.28M target; paired selection pending |
+|  |  |  | **CoverageDLGN** | **[TRIED] raw V3 swap-0.50 60.907 +/- 0.310% 20K validation (n=3) / [N/A]** | Exact 1.28M target; +5.280 pp paired, 95% CI [+3.769, +6.791]; full final pending |
 
 The one-seed 5K compression screen is complete; these are validation
 selection values, not held-out test or paper-final values:
@@ -118,6 +118,13 @@ V3+WARP reached 59.080%, but it advances only with a newly generated matched
 random-topology+WARP control and remains a secondary combined configuration.
 Light reached 36.020% and was rejected. Source:
 `summary/table2_l_screen.json`.
+
+At the paired 20K stage, raw V3 reached 60.907% versus 55.627% raw random
+(+5.280 pp, 95% Student-t CI [+3.769, +6.791], all three seeds positive).
+V3+WARP reached 59.813% versus 54.207% matched random+WARP (+5.607 pp,
+95% CI [+4.769, +6.444]). Raw V3 is therefore frozen for the primary
+five-seed final rather than selecting the lower-accuracy combined variant.
+Source: `summary/table2_l_selection.json`.
 
 | Target gates | Random screen | Best CoverageDLGN screen | Paired 20K selection | Full 108K validation | Held-out test |
 |---:|---:|---:|---|---|---|

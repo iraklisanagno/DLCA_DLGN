@@ -506,3 +506,23 @@ This log records operational failures and protocol decisions made after commit
   CoverageDLGN v3 58.284%.
 - `summary/table2_m_mommen_final.json` and its CSV export now have
   `test_set_used=true`. This checkpoint will not be queried on test again.
+
+## July 27, 2026: dense CIFAR-10 L paired 20K selection
+
+- All 12 predeclared runs completed with zero failures and one identical
+  training implementation: three seeds each for raw random, raw V3
+  swap-0.50, matched random+WARP, and V3+WARP.
+- Raw random reached 55.627% +/- 0.502% best hardened validation accuracy;
+  raw V3 reached 60.907% +/- 0.310%. The paired gain is +5.280 pp with a
+  95% Student-t interval of [+3.769, +6.791], and all three seed differences
+  are positive.
+- Matched random+WARP reached 54.207% +/- 0.133%; V3+WARP reached
+  59.813% +/- 0.242%. Its paired gain is +5.607 pp with a 95% interval of
+  [+4.769, +6.444], again positive for all seeds.
+- The primary final is frozen as raw random versus raw V3 swap-0.50 because
+  it isolates the CoverageDLGN contribution and raw V3 has higher absolute
+  validation accuracy than V3+WARP. WARP remains a secondary complementary
+  result; Light remains rejected.
+- `summary/table2_l_selection.json` and its CSV export are the
+  machine-readable selection sources with `test_set_used=false`. The
+  held-out test remains locked.
