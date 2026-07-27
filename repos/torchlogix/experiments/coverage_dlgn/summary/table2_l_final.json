@@ -1,0 +1,224 @@
+{
+  "phase": "table2_l_final",
+  "validation_metric": "best hardened validation accuracy",
+  "test_set_used": false,
+  "run_count": 10,
+  "source_revisions": {
+    "b73307aca6669051ac090187f8b9180cbc4bde72": 10
+  },
+  "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5",
+  "queue_audit": {
+    "finished_count": 10,
+    "skipped_count": 0,
+    "failed_count": 0,
+    "wall_seconds": 35905.88092008399
+  },
+  "paired_comparison": {
+    "metric": "best_validation_hard_accuracy",
+    "seed_differences_pp": [
+      5.4400000572204625,
+      4.919999837875366,
+      4.98000013828277,
+      5.279999673366542,
+      5.780000090599058
+    ],
+    "mean_gain_pp": 5.27999995946884,
+    "ci95_pp": [
+      4.843117635309724,
+      5.716882283627955
+    ],
+    "all_positive": true
+  },
+  "methods": [
+    {
+      "family": "random",
+      "provenance": "REPRODUCED",
+      "seed_count": 5,
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "mean_best_validation_hard_accuracy": 0.5646799876689911,
+      "std_best_validation_hard_accuracy": 0.002100477856355627,
+      "mean_wall_seconds": 6807.959604271006,
+      "max_peak_gpu_memory_bytes": 2917583360,
+      "dense_gate_count": 1280000,
+      "trainable_parameters": 20480000,
+      "training_routing_parameters": 0
+    },
+    {
+      "family": "coverage_v3",
+      "provenance": "OUR-FINAL",
+      "seed_count": 5,
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "mean_best_validation_hard_accuracy": 0.6174799872636795,
+      "std_best_validation_hard_accuracy": 0.0027734454208909122,
+      "mean_wall_seconds": 6793.088865111005,
+      "max_peak_gpu_memory_bytes": 2917583360,
+      "dense_gate_count": 1280000,
+      "trainable_parameters": 20480000,
+      "training_routing_parameters": 0
+    }
+  ],
+  "runs": [
+    {
+      "name": "final_table2_cifar10_l_random_seed0",
+      "family": "random",
+      "provenance": "REPRODUCED",
+      "seed": 0,
+      "best_validation_hard_accuracy": 0.5621999847888947,
+      "final_validation_hard_accuracy": 0.5603999859094619,
+      "wall_seconds": 6775.1973212560115,
+      "peak_gpu_memory_bytes": 2917583360,
+      "dense_gate_count": 1280000,
+      "trainable_parameters": 20480000,
+      "training_routing_parameters": 0,
+      "source_revision": "b73307aca6669051ac090187f8b9180cbc4bde72",
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+    },
+    {
+      "name": "final_table2_cifar10_l_random_seed1",
+      "family": "random",
+      "provenance": "REPRODUCED",
+      "seed": 1,
+      "best_validation_hard_accuracy": 0.5661999893188476,
+      "final_validation_hard_accuracy": 0.5625999915599823,
+      "wall_seconds": 6861.021283801994,
+      "peak_gpu_memory_bytes": 2917583360,
+      "dense_gate_count": 1280000,
+      "trainable_parameters": 20480000,
+      "training_routing_parameters": 0,
+      "source_revision": "b73307aca6669051ac090187f8b9180cbc4bde72",
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+    },
+    {
+      "name": "final_table2_cifar10_l_random_seed2",
+      "family": "random",
+      "provenance": "REPRODUCED",
+      "seed": 2,
+      "best_validation_hard_accuracy": 0.5647999870777131,
+      "final_validation_hard_accuracy": 0.563999988436699,
+      "wall_seconds": 6777.74885049602,
+      "peak_gpu_memory_bytes": 2917583360,
+      "dense_gate_count": 1280000,
+      "trainable_parameters": 20480000,
+      "training_routing_parameters": 0,
+      "source_revision": "b73307aca6669051ac090187f8b9180cbc4bde72",
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+    },
+    {
+      "name": "final_table2_cifar10_l_random_seed3",
+      "family": "random",
+      "provenance": "REPRODUCED",
+      "seed": 3,
+      "best_validation_hard_accuracy": 0.5671999895572662,
+      "final_validation_hard_accuracy": 0.562399987578392,
+      "wall_seconds": 6853.5572538989945,
+      "peak_gpu_memory_bytes": 2917583360,
+      "dense_gate_count": 1280000,
+      "trainable_parameters": 20480000,
+      "training_routing_parameters": 0,
+      "source_revision": "b73307aca6669051ac090187f8b9180cbc4bde72",
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+    },
+    {
+      "name": "final_table2_cifar10_l_random_seed4",
+      "family": "random",
+      "provenance": "REPRODUCED",
+      "seed": 4,
+      "best_validation_hard_accuracy": 0.5629999876022339,
+      "final_validation_hard_accuracy": 0.5613999837636947,
+      "wall_seconds": 6772.273311902012,
+      "peak_gpu_memory_bytes": 2917583360,
+      "dense_gate_count": 1280000,
+      "trainable_parameters": 20480000,
+      "training_routing_parameters": 0,
+      "source_revision": "b73307aca6669051ac090187f8b9180cbc4bde72",
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+    },
+    {
+      "name": "final_table2_cifar10_l_v3_swap0500_seed0",
+      "family": "coverage_v3",
+      "provenance": "OUR-FINAL",
+      "seed": 0,
+      "best_validation_hard_accuracy": 0.6165999853610993,
+      "final_validation_hard_accuracy": 0.6151999866962433,
+      "wall_seconds": 6833.379394029995,
+      "peak_gpu_memory_bytes": 2917583360,
+      "dense_gate_count": 1280000,
+      "trainable_parameters": 20480000,
+      "training_routing_parameters": 0,
+      "source_revision": "b73307aca6669051ac090187f8b9180cbc4bde72",
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+    },
+    {
+      "name": "final_table2_cifar10_l_v3_swap0500_seed1",
+      "family": "coverage_v3",
+      "provenance": "OUR-FINAL",
+      "seed": 1,
+      "best_validation_hard_accuracy": 0.6153999876976013,
+      "final_validation_hard_accuracy": 0.6137999838590622,
+      "wall_seconds": 6735.718533978012,
+      "peak_gpu_memory_bytes": 2917583360,
+      "dense_gate_count": 1280000,
+      "trainable_parameters": 20480000,
+      "training_routing_parameters": 0,
+      "source_revision": "b73307aca6669051ac090187f8b9180cbc4bde72",
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+    },
+    {
+      "name": "final_table2_cifar10_l_v3_swap0500_seed2",
+      "family": "coverage_v3",
+      "provenance": "OUR-FINAL",
+      "seed": 2,
+      "best_validation_hard_accuracy": 0.6145999884605408,
+      "final_validation_hard_accuracy": 0.613799991607666,
+      "wall_seconds": 6834.90039971401,
+      "peak_gpu_memory_bytes": 2917583360,
+      "dense_gate_count": 1280000,
+      "trainable_parameters": 20480000,
+      "training_routing_parameters": 0,
+      "source_revision": "b73307aca6669051ac090187f8b9180cbc4bde72",
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+    },
+    {
+      "name": "final_table2_cifar10_l_v3_swap0500_seed3",
+      "family": "coverage_v3",
+      "provenance": "OUR-FINAL",
+      "seed": 3,
+      "best_validation_hard_accuracy": 0.6199999862909317,
+      "final_validation_hard_accuracy": 0.615799987912178,
+      "wall_seconds": 6740.484686511016,
+      "peak_gpu_memory_bytes": 2917583360,
+      "dense_gate_count": 1280000,
+      "trainable_parameters": 20480000,
+      "training_routing_parameters": 0,
+      "source_revision": "b73307aca6669051ac090187f8b9180cbc4bde72",
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+    },
+    {
+      "name": "final_table2_cifar10_l_v3_swap0500_seed4",
+      "family": "coverage_v3",
+      "provenance": "OUR-FINAL",
+      "seed": 4,
+      "best_validation_hard_accuracy": 0.6207999885082245,
+      "final_validation_hard_accuracy": 0.6133999866247177,
+      "wall_seconds": 6820.961311321997,
+      "peak_gpu_memory_bytes": 2917583360,
+      "dense_gate_count": 1280000,
+      "trainable_parameters": 20480000,
+      "training_routing_parameters": 0,
+      "source_revision": "b73307aca6669051ac090187f8b9180cbc4bde72",
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+    }
+  ]
+}

@@ -526,3 +526,24 @@ This log records operational failures and protocol decisions made after commit
 - `summary/table2_l_selection.json` and its CSV export are the
   machine-readable selection sources with `test_set_used=false`. The
   held-out test remains locked.
+
+## July 27, 2026: dense CIFAR-10 L five-seed full validation
+
+- All ten frozen 108K runs completed with zero failures in 35,906 seconds of
+  two-GPU queue wall time: five raw fixed-random seeds and five raw
+  CoverageDLGN v3 swap-0.50 seeds. Every run used source revision `b73307a`
+  and training implementation hash
+  `7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5`.
+- Fixed random `[REPRODUCED]` reached 56.468% +/- 0.210% mean best hardened
+  validation accuracy. CoverageDLGN v3 `[OUR-FINAL]` reached
+  61.748% +/- 0.277%.
+- Per-seed V3 gains are +5.440, +4.920, +4.980, +5.280, and +5.780 pp.
+  The paired mean is +5.280 pp with a 95% Student-t interval of
+  [+4.843, +5.717]; all five differences are positive.
+- Both methods use the identical 1.28M deployed-gate and 20.48M trainable
+  gate-logit budgets with no trainable routing parameters. Training averaged
+  6,808 seconds per random seed and 6,793 seconds per V3 seed; peak allocated
+  GPU memory was 2,917,583,360 bytes for both.
+- `summary/table2_l_final.json` and its CSV export are the frozen validation
+  sources with `test_set_used=false`. The held-out test remains locked until
+  the single L Mommen run is complete and all validation is committed.

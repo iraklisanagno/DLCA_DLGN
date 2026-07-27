@@ -1,0 +1,3 @@
+family,provenance,seed_count,seeds,mean_best_validation_hard_accuracy,std_best_validation_hard_accuracy,mean_wall_seconds,max_peak_gpu_memory_bytes,dense_gate_count,trainable_parameters,training_routing_parameters
+random,REPRODUCED,5,"0,1,2,3,4",0.5646799876689911,0.002100477856355627,6807.959604271006,2917583360,1280000,20480000,0
+coverage_v3,OUR-FINAL,5,"0,1,2,3,4",0.6174799872636795,0.0027734454208909122,6793.088865111005,2917583360,1280000,20480000,0

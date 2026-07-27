@@ -102,12 +102,12 @@ exactly-once test evaluation.
 |  |  |  | WARP-LUT | [PENDING] / [REPORTED] 52.12 +/- 0.01% | 128K total gates, nonmatched |
 |  |  |  | BitLogic best-of-space | [PENDING] / [REPORTED] 58.06 +/- 0.14% | 128K total rank-4 gates, nonmatched |
 |  |  |  | **CoverageDLGN** | **[OUR-FINAL] 58.284% (n=5) / [N/A]** | Exact 512K target; +4.256 pp paired test gain |
-| L: 5 x 256K | 1.28M | 20.48M | Deep DLGN random | [TRIED] 55.627 +/- 0.502% 20K validation (n=3) / **[REPORTED] 60.78%** | Exact 1.28M architecture; full final pending |
+| L: 5 x 256K | 1.28M | 20.48M | Deep DLGN random | **[REPRODUCED] 56.468 +/- 0.210% validation (n=5; test locked) / [REPORTED] 60.78%** | Exact 1.28M architecture; full validation source: `summary/table2_l_final.json` |
 |  |  | feasibility pending | Mommen learned connectivity | [PENDING] / [N/A] | Three-seed adaptation if timing/memory feasibility passes |
 |  |  |  | LILogicNet-L | [PENDING] / [REPORTED] 60.98 +/- 0.19% | 256K gates, nonmatched |
 |  |  |  | WARP-LUT | [PENDING] / [REPORTED] 52.12 +/- 0.01% | 128K total gates, nonmatched |
 |  |  |  | BitLogic best-of-space | [PENDING] / [REPORTED] 58.06 +/- 0.14% | 128K total rank-4 gates, nonmatched |
-|  |  |  | **CoverageDLGN** | **[TRIED] raw V3 swap-0.50 60.907 +/- 0.310% 20K validation (n=3) / [N/A]** | Exact 1.28M target; +5.280 pp paired, 95% CI [+3.769, +6.791]; full final pending |
+|  |  |  | **CoverageDLGN** | **[OUR-FINAL] raw V3 swap-0.50 61.748 +/- 0.277% validation (n=5; test locked) / [N/A]** | Exact 1.28M target; +5.280 pp paired, 95% CI [+4.843, +5.717]; full validation source as above |
 
 The one-seed 5K compression screen is complete; these are validation
 selection values, not held-out test or paper-final values:
@@ -125,6 +125,12 @@ V3+WARP reached 59.813% versus 54.207% matched random+WARP (+5.607 pp,
 95% CI [+4.769, +6.444]). Raw V3 is therefore frozen for the primary
 five-seed final rather than selecting the lower-accuracy combined variant.
 Source: `summary/table2_l_selection.json`.
+
+The full 108K five-seed validation confirms the primary result: raw V3
+reached 61.748% versus 56.468% raw random. Every paired difference is
+positive; the mean gain is +5.280 pp with a 95% Student-t interval of
+[+4.843, +5.717]. The held-out test remains locked until the one-seed L
+Mommen comparator is completed and all validation checkpoints are committed.
 
 | Target gates | Random screen | Best CoverageDLGN screen | Paired 20K selection | Full 108K validation | Held-out test |
 |---:|---:|---:|---|---|---|
