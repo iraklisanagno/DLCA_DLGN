@@ -662,6 +662,35 @@ def test_cifar100_m_diagnostic_screen_is_explicitly_not_promotion():
         assert config["seed"] == config["topology_seed"] == 0
 
 
+def test_cifar100_m_selection_is_paired_and_uses_screen_winner():
+    queue_path = (
+        Path("experiments/coverage_dlgn/queues")
+        / "table4_cifar100_m_selection.json"
+    )
+    queue = json.loads(queue_path.read_text())
+    assert queue["heldout_test_used"] is False
+    assert queue["selected_v3_candidate"] == "swap0500"
+    assert len(queue["entries"]) == 6
+    for seed in (0, 1, 2):
+        entries = [
+            entry for entry in queue["entries"]
+            if entry["seed"] == seed
+        ]
+        assert {entry["family"] for entry in entries} == {
+            "random", "coverage_v3"
+        }
+        for entry in entries:
+            config = json.loads(Path(entry["config"]).read_text())
+            assert config["architecture"] == "DlgnCifar100BitLogicM"
+            assert config["seed"] == config["topology_seed"] == seed
+            assert config["num_iterations"] == 20_000
+            assert config["parametrization"] == "raw"
+            if entry["family"] == "coverage_v3":
+                assert config["coverage_candidate_pool_size"] == 8
+                assert config["coverage_swap_fraction"] == 0.5
+                assert config["coverage_novelty_weight"] == 1.0
+
+
 @pytest.mark.parametrize(
     ("model_cls", "budget", "width", "tau"),
     [

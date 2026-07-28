@@ -221,7 +221,9 @@ random reached `[TRIED]` 8.780 +/- 0.381%; the best frozen V3 control
 (`swap_fraction=0.125`) reached `[TRIED]` 7.940 +/- 0.302%. The paired gap
 is -0.840 pp, 95% CI [-1.404, -0.276], so S did not promote to full effort.
 M receives only a diagnostic screen because its first layer is no longer
-undersubscribed; held-out test remains locked.
+undersubscribed. That screen reached `[TRIED]` 9.880% for random and
+`[TRIED]` 10.380% for frozen V3 `swap_fraction=0.5` (+0.500 pp), so M
+advances to paired three-seed 20K confirmation. Held-out test remains locked.
 
 Additional reported-only dense CIFAR-100 references:
 

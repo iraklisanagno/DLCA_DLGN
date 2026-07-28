@@ -656,3 +656,13 @@ This log records operational failures and protocol decisions made after commit
   labelled one-seed 5K exploratory screen. This is a documented diagnostic
   exception, not an assertion that S met the promotion condition. M advances
   further only if its own paired signal is positive.
+
+## July 28, 2026: dense CIFAR-100 M diagnostic screen
+
+- All eight one-seed 5K diagnostic runs completed without touching held-out
+  test. Random reached 9.880% best hardened validation accuracy.
+- Every V3 control except `swap0125` matched or exceeded random. The selected
+  existing control is `swap0500` at 10.380%, a preliminary +0.500 pp.
+- The positive M-specific signal authorizes a paired three-seed 20K
+  confirmation. This does not retroactively change the failed S promotion
+  decision and does not change the V3 mechanism.
