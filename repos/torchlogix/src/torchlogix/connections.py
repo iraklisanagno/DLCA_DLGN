@@ -317,6 +317,7 @@ class LearnableDenseConnections(Connections):
             weights_init="uniform",
             device=None,
             init_method="random",
+            allow_partial_input_coverage=False,
             **kwargs
         ):
         super().__init__(
@@ -344,6 +345,7 @@ class LearnableDenseConnections(Connections):
             )
         self.forward_mode = forward_mode
         self.weights_init = weights_init
+        self.allow_partial_input_coverage = allow_partial_input_coverage
         if num_candidates == -1:
             num_candidates = in_dim
             self.num_candidates = num_candidates
@@ -433,7 +435,7 @@ class LearnableDenseConnections(Connections):
             f"Cannot have num_candidates * lut_rank > in_dim "
             f"({self.num_candidates * self.lut_rank} > {self.in_dim})"
         )
-        assert self.out_dim * self.lut_rank >= self.in_dim, (
+        assert self.allow_partial_input_coverage or self.out_dim * self.lut_rank >= self.in_dim, (
                 f"Need out_dim * lut_rank >= in_dim to cover all inputs "
                 f"({self.out_dim} * {self.lut_rank} < {self.in_dim})."
                 )

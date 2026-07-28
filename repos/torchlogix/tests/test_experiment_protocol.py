@@ -593,6 +593,28 @@ def test_cifar100_s_screen_changes_only_frozen_v3_controls():
             assert config["connections_init_method"] == "random"
 
 
+def test_cifar100_s_opt_in_supports_topk_comparators_at_exact_width():
+    thresholds = torch.tensor([0.25, 0.5, 0.75])
+    kwargs = _paper_model_kwargs(thresholds)
+    kwargs["connections"] = "learnable"
+    kwargs["connections_kwargs"].update({
+        "num_candidates": 32,
+        "forward_mode": "soft_mix",
+        "weights_init": "normal",
+    })
+    model = DlgnCifar100BitLogicS(**kwargs)
+    layers = [module for module in model if isinstance(module, LogicDense)]
+    assert all(
+        isinstance(layer.connections, LearnableDenseConnections)
+        for layer in layers
+    )
+    assert all(
+        layer.connections.allow_partial_input_coverage
+        for layer in layers
+    )
+    assert layers[0].connections.indices.shape == (32, 2, 4_000)
+
+
 @pytest.mark.parametrize(
     ("model_cls", "budget", "width", "tau"),
     [

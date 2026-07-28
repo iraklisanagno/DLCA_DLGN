@@ -606,6 +606,11 @@ This log records operational failures and protocol decisions made after commit
   full-coverage assertion. Both paired random and V3 runs use the same
   architecture and slot constraint. V3's topology construction, scoring,
   and refinement are unchanged.
+- A subsequent pre-run comparator audit found the same legacy assertion in
+  bounded learnable routing. The CIFAR-100 models now pass the opt-in through
+  fixed and learnable connections alike. Candidate tensors retain their full
+  Top-K coverage, while deployed routing remains subject to the same 8,000
+  S-layer slots as fixed routing.
 - The S/M/L architecture and budget checks, partial-coverage behavior, and
-  existing topology/LGN tests pass: 93 tests total. The frozen machine-readable
+  existing topology/LGN tests pass: 95 tests total. The frozen machine-readable
   protocol is `protocols/table4_dense_cifar100.json`.
