@@ -1,7 +1,7 @@
 {
   "phase": "table2_l_final",
   "validation_metric": "best hardened validation accuracy",
-  "test_set_used": false,
+  "test_set_used": true,
   "run_count": 10,
   "source_revisions": {
     "b73307aca6669051ac090187f8b9180cbc4bde72": 10
@@ -14,18 +14,18 @@
     "wall_seconds": 35905.88092008399
   },
   "paired_comparison": {
-    "metric": "best_validation_hard_accuracy",
+    "metric": "test_hard_accuracy",
     "seed_differences_pp": [
-      5.4400000572204625,
-      4.919999837875366,
-      4.98000013828277,
-      5.279999673366542,
-      5.780000090599058
+      4.719999879598613,
+      5.720000118017198,
+      5.1700000464916185,
+      4.900000214576716,
+      4.789999932050703
     ],
-    "mean_gain_pp": 5.27999995946884,
+    "mean_gain_pp": 5.0600000381469705,
     "ci95_pp": [
-      4.843117635309724,
-      5.716882283627955
+      4.554946351476648,
+      5.565053724817293
     ],
     "all_positive": true
   },
@@ -47,7 +47,9 @@
       "max_peak_gpu_memory_bytes": 2917583360,
       "dense_gate_count": 1280000,
       "trainable_parameters": 20480000,
-      "training_routing_parameters": 0
+      "training_routing_parameters": 0,
+      "mean_test_hard_accuracy": 0.5595999863147736,
+      "std_test_hard_accuracy": 0.002508983918162893
     },
     {
       "family": "coverage_v3",
@@ -66,7 +68,9 @@
       "max_peak_gpu_memory_bytes": 2917583360,
       "dense_gate_count": 1280000,
       "trainable_parameters": 20480000,
-      "training_routing_parameters": 0
+      "training_routing_parameters": 0,
+      "mean_test_hard_accuracy": 0.6101999866962433,
+      "std_test_hard_accuracy": 0.0033600597757996275
     }
   ],
   "runs": [
@@ -83,7 +87,12 @@
       "trainable_parameters": 20480000,
       "training_routing_parameters": 0,
       "source_revision": "b73307aca6669051ac090187f8b9180cbc4bde72",
-      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5",
+      "test_hard_accuracy": 0.5581999868154526,
+      "test_relaxed_accuracy": 0.5574999874830247,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 62000
     },
     {
       "name": "final_table2_cifar10_l_random_seed1",
@@ -98,7 +107,12 @@
       "trainable_parameters": 20480000,
       "training_routing_parameters": 0,
       "source_revision": "b73307aca6669051ac090187f8b9180cbc4bde72",
-      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5",
+      "test_hard_accuracy": 0.555899985730648,
+      "test_relaxed_accuracy": 0.5560999858379364,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 64000
     },
     {
       "name": "final_table2_cifar10_l_random_seed2",
@@ -113,7 +127,12 @@
       "trainable_parameters": 20480000,
       "training_routing_parameters": 0,
       "source_revision": "b73307aca6669051ac090187f8b9180cbc4bde72",
-      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5",
+      "test_hard_accuracy": 0.561999985575676,
+      "test_relaxed_accuracy": 0.561699986755848,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 98000
     },
     {
       "name": "final_table2_cifar10_l_random_seed3",
@@ -128,7 +147,12 @@
       "trainable_parameters": 20480000,
       "training_routing_parameters": 0,
       "source_revision": "b73307aca6669051ac090187f8b9180cbc4bde72",
-      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5",
+      "test_hard_accuracy": 0.5606999871134758,
+      "test_relaxed_accuracy": 0.5617999845743179,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 88000
     },
     {
       "name": "final_table2_cifar10_l_random_seed4",
@@ -143,7 +167,12 @@
       "trainable_parameters": 20480000,
       "training_routing_parameters": 0,
       "source_revision": "b73307aca6669051ac090187f8b9180cbc4bde72",
-      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5",
+      "test_hard_accuracy": 0.5611999863386155,
+      "test_relaxed_accuracy": 0.5612999886274338,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 84000
     },
     {
       "name": "final_table2_cifar10_l_v3_swap0500_seed0",
@@ -158,7 +187,12 @@
       "trainable_parameters": 20480000,
       "training_routing_parameters": 0,
       "source_revision": "b73307aca6669051ac090187f8b9180cbc4bde72",
-      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5",
+      "test_hard_accuracy": 0.6053999856114387,
+      "test_relaxed_accuracy": 0.6060999861359596,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 72000
     },
     {
       "name": "final_table2_cifar10_l_v3_swap0500_seed1",
@@ -173,7 +207,12 @@
       "trainable_parameters": 20480000,
       "training_routing_parameters": 0,
       "source_revision": "b73307aca6669051ac090187f8b9180cbc4bde72",
-      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5",
+      "test_hard_accuracy": 0.61309998691082,
+      "test_relaxed_accuracy": 0.6112999853491783,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 40000
     },
     {
       "name": "final_table2_cifar10_l_v3_swap0500_seed2",
@@ -188,7 +227,12 @@
       "trainable_parameters": 20480000,
       "training_routing_parameters": 0,
       "source_revision": "b73307aca6669051ac090187f8b9180cbc4bde72",
-      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5",
+      "test_hard_accuracy": 0.6136999860405922,
+      "test_relaxed_accuracy": 0.6150999879837036,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 98000
     },
     {
       "name": "final_table2_cifar10_l_v3_swap0500_seed3",
@@ -203,7 +247,12 @@
       "trainable_parameters": 20480000,
       "training_routing_parameters": 0,
       "source_revision": "b73307aca6669051ac090187f8b9180cbc4bde72",
-      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5",
+      "test_hard_accuracy": 0.609699989259243,
+      "test_relaxed_accuracy": 0.6074999883770943,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 64000
     },
     {
       "name": "final_table2_cifar10_l_v3_swap0500_seed4",
@@ -218,7 +267,12 @@
       "trainable_parameters": 20480000,
       "training_routing_parameters": 0,
       "source_revision": "b73307aca6669051ac090187f8b9180cbc4bde72",
-      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5"
+      "training_implementation_sha256": "7904ccc39c63e188c4b403ee529a3d7634642a4fcd9153b4f480f2f8f5827ee5",
+      "test_hard_accuracy": 0.6090999856591225,
+      "test_relaxed_accuracy": 0.6102999851107598,
+      "test_examples": 10000,
+      "test_checkpoint": "best_checkpoint.pt",
+      "test_validation_selection_step": 50000
     }
   ]
 }

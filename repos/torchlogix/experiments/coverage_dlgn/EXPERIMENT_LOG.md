@@ -563,3 +563,26 @@ This log records operational failures and protocol decisions made after commit
 - `summary/table2_l_mommen_final.json` and its CSV export are the
   machine-readable sources with `test_set_used=false`. The held-out test
   remains locked pending a separate exactly-once final evaluation decision.
+
+## July 28, 2026: dense CIFAR-10 L held-out test
+
+- Commits `acc360d` and `7eaea55` froze the central and Mommen validation
+  checkpoints, and commit `435dd00` froze the exactly-once guard.
+- All 11 checkpoints completed held-out evaluation with zero failures.
+  Fixed random `[REPRODUCED]` reached 55.960% +/- 0.251% test accuracy;
+  CoverageDLGN v3 `[OUR-FINAL]` reached 61.020% +/- 0.336%.
+- Per-seed V3 test gains are +4.720, +5.720, +5.170, +4.900, and +4.790 pp.
+  Their mean is +5.060 pp with a 95% Student-t interval of
+  [+4.555, +5.565], and all five are positive.
+- The one-seed Mommen adaptation reached `[TRIED]` 54.340% test accuracy.
+  `summary/table2_l_final.json` and `summary/table2_l_mommen_final.json`
+  now have `test_set_used=true`; none of these checkpoints will be tested
+  again.
+
+## July 28, 2026: experiment-order decision
+
+- Convolutional experiments are paused by user direction. No convolutional
+  S, M, or L run will be launched in the current phase.
+- The next phase is dense CIFAR-100, beginning with the exact S protocol and
+  advancing to M/L under the frozen promotion and comparator policies.
+- V4 will be revisited after dense CIFAR-100 S/M/L is complete.

@@ -2,7 +2,7 @@
   "phase": "table2_l_mommen_final",
   "policy": "one full seed only; no automatic promotion",
   "provenance": "TRIED",
-  "test_set_used": false,
+  "test_set_used": true,
   "run_count": 1,
   "queue_audit": {
     "finished_count": 1,
@@ -27,6 +27,11 @@
     "architecture": "DlgnCifar10LargeLearnable",
     "connections_num_candidates": 8,
     "source_revision": "d2e15b6a62d4a06506db1bf64efe0c4b3f4baa95",
-    "training_implementation_sha256": "c6bd2474f8aa66c2ce2df9c9256371805cce5efb18aa81c08642a449771b8ca8"
+    "training_implementation_sha256": "c6bd2474f8aa66c2ce2df9c9256371805cce5efb18aa81c08642a449771b8ca8",
+    "test_hard_accuracy": 0.5433999863266945,
+    "test_relaxed_accuracy": 0.5439999887347221,
+    "test_examples": 10000,
+    "test_checkpoint": "best_checkpoint.pt",
+    "test_validation_selection_step": 46000
   }
 }

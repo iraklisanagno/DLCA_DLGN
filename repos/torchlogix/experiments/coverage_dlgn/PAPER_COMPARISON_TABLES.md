@@ -102,12 +102,12 @@ exactly-once test evaluation.
 |  |  |  | WARP-LUT | [PENDING] / [REPORTED] 52.12 +/- 0.01% | 128K total gates, nonmatched |
 |  |  |  | BitLogic best-of-space | [PENDING] / [REPORTED] 58.06 +/- 0.14% | 128K total rank-4 gates, nonmatched |
 |  |  |  | **CoverageDLGN** | **[OUR-FINAL] 58.284% (n=5) / [N/A]** | Exact 512K target; +4.256 pp paired test gain |
-| L: 5 x 256K | 1.28M | 20.48M | Deep DLGN random | **[REPRODUCED] 56.468 +/- 0.210% validation (n=5; test locked) / [REPORTED] 60.78%** | Exact 1.28M architecture; full validation source: `summary/table2_l_final.json` |
-|  |  | 40.960M | Mommen learned connectivity | **[TRIED] 54.340% validation (n=1; test locked) / [N/A]** | Exact-1.28M \(N_c=8\) adaptation; conditional policy stops at one seed |
+| L: 5 x 256K | 1.28M | 20.48M | Deep DLGN random | **[REPRODUCED] 55.960 +/- 0.251% test (n=5) / [REPORTED] 60.78%** | Exact 1.28M architecture; one-time held-out test; source: `summary/table2_l_final.json` |
+|  |  | 40.960M | Mommen learned connectivity | **[TRIED] 54.340% test (n=1) / [N/A]** | Exact-1.28M \(N_c=8\) adaptation; conditional policy stops at one seed; one-time held-out test |
 |  |  |  | LILogicNet-L | [PENDING] / [REPORTED] 60.98 +/- 0.19% | 256K gates, nonmatched |
 |  |  |  | WARP-LUT | [PENDING] / [REPORTED] 52.12 +/- 0.01% | 128K total gates, nonmatched |
 |  |  |  | BitLogic best-of-space | [PENDING] / [REPORTED] 58.06 +/- 0.14% | 128K total rank-4 gates, nonmatched |
-|  |  |  | **CoverageDLGN** | **[OUR-FINAL] raw V3 swap-0.50 61.748 +/- 0.277% validation (n=5; test locked) / [N/A]** | Exact 1.28M target; +5.280 pp paired, 95% CI [+4.843, +5.717]; full validation source as above |
+|  |  |  | **CoverageDLGN** | **[OUR-FINAL] raw V3 swap-0.50 61.020 +/- 0.336% test (n=5) / [N/A]** | Exact 1.28M target; +5.060 pp paired, 95% CI [+4.555, +5.565]; one-time held-out test |
 
 The one-seed 5K compression screen is complete; these are validation
 selection values, not held-out test or paper-final values:
@@ -135,6 +135,13 @@ The completed one-seed Mommen adaptation reached 54.340% validation in
 13.39 hours, below both fixed random and V3, while adding 20.48M
 training-only routing parameters. It is retained as `[TRIED, n=1]` and is not
 promoted. Source: `summary/table2_l_mommen_final.json`.
+
+After every L validation choice was committed, all 11 frozen checkpoints were
+evaluated exactly once on held-out test. Raw V3 reached 61.020% versus
+55.960% random. All five paired test gains are positive; the mean is
++5.060 pp with a 95% Student-t interval of [+4.555, +5.565]. Mommen reached
+54.340% for its single adapted seed. These L checkpoints will not be queried
+on test again.
 
 | Target gates | Random screen | Best CoverageDLGN screen | Paired 20K selection | Full 108K validation | Held-out test |
 |---:|---:|---:|---|---|---|
