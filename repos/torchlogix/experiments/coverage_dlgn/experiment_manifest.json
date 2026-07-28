@@ -229,7 +229,7 @@
     "dense_cifar100_each_scale": {
       "fixed_random": 5,
       "coverage_dlgn": 5,
-      "mommen": 3,
+      "mommen": "3 on S; one full seed first on M/L and promote only if competitive",
       "lilogic": "3 on S; reported-only on M/L",
       "bitlogic": "reported-only",
       "difflogic_and_warp_lut": "reported-only"

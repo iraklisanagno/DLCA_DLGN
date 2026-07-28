@@ -1,0 +1,89 @@
+{
+  "phase": "table4_dense_cifar100",
+  "dataset": "cifar-100",
+  "architecture_source": "BitLogic Table 6 common protocol, rank-2 DiffLogic coordinate",
+  "data": {
+    "input_encoding": "3-threshold linear thermometer per RGB channel",
+    "thresholds": [
+      0.25,
+      0.5,
+      0.75
+    ],
+    "data_split_seed": 2027,
+    "validation_fraction": 0.1,
+    "augmentation": "random horizontal flip and random crop with reflect-mode padding",
+    "normalization": "none",
+    "heldout_test_policy": "locked until each scale's winner and comparators are frozen"
+  },
+  "training": {
+    "optimizer": "AdamW",
+    "adam_betas": [
+      0.9,
+      0.999
+    ],
+    "adam_epsilon": 1e-08,
+    "learning_rate": 0.01,
+    "weight_decay": 0.0,
+    "batch_size": 128,
+    "epochs": 100,
+    "train_examples_after_split": 45000,
+    "steps_per_epoch_drop_last": 351,
+    "final_iterations": 35100,
+    "selection_iterations": 20000,
+    "screen_iterations": 5000,
+    "selection_seeds": [
+      0,
+      1,
+      2
+    ],
+    "primary_final_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "note": "No early stopping, label smoothing, gradient clipping, mixed precision, or LR schedule."
+  },
+  "architecture": {
+    "depth": 2,
+    "class_count": 100,
+    "lut_rank": 2,
+    "group_sum_temperature": 1.0,
+    "scales": {
+      "S": {
+        "architecture": "DlgnCifar100BitLogicS",
+        "width_per_layer": 4000,
+        "total_gates": 8000,
+        "first_layer_slots": 8000,
+        "encoded_inputs": 9216,
+        "partial_first_layer_coverage": "opt-in uniform maximal subset for both paired methods"
+      },
+      "M": {
+        "architecture": "DlgnCifar100BitLogicM",
+        "width_per_layer": 16000,
+        "total_gates": 32000
+      },
+      "L": {
+        "architecture": "DlgnCifar100BitLogicL",
+        "width_per_layer": 64000,
+        "total_gates": 128000
+      }
+    }
+  },
+  "coverage_method": {
+    "algorithm": "frozen semantic_balanced_hybrid V3",
+    "mechanism_changes_allowed": false,
+    "controls_tuned_per_scale": [
+      "coverage_candidate_pool_size",
+      "coverage_swap_fraction",
+      "coverage_novelty_weight"
+    ],
+    "parametrization_for_primary_claim": "raw"
+  },
+  "promotion": {
+    "S_to_M": "positive mean paired CoverageDLGN gain after three-seed 20K selection",
+    "M_to_L": "positive mean paired CoverageDLGN gain after three-seed 20K selection",
+    "comparators": "Mommen three seeds on S; one seed first on M/L, promote only if competitive; LILogic local on S only; remaining values reported-only"
+  }
+}

@@ -192,7 +192,10 @@ operation accounting.
 
 The initial compact CIFAR-100 ladder follows BitLogic's two-layer common
 protocol. The paper reports width per layer, so total gate count is twice its
-reported width.
+reported width. The S coordinate has 8,000 first-layer input slots for 9,216
+encoded inputs; paired local random and CoverageDLGN runs therefore use the
+same opt-in, uniform maximal-subset constraint without changing the two-by-4K
+paper architecture.
 
 | Architecture | Total gates | Fan-in | Method | A / R accuracy | Source status |
 |---|---:|---:|---|---:|---|

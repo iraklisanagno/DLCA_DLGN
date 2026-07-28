@@ -51,6 +51,9 @@ from torchlogix.models import (
     DlgnCifar10Large,
     DlgnCifar10LargeLearnable,
     DlgnCifar10Small,
+    DlgnCifar100BitLogicL,
+    DlgnCifar100BitLogicM,
+    DlgnCifar100BitLogicS,
     DlgnFashionMnistPaperSmall,
     DlgnFashionMnistPaperSmallLearnable,
     DlgnFashionMnistBitLogic48k,
@@ -527,6 +530,33 @@ def test_cifar10_large_mommen_wrapper_preserves_exact_architecture():
         for layer in layers
     )
     assert model[-1].tau == 100.0
+
+
+@pytest.mark.parametrize(
+    ("model_cls", "width", "budget"),
+    [
+        (DlgnCifar100BitLogicS, 4_000, 8_000),
+        (DlgnCifar100BitLogicM, 16_000, 32_000),
+        (DlgnCifar100BitLogicL, 64_000, 128_000),
+    ],
+)
+def test_cifar100_bitlogic_rank2_ladder_matches_common_protocol(
+    model_cls, width, budget
+):
+    thresholds = torch.tensor([0.25, 0.5, 0.75])
+    model = model_cls(**_paper_model_kwargs(thresholds))
+    layers = [module for module in model if isinstance(module, LogicDense)]
+    assert model.n_input_bits == 3
+    assert model.class_count == 100
+    assert len(layers) == 2
+    assert all(layer.out_dim == width for layer in layers)
+    assert sum(layer.out_dim for layer in layers) == budget
+    assert layers[0].in_dim == 3 * 32 * 32 * 3
+    assert layers[0].connections.allow_partial_input_coverage
+    if width == 4_000:
+        assert torch.unique(layers[0].connections.indices).numel() == 8_000
+    assert model[-1].k == 100
+    assert model[-1].tau == 1.0
 
 
 @pytest.mark.parametrize(

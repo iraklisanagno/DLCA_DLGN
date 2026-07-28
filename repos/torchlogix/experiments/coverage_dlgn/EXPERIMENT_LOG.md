@@ -586,3 +586,26 @@ This log records operational failures and protocol decisions made after commit
 - The next phase is dense CIFAR-100, beginning with the exact S protocol and
   advancing to M/L under the frozen promotion and comparator policies.
 - V4 will be revisited after dense CIFAR-100 S/M/L is complete.
+
+## July 28, 2026: dense CIFAR-100 protocol freeze
+
+- The BitLogic Table 6 common protocol was audited before implementation.
+  Dense CIFAR-100 uses a two-layer width ladder of 4K, 16K, and 64K gates
+  per layer (8K, 32K, and 128K total), rank-2 LUTs for the matched
+  DiffLogic/CoverageDLGN coordinate, three linear thermometer thresholds,
+  a 90/10 train/validation split, reflect-padded random crop plus horizontal
+  flip, AdamW at 0.01, batch size 128, and 100 epochs (35,100 iterations).
+- The initial S architecture regression test failed before any training:
+  9,216 encoded inputs exceed its 8,000 first-layer input slots. TorchLogix
+  previously required every encoded input to occur at least once. Changing
+  the widths would have violated the paper protocol, so the exact two-by-4K
+  architecture was retained.
+- An opt-in partial-coverage mode now selects a uniform maximal subset of
+  first-layer inputs when slots are insufficient. It is enabled only by the
+  new CIFAR-100 common-protocol models; all existing models retain the prior
+  full-coverage assertion. Both paired random and V3 runs use the same
+  architecture and slot constraint. V3's topology construction, scoring,
+  and refinement are unchanged.
+- The S/M/L architecture and budget checks, partial-coverage behavior, and
+  existing topology/LGN tests pass: 93 tests total. The frozen machine-readable
+  protocol is `protocols/table4_dense_cifar100.json`.

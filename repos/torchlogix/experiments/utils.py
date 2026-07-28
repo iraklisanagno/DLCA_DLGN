@@ -28,11 +28,17 @@ def load_dataset(args):
     data_path = os.getenv("DATASET_PATH", ".")
     transform = torchvision.transforms.ToTensor()
     train_transform = transform
-    if getattr(args, "augmentation", "none") == "standard":
-        if args.dataset != "cifar-10":
-            raise ValueError("standard augmentation is currently defined only for CIFAR-10")
+    augmentation = getattr(args, "augmentation", "none")
+    if augmentation in {"standard", "bitlogic"}:
+        if args.dataset not in {"cifar-10", "cifar-100"}:
+            raise ValueError(
+                "CIFAR crop/flip augmentation requires CIFAR-10 or CIFAR-100"
+            )
+        padding_mode = "reflect" if augmentation == "bitlogic" else "constant"
         train_transform = torchvision.transforms.Compose([
-            torchvision.transforms.RandomCrop(32, padding=4),
+            torchvision.transforms.RandomCrop(
+                32, padding=4, padding_mode=padding_mode
+            ),
             torchvision.transforms.RandomHorizontalFlip(),
             transform,
         ])
@@ -65,6 +71,23 @@ def load_dataset(args):
         )
         test_set = torchvision.datasets.CIFAR10(
             f"{data_path}/data-cifar", train=False, transform=transform
+        )
+    elif args.dataset == "cifar-100":
+        train_set = torchvision.datasets.CIFAR100(
+            f"{data_path}/data-cifar-100",
+            train=True,
+            download=True,
+            transform=train_transform,
+        )
+        validation_source = torchvision.datasets.CIFAR100(
+            f"{data_path}/data-cifar-100",
+            train=True,
+            transform=transform,
+        )
+        test_set = torchvision.datasets.CIFAR100(
+            f"{data_path}/data-cifar-100",
+            train=False,
+            transform=transform,
         )
     
     if args.valid_set_size > 0:

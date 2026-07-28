@@ -48,7 +48,8 @@ def get_parser():
     )
     # Dataset and architecture
     parser.add_argument(
-        "--dataset", type=str, choices=["mnist", "fashion-mnist", "cifar-10"],
+        "--dataset", type=str,
+        choices=["mnist", "fashion-mnist", "cifar-10", "cifar-100"],
         default="mnist", help="Dataset to train on"
     )
     parser.add_argument(
@@ -82,8 +83,12 @@ def get_parser():
         help="Fraction of train set for validation"
     )
     parser.add_argument(
-        "--augmentation", choices=["none", "standard"], default="none",
-        help="Training-only data augmentation; standard means crop/flip for CIFAR"
+        "--augmentation", choices=["none", "standard", "bitlogic"], default="none",
+        help=(
+            "Training-only data augmentation; standard means crop/flip for "
+            "CIFAR and bitlogic uses reflect-padded crop/flip from the "
+            "BitLogic common protocol"
+        )
     )
 
     # Learning rate parameters

@@ -276,12 +276,18 @@ def image_input_semantics(
     )
 
 
-def _validate_dimensions(in_dim: int, out_dim: int, lut_rank: int) -> None:
+def _validate_dimensions(
+    in_dim: int,
+    out_dim: int,
+    lut_rank: int,
+    *,
+    allow_partial_input_coverage: bool = False,
+) -> None:
     if in_dim < lut_rank:
         raise ValueError(f"in_dim ({in_dim}) must be at least lut_rank ({lut_rank})")
     if out_dim <= 0:
         raise ValueError("out_dim must be positive")
-    if out_dim * lut_rank < in_dim:
+    if not allow_partial_input_coverage and out_dim * lut_rank < in_dim:
         raise ValueError(
             f"out_dim * lut_rank must cover the inputs ({out_dim} * {lut_rank} < {in_dim})"
         )
@@ -293,7 +299,11 @@ def _random_indices(
     lut_rank: int,
     rng: np.random.Generator,
 ) -> np.ndarray:
-    values = rng.permutation(lut_rank * out_dim) % in_dim
+    n_slots = lut_rank * out_dim
+    if n_slots < in_dim:
+        values = rng.permutation(in_dim)[:n_slots]
+    else:
+        values = rng.permutation(n_slots) % in_dim
     return values.reshape(lut_rank, out_dim).astype(np.int64, copy=False)
 
 
@@ -1339,6 +1349,7 @@ def generate_dense_topology(
     novelty_weight: float = 1.0,
     reuse_change_fraction: float = 0.25,
     reuse_weight: float = 1.0,
+    allow_partial_input_coverage: bool = False,
 ) -> DenseTopologyResult:
     """Construct a fixed dense topology and its packed output ancestry."""
     started = time.perf_counter()
@@ -1348,7 +1359,12 @@ def generate_dense_topology(
             f"{strategy} is a convolutional channel schedule; "
             "use semantic_balanced_hybrid for dense layers"
         )
-    _validate_dimensions(in_dim, out_dim, lut_rank)
+    _validate_dimensions(
+        in_dim,
+        out_dim,
+        lut_rank,
+        allow_partial_input_coverage=allow_partial_input_coverage,
+    )
     if strategy in {
         "local_cyclic",
         "butterfly",

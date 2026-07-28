@@ -118,6 +118,7 @@ class FixedDenseConnections(Connections):
         novelty_weight=1.0,
         reuse_change_fraction=0.25,
         reuse_weight=1.0,
+        allow_partial_input_coverage=False,
         **kwargs
         ):
         super().__init__(
@@ -146,6 +147,7 @@ class FixedDenseConnections(Connections):
         self.novelty_weight = novelty_weight
         self.reuse_change_fraction = reuse_change_fraction
         self.reuse_weight = reuse_weight
+        self.allow_partial_input_coverage = allow_partial_input_coverage
         self._output_ancestry = None
         self.construction_seconds = 0.0
         self.generator_temporary_bytes = 0
@@ -166,7 +168,7 @@ class FixedDenseConnections(Connections):
             f"Cannot have num_candidates * lut_rank > in_dim "
             f"({self.lut_rank} > {self.in_dim})"
         )
-        assert self.out_dim * self.lut_rank >= self.in_dim, (
+        assert self.allow_partial_input_coverage or self.out_dim * self.lut_rank >= self.in_dim, (
                 f"Need out_dim * lut_rank >= in_dim to cover all inputs "
                 f"({self.out_dim} * {self.lut_rank} < {self.in_dim})."
                 )
@@ -176,8 +178,14 @@ class FixedDenseConnections(Connections):
         # runs reproducible.
         if self.init_method == "random" and self.topology_seed is None:
             # With this method both inputs can stem from the same input feature
-            c = torch.randperm(self.lut_rank * self.out_dim, 
-                               device=self.device) % self.in_dim
+            n_slots = self.lut_rank * self.out_dim
+            if n_slots < self.in_dim:
+                # Exact-width paper protocols can contain fewer first-layer
+                # slots than encoded inputs. Select a uniform subset rather
+                # than silently dropping the highest flattened input indices.
+                c = torch.randperm(self.in_dim, device=self.device)[:n_slots]
+            else:
+                c = torch.randperm(n_slots, device=self.device) % self.in_dim
             c = c.reshape(self.lut_rank, self.out_dim)
         elif self.init_method == "random-unique" and self.topology_seed is None:
             c = get_random_unique_connections(
@@ -208,6 +216,7 @@ class FixedDenseConnections(Connections):
                 novelty_weight=self.novelty_weight,
                 reuse_change_fraction=self.reuse_change_fraction,
                 reuse_weight=self.reuse_weight,
+                allow_partial_input_coverage=self.allow_partial_input_coverage,
             )
             c = torch.from_numpy(result.indices)
             self._output_ancestry = result.output_ancestry

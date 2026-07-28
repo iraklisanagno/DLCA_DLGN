@@ -716,6 +716,50 @@ class DlgnCifar10Large4(DlgnCifar10):
         )
 
 
+class DlgnCifar100BitLogic(Dlgn):
+    """Rank-2 coordinate of BitLogic's two-layer CIFAR-100 common protocol."""
+
+    n_input_bits = 3
+    n_learnable_layers = 0
+    width = None
+
+    def __init__(self, **llkw):
+        if self.width is None:
+            raise ValueError("CIFAR-100 BitLogic width must be set")
+        tau = llkw.get("tau", 1.0)
+        connections_kwargs = dict(llkw.get("connections_kwargs", {}))
+        connections_kwargs.setdefault("allow_partial_input_coverage", True)
+        llkw["connections_kwargs"] = connections_kwargs
+        super().__init__(
+            in_dim=3 * 32 * 32 * self.n_input_bits,
+            n_layers=2,
+            neurons_per_layer=self.width,
+            class_count=100,
+            tau=tau,
+            input_shape=(3, 32, 32),
+            input_layout="channel_interleaved",
+            **llkw,
+        )
+
+
+class DlgnCifar100BitLogicS(DlgnCifar100BitLogic):
+    """Two-by-4K rank-2 gates: 8K total gates."""
+
+    width = 4_000
+
+
+class DlgnCifar100BitLogicM(DlgnCifar100BitLogic):
+    """Two-by-16K rank-2 gates: 32K total gates."""
+
+    width = 16_000
+
+
+class DlgnCifar100BitLogicL(DlgnCifar100BitLogic):
+    """Two-by-64K rank-2 gates: 128K total gates."""
+
+    width = 64_000
+
+
 class DlgnJsc(Dlgn):
     """
     Model as described in the paper 'LLNN'
