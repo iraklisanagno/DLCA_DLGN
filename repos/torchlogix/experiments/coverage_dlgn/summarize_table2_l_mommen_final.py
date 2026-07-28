@@ -32,8 +32,6 @@ def main() -> None:
     run = json.loads((run_dir / "run_summary.json").read_text())
     config = json.loads((run_dir / "training_config.json").read_text())
     environment = json.loads((run_dir / "environment.json").read_text())
-    if (run_dir / "test_metrics.json").exists():
-        raise RuntimeError("held-out test must remain locked at this stage")
     cost = run["cost"]
     row = {
         "name": entry["name"],
@@ -62,11 +60,24 @@ def main() -> None:
             "training_implementation_sha256"
         ],
     }
+    test_path = run_dir / "test_metrics.json"
+    test_set_used = test_path.is_file()
+    if test_set_used:
+        test = json.loads(test_path.read_text())
+        row.update({
+            "test_hard_accuracy": test["test_hard_accuracy"],
+            "test_relaxed_accuracy": test["test_relaxed_accuracy"],
+            "test_examples": test["test_examples"],
+            "test_checkpoint": test["checkpoint"],
+            "test_validation_selection_step": (
+                test["validation_selection_step"]
+            ),
+        })
     payload = {
         "phase": queue["phase"],
         "policy": queue["policy"],
         "provenance": "TRIED",
-        "test_set_used": False,
+        "test_set_used": test_set_used,
         "run_count": 1,
         "queue_audit": {
             "finished_count": len(audit["finished"]),
@@ -86,6 +97,8 @@ def main() -> None:
         writer.writerow(row)
     print(JSON_PATH)
     print(f"validation={100 * row['best_validation_hard_accuracy']:.3f}%")
+    if test_set_used:
+        print(f"test={100 * row['test_hard_accuracy']:.3f}%")
 
 
 if __name__ == "__main__":
