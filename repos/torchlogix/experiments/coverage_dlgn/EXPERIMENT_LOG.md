@@ -666,3 +666,18 @@ This log records operational failures and protocol decisions made after commit
 - The positive M-specific signal authorizes a paired three-seed 20K
   confirmation. This does not retroactively change the failed S promotion
   decision and does not change the V3 mechanism.
+
+## July 28, 2026: dense CIFAR-100 M selection and L kill
+
+- All six paired M 20K runs completed. Fixed random reached
+  `[TRIED]` 10.060% +/- 0.220% best hardened validation accuracy; frozen V3
+  `swap0500` reached `[TRIED]` 9.707% +/- 0.076%.
+- Per-seed V3 gains were -0.100, -0.660, and -0.300 pp. The paired mean is
+  -0.353 pp with a 95% Student-t interval of [-1.058, +0.352]. All three
+  point estimates are negative, and the positive-mean promotion condition
+  failed.
+- Dense CIFAR-100 L is therefore stopped before screen, full training, or
+  held-out test. S and M remain validation-only `[TRIED]` results; L retains
+  reported-only paper values. No CIFAR-100 held-out test was used.
+- This closes dense CIFAR-100 under the frozen promotion/kill protocol.
+  Convolutional V4 may now be revisited as a separate phase.

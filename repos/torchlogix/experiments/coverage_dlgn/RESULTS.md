@@ -745,6 +745,13 @@ thereafter, compared with 0.285, 0.136, 0.068, and 0.035 for random.
     evaluation every 500 steps showed +3.14 pp, but a preplanned 5K
     confirmation with evaluation every 1,000 steps ended at -3.12 pp. The
     method was not promoted to multi-seed or held-out-test evaluation.
+26. **Dense CIFAR-100 compact scales did not promote.** Exact two-by-4K S has
+    fewer first-layer slots than encoded inputs. Its best frozen V3 control
+    trailed random by -0.840 pp across three paired 20K seeds (95% CI
+    [-1.404, -0.276]). A documented M diagnostic removed the undersubscribed
+    first layer and screened at +0.500 pp, but its three-seed 20K confirmation
+    was -0.353 pp (95% CI [-1.058, +0.352]), with every seed negative. No
+    full S/M, L, or CIFAR-100 held-out evaluation was run.
 
 ## Implemented artifacts
 

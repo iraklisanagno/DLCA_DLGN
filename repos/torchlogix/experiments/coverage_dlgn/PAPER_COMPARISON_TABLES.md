@@ -223,7 +223,10 @@ is -0.840 pp, 95% CI [-1.404, -0.276], so S did not promote to full effort.
 M receives only a diagnostic screen because its first layer is no longer
 undersubscribed. That screen reached `[TRIED]` 9.880% for random and
 `[TRIED]` 10.380% for frozen V3 `swap_fraction=0.5` (+0.500 pp), so M
-advances to paired three-seed 20K confirmation. Held-out test remains locked.
+advanced to paired three-seed 20K confirmation. The confirmation reached
+`[TRIED]` 10.060 +/- 0.220% for random and `[TRIED]` 9.707 +/- 0.076% for
+V3, a paired -0.353 pp (95% CI [-1.058, +0.352]). M did not promote; L is
+reported-only and no CIFAR-100 held-out test was used.
 
 Additional reported-only dense CIFAR-100 references:
 
