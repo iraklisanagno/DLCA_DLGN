@@ -644,6 +644,24 @@ def test_cifar100_s_selection_is_paired_and_uses_screen_winner():
                 assert config["coverage_novelty_weight"] == 1.0
 
 
+def test_cifar100_m_diagnostic_screen_is_explicitly_not_promotion():
+    queue_path = (
+        Path("experiments/coverage_dlgn/queues")
+        / "table4_cifar100_m_screen.json"
+    )
+    queue = json.loads(queue_path.read_text())
+    assert queue["heldout_test_used"] is False
+    assert queue["s_promotion_condition_met"] is False
+    assert "diagnostic" in queue["purpose"]
+    assert len(queue["entries"]) == 8
+    for entry in queue["entries"]:
+        config = json.loads(Path(entry["config"]).read_text())
+        assert config["architecture"] == "DlgnCifar100BitLogicM"
+        assert config["num_iterations"] == 5_000
+        assert config["parametrization"] == "raw"
+        assert config["seed"] == config["topology_seed"] == 0
+
+
 @pytest.mark.parametrize(
     ("model_cls", "budget", "width", "tau"),
     [

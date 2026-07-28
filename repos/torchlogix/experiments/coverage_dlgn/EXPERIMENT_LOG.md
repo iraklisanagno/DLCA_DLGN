@@ -633,3 +633,26 @@ This log records operational failures and protocol decisions made after commit
   -1.280 pp screen gap. This is `[TRIED]`, not a final or held-out result.
 - Per the frozen protocol, random and `swap0125` advance to the paired
   three-seed 20K confirmation. No held-out test has been used.
+
+## July 28, 2026: dense CIFAR-100 S selection and topology diagnosis
+
+- All six paired 20K runs completed. Fixed random reached
+  `[TRIED]` 8.780% +/- 0.381% best hardened validation accuracy; frozen V3
+  `swap0125` reached `[TRIED]` 7.940% +/- 0.302%.
+- Per-seed V3 gains were -1.100, -0.680, and -0.740 pp. The paired mean is
+  -0.840 pp with a 95% Student-t interval of [-1.404, -0.276]. The frozen
+  S-to-M promotion condition therefore failed. No full S or held-out-test
+  run is authorized by this result.
+- The topology report explains why compact S is a distinct regime. Its
+  8,000 first-layer slots are fewer than 9,216 encoded inputs. Random uses
+  all 8,000 slots and covers 99.740% of raw RGB spatial sources. Frozen V3's
+  truncated first semantic-butterfly stage covers 7,905 encoded bits and
+  98.828% of raw sources; 91.650% of its pairs retain the same channel and
+  threshold because the 4K output prefix ends before later semantic-axis
+  stages. Random's corresponding fraction is about 34%.
+- M and L do not have this undersubscribed first layer: they provide 32K and
+  128K first-layer slots for the same 9,216 inputs. In order to complete the
+  user-directed dense study without changing V3, M receives a separately
+  labelled one-seed 5K exploratory screen. This is a documented diagnostic
+  exception, not an assertion that S met the promotion condition. M advances
+  further only if its own paired signal is positive.

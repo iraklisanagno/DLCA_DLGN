@@ -1,0 +1,104 @@
+{
+  "phase": "table4_cifar100_s_selection",
+  "provenance": "TRIED",
+  "validation_metric": "best hardened validation accuracy",
+  "test_set_used": false,
+  "selected_v3_candidate": "swap0125",
+  "family_stats": {
+    "random": {
+      "mean": 0.0878,
+      "sample_std": 0.003810511776651527,
+      "n": 3
+    },
+    "coverage_v3": {
+      "mean": 0.0794,
+      "sample_std": 0.003019933774108303,
+      "n": 3
+    }
+  },
+  "paired_gain_pp": -0.8399999999999996,
+  "paired_gain_95ci_pp": [
+    -1.4042876153280526,
+    -0.27571238467194675
+  ],
+  "per_seed_gain_pp": [
+    -1.0999999999999996,
+    -0.68,
+    -0.739999999999999
+  ],
+  "promotion_positive_mean": false,
+  "rows": [
+    {
+      "name": "select_table4_cifar100_s_random_seed0",
+      "family": "random",
+      "candidate": "random",
+      "seed": 0,
+      "best_validation_hard_accuracy": 0.09,
+      "wall_seconds": 286.93340258899843,
+      "peak_gpu_memory_bytes": 28904960,
+      "dense_gate_count": 8000,
+      "source_revision": "e26c6a274059cd7aa17ae36dfb9495f404877c65",
+      "training_implementation_sha256": "51efea4e869a3b2ce3861afb9b8d5011ee6770f4ade3166afe89a815363e7f67"
+    },
+    {
+      "name": "select_table4_cifar100_s_random_seed1",
+      "family": "random",
+      "candidate": "random",
+      "seed": 1,
+      "best_validation_hard_accuracy": 0.0834,
+      "wall_seconds": 285.8892184039578,
+      "peak_gpu_memory_bytes": 28904960,
+      "dense_gate_count": 8000,
+      "source_revision": "e26c6a274059cd7aa17ae36dfb9495f404877c65",
+      "training_implementation_sha256": "51efea4e869a3b2ce3861afb9b8d5011ee6770f4ade3166afe89a815363e7f67"
+    },
+    {
+      "name": "select_table4_cifar100_s_random_seed2",
+      "family": "random",
+      "candidate": "random",
+      "seed": 2,
+      "best_validation_hard_accuracy": 0.09,
+      "wall_seconds": 286.11108737799805,
+      "peak_gpu_memory_bytes": 28904960,
+      "dense_gate_count": 8000,
+      "source_revision": "e26c6a274059cd7aa17ae36dfb9495f404877c65",
+      "training_implementation_sha256": "51efea4e869a3b2ce3861afb9b8d5011ee6770f4ade3166afe89a815363e7f67"
+    },
+    {
+      "name": "select_table4_cifar100_s_v3_swap0125_seed0",
+      "family": "coverage_v3",
+      "candidate": "swap0125",
+      "seed": 0,
+      "best_validation_hard_accuracy": 0.079,
+      "wall_seconds": 286.7105589180137,
+      "peak_gpu_memory_bytes": 28904960,
+      "dense_gate_count": 8000,
+      "source_revision": "e26c6a274059cd7aa17ae36dfb9495f404877c65",
+      "training_implementation_sha256": "51efea4e869a3b2ce3861afb9b8d5011ee6770f4ade3166afe89a815363e7f67"
+    },
+    {
+      "name": "select_table4_cifar100_s_v3_swap0125_seed1",
+      "family": "coverage_v3",
+      "candidate": "swap0125",
+      "seed": 1,
+      "best_validation_hard_accuracy": 0.0766,
+      "wall_seconds": 286.1780655279872,
+      "peak_gpu_memory_bytes": 28904960,
+      "dense_gate_count": 8000,
+      "source_revision": "e26c6a274059cd7aa17ae36dfb9495f404877c65",
+      "training_implementation_sha256": "51efea4e869a3b2ce3861afb9b8d5011ee6770f4ade3166afe89a815363e7f67"
+    },
+    {
+      "name": "select_table4_cifar100_s_v3_swap0125_seed2",
+      "family": "coverage_v3",
+      "candidate": "swap0125",
+      "seed": 2,
+      "best_validation_hard_accuracy": 0.0826,
+      "wall_seconds": 286.6128631019965,
+      "peak_gpu_memory_bytes": 28904960,
+      "dense_gate_count": 8000,
+      "source_revision": "e26c6a274059cd7aa17ae36dfb9495f404877c65",
+      "training_implementation_sha256": "51efea4e869a3b2ce3861afb9b8d5011ee6770f4ade3166afe89a815363e7f67"
+    }
+  ]
+}
