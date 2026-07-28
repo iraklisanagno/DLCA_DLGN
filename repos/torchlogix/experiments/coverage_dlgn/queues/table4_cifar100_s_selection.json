@@ -1,0 +1,58 @@
+{
+  "phase": "table4_cifar100_s_selection",
+  "purpose": "paired three-seed 20K validation selection",
+  "selection_metric": "mean best hardened validation accuracy",
+  "heldout_test_used": false,
+  "screen_source": "experiments/coverage_dlgn/summary/table4_cifar100_s_screen.json",
+  "selected_v3_candidate": "swap0125",
+  "entries": [
+    {
+      "name": "select_table4_cifar100_s_random_seed0",
+      "family": "random",
+      "candidate": "random",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/table4_cifar100_s_selection/select_table4_cifar100_s_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/select_table4_cifar100_s_random_seed0"
+    },
+    {
+      "name": "select_table4_cifar100_s_v3_swap0125_seed0",
+      "family": "coverage_v3",
+      "candidate": "swap0125",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/table4_cifar100_s_selection/select_table4_cifar100_s_v3_swap0125_seed0.json",
+      "output": "experiments/coverage_dlgn/results/select_table4_cifar100_s_v3_swap0125_seed0"
+    },
+    {
+      "name": "select_table4_cifar100_s_random_seed1",
+      "family": "random",
+      "candidate": "random",
+      "seed": 1,
+      "config": "experiments/coverage_dlgn/configs/table4_cifar100_s_selection/select_table4_cifar100_s_random_seed1.json",
+      "output": "experiments/coverage_dlgn/results/select_table4_cifar100_s_random_seed1"
+    },
+    {
+      "name": "select_table4_cifar100_s_v3_swap0125_seed1",
+      "family": "coverage_v3",
+      "candidate": "swap0125",
+      "seed": 1,
+      "config": "experiments/coverage_dlgn/configs/table4_cifar100_s_selection/select_table4_cifar100_s_v3_swap0125_seed1.json",
+      "output": "experiments/coverage_dlgn/results/select_table4_cifar100_s_v3_swap0125_seed1"
+    },
+    {
+      "name": "select_table4_cifar100_s_random_seed2",
+      "family": "random",
+      "candidate": "random",
+      "seed": 2,
+      "config": "experiments/coverage_dlgn/configs/table4_cifar100_s_selection/select_table4_cifar100_s_random_seed2.json",
+      "output": "experiments/coverage_dlgn/results/select_table4_cifar100_s_random_seed2"
+    },
+    {
+      "name": "select_table4_cifar100_s_v3_swap0125_seed2",
+      "family": "coverage_v3",
+      "candidate": "swap0125",
+      "seed": 2,
+      "config": "experiments/coverage_dlgn/configs/table4_cifar100_s_selection/select_table4_cifar100_s_v3_swap0125_seed2.json",
+      "output": "experiments/coverage_dlgn/results/select_table4_cifar100_s_v3_swap0125_seed2"
+    }
+  ]
+}

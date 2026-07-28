@@ -215,6 +215,12 @@ paper architecture.
 |  | 128K | 4 | BitLogic best-of-space | [PENDING] / **[REPORTED] 18.82 +/- 0.09%** | Exact BitLogic configuration |
 |  | **128K** | **2** | **CoverageDLGN** | [PENDING] / [N/A] | Matched gates |
 
+Live validation status (not table-final accuracy): the CIFAR-100 S one-seed
+5K screen is `[TRIED]`. Fixed random reached 9.420%; the best frozen V3
+control (`swap_fraction=0.125`) reached 8.140% (-1.280 pp). Both advance to
+the prespecified paired three-seed 20K confirmation; held-out test remains
+locked.
+
 Additional reported-only dense CIFAR-100 references:
 
 | Method | Accuracy | Gates or parameters | Status |

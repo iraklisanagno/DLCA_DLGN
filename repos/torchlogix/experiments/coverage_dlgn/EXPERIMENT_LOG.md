@@ -614,3 +614,22 @@ This log records operational failures and protocol decisions made after commit
 - The S/M/L architecture and budget checks, partial-coverage behavior, and
   existing topology/LGN tests pass: 95 tests total. The frozen machine-readable
   protocol is `protocols/table4_dense_cifar100.json`.
+
+## July 28, 2026: dense CIFAR-100 S screen
+
+- The official CIFAR-100 archive initially transferred at about 0.1 MB/s.
+  The single transfer was interrupted at 49,774,592 bytes and retained as
+  `/tmp/torchlogix-datasets/data-cifar-100/cifar-100-python.interrupted.tar.gz`.
+  Eight parallel byte ranges were assembled and accepted only after matching
+  the official MD5 `eb9058c3a382ffc7106e4002c42a8d85`.
+- Both 10-step CUDA smokes passed. They recovered fixed thresholds
+  `{0.25, 0.5, 0.75}`, two 4K layers, 8K total gates, 128K trainable LUT
+  parameters, and hardened validation for random and frozen V3.
+- All eight one-seed 5K screen runs completed with identical training
+  implementation hash
+  `51efea4e869a3b2ce3861afb9b8d5011ee6770f4ade3166afe89a815363e7f67`.
+  Random reached 9.420% best hardened validation accuracy. The best V3
+  control was the existing swap fraction 0.125 at 8.140%, a preliminary
+  -1.280 pp screen gap. This is `[TRIED]`, not a final or held-out result.
+- Per the frozen protocol, random and `swap0125` advance to the paired
+  three-seed 20K confirmation. No held-out test has been used.
