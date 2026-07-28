@@ -547,3 +547,19 @@ This log records operational failures and protocol decisions made after commit
 - `summary/table2_l_final.json` and its CSV export are the frozen validation
   sources with `test_set_used=false`. The held-out test remains locked until
   the single L Mommen run is complete and all validation is committed.
+
+## July 28, 2026: dense CIFAR-10 L one-seed Mommen validation
+
+- The exact-1.28M Mommen \(N_c=8\) comparator completed its single
+  predeclared 108K seed with zero failures. It reached `[TRIED]` 54.340%
+  best hardened validation accuracy; its final-step value was 53.680%.
+- The run required 48,206 seconds (13.39 hours) and peaked at
+  12,781,914,624 allocated GPU bytes. It used 40.96M total trainable
+  parameters, including 20.48M training-only routing parameters, while
+  deploying the same 1.28M-gate circuit budget.
+- Mommen is 2.128 pp below the five-seed random validation mean and
+  7.408 pp below CoverageDLGN v3. Per the conditional policy it is not
+  promoted beyond one seed.
+- `summary/table2_l_mommen_final.json` and its CSV export are the
+  machine-readable sources with `test_set_used=false`. The held-out test
+  remains locked pending a separate exactly-once final evaluation decision.

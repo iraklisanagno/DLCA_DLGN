@@ -1,0 +1,32 @@
+{
+  "phase": "table2_l_mommen_final",
+  "policy": "one full seed only; no automatic promotion",
+  "provenance": "TRIED",
+  "test_set_used": false,
+  "run_count": 1,
+  "queue_audit": {
+    "finished_count": 1,
+    "skipped_count": 0,
+    "failed_count": 0,
+    "wall_seconds": 48211.12216917402
+  },
+  "run": {
+    "name": "final_table2_cifar10_l_mommen_nc8_seed0",
+    "family": "mommen",
+    "provenance": "TRIED",
+    "seed": 0,
+    "seed_count": 1,
+    "best_validation_hard_accuracy": 0.5433999860286712,
+    "final_validation_hard_accuracy": 0.5367999845743179,
+    "wall_seconds": 48205.697552507976,
+    "peak_gpu_memory_bytes": 12781914624,
+    "dense_gate_count": 1280000,
+    "trainable_parameters": 40960000,
+    "training_routing_parameters": 20480000,
+    "deployed_routing_bits": 44032000,
+    "architecture": "DlgnCifar10LargeLearnable",
+    "connections_num_candidates": 8,
+    "source_revision": "d2e15b6a62d4a06506db1bf64efe0c4b3f4baa95",
+    "training_implementation_sha256": "c6bd2474f8aa66c2ce2df9c9256371805cce5efb18aa81c08642a449771b8ca8"
+  }
+}

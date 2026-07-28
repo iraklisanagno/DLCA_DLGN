@@ -103,7 +103,7 @@ exactly-once test evaluation.
 |  |  |  | BitLogic best-of-space | [PENDING] / [REPORTED] 58.06 +/- 0.14% | 128K total rank-4 gates, nonmatched |
 |  |  |  | **CoverageDLGN** | **[OUR-FINAL] 58.284% (n=5) / [N/A]** | Exact 512K target; +4.256 pp paired test gain |
 | L: 5 x 256K | 1.28M | 20.48M | Deep DLGN random | **[REPRODUCED] 56.468 +/- 0.210% validation (n=5; test locked) / [REPORTED] 60.78%** | Exact 1.28M architecture; full validation source: `summary/table2_l_final.json` |
-|  |  | feasibility pending | Mommen learned connectivity | [PENDING] / [N/A] | Three-seed adaptation if timing/memory feasibility passes |
+|  |  | 40.960M | Mommen learned connectivity | **[TRIED] 54.340% validation (n=1; test locked) / [N/A]** | Exact-1.28M \(N_c=8\) adaptation; conditional policy stops at one seed |
 |  |  |  | LILogicNet-L | [PENDING] / [REPORTED] 60.98 +/- 0.19% | 256K gates, nonmatched |
 |  |  |  | WARP-LUT | [PENDING] / [REPORTED] 52.12 +/- 0.01% | 128K total gates, nonmatched |
 |  |  |  | BitLogic best-of-space | [PENDING] / [REPORTED] 58.06 +/- 0.14% | 128K total rank-4 gates, nonmatched |
@@ -131,6 +131,10 @@ reached 61.748% versus 56.468% raw random. Every paired difference is
 positive; the mean gain is +5.280 pp with a 95% Student-t interval of
 [+4.843, +5.717]. The held-out test remains locked until the one-seed L
 Mommen comparator is completed and all validation checkpoints are committed.
+The completed one-seed Mommen adaptation reached 54.340% validation in
+13.39 hours, below both fixed random and V3, while adding 20.48M
+training-only routing parameters. It is retained as `[TRIED, n=1]` and is not
+promoted. Source: `summary/table2_l_mommen_final.json`.
 
 | Target gates | Random screen | Best CoverageDLGN screen | Paired 20K selection | Full 108K validation | Held-out test |
 |---:|---:|---:|---|---|---|
