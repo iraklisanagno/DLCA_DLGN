@@ -559,6 +559,40 @@ def test_cifar100_bitlogic_rank2_ladder_matches_common_protocol(
     assert model[-1].tau == 1.0
 
 
+def test_cifar100_s_screen_changes_only_frozen_v3_controls():
+    queue_path = (
+        Path("experiments/coverage_dlgn/queues")
+        / "table4_cifar100_s_screen.json"
+    )
+    queue = json.loads(queue_path.read_text())
+    assert queue["heldout_test_used"] is False
+    assert len(queue["entries"]) == 8
+    for entry in queue["entries"]:
+        config = json.loads(Path(entry["config"]).read_text())
+        assert config["dataset"] == "cifar-100"
+        assert config["architecture"] == "DlgnCifar100BitLogicS"
+        assert config["augmentation"] == "bitlogic"
+        assert config["batch_size"] == 128
+        assert config["learning_rate"] == 0.01
+        assert config["weight_decay"] == 0.0
+        assert config["num_iterations"] == 5_000
+        assert config["lut_rank"] == 2
+        assert config["parametrization"] == "raw"
+        assert config["seed"] == config["topology_seed"] == 0
+        if entry["family"] == "coverage_v3":
+            assert (
+                config["connections_init_method"]
+                == "semantic_balanced_hybrid"
+            )
+            assert set(config).issuperset({
+                "coverage_candidate_pool_size",
+                "coverage_swap_fraction",
+                "coverage_novelty_weight",
+            })
+        else:
+            assert config["connections_init_method"] == "random"
+
+
 @pytest.mark.parametrize(
     ("model_cls", "budget", "width", "tau"),
     [

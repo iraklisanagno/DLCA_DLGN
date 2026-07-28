@@ -1,0 +1,73 @@
+{
+  "phase": "table4_cifar100_s_screen",
+  "purpose": "one-seed 5K validation topology screen; not final",
+  "selection_metric": "best hardened validation accuracy",
+  "heldout_test_used": false,
+  "architecture": {
+    "name": "DlgnCifar100BitLogicS",
+    "depth": 2,
+    "width": 4000,
+    "gate_count": 8000,
+    "lut_rank": 2,
+    "input_thresholds": 3,
+    "class_count": 100
+  },
+  "entries": [
+    {
+      "name": "screen_table4_cifar100_s_random_seed0",
+      "family": "random",
+      "candidate": "random",
+      "config": "experiments/coverage_dlgn/configs/table4_cifar100_s_screen/screen_table4_cifar100_s_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table4_cifar100_s_random_seed0"
+    },
+    {
+      "name": "screen_table4_cifar100_s_v3_incumbent_seed0",
+      "family": "coverage_v3",
+      "candidate": "incumbent",
+      "config": "experiments/coverage_dlgn/configs/table4_cifar100_s_screen/screen_table4_cifar100_s_v3_incumbent_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table4_cifar100_s_v3_incumbent_seed0"
+    },
+    {
+      "name": "screen_table4_cifar100_s_v3_pool4_seed0",
+      "family": "coverage_v3",
+      "candidate": "pool4",
+      "config": "experiments/coverage_dlgn/configs/table4_cifar100_s_screen/screen_table4_cifar100_s_v3_pool4_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table4_cifar100_s_v3_pool4_seed0"
+    },
+    {
+      "name": "screen_table4_cifar100_s_v3_pool16_seed0",
+      "family": "coverage_v3",
+      "candidate": "pool16",
+      "config": "experiments/coverage_dlgn/configs/table4_cifar100_s_screen/screen_table4_cifar100_s_v3_pool16_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table4_cifar100_s_v3_pool16_seed0"
+    },
+    {
+      "name": "screen_table4_cifar100_s_v3_swap0125_seed0",
+      "family": "coverage_v3",
+      "candidate": "swap0125",
+      "config": "experiments/coverage_dlgn/configs/table4_cifar100_s_screen/screen_table4_cifar100_s_v3_swap0125_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table4_cifar100_s_v3_swap0125_seed0"
+    },
+    {
+      "name": "screen_table4_cifar100_s_v3_swap0500_seed0",
+      "family": "coverage_v3",
+      "candidate": "swap0500",
+      "config": "experiments/coverage_dlgn/configs/table4_cifar100_s_screen/screen_table4_cifar100_s_v3_swap0500_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table4_cifar100_s_v3_swap0500_seed0"
+    },
+    {
+      "name": "screen_table4_cifar100_s_v3_novelty050_seed0",
+      "family": "coverage_v3",
+      "candidate": "novelty050",
+      "config": "experiments/coverage_dlgn/configs/table4_cifar100_s_screen/screen_table4_cifar100_s_v3_novelty050_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table4_cifar100_s_v3_novelty050_seed0"
+    },
+    {
+      "name": "screen_table4_cifar100_s_v3_novelty200_seed0",
+      "family": "coverage_v3",
+      "candidate": "novelty200",
+      "config": "experiments/coverage_dlgn/configs/table4_cifar100_s_screen/screen_table4_cifar100_s_v3_novelty200_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table4_cifar100_s_v3_novelty200_seed0"
+    }
+  ]
+}
