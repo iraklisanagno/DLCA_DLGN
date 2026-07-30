@@ -1,0 +1,93 @@
+{
+  "phase": "table2_compression_remaining_test",
+  "heldout_test_used": true,
+  "overwrite_protection": true,
+  "wall_seconds": 253.05286641302519,
+  "finished": [
+    {
+      "name": "final_table2_cifar10_256k_random_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 7.0049363520229235,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table2_compression_remaining_test/final_table2_cifar10_256k_random_seed0.log"
+    },
+    {
+      "name": "final_table2_cifar10_256k_random_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 7.004871878016274,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table2_compression_remaining_test/final_table2_cifar10_256k_random_seed1.log"
+    },
+    {
+      "name": "final_table2_cifar10_256k_random_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 6.00406455603661,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table2_compression_remaining_test/final_table2_cifar10_256k_random_seed2.log"
+    },
+    {
+      "name": "final_table2_cifar10_256k_v3_incumbent_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 56.00982603500597,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table2_compression_remaining_test/final_table2_cifar10_256k_v3_incumbent_seed0.log"
+    },
+    {
+      "name": "final_table2_cifar10_256k_v3_incumbent_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 56.008188935986254,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table2_compression_remaining_test/final_table2_cifar10_256k_v3_incumbent_seed1.log"
+    },
+    {
+      "name": "final_table2_cifar10_384k_random_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 7.001693616970442,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table2_compression_remaining_test/final_table2_cifar10_384k_random_seed0.log"
+    },
+    {
+      "name": "final_table2_cifar10_384k_random_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 7.003918154980056,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table2_compression_remaining_test/final_table2_cifar10_384k_random_seed1.log"
+    },
+    {
+      "name": "final_table2_cifar10_384k_random_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 7.003444637986831,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table2_compression_remaining_test/final_table2_cifar10_384k_random_seed2.log"
+    },
+    {
+      "name": "final_table2_cifar10_256k_v3_incumbent_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 56.01863675599452,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table2_compression_remaining_test/final_table2_cifar10_256k_v3_incumbent_seed2.log"
+    },
+    {
+      "name": "final_table2_cifar10_384k_v3_incumbent_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 81.01253904198529,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table2_compression_remaining_test/final_table2_cifar10_384k_v3_incumbent_seed0.log"
+    },
+    {
+      "name": "final_table2_cifar10_384k_v3_incumbent_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 82.00920148799196,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table2_compression_remaining_test/final_table2_cifar10_384k_v3_incumbent_seed1.log"
+    },
+    {
+      "name": "final_table2_cifar10_384k_v3_incumbent_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 82.00905021099607,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table2_compression_remaining_test/final_table2_cifar10_384k_v3_incumbent_seed2.log"
+    }
+  ],
+  "failed": []
+}

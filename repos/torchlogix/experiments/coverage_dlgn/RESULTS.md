@@ -752,6 +752,42 @@ thereafter, compared with 0.285, 0.136, 0.068, and 0.035 for random.
     first layer and screened at +0.500 pp, but its three-seed 20K confirmation
     was -0.353 pp (95% CI [-1.058, +0.352]), with every seed negative. No
     full S/M, L, or CIFAR-100 held-out evaluation was run.
+27. **Deep CIFAR-100 separates a small positive regime from a stopped
+    large-width regime.** On the exact 6-by-64K architecture, frozen V3
+    `swap_fraction=0.125` passed the 5K and three-seed 20K gates. At the
+    paper-length schedule it improved validation by +0.633 pp and held-out
+    test by +0.333 pp (21.010% versus 20.677%, n=3), but the test 95% CI
+    [-0.816, +1.483] crosses zero. On exact 6-by-256K, all three existing V3
+    controls trailed random at 5K; the best was -0.620 pp, so the frozen
+    protocol stopped the branch before full effort or test access. This is
+    evidence that unchanged V3 is not uniformly beneficial as width,
+    threshold count, and temperature change.
+28. **The deep screen recovered from one external termination without
+    duplicating completed work.** Three complete runs were retained, two
+    incomplete attempts were quarantined under `results/failed/`, and the
+    resumed queue executed only the missing entries. A separate selection
+    generator field-name error occurred before training and produced no
+    scientific result. Both incidents and their resolutions are recorded in
+    `EXPERIMENT_LOG.md`.
+29. **Depth alone does not increase V3's CIFAR-100 benefit at fixed 384K
+    gates.** A controlled seed-0 20K ablation produced +0.780 pp for
+    3-by-128K, but this missed the frozen +1 pp confirmation threshold.
+    Both 12-by-32K and 24-by-16K remained at approximately 1.2% chance-level
+    accuracy for random and V3. At depth 24, every final gate already has all
+    3,072 raw RGB spatial sources in its ancestry under both methods.
+    Therefore additional depth simultaneously saturates V3's ancestry
+    objective and creates an optimization failure under the unchanged
+    training recipe; it is not evidence that V3 improves monotonically with
+    depth.
+30. **Class-conditional ancestry balance is not the missing CIFAR-100
+    mechanism.** A separate fixed final-layer refinement reduced V3's mean
+    per-class source-usage CV from 0.25655 to 0.23475 across three seeds while
+    preserving its backbone, exact predecessor degrees, gate/parameter
+    budgets, routing bits, and inference path. Nevertheless, 20K hardened
+    validation was 21.593% versus 21.580% for V3: only +0.013 pp
+    (95% CI [-0.385, +0.412]). Its +0.553 pp gain over random also missed the
+    frozen +2 pp requirement. No full, transfer, convolutional, or held-out
+    experiment was run.
 
 ## Implemented artifacts
 
@@ -769,6 +805,9 @@ thereafter, compared with 0.285, 0.136, 0.068, and 0.035 for random.
   convolutional integration. Its failed M promotion result is retained.
 - A classifier-specific v3 extension for shrinking convolutional classifier
   tails, without modifying or replacing the frozen dense v3 strategy.
+- A separate class-conditional coverage head that preserves V3/V4 and exact
+  deployment cost. Its successful diagnostic change and failed CIFAR-100
+  accuracy promotion are retained as a negative result.
 - Per-depth coverage, overlap, fan-out, distinct-pair, reachability, storage,
   construction-time, and temporary-memory metrics.
 - Image-semantic diagnostics for raw-source ancestry, spatial and semantic-axis
@@ -791,19 +830,84 @@ thereafter, compared with 0.285, 0.136, 0.068, and 0.035 for random.
 - Reproducible table/CSV/SVG generation, plus a checksummed snapshot of the
   exact source used for training.
 
+## July 29 dense follow-up
+
+The remaining frozen CIFAR-10 compression checkpoints were evaluated once on
+held-out test. At 256K gates, CoverageDLGN reached 56.903% +/- 0.134% versus
+52.253% +/- 0.058% for random, a paired +4.650 pp with 95% CI
+[+4.174, +5.126]. At 384K, CoverageDLGN reached 58.143% +/- 0.153% versus
+53.657% +/- 0.328%, a paired +4.487 pp with 95% CI
+[+3.515, +5.458]. Every paired gain was positive. These 12 checkpoints are
+closed to further test queries.
+
+The CIFAR-10 M V3 component ablation reused the old random/full-V3 controls
+and trained only six missing arms. Balanced butterfly fan-out contributes
++4.160 pp over random (95% CI [+3.988, +4.332]). Adding the semantic first
+layer contributes +0.273 pp (95% CI [-0.780, +1.326]), and the ancestry-swap
+stage contributes +0.040 pp (95% CI [-0.434, +0.514]). Full V3 remains
++4.473 pp over random (95% CI [+3.624, +5.323]). Thus balanced fan-out is the
+dominant measured component at this coordinate; the smaller semantic and
+ancestry increments are inconclusive.
+
+A separate one-shot task-aware extension was implemented without changing
+V3. It preserved the exact predecessor-degree vector and deployment cost,
+used one ordinary step-10K batch, added no optimizer steps, and changed about
+11.3% of gates. Across three seeds it reached 59.093% +/- 0.234%, which is
++4.273 pp over random but -0.200 pp versus V3. It failed the predeclared +1 pp
+over-V3 gate, so it has no full, held-out, transfer, or convolutional result.
+
+The CIFAR-100 baseline audit found a material reproduction mismatch:
+canonical difflogic random routing uses two Torch permutations, whereas the
+paired local study uses an independent NumPy topology seed. Architecture and
+training schedule match, but the local 20.677% result is therefore labeled
+`[REPRODUCED, topology-adapted]` beside the paper's reported 22.54%.
+
+Machine-readable sources:
+
+- `summary/table2_cifar10_compression_remaining_test.json`;
+- `summary/cifar10_medium_v3_components.json`;
+- `summary/cifar10_medium_task_aware.json`; and
+- `summary/cifar100_baseline_audit.json`.
+
+## July 29 convolutional revision
+
+The specification-compliant channel-spatial adapter preserved frozen V4's
+channel pairs and spatial-coordinate tensor, changed only bottom-level channel
+assignment, and added no gates, routing entries, or trainable parameters.
+Across three CIFAR-10 S validation seeds it reached 57.033%, versus 56.673%
+random (+0.360 pp, 95% CI [-0.501, +1.221]) and 57.187% V4
+(-0.153 pp, 95% CI [-2.714, +2.407]). It failed both promotion gates, so no M
+or held-out run followed.
+
+The paired component arm with balanced channel routing and swaps disabled
+reached 58.013%: +1.340 pp over random and +0.827 pp over V4. Both intervals
+cross zero. This is the best current convolutional diagnostic, not a promoted
+replacement for V4.
+
+The initial explicit-classifier attempt is excluded because its independent
+dense topology RNG changed later parameter initialization. Its artifacts and
+explanation are retained under
+`results/failed/cifar10_conv_small_explicit_classifier_rng_attempt1`.
+
+Machine-readable sources:
+
+- `summary/cifar10_conv_small_v4_components.json`;
+- `summary/cifar10_conv_small_channel_spatial.json`.
+
 ## Not completed; required before a DATE claim
 
 - A protocol-identical numerical reproduction of the published CIFAR-10
   baseline. The architecture is exact, but the current frozen-validation
   protocol uses 45,000 rather than all 50,000 training images and 240 rather
   than 200 effective epochs.
-- Butterfly and pure-coverage schedules on every budget/depth cell. The paired
-  random/v3 matrix is complete, but the specification's full four-schedule
-  matrix is not.
+- Butterfly and pure-coverage schedules on every budget/depth cell. The
+  CIFAR-10 M butterfly component is now complete, but the specification's
+  full four-schedule matrix is not.
 - Candidate-pool, swap-fraction, and novelty-weight ablations. Pool 8, fraction
   0.25, and weight 1.0 were frozen for the central study after the bounded
   three-seed pilot; they were not exhaustively optimized.
-- Overlap-off, fan-out-off, and distance/locality ablations at pilot scale.
+- Overlap-off and distance/locality ablations at pilot scale. The balanced
+  fan-out component has now been isolated on CIFAR-10 M.
 - WARP/Light repetition.
 - Mommen partial-learnable, LILogic Top-K, BitLogic, and RigL comparisons under
   identical splits, budgets, and training effort.
@@ -818,10 +922,13 @@ thereafter, compared with 0.285, 0.136, 0.068, and 0.035 for random.
 The superseded fraction-0.25 v2 hybrid failed the formal kill criterion.
 Semantic-balanced v3 clears the continuation criterion, remains positive at
 four and eight layers across both budgets, and transfers positively to the
-channel-only v4 pilot. The responsible next steps are component ablations, the
-remaining schedules in the budget/depth matrix, long-training convolutional
-reproduction, and protocol-identical named baselines. These results justify
-continuing the project; they do not alone constitute a complete DATE claim.
+channel-only v4 pilot. The completed M ablation attributes most of the dense
+gain to balanced fan-out; ancestry-only and task-aware refinements did not
+improve the frozen method. The responsible next steps are the remaining
+schedules in the budget/depth matrix, deployment Pareto measurements,
+long-training convolutional reproduction, and protocol-identical named
+baselines. These results justify continuing the project; they do not alone
+constitute a complete DATE claim.
 
 ## Final verification
 
@@ -835,6 +942,8 @@ Final verification after regenerating the summary artifacts:
   paired protocol equality, and bit-identical convolutional spatial hashes;
 - the July 24 ancestry/classifier focused suite passes with **1,862 passed and
   1,660 skipped**;
+- the July 29 topology/protocol/circuit/task-aware focused suite passes with
+  **157 passed** in 208.18 seconds, including post-rewire circuit equivalence;
 - the complete TorchLogix suite passes with **3,302 passed, 3,038 skipped, and
   one pre-existing warning** in 161.99 seconds;
 - all three generated SVGs parse as valid XML;

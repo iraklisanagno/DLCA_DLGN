@@ -1,0 +1,30 @@
+{
+  "phase": "cifar10_conv_small_channel_spatial",
+  "purpose": "Train only the new channel-spatial adapter; reuse completed random and V4 controls.",
+  "protocol": "experiments/coverage_dlgn/protocols/cifar10_conv_small_channel_spatial.json",
+  "controls_reused_not_rerun": true,
+  "heldout_test_used": false,
+  "entries": [
+    {
+      "name": "pilot_conv_cifar10_small_channel_spatial_seed0",
+      "family": "channel_spatial",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/cifar10_conv_small_channel_spatial/pilot_conv_cifar10_small_channel_spatial_seed0.json",
+      "output": "experiments/coverage_dlgn/results/pilot_conv_cifar10_small_channel_spatial_seed0"
+    },
+    {
+      "name": "pilot_conv_cifar10_small_channel_spatial_seed1",
+      "family": "channel_spatial",
+      "seed": 1,
+      "config": "experiments/coverage_dlgn/configs/cifar10_conv_small_channel_spatial/pilot_conv_cifar10_small_channel_spatial_seed1.json",
+      "output": "experiments/coverage_dlgn/results/pilot_conv_cifar10_small_channel_spatial_seed1"
+    },
+    {
+      "name": "pilot_conv_cifar10_small_channel_spatial_seed2",
+      "family": "channel_spatial",
+      "seed": 2,
+      "config": "experiments/coverage_dlgn/configs/cifar10_conv_small_channel_spatial/pilot_conv_cifar10_small_channel_spatial_seed2.json",
+      "output": "experiments/coverage_dlgn/results/pilot_conv_cifar10_small_channel_spatial_seed2"
+    }
+  ]
+}

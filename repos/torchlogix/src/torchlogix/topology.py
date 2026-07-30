@@ -38,8 +38,12 @@ STRATEGY_ALIASES = {
     "semantic_balanced_hybrid": "semantic_balanced_hybrid",
     "semantic-classifier-hybrid": "semantic_classifier_hybrid",
     "semantic_classifier_hybrid": "semantic_classifier_hybrid",
+    "class-conditional-coverage": "class_conditional_coverage",
+    "class_conditional_coverage": "class_conditional_coverage",
     "semantic-channel-hybrid": "semantic_channel_hybrid",
     "semantic_channel_hybrid": "semantic_channel_hybrid",
+    "semantic-channel-spatial-hybrid": "semantic_channel_spatial_hybrid",
+    "semantic_channel_spatial_hybrid": "semantic_channel_spatial_hybrid",
     "ancestry-channel-hybrid": "ancestry_channel_hybrid",
     "ancestry_channel_hybrid": "ancestry_channel_hybrid",
     "coverage-reuse-hybrid": "coverage_reuse_hybrid",
@@ -1326,6 +1330,275 @@ def generate_coverage_reuse_conv_topology(
     )
 
 
+def class_conditional_refine(
+    base_indices: np.ndarray,
+    input_ancestry: np.ndarray,
+    *,
+    topology_seed: int = 0,
+    layer_index: int = 0,
+    change_fraction: float = 0.25,
+    candidate_pool_size: int = 8,
+    output_groups: int,
+) -> DenseTopologyResult:
+    """Balance source usage inside classifier groups with fixed-cost swaps.
+
+    The refinement exchanges predecessor occurrences between gates belonging
+    to different ``GroupSum`` classes.  Every accepted two-edge move preserves
+    the complete predecessor degree sequence, gate count, and LUT rank.  The
+    score rewards efficient within-gate ancestry union and sources that are
+    currently underused by the affected class.
+    """
+    started = time.perf_counter()
+    if not 0.0 <= change_fraction <= 1.0:
+        raise ValueError("class head change_fraction must be in [0, 1]")
+    if candidate_pool_size < 1:
+        raise ValueError("candidate_pool_size must be positive")
+    if output_groups < 2:
+        raise ValueError(
+            "class-conditional coverage requires at least two output groups"
+        )
+    indices = np.asarray(base_indices, dtype=np.int64).copy()
+    input_ancestry = np.asarray(input_ancestry, dtype=np.uint64)
+    if indices.ndim != 2 or indices.shape[0] != 2:
+        raise ValueError("class-conditional coverage requires rank-2 indices")
+    out_dim = indices.shape[1]
+    if out_dim < output_groups:
+        raise ValueError("out_dim must provide at least one gate per group")
+
+    active_packed = np.bitwise_or.reduce(input_ancestry, axis=0)
+    active_bits = np.unpackbits(
+        np.ascontiguousarray(active_packed).view(np.uint8),
+        bitorder="little",
+    ).astype(bool)
+    active_positions = np.flatnonzero(active_bits)
+    if not active_positions.size:
+        raise ValueError("input ancestry contains no active sources")
+
+    current_output = propagate_packed_ancestry(input_ancestry, indices)
+    current_bits = np.unpackbits(
+        np.ascontiguousarray(current_output).view(np.uint8),
+        axis=1,
+        bitorder="little",
+    )[:, active_positions].astype(np.uint8)
+    group_ids = np.minimum(
+        output_groups - 1,
+        np.arange(out_dim, dtype=np.int64) * output_groups // out_dim,
+    )
+    group_usage = np.zeros(
+        (output_groups, active_positions.size), dtype=np.int32
+    )
+    for group in range(output_groups):
+        group_usage[group] = current_bits[group_ids == group].sum(
+            axis=0, dtype=np.int32
+        )
+
+    pair_counts: dict[tuple[int, int], int] = {}
+    for left, right in indices.T:
+        key = (min(int(left), int(right)), max(int(left), int(right)))
+        pair_counts[key] = pair_counts.get(key, 0) + 1
+
+    def ancestry_and_bits(left: int, right: int) -> tuple[np.ndarray, np.ndarray]:
+        ancestry = np.bitwise_or(
+            input_ancestry[left], input_ancestry[right]
+        )
+        unpacked = np.unpackbits(
+            np.ascontiguousarray(ancestry).view(np.uint8),
+            bitorder="little",
+        )[active_positions].astype(np.uint8)
+        return ancestry, unpacked
+
+    def score(
+        left: int,
+        right: int,
+        *,
+        reference_usage: np.ndarray,
+    ) -> tuple[float, np.ndarray, np.ndarray]:
+        ancestry, bits = ancestry_and_bits(left, right)
+        intersection = np.bitwise_and(
+            input_ancestry[left], input_ancestry[right]
+        )
+        union_count = _single_popcount(ancestry)
+        input_mass = (
+            _single_popcount(input_ancestry[left])
+            + _single_popcount(input_ancestry[right])
+        )
+        union_efficiency = union_count / max(1, input_mass)
+        within_overlap = _single_popcount(intersection) / max(1, union_count)
+        selected = bits.astype(bool)
+        mean_usage = float(reference_usage.mean())
+        selected_usage = (
+            float(reference_usage[selected].mean())
+            if np.any(selected)
+            else mean_usage
+        )
+        # Positive when this ancestry selects sources used less frequently
+        # than the class average. The normalization makes the fixed weight
+        # transferable across class counts and network widths.
+        balance = (
+            1.0 - selected_usage / max(mean_usage, 1e-12)
+            if mean_usage
+            else 0.0
+        )
+        return (
+            union_efficiency - within_overlap + balance,
+            ancestry,
+            bits,
+        )
+
+    target_gates = min(out_dim, int(round(change_fraction * out_dim)))
+    target_gates -= target_gates % 2
+    changed = np.zeros(out_dim, dtype=bool)
+    seed = (
+        int(topology_seed)
+        + 0xD1B54A32D192ED03
+        + 0x9E3779B1 * int(layer_index)
+    ) % (1 << 63)
+    rng = np.random.default_rng(seed)
+    available = list(rng.permutation(out_dim)[:target_gates])
+    tolerance = 1e-12
+    while len(available) >= 2:
+        gate_a = int(available.pop())
+        group_a = int(group_ids[gate_a])
+        a, b = map(int, indices[:, gate_a])
+        usage_a_without = (
+            group_usage[group_a] - current_bits[gate_a].astype(np.int32)
+        )
+        old_score_a, _, _ = score(
+            a, b, reference_usage=usage_a_without
+        )
+        eligible_positions = [
+            position
+            for position, gate in enumerate(available)
+            if int(group_ids[gate]) != group_a
+        ]
+        if not eligible_positions:
+            continue
+        pool_count = min(candidate_pool_size, len(eligible_positions))
+        selected_positions = rng.choice(
+            len(eligible_positions), size=pool_count, replace=False
+        )
+        best = None
+        for selected_position in np.asarray(selected_positions).tolist():
+            pool_position = eligible_positions[selected_position]
+            gate_b = int(available[pool_position])
+            group_b = int(group_ids[gate_b])
+            c, d = map(int, indices[:, gate_b])
+            usage_b_without = (
+                group_usage[group_b]
+                - current_bits[gate_b].astype(np.int32)
+            )
+            old_score_b, _, _ = score(
+                c, d, reference_usage=usage_b_without
+            )
+            old_keys = [
+                (min(a, b), max(a, b)),
+                (min(c, d), max(c, d)),
+            ]
+            for proposed_a, proposed_b in (
+                ((a, d), (c, b)),
+                ((a, c), (b, d)),
+            ):
+                if (
+                    proposed_a[0] == proposed_a[1]
+                    or proposed_b[0] == proposed_b[1]
+                ):
+                    continue
+                new_keys = [
+                    tuple(sorted(proposed_a)),
+                    tuple(sorted(proposed_b)),
+                ]
+                if new_keys[0] == new_keys[1]:
+                    continue
+                if any(
+                    pair_counts.get(key, 0) - old_keys.count(key) > 0
+                    for key in new_keys
+                ):
+                    continue
+                new_score_a, ancestry_a, bits_a = score(
+                    *proposed_a, reference_usage=usage_a_without
+                )
+                new_score_b, ancestry_b, bits_b = score(
+                    *proposed_b, reference_usage=usage_b_without
+                )
+                improvement = (
+                    new_score_a + new_score_b - old_score_a - old_score_b
+                )
+                tie_key = (*proposed_a, *proposed_b, gate_b)
+                if improvement > tolerance and (
+                    best is None
+                    or improvement > best[0] + tolerance
+                    or (
+                        abs(improvement - best[0]) <= tolerance
+                        and tie_key < best[1]
+                    )
+                ):
+                    best = (
+                        improvement,
+                        tie_key,
+                        pool_position,
+                        gate_b,
+                        proposed_a,
+                        proposed_b,
+                        ancestry_a,
+                        ancestry_b,
+                        bits_a,
+                        bits_b,
+                        old_keys,
+                        new_keys,
+                    )
+        if best is None:
+            continue
+        (
+            _,
+            _,
+            pool_position,
+            gate_b,
+            proposed_a,
+            proposed_b,
+            ancestry_a,
+            ancestry_b,
+            bits_a,
+            bits_b,
+            old_keys,
+            new_keys,
+        ) = best
+        group_b = int(group_ids[gate_b])
+        available.pop(pool_position)
+        for key in old_keys:
+            pair_counts[key] -= 1
+        for key in new_keys:
+            pair_counts[key] = pair_counts.get(key, 0) + 1
+        group_usage[group_a] += (
+            bits_a.astype(np.int32) - current_bits[gate_a].astype(np.int32)
+        )
+        group_usage[group_b] += (
+            bits_b.astype(np.int32) - current_bits[gate_b].astype(np.int32)
+        )
+        indices[:, gate_a] = proposed_a
+        indices[:, gate_b] = proposed_b
+        current_output[gate_a] = ancestry_a
+        current_output[gate_b] = ancestry_b
+        current_bits[gate_a] = bits_a
+        current_bits[gate_b] = bits_b
+        changed[[gate_a, gate_b]] = True
+
+    temporary_bytes = (
+        input_ancestry.nbytes
+        + indices.nbytes
+        + current_output.nbytes
+        + current_bits.nbytes
+        + group_usage.nbytes
+        + changed.nbytes
+    )
+    return DenseTopologyResult(
+        indices=np.ascontiguousarray(indices),
+        output_ancestry=np.ascontiguousarray(current_output),
+        construction_seconds=time.perf_counter() - started,
+        temporary_bytes=int(temporary_bytes),
+        greedy_mask=changed,
+    )
+
+
 def generate_dense_topology(
     in_dim: int,
     out_dim: int,
@@ -1349,12 +1622,17 @@ def generate_dense_topology(
     novelty_weight: float = 1.0,
     reuse_change_fraction: float = 0.25,
     reuse_weight: float = 1.0,
+    class_balance_change_fraction: float = 0.25,
     allow_partial_input_coverage: bool = False,
 ) -> DenseTopologyResult:
     """Construct a fixed dense topology and its packed output ancestry."""
     started = time.perf_counter()
     strategy = canonical_strategy(strategy)
-    if strategy in {"semantic_channel_hybrid", "ancestry_channel_hybrid"}:
+    if strategy in {
+        "semantic_channel_hybrid",
+        "semantic_channel_spatial_hybrid",
+        "ancestry_channel_hybrid",
+    }:
         raise ValueError(
             f"{strategy} is a convolutional channel schedule; "
             "use semantic_balanced_hybrid for dense layers"
@@ -1372,6 +1650,7 @@ def generate_dense_topology(
         "coverage_hybrid",
         "semantic_balanced_hybrid",
         "semantic_classifier_hybrid",
+        "class_conditional_coverage",
         "coverage_reuse_hybrid",
     }:
         if lut_rank != 2:
@@ -1382,6 +1661,7 @@ def generate_dense_topology(
             if strategy in {
                 "semantic_balanced_hybrid",
                 "semantic_classifier_hybrid",
+                "class_conditional_coverage",
                 "coverage_reuse_hybrid",
             }
             and input_semantics is not None
@@ -1497,6 +1777,38 @@ def generate_dense_topology(
             novelty_weight=novelty_weight,
         )
         temporary_bytes = max(temporary_bytes, swap_bytes)
+    elif strategy == "class_conditional_coverage":
+        base = _butterfly_indices(
+            in_dim,
+            out_dim,
+            layer_index,
+            topology_seed,
+        )
+        base, _, base_bytes = _degree_preserving_coverage_swaps(
+            base,
+            input_ancestry,
+            rng=rng,
+            swap_fraction=swap_fraction,
+            candidate_pool_size=candidate_pool_size,
+            output_groups=output_groups,
+            novelty_weight=novelty_weight,
+        )
+        refined = class_conditional_refine(
+            base,
+            input_ancestry,
+            topology_seed=topology_seed,
+            layer_index=layer_index,
+            change_fraction=class_balance_change_fraction,
+            candidate_pool_size=candidate_pool_size,
+            output_groups=output_groups,
+        )
+        indices = refined.indices
+        greedy_mask = refined.greedy_mask
+        temporary_bytes = max(
+            temporary_bytes,
+            base_bytes,
+            refined.temporary_bytes,
+        )
     elif strategy == "coverage_reuse_hybrid":
         if input_semantics is not None:
             if input_semantics.n_inputs != in_dim:
@@ -1785,6 +2097,126 @@ def semantic_ancestry_metrics(
     }, output
 
 
+def classwise_ancestry_metrics(
+    input_ancestry: np.ndarray,
+    indices: np.ndarray | torch.Tensor,
+    *,
+    n_sources: int,
+    output_groups: int,
+    sample_count: int = 512,
+) -> dict[str, object]:
+    """Measure ancestry balance inside and between classifier groups.
+
+    ``GroupSum`` assigns contiguous output gates to classes.  Aggregate
+    coverage alone saturates easily, so this diagnostic also measures how
+    uniformly each class reuses the available sources and how redundant its
+    individual gate ancestries are.  It is analysis-only and never changes a
+    deployed topology.
+    """
+    if output_groups < 2:
+        raise ValueError("classwise diagnostics require at least two groups")
+    if sample_count < 1:
+        raise ValueError("sample_count must be positive")
+    if isinstance(indices, torch.Tensor):
+        indices = indices.detach().cpu().numpy()
+    indices = np.asarray(indices, dtype=np.int64)
+    output = propagate_packed_ancestry(input_ancestry, indices)
+    if n_sources > output.shape[1] * 64:
+        raise ValueError("n_sources exceeds the packed ancestry universe")
+
+    def jaccard(left: np.ndarray, right: np.ndarray) -> np.ndarray:
+        intersections = _row_popcount(np.bitwise_and(left, right)).astype(
+            np.float64
+        )
+        unions = _row_popcount(np.bitwise_or(left, right)).astype(np.float64)
+        return np.divide(
+            intersections,
+            unions,
+            out=np.zeros_like(intersections),
+            where=unions != 0,
+        )
+
+    per_group = []
+    group_rows = []
+    for group in range(output_groups):
+        start = group * output.shape[0] // output_groups
+        stop = (group + 1) * output.shape[0] // output_groups
+        rows = output[start:stop]
+        group_rows.append(rows)
+        unpacked = np.unpackbits(
+            np.ascontiguousarray(rows).view(np.uint8),
+            axis=1,
+            bitorder="little",
+        )[:, :n_sources]
+        usage = unpacked.sum(axis=0).astype(np.float64)
+        mean_usage = float(usage.mean())
+        if rows.shape[0] > 1:
+            count = min(sample_count, rows.shape[0] - 1)
+            positions = np.linspace(
+                0, rows.shape[0] - 2, count, dtype=np.int64
+            )
+            within = jaccard(rows[positions], rows[positions + 1])
+            within_mean = float(within.mean())
+        else:
+            within_mean = 0.0
+        per_group.append({
+            "group": group,
+            "gate_count": int(rows.shape[0]),
+            "coverage": float(np.mean(usage > 0)),
+            "usage_mean": mean_usage,
+            "usage_cv": (
+                float(usage.std() / mean_usage) if mean_usage else 0.0
+            ),
+            "usage_min": int(usage.min()),
+            "usage_max": int(usage.max()),
+            "within_group_jaccard": within_mean,
+            "distinct_ancestry_fraction": (
+                int(np.unique(rows, axis=0).shape[0]) / rows.shape[0]
+            ),
+        })
+
+    between_values = []
+    for group in range(output_groups):
+        left = group_rows[group]
+        right = group_rows[(group + 1) % output_groups]
+        count = min(sample_count, left.shape[0], right.shape[0])
+        left_positions = np.linspace(
+            0, left.shape[0] - 1, count, dtype=np.int64
+        )
+        right_positions = np.linspace(
+            0, right.shape[0] - 1, count, dtype=np.int64
+        )
+        between_values.extend(
+            jaccard(left[left_positions], right[right_positions]).tolist()
+        )
+
+    def values(key: str) -> np.ndarray:
+        return np.asarray([row[key] for row in per_group], dtype=np.float64)
+
+    coverage = values("coverage")
+    usage_cv = values("usage_cv")
+    within = values("within_group_jaccard")
+    distinct = values("distinct_ancestry_fraction")
+    return {
+        "n_sources": int(n_sources),
+        "output_groups": int(output_groups),
+        "gates_per_group_min": int(min(
+            row["gate_count"] for row in per_group
+        )),
+        "gates_per_group_max": int(max(
+            row["gate_count"] for row in per_group
+        )),
+        "class_coverage_mean": float(coverage.mean()),
+        "class_coverage_min": float(coverage.min()),
+        "class_source_usage_cv_mean": float(usage_cv.mean()),
+        "class_source_usage_cv_max": float(usage_cv.max()),
+        "within_class_jaccard_mean": float(within.mean()),
+        "between_class_jaccard_mean": float(np.mean(between_values)),
+        "class_distinct_ancestry_fraction_mean": float(distinct.mean()),
+        "per_group": per_group,
+    }
+
+
 def generate_dense_stack(
     n_original_inputs: int,
     widths: Sequence[int],
@@ -1917,12 +2349,12 @@ def analyze_model_topology(model: torch.nn.Module) -> list[dict[str, int | float
 def analyze_conv_channel_topology(
     model: torch.nn.Module,
 ) -> list[dict[str, int | float | str]]:
-    """Measure channel routing while treating spatial indexing as immutable.
+    """Measure channel routing and local receptive-field coverage.
 
     Each grouped TorchLogix convolution uses the same selected channels for all
-    sliding-window positions. Metrics therefore count one channel-group
-    occurrence per output kernel, while the spatial-coordinate hash verifies
-    that paired schedules leave the receptive-field samples unchanged.
+    sliding-window positions. Channel metrics therefore count one channel-group
+    occurrence per output kernel. Local spatial metrics use the first sliding
+    position, where coordinates equal the kernel-relative offsets.
     """
     layers = [
         module
@@ -1963,6 +2395,38 @@ def analyze_conv_channel_topology(
             np.abs(groups[:, 0] - groups[:, 1]).astype(np.float64)
             if groups.shape[1] == 2 else np.zeros(len(groups), dtype=np.float64)
         )
+        local = first_level[:, :, 0]
+        local_spatial = np.ascontiguousarray(local[..., :-1], dtype=np.int64)
+        kernel_spatial = np.transpose(
+            local_spatial,
+            (1, 0, 2, 3),
+        ).reshape(layer.num_kernels, -1, local_spatial.shape[-1])
+        spatial_unique = np.asarray([
+            np.unique(offsets, axis=0).shape[0]
+            for offsets in kernel_spatial
+        ], dtype=np.float64)
+        spatial_ids = np.ravel_multi_index(
+            kernel_spatial.reshape(-1, kernel_spatial.shape[-1]).T,
+            tuple(connections.receptive_field_size),
+        )
+        spatial_fanout = np.bincount(
+            spatial_ids,
+            minlength=math.prod(connections.receptive_field_size),
+        ).astype(np.float64)
+        spatial_fanout_mean = float(spatial_fanout.mean())
+        local_channels = local[..., -1]
+        cross_channel_leaf_fraction = (
+            float(np.mean(local_channels[0] != local_channels[1]))
+            if local_channels.shape[0] == 2 else 0.0
+        )
+        kernel_channel_spatial = np.transpose(
+            local,
+            (1, 0, 2, 3),
+        ).reshape(layer.num_kernels, -1, local.shape[-1])
+        channel_spatial_unique = np.asarray([
+            np.unique(leaves, axis=0).shape[0]
+            for leaves in kernel_channel_spatial
+        ], dtype=np.float64)
         spatial = np.ascontiguousarray(first_level[..., :-1], dtype=np.int64)
         tree_gates_per_kernel = sum(
             layer.lut_rank ** level for level in range(layer.tree_depth)
@@ -1998,6 +2462,21 @@ def analyze_conv_channel_topology(
             "channel_pair_span_mean": float(pair_span.mean()),
             "channel_pair_span_p50": float(np.quantile(pair_span, 0.5)),
             "channel_pair_span_p90": float(np.quantile(pair_span, 0.9)),
+            "cross_channel_leaf_pair_fraction": (
+                cross_channel_leaf_fraction
+            ),
+            "unique_spatial_offsets_mean": float(spatial_unique.mean()),
+            "unique_spatial_offsets_min": int(spatial_unique.min()),
+            "unique_channel_spatial_leaves_mean": float(
+                channel_spatial_unique.mean()
+            ),
+            "unique_channel_spatial_leaves_min": int(
+                channel_spatial_unique.min()
+            ),
+            "spatial_offset_fanout_cv": float(
+                spatial_fanout.std() / spatial_fanout_mean
+                if spatial_fanout_mean else 0.0
+            ),
             "spatial_coordinates_sha256": hashlib.sha256(
                 spatial.tobytes()
             ).hexdigest(),

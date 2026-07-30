@@ -1,0 +1,9 @@
+{
+  "cell": "table2_cifar10_m_mommen",
+  "test_set_used": true,
+  "expected_count": 1,
+  "completed_count": 1,
+  "return_code": 0,
+  "run": "final_table2_cifar10_m_mommen_nc8_seed0",
+  "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table2_m_mommen_final/test/final_table2_cifar10_m_mommen_nc8_seed0.test.log"
+}

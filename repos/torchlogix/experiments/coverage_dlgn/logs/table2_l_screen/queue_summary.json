@@ -1,0 +1,50 @@
+{
+  "phase": "table2_l_screen",
+  "wall_seconds": 3685.089180828014,
+  "skipped": [],
+  "finished": [
+    {
+      "name": "screen_table2_cifar10_l_random_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 390.0144420840079,
+      "log": "experiments/coverage_dlgn/logs/table2_l_screen/screen_table2_cifar10_l_random_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_l_v3_incumbent_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 620.0118800759956,
+      "log": "experiments/coverage_dlgn/logs/table2_l_screen/screen_table2_cifar10_l_v3_incumbent_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_l_v3_pool4_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 510.01306788099464,
+      "log": "experiments/coverage_dlgn/logs/table2_l_screen/screen_table2_cifar10_l_v3_pool4_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_l_v3_swap0500_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 855.0181620820076,
+      "log": "experiments/coverage_dlgn/logs/table2_l_screen/screen_table2_cifar10_l_v3_swap0500_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_l_v3_light_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 665.0142551690224,
+      "log": "experiments/coverage_dlgn/logs/table2_l_screen/screen_table2_cifar10_l_v3_light_seed0.log"
+    },
+    {
+      "name": "screen_table2_cifar10_l_v3_warp_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 645.0140225589857,
+      "log": "experiments/coverage_dlgn/logs/table2_l_screen/screen_table2_cifar10_l_v3_warp_seed0.log"
+    }
+  ],
+  "failed": []
+}

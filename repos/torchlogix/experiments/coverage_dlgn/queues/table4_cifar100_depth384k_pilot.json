@@ -1,0 +1,69 @@
+{
+  "phase": "table4_cifar100_depth384k_pilot",
+  "purpose": "paired seed-0 20K fixed-384K depth pilot",
+  "protocol": "experiments/coverage_dlgn/protocols/table4_dense_cifar100_depth384k.json",
+  "selection_metric": "best hardened validation accuracy",
+  "heldout_test_used": false,
+  "entries": [
+    {
+      "name": "pilot_table4_cifar100_384k_depth3_random_seed0",
+      "architecture_label": "depth3",
+      "depth": 3,
+      "width_per_layer": 128000,
+      "family": "random",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/table4_cifar100_depth384k_pilot/pilot_table4_cifar100_384k_depth3_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/pilot_table4_cifar100_384k_depth3_random_seed0"
+    },
+    {
+      "name": "pilot_table4_cifar100_384k_depth3_coverage_v3_seed0",
+      "architecture_label": "depth3",
+      "depth": 3,
+      "width_per_layer": 128000,
+      "family": "coverage_v3",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/table4_cifar100_depth384k_pilot/pilot_table4_cifar100_384k_depth3_coverage_v3_seed0.json",
+      "output": "experiments/coverage_dlgn/results/pilot_table4_cifar100_384k_depth3_coverage_v3_seed0"
+    },
+    {
+      "name": "pilot_table4_cifar100_384k_depth12_random_seed0",
+      "architecture_label": "depth12",
+      "depth": 12,
+      "width_per_layer": 32000,
+      "family": "random",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/table4_cifar100_depth384k_pilot/pilot_table4_cifar100_384k_depth12_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/pilot_table4_cifar100_384k_depth12_random_seed0"
+    },
+    {
+      "name": "pilot_table4_cifar100_384k_depth12_coverage_v3_seed0",
+      "architecture_label": "depth12",
+      "depth": 12,
+      "width_per_layer": 32000,
+      "family": "coverage_v3",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/table4_cifar100_depth384k_pilot/pilot_table4_cifar100_384k_depth12_coverage_v3_seed0.json",
+      "output": "experiments/coverage_dlgn/results/pilot_table4_cifar100_384k_depth12_coverage_v3_seed0"
+    },
+    {
+      "name": "pilot_table4_cifar100_384k_depth24_random_seed0",
+      "architecture_label": "depth24",
+      "depth": 24,
+      "width_per_layer": 16000,
+      "family": "random",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/table4_cifar100_depth384k_pilot/pilot_table4_cifar100_384k_depth24_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/pilot_table4_cifar100_384k_depth24_random_seed0"
+    },
+    {
+      "name": "pilot_table4_cifar100_384k_depth24_coverage_v3_seed0",
+      "architecture_label": "depth24",
+      "depth": 24,
+      "width_per_layer": 16000,
+      "family": "coverage_v3",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/table4_cifar100_depth384k_pilot/pilot_table4_cifar100_384k_depth24_coverage_v3_seed0.json",
+      "output": "experiments/coverage_dlgn/results/pilot_table4_cifar100_384k_depth24_coverage_v3_seed0"
+    }
+  ]
+}

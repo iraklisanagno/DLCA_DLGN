@@ -196,6 +196,9 @@ def get_model(thresholds, args):
                 args, "coverage_reuse_change_fraction", 0.25
             ),
             "reuse_weight": getattr(args, "coverage_reuse_weight", 1.0),
+            "class_balance_change_fraction": getattr(
+                args, "class_balance_change_fraction", 0.25
+            ),
             },
         "parametrization": args.parametrization,
         "parametrization_kwargs": {

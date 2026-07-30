@@ -1,0 +1,46 @@
+{
+  "cell": "table4_cifar100_deep_64k",
+  "test_set_used": true,
+  "expected_count": 6,
+  "completed_count": 6,
+  "failures": [],
+  "missing": [],
+  "records": [
+    {
+      "name": "final_table4_cifar100_64k_random_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table4_cifar100_deep_final/test/final_table4_cifar100_64k_random_seed0.test.log"
+    },
+    {
+      "name": "final_table4_cifar100_64k_random_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table4_cifar100_deep_final/test/final_table4_cifar100_64k_random_seed1.test.log"
+    },
+    {
+      "name": "final_table4_cifar100_64k_random_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table4_cifar100_deep_final/test/final_table4_cifar100_64k_random_seed2.test.log"
+    },
+    {
+      "name": "final_table4_cifar100_64k_v3_swap0125_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table4_cifar100_deep_final/test/final_table4_cifar100_64k_v3_swap0125_seed0.test.log"
+    },
+    {
+      "name": "final_table4_cifar100_64k_v3_swap0125_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table4_cifar100_deep_final/test/final_table4_cifar100_64k_v3_swap0125_seed1.test.log"
+    },
+    {
+      "name": "final_table4_cifar100_64k_v3_swap0125_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table4_cifar100_deep_final/test/final_table4_cifar100_64k_v3_swap0125_seed2.test.log"
+    }
+  ]
+}

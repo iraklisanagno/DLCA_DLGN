@@ -1,0 +1,32 @@
+{
+  "phase": "cifar10_medium_task_aware",
+  "protocol": "experiments/coverage_dlgn/protocols/cifar10_medium_task_aware.json",
+  "controls_reused_not_rerun": true,
+  "heldout_test_used": false,
+  "entries": [
+    {
+      "name": "pilot_cifar10_medium_v3_task_aware_seed0",
+      "family": "coverage_v3_task_aware",
+      "seed": 0,
+      "source_v3_config": "experiments/coverage_dlgn/configs/pilot_cifar10_medium_semantic_balanced_v3_seed0.json",
+      "config": "experiments/coverage_dlgn/configs/cifar10_medium_task_aware/pilot_cifar10_medium_v3_task_aware_seed0.json",
+      "output": "experiments/coverage_dlgn/results/pilot_cifar10_medium_v3_task_aware_seed0"
+    },
+    {
+      "name": "pilot_cifar10_medium_v3_task_aware_seed1",
+      "family": "coverage_v3_task_aware",
+      "seed": 1,
+      "source_v3_config": "experiments/coverage_dlgn/configs/pilot_cifar10_medium_semantic_balanced_v3_seed0.json",
+      "config": "experiments/coverage_dlgn/configs/cifar10_medium_task_aware/pilot_cifar10_medium_v3_task_aware_seed1.json",
+      "output": "experiments/coverage_dlgn/results/pilot_cifar10_medium_v3_task_aware_seed1"
+    },
+    {
+      "name": "pilot_cifar10_medium_v3_task_aware_seed2",
+      "family": "coverage_v3_task_aware",
+      "seed": 2,
+      "source_v3_config": "experiments/coverage_dlgn/configs/pilot_cifar10_medium_semantic_balanced_v3_seed0.json",
+      "config": "experiments/coverage_dlgn/configs/cifar10_medium_task_aware/pilot_cifar10_medium_v3_task_aware_seed2.json",
+      "output": "experiments/coverage_dlgn/results/pilot_cifar10_medium_v3_task_aware_seed2"
+    }
+  ]
+}

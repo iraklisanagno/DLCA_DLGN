@@ -1,0 +1,29 @@
+{
+  "phase": "cifar10_medium_task_aware",
+  "wall_seconds": 1170.022019319993,
+  "skipped": [],
+  "finished": [
+    {
+      "name": "pilot_cifar10_medium_v3_task_aware_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 585.0108339799917,
+      "log": "experiments/coverage_dlgn/logs/cifar10_medium_task_aware/pilot_cifar10_medium_v3_task_aware_seed0.log"
+    },
+    {
+      "name": "pilot_cifar10_medium_v3_task_aware_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 590.0113637450268,
+      "log": "experiments/coverage_dlgn/logs/cifar10_medium_task_aware/pilot_cifar10_medium_v3_task_aware_seed1.log"
+    },
+    {
+      "name": "pilot_cifar10_medium_v3_task_aware_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 585.0100189789664,
+      "log": "experiments/coverage_dlgn/logs/cifar10_medium_task_aware/pilot_cifar10_medium_v3_task_aware_seed2.log"
+    }
+  ],
+  "failed": []
+}

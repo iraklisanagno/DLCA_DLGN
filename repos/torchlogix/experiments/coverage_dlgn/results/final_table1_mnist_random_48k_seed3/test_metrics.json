@@ -1,0 +1,10 @@
+{
+  "checkpoint": "best_checkpoint.pt",
+  "test_examples": 10000,
+  "test_hard_accuracy": 0.9700999784469605,
+  "test_hard_loss": 0.09754234206513501,
+  "test_relaxed_accuracy": 0.9706999790668488,
+  "test_relaxed_loss": 0.09379003079899122,
+  "validation_hard_accuracy": 0.9714999705553055,
+  "validation_selection_step": 36000
+}

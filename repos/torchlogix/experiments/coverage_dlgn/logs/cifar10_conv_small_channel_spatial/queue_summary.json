@@ -1,0 +1,29 @@
+{
+  "phase": "cifar10_conv_small_channel_spatial",
+  "wall_seconds": 3090.080726545013,
+  "skipped": [],
+  "finished": [
+    {
+      "name": "pilot_conv_cifar10_small_channel_spatial_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 1030.027393421973,
+      "log": "experiments/coverage_dlgn/logs/cifar10_conv_small_channel_spatial/pilot_conv_cifar10_small_channel_spatial_seed0.log"
+    },
+    {
+      "name": "pilot_conv_cifar10_small_channel_spatial_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 1030.0292766050552,
+      "log": "experiments/coverage_dlgn/logs/cifar10_conv_small_channel_spatial/pilot_conv_cifar10_small_channel_spatial_seed1.log"
+    },
+    {
+      "name": "pilot_conv_cifar10_small_channel_spatial_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 1030.0180625010398,
+      "log": "experiments/coverage_dlgn/logs/cifar10_conv_small_channel_spatial/pilot_conv_cifar10_small_channel_spatial_seed2.log"
+    }
+  ],
+  "failed": []
+}

@@ -1,0 +1,204 @@
+{
+  "phase": "table2_compression_remaining_test",
+  "provenance": "OUR-FINAL",
+  "test_set_used": true,
+  "heldout_evaluation_count_per_checkpoint": 1,
+  "family_stats": {
+    "256k": {
+      "random": {
+        "mean": 0.5225333208839098,
+        "sample_std": 0.0005773496325545427,
+        "n": 3
+      },
+      "coverage_v3": {
+        "mean": 0.5690333193540573,
+        "sample_std": 0.0013428828113008365,
+        "n": 3
+      }
+    },
+    "384k": {
+      "random": {
+        "mean": 0.5365666541457177,
+        "sample_std": 0.003280752137757765,
+        "n": 3
+      },
+      "coverage_v3": {
+        "mean": 0.5814333202441533,
+        "sample_std": 0.0015307942641281768,
+        "n": 3
+      }
+    }
+  },
+  "paired_results": {
+    "256k": {
+      "per_seed_gain_pp": [
+        4.7799999713897705,
+        4.739999681711193,
+        4.42999988794327
+      ],
+      "paired_mean_gain_pp": 4.649999847014744,
+      "paired_95ci_pp": [
+        4.174107572783966,
+        5.125892121245522
+      ]
+    },
+    "384k": {
+      "per_seed_gain_pp": [
+        4.159999936819069,
+        4.3799998164176905,
+        4.92000007629394
+      ],
+      "paired_mean_gain_pp": 4.486666609843567,
+      "paired_95ci_pp": [
+        3.5152023015246594,
+        5.458130918162475
+      ]
+    }
+  },
+  "rows": [
+    {
+      "budget": "256k",
+      "family": "random",
+      "seed": 0,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/final_table2_cifar10_256k_random_seed0",
+      "validation_hard_accuracy": 0.5271999895572662,
+      "test_hard_accuracy": 0.5221999868750572,
+      "test_relaxed_accuracy": 0.5248999860882759,
+      "dense_gate_count": 256000,
+      "trainable_parameters": 4096000,
+      "deployed_routing_bits": 7936000
+    },
+    {
+      "budget": "256k",
+      "family": "random",
+      "seed": 1,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/final_table2_cifar10_256k_random_seed1",
+      "validation_hard_accuracy": 0.5339999860525131,
+      "test_hard_accuracy": 0.5221999889612198,
+      "test_relaxed_accuracy": 0.5216999885439872,
+      "dense_gate_count": 256000,
+      "trainable_parameters": 4096000,
+      "deployed_routing_bits": 7936000
+    },
+    {
+      "budget": "256k",
+      "family": "random",
+      "seed": 2,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/final_table2_cifar10_256k_random_seed2",
+      "validation_hard_accuracy": 0.5309999847412109,
+      "test_hard_accuracy": 0.5231999868154525,
+      "test_relaxed_accuracy": 0.5221999874711036,
+      "dense_gate_count": 256000,
+      "trainable_parameters": 4096000,
+      "deployed_routing_bits": 7936000
+    },
+    {
+      "budget": "256k",
+      "family": "coverage_v3",
+      "seed": 0,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/final_table2_cifar10_256k_v3_incumbent_seed0",
+      "validation_hard_accuracy": 0.5781999844312667,
+      "test_hard_accuracy": 0.5699999865889549,
+      "test_relaxed_accuracy": 0.5733999881148338,
+      "dense_gate_count": 256000,
+      "trainable_parameters": 4096000,
+      "deployed_routing_bits": 7936000
+    },
+    {
+      "budget": "256k",
+      "family": "coverage_v3",
+      "seed": 1,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/final_table2_cifar10_256k_v3_incumbent_seed1",
+      "validation_hard_accuracy": 0.5737999826669693,
+      "test_hard_accuracy": 0.5695999857783317,
+      "test_relaxed_accuracy": 0.5725999847054482,
+      "dense_gate_count": 256000,
+      "trainable_parameters": 4096000,
+      "deployed_routing_bits": 7936000
+    },
+    {
+      "budget": "256k",
+      "family": "coverage_v3",
+      "seed": 2,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/final_table2_cifar10_256k_v3_incumbent_seed2",
+      "validation_hard_accuracy": 0.5819999891519546,
+      "test_hard_accuracy": 0.5674999856948852,
+      "test_relaxed_accuracy": 0.5729999896883965,
+      "dense_gate_count": 256000,
+      "trainable_parameters": 4096000,
+      "deployed_routing_bits": 7936000
+    },
+    {
+      "budget": "384k",
+      "family": "random",
+      "seed": 0,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/final_table2_cifar10_384k_random_seed0",
+      "validation_hard_accuracy": 0.5517999845743179,
+      "test_hard_accuracy": 0.5380999881029129,
+      "test_relaxed_accuracy": 0.53839998960495,
+      "dense_gate_count": 384000,
+      "trainable_parameters": 6144000,
+      "deployed_routing_bits": 12480000
+    },
+    {
+      "budget": "384k",
+      "family": "random",
+      "seed": 1,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/final_table2_cifar10_384k_random_seed1",
+      "validation_hard_accuracy": 0.5467999875545502,
+      "test_hard_accuracy": 0.5387999871373177,
+      "test_relaxed_accuracy": 0.5383999872207642,
+      "dense_gate_count": 384000,
+      "trainable_parameters": 6144000,
+      "deployed_routing_bits": 12480000
+    },
+    {
+      "budget": "384k",
+      "family": "random",
+      "seed": 2,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/final_table2_cifar10_384k_random_seed2",
+      "validation_hard_accuracy": 0.5489999860525131,
+      "test_hard_accuracy": 0.5327999871969223,
+      "test_relaxed_accuracy": 0.5327999868988991,
+      "dense_gate_count": 384000,
+      "trainable_parameters": 6144000,
+      "deployed_routing_bits": 12480000
+    },
+    {
+      "budget": "384k",
+      "family": "coverage_v3",
+      "seed": 0,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/final_table2_cifar10_384k_v3_incumbent_seed0",
+      "validation_hard_accuracy": 0.594799987077713,
+      "test_hard_accuracy": 0.5796999874711036,
+      "test_relaxed_accuracy": 0.5811999872326851,
+      "dense_gate_count": 384000,
+      "trainable_parameters": 6144000,
+      "deployed_routing_bits": 12480000
+    },
+    {
+      "budget": "384k",
+      "family": "coverage_v3",
+      "seed": 1,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/final_table2_cifar10_384k_v3_incumbent_seed1",
+      "validation_hard_accuracy": 0.5959999877214431,
+      "test_hard_accuracy": 0.5825999853014946,
+      "test_relaxed_accuracy": 0.5826999855041504,
+      "dense_gate_count": 384000,
+      "trainable_parameters": 6144000,
+      "deployed_routing_bits": 12480000
+    },
+    {
+      "budget": "384k",
+      "family": "coverage_v3",
+      "seed": 2,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/final_table2_cifar10_384k_v3_incumbent_seed2",
+      "validation_hard_accuracy": 0.5885999876260758,
+      "test_hard_accuracy": 0.5819999879598617,
+      "test_relaxed_accuracy": 0.5824999886751175,
+      "dense_gate_count": 384000,
+      "trainable_parameters": 6144000,
+      "deployed_routing_bits": 12480000
+    }
+  ]
+}

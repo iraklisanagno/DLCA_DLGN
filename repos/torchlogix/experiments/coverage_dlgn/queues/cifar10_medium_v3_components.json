@@ -1,0 +1,51 @@
+{
+  "phase": "cifar10_medium_v3_components",
+  "purpose": "train only missing V3 component-ablation arms",
+  "protocol": "experiments/coverage_dlgn/protocols/cifar10_medium_v3_components.json",
+  "controls_reused_not_rerun": true,
+  "heldout_test_used": false,
+  "entries": [
+    {
+      "name": "ablate_cifar10_medium_balanced_butterfly_seed0",
+      "family": "balanced_butterfly",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/cifar10_medium_v3_components/ablate_cifar10_medium_balanced_butterfly_seed0.json",
+      "output": "experiments/coverage_dlgn/results/ablate_cifar10_medium_balanced_butterfly_seed0"
+    },
+    {
+      "name": "ablate_cifar10_medium_balanced_butterfly_seed1",
+      "family": "balanced_butterfly",
+      "seed": 1,
+      "config": "experiments/coverage_dlgn/configs/cifar10_medium_v3_components/ablate_cifar10_medium_balanced_butterfly_seed1.json",
+      "output": "experiments/coverage_dlgn/results/ablate_cifar10_medium_balanced_butterfly_seed1"
+    },
+    {
+      "name": "ablate_cifar10_medium_balanced_butterfly_seed2",
+      "family": "balanced_butterfly",
+      "seed": 2,
+      "config": "experiments/coverage_dlgn/configs/cifar10_medium_v3_components/ablate_cifar10_medium_balanced_butterfly_seed2.json",
+      "output": "experiments/coverage_dlgn/results/ablate_cifar10_medium_balanced_butterfly_seed2"
+    },
+    {
+      "name": "ablate_cifar10_medium_semantic_first_no_swaps_seed0",
+      "family": "semantic_first_no_swaps",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/cifar10_medium_v3_components/ablate_cifar10_medium_semantic_first_no_swaps_seed0.json",
+      "output": "experiments/coverage_dlgn/results/ablate_cifar10_medium_semantic_first_no_swaps_seed0"
+    },
+    {
+      "name": "ablate_cifar10_medium_semantic_first_no_swaps_seed1",
+      "family": "semantic_first_no_swaps",
+      "seed": 1,
+      "config": "experiments/coverage_dlgn/configs/cifar10_medium_v3_components/ablate_cifar10_medium_semantic_first_no_swaps_seed1.json",
+      "output": "experiments/coverage_dlgn/results/ablate_cifar10_medium_semantic_first_no_swaps_seed1"
+    },
+    {
+      "name": "ablate_cifar10_medium_semantic_first_no_swaps_seed2",
+      "family": "semantic_first_no_swaps",
+      "seed": 2,
+      "config": "experiments/coverage_dlgn/configs/cifar10_medium_v3_components/ablate_cifar10_medium_semantic_first_no_swaps_seed2.json",
+      "output": "experiments/coverage_dlgn/results/ablate_cifar10_medium_semantic_first_no_swaps_seed2"
+    }
+  ]
+}

@@ -228,6 +228,7 @@ class ClgnCifar10(torch.nn.Sequential):
         track_channel_ancestry = (
             conv_method in {
                 "semantic_channel_hybrid",
+                "semantic_channel_spatial_hybrid",
                 "ancestry_channel_hybrid",
                 "coverage_reuse_hybrid",
             }

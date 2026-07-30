@@ -38,7 +38,15 @@ class Dlgn(torch.nn.Sequential):
         binarization_module = setup_binarization(thresholds, binarization, **binarization_kwargs)
         layers = [binarization_module, torch.nn.Flatten()]
         connection_kwargs = dict(llkw.get("connections_kwargs") or {})
+        classifier_strategy_override = connection_kwargs.pop(
+            "classifier_init_method", None
+        )
         strategy = canonical_strategy(connection_kwargs.get("init_method", "random"))
+        classifier_strategy = (
+            canonical_strategy(classifier_strategy_override)
+            if classifier_strategy_override is not None
+            else None
+        )
         semantics = None
         if input_shape is not None:
             channels, height, width = input_shape
@@ -61,6 +69,10 @@ class Dlgn(torch.nn.Sequential):
                 "coverage_hybrid",
                 "semantic_balanced_hybrid",
             }
+            or (
+                llkw.get("connections", "fixed") == "fixed"
+                and classifier_strategy == "class_conditional_coverage"
+            )
         )
         if track_ancestry and self.n_learnable_layers:
             raise ValueError("Coverage-aware fixed topology cannot follow a learnable connection layer")
@@ -76,6 +88,8 @@ class Dlgn(torch.nn.Sequential):
             layer_in_dim = in_dim if i == 0 else neurons_per_layer[i - 1]
             layer_kwargs = dict(llkw)
             layer_connections_kwargs = dict(connection_kwargs)
+            if classifier_strategy is not None and i == n_layers - 1:
+                layer_connections_kwargs["init_method"] = classifier_strategy
             layer_connections_kwargs["layer_index"] = i
             if track_ancestry:
                 layer_connections_kwargs["input_ancestry"] = ancestry
@@ -758,6 +772,114 @@ class DlgnCifar100BitLogicL(DlgnCifar100BitLogic):
     """Two-by-64K rank-2 gates: 128K total gates."""
 
     width = 64_000
+
+
+class DlgnCifar100Scalability64k(Dlgn):
+    """Six-by-64K dense CIFAR-100 DLGN from the scalability study.
+
+    The architecture uses three uniform thermometer thresholds per RGB
+    channel and the paper's GroupSum temperature of 10.
+    """
+
+    n_input_bits = 3
+    n_learnable_layers = 0
+
+    def __init__(self, **llkw):
+        tau = llkw.get("tau", 10.0)
+        super().__init__(
+            in_dim=3 * 32 * 32 * self.n_input_bits,
+            n_layers=6,
+            neurons_per_layer=64_000,
+            class_count=100,
+            tau=tau,
+            input_shape=(3, 32, 32),
+            input_layout="channel_interleaved",
+            **llkw,
+        )
+
+
+class DlgnCifar100Budget384kDepth3(Dlgn):
+    """Three-by-128K CIFAR-100 depth control at 384K total gates."""
+
+    n_input_bits = 3
+    n_learnable_layers = 0
+
+    def __init__(self, **llkw):
+        tau = llkw.get("tau", 10.0)
+        super().__init__(
+            in_dim=3 * 32 * 32 * self.n_input_bits,
+            n_layers=3,
+            neurons_per_layer=128_000,
+            class_count=100,
+            tau=tau,
+            input_shape=(3, 32, 32),
+            input_layout="channel_interleaved",
+            **llkw,
+        )
+
+
+class DlgnCifar100Budget384kDepth12(Dlgn):
+    """Twelve-by-32K CIFAR-100 depth control at 384K total gates."""
+
+    n_input_bits = 3
+    n_learnable_layers = 0
+
+    def __init__(self, **llkw):
+        tau = llkw.get("tau", 10.0)
+        super().__init__(
+            in_dim=3 * 32 * 32 * self.n_input_bits,
+            n_layers=12,
+            neurons_per_layer=32_000,
+            class_count=100,
+            tau=tau,
+            input_shape=(3, 32, 32),
+            input_layout="channel_interleaved",
+            **llkw,
+        )
+
+
+class DlgnCifar100Budget384kDepth24(Dlgn):
+    """Twenty-four-by-16K CIFAR-100 depth control at 384K total gates."""
+
+    n_input_bits = 3
+    n_learnable_layers = 0
+
+    def __init__(self, **llkw):
+        tau = llkw.get("tau", 10.0)
+        super().__init__(
+            in_dim=3 * 32 * 32 * self.n_input_bits,
+            n_layers=24,
+            neurons_per_layer=16_000,
+            class_count=100,
+            tau=tau,
+            input_shape=(3, 32, 32),
+            input_layout="channel_interleaved",
+            **llkw,
+        )
+
+
+class DlgnCifar100Multilinear256k(Dlgn):
+    """Six-by-256K dense CIFAR-100 DLGN from the multilinear study.
+
+    The published coordinate uses 31 equally spaced thermometer thresholds
+    per RGB channel and a GroupSum temperature of 1.
+    """
+
+    n_input_bits = 31
+    n_learnable_layers = 0
+
+    def __init__(self, **llkw):
+        tau = llkw.get("tau", 1.0)
+        super().__init__(
+            in_dim=3 * 32 * 32 * self.n_input_bits,
+            n_layers=6,
+            neurons_per_layer=256_000,
+            class_count=100,
+            tau=tau,
+            input_shape=(3, 32, 32),
+            input_layout="channel_interleaved",
+            **llkw,
+        )
 
 
 class DlgnJsc(Dlgn):

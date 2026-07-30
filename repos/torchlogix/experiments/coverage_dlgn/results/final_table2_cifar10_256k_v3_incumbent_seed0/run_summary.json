@@ -1,0 +1,72 @@
+{
+  "wall_seconds": 1154.728723459004,
+  "best_validation_hard_accuracy": 0.5781999844312667,
+  "final_metrics": {
+    "val_loss_discrete": 1.2110544013977051,
+    "val_acc_discrete": 0.5751999872922897,
+    "val_loss_relaxed": 1.2085975527763366,
+    "val_acc_relaxed": 0.5753999882936478,
+    "train_loss": 0.180283447265625,
+    "connections_temperature": 0.001,
+    "parametrization_temperature": 1.0
+  },
+  "peak_gpu_memory_bytes": 603302400,
+  "topology": [
+    {
+      "strategy": "semantic_balanced_hybrid",
+      "topology_seed": 0,
+      "layer_index": 0,
+      "construction_seconds": 2.725307500004419,
+      "generator_temporary_bytes": 29138944,
+      "swap_fraction": 0.0,
+      "output_groups": 1,
+      "novelty_weight": 1.0,
+      "reuse_change_fraction": 0.25,
+      "reuse_weight": 1.0
+    },
+    {
+      "strategy": "semantic_balanced_hybrid",
+      "topology_seed": 0,
+      "layer_index": 1,
+      "construction_seconds": 18.599091506999684,
+      "generator_temporary_bytes": 50176000,
+      "swap_fraction": 0.25,
+      "output_groups": 1,
+      "novelty_weight": 1.0,
+      "reuse_change_fraction": 0.25,
+      "reuse_weight": 1.0
+    },
+    {
+      "strategy": "semantic_balanced_hybrid",
+      "topology_seed": 0,
+      "layer_index": 2,
+      "construction_seconds": 16.704032976995222,
+      "generator_temporary_bytes": 50176000,
+      "swap_fraction": 0.25,
+      "output_groups": 1,
+      "novelty_weight": 1.0,
+      "reuse_change_fraction": 0.25,
+      "reuse_weight": 1.0
+    },
+    {
+      "strategy": "semantic_balanced_hybrid",
+      "topology_seed": 0,
+      "layer_index": 3,
+      "construction_seconds": 12.495244402991375,
+      "generator_temporary_bytes": 50176000,
+      "swap_fraction": 0.25,
+      "output_groups": 10,
+      "novelty_weight": 1.0,
+      "reuse_change_fraction": 0.25,
+      "reuse_weight": 1.0
+    }
+  ],
+  "cost": {
+    "dense_gate_count": 256000,
+    "trainable_parameters": 4096000,
+    "training_routing_parameters": 0,
+    "deployed_routing_bits": 7936000,
+    "deployed_routing_bytes_packed": 992000,
+    "candidate_indices_tensor_bytes": 4096000
+  }
+}

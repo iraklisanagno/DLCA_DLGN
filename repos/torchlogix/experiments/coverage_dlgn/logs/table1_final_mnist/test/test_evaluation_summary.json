@@ -1,0 +1,160 @@
+{
+  "cell": "mnist",
+  "test_set_used": true,
+  "expected_count": 25,
+  "completed_count": 25,
+  "failures": [],
+  "missing": [],
+  "records": [
+    {
+      "name": "final_table1_mnist_bitlogic_48k_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/test/final_table1_mnist_bitlogic_48k_seed0.test.log"
+    },
+    {
+      "name": "final_table1_mnist_bitlogic_48k_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/test/final_table1_mnist_bitlogic_48k_seed1.test.log"
+    },
+    {
+      "name": "final_table1_mnist_bitlogic_48k_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/test/final_table1_mnist_bitlogic_48k_seed2.test.log"
+    },
+    {
+      "name": "final_table1_mnist_bitlogic_48k_seed3",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/test/final_table1_mnist_bitlogic_48k_seed3.test.log"
+    },
+    {
+      "name": "final_table1_mnist_bitlogic_48k_seed4",
+      "gpu": 0,
+      "return_code": 0,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/test/final_table1_mnist_bitlogic_48k_seed4.test.log"
+    },
+    {
+      "name": "final_table1_mnist_lilogic_top32_depth3_tau15_48k_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/test/final_table1_mnist_lilogic_top32_depth3_tau15_48k_seed0.test.log"
+    },
+    {
+      "name": "final_table1_mnist_lilogic_top32_depth3_tau15_48k_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/test/final_table1_mnist_lilogic_top32_depth3_tau15_48k_seed1.test.log"
+    },
+    {
+      "name": "final_table1_mnist_lilogic_top32_depth3_tau15_48k_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/test/final_table1_mnist_lilogic_top32_depth3_tau15_48k_seed2.test.log"
+    },
+    {
+      "name": "final_table1_mnist_lilogic_top32_depth3_tau15_48k_seed3",
+      "gpu": 0,
+      "return_code": 0,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/test/final_table1_mnist_lilogic_top32_depth3_tau15_48k_seed3.test.log"
+    },
+    {
+      "name": "final_table1_mnist_lilogic_top32_depth3_tau15_48k_seed4",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/test/final_table1_mnist_lilogic_top32_depth3_tau15_48k_seed4.test.log"
+    },
+    {
+      "name": "final_table1_mnist_mommen_nc16_depth2_48k_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/test/final_table1_mnist_mommen_nc16_depth2_48k_seed0.test.log"
+    },
+    {
+      "name": "final_table1_mnist_mommen_nc16_depth2_48k_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/test/final_table1_mnist_mommen_nc16_depth2_48k_seed1.test.log"
+    },
+    {
+      "name": "final_table1_mnist_mommen_nc16_depth2_48k_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/test/final_table1_mnist_mommen_nc16_depth2_48k_seed2.test.log"
+    },
+    {
+      "name": "final_table1_mnist_mommen_nc16_depth2_48k_seed3",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/test/final_table1_mnist_mommen_nc16_depth2_48k_seed3.test.log"
+    },
+    {
+      "name": "final_table1_mnist_mommen_nc16_depth2_48k_seed4",
+      "gpu": 0,
+      "return_code": 0,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/test/final_table1_mnist_mommen_nc16_depth2_48k_seed4.test.log"
+    },
+    {
+      "name": "final_table1_mnist_random_48k_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/test/final_table1_mnist_random_48k_seed0.test.log"
+    },
+    {
+      "name": "final_table1_mnist_random_48k_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/test/final_table1_mnist_random_48k_seed1.test.log"
+    },
+    {
+      "name": "final_table1_mnist_random_48k_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/test/final_table1_mnist_random_48k_seed2.test.log"
+    },
+    {
+      "name": "final_table1_mnist_random_48k_seed3",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/test/final_table1_mnist_random_48k_seed3.test.log"
+    },
+    {
+      "name": "final_table1_mnist_random_48k_seed4",
+      "gpu": 0,
+      "return_code": 0,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/test/final_table1_mnist_random_48k_seed4.test.log"
+    },
+    {
+      "name": "final_table1_mnist_v3_incumbent_48k_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/test/final_table1_mnist_v3_incumbent_48k_seed0.test.log"
+    },
+    {
+      "name": "final_table1_mnist_v3_incumbent_48k_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/test/final_table1_mnist_v3_incumbent_48k_seed1.test.log"
+    },
+    {
+      "name": "final_table1_mnist_v3_incumbent_48k_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/test/final_table1_mnist_v3_incumbent_48k_seed2.test.log"
+    },
+    {
+      "name": "final_table1_mnist_v3_incumbent_48k_seed3",
+      "gpu": 0,
+      "return_code": 0,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/test/final_table1_mnist_v3_incumbent_48k_seed3.test.log"
+    },
+    {
+      "name": "final_table1_mnist_v3_incumbent_48k_seed4",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/test/final_table1_mnist_v3_incumbent_48k_seed4.test.log"
+    }
+  ]
+}

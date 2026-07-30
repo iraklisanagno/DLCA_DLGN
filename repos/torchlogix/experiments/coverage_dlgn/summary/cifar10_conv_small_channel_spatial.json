@@ -1,0 +1,74 @@
+{
+  "phase": "cifar10_conv_small_channel_spatial",
+  "dataset": "cifar-10",
+  "architecture": "ClgnCifar10PaperSmall",
+  "metric": "best hardened validation accuracy",
+  "heldout_test_used": false,
+  "controls_reused_not_rerun": true,
+  "per_seed_percent": {
+    "random": [
+      56.10000000000001,
+      57.4,
+      56.52
+    ],
+    "frozen_v4": [
+      57.599999999999994,
+      57.8,
+      56.16
+    ],
+    "channel_spatial": [
+      56.26,
+      58.160000000000004,
+      56.68
+    ]
+  },
+  "mean_percent": {
+    "random": 56.67333333333334,
+    "frozen_v4": 57.18666666666666,
+    "channel_spatial": 57.03333333333333
+  },
+  "paired_effects": {
+    "channel_spatial_minus_random": {
+      "paired_differences_percentage_points": [
+        0.15999999999998948,
+        0.7600000000000051,
+        0.1599999999999966
+      ],
+      "paired_mean_percentage_points": 0.35999999999999704,
+      "paired_std_percentage_points": 0.34641016151378246,
+      "paired_t95_ci_percentage_points": [
+        -0.5005305459498204,
+        1.2205305459498146
+      ]
+    },
+    "channel_spatial_minus_frozen_v4": {
+      "paired_differences_percentage_points": [
+        -1.3399999999999963,
+        0.36000000000000654,
+        0.5200000000000031
+      ],
+      "paired_mean_percentage_points": -0.15333333333332888,
+      "paired_std_percentage_points": 1.0307925753192708,
+      "paired_t95_ci_percentage_points": [
+        -2.7139640426758973,
+        2.4072973760092395
+      ]
+    }
+  },
+  "promotion_gate": {
+    "required_gain_over_random_percentage_points": 2.0,
+    "required_gain_over_frozen_v4_percentage_points": 1.0,
+    "passes_random_gate": false,
+    "passes_v4_gate": false,
+    "promote_to_medium": false
+  },
+  "cost": {
+    "additional_trainable_parameters": 0,
+    "additional_deployed_gates": 0,
+    "additional_deployed_routing_entries": 0
+  },
+  "frozen_method_policy": {
+    "v3_changed": false,
+    "v4_changed": false
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "cell": "table2_cifar10_l",
+  "test_set_used": true,
+  "expected_count": 11,
+  "completed_count": 11,
+  "failures": [],
+  "missing": [],
+  "records": [
+    {
+      "name": "final_table2_cifar10_l_mommen_nc8_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table2_l_final/test/final_table2_cifar10_l_mommen_nc8_seed0.test.log"
+    },
+    {
+      "name": "final_table2_cifar10_l_random_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table2_l_final/test/final_table2_cifar10_l_random_seed0.test.log"
+    },
+    {
+      "name": "final_table2_cifar10_l_random_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table2_l_final/test/final_table2_cifar10_l_random_seed1.test.log"
+    },
+    {
+      "name": "final_table2_cifar10_l_random_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table2_l_final/test/final_table2_cifar10_l_random_seed2.test.log"
+    },
+    {
+      "name": "final_table2_cifar10_l_random_seed3",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table2_l_final/test/final_table2_cifar10_l_random_seed3.test.log"
+    },
+    {
+      "name": "final_table2_cifar10_l_random_seed4",
+      "gpu": 0,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table2_l_final/test/final_table2_cifar10_l_random_seed4.test.log"
+    },
+    {
+      "name": "final_table2_cifar10_l_v3_swap0500_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table2_l_final/test/final_table2_cifar10_l_v3_swap0500_seed0.test.log"
+    },
+    {
+      "name": "final_table2_cifar10_l_v3_swap0500_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table2_l_final/test/final_table2_cifar10_l_v3_swap0500_seed1.test.log"
+    },
+    {
+      "name": "final_table2_cifar10_l_v3_swap0500_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table2_l_final/test/final_table2_cifar10_l_v3_swap0500_seed2.test.log"
+    },
+    {
+      "name": "final_table2_cifar10_l_v3_swap0500_seed3",
+      "gpu": 0,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table2_l_final/test/final_table2_cifar10_l_v3_swap0500_seed3.test.log"
+    },
+    {
+      "name": "final_table2_cifar10_l_v3_swap0500_seed4",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table2_l_final/test/final_table2_cifar10_l_v3_swap0500_seed4.test.log"
+    }
+  ]
+}

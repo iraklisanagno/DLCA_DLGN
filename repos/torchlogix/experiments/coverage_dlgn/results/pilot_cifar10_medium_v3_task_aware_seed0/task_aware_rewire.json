@@ -1,0 +1,53 @@
+{
+  "step": 10000,
+  "calibration_batches": 1,
+  "calibration_examples": 100,
+  "uses_ordinary_training_batch": true,
+  "extra_optimizer_steps": 0,
+  "layers": [
+    {
+      "layer_index": 0,
+      "changed_gates": 15456,
+      "eligible_gates": 16000,
+      "accepted_swaps": 7728,
+      "score_improvement": 3294.0883277961034,
+      "construction_seconds": 0.7648140169912949,
+      "predecessor_degree_preserved": true,
+      "before_indices_sha256": "ba0938a76750b9d1fe6b3d75af285cc139b5263b0d5f85d7f6c17622cfe2a2bd",
+      "after_indices_sha256": "d36c3517e78cf80c0c0e513e125b69cb9a2e4cb9a62113cc1f68c3384cbd06de"
+    },
+    {
+      "layer_index": 1,
+      "changed_gates": 14654,
+      "eligible_gates": 16000,
+      "accepted_swaps": 7327,
+      "score_improvement": 3459.1805398426136,
+      "construction_seconds": 0.7953143899794668,
+      "predecessor_degree_preserved": true,
+      "before_indices_sha256": "b3073af1c27b6f90bab946eb9ac9713724cfd7bfdad66932859da775b5d1b9ce",
+      "after_indices_sha256": "d226bca6c317fab35d19f164bfbfe5aecaecd5f41f4474001dcbe63f8a59b637"
+    },
+    {
+      "layer_index": 2,
+      "changed_gates": 14300,
+      "eligible_gates": 16000,
+      "accepted_swaps": 7150,
+      "score_improvement": 2836.88315221675,
+      "construction_seconds": 0.8232096469728276,
+      "predecessor_degree_preserved": true,
+      "before_indices_sha256": "9541801b4c0f88af3e3a958081f910cf51854d1742c64eda6b69aff46abd581a",
+      "after_indices_sha256": "64989fa4f37582de9036c170f894550d1b3ac497766c1c2a90b8c1f495ecf091"
+    },
+    {
+      "layer_index": 3,
+      "changed_gates": 13408,
+      "eligible_gates": 16000,
+      "accepted_swaps": 6704,
+      "score_improvement": 1774.1990264611059,
+      "construction_seconds": 0.8511562470230274,
+      "predecessor_degree_preserved": true,
+      "before_indices_sha256": "957572bdadb97e7b5a88db404eb71a040a22acc8821aa18506e514d6b8d66ac9",
+      "after_indices_sha256": "ac21b2b9162d42239984956826564202e63985bffb8d0a1753143bf9ca60cf52"
+    }
+  ]
+}

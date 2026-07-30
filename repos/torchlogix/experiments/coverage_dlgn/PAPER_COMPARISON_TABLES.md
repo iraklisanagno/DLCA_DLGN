@@ -129,8 +129,8 @@ Source: `summary/table2_l_selection.json`.
 The full 108K five-seed validation confirms the primary result: raw V3
 reached 61.748% versus 56.468% raw random. Every paired difference is
 positive; the mean gain is +5.280 pp with a 95% Student-t interval of
-[+4.843, +5.717]. The held-out test remains locked until the one-seed L
-Mommen comparator is completed and all validation checkpoints are committed.
+[+4.843, +5.717]. The held-out test remained locked until the one-seed L
+Mommen comparator was completed and all validation checkpoints were committed.
 The completed one-seed Mommen adaptation reached 54.340% validation in
 13.39 hours, below both fixed random and V3, while adding 20.48M
 training-only routing parameters. It is retained as `[TRIED, n=1]` and is not
@@ -146,8 +146,33 @@ on test again.
 | Target gates | Random screen | Best CoverageDLGN screen | Paired 20K selection | Full 108K validation | Held-out test |
 |---:|---:|---:|---|---|---|
 | 128K | [TRIED] 49.780% | [TRIED] 54.300% (raw, pool 4) | [TRIED] raw swap 0.50: 54.853% vs random 50.000% (n=3) | [OUR-FINAL] 55.140% vs [REPRODUCED] 50.760% (n=5, +4.380 pp) | **[OUR-FINAL] 53.910% vs [REPRODUCED] 49.748% (n=5, +4.162 pp, 95% CI [+3.759, +4.565])** |
-| 256K | [TRIED] 51.600% | [TRIED] 55.940% (three-way raw tie) | [TRIED] raw incumbent: 57.513% vs random 52.567% (n=3) | **[TRIED] 57.800% vs 53.073% (n=3, +4.727 pp, 95% CI [+3.120, +6.333])** | [PENDING] |
-| 384K | [TRIED] 52.280% | [TRIED] 57.520% (WARP) | [TRIED] raw incumbent: 58.980% vs random 54.400% (n=3) | **[TRIED] 59.313% vs 54.920% (n=3, +4.393 pp, 95% CI [+3.184, +5.603])** | [PENDING] |
+| 256K | [TRIED] 51.600% | [TRIED] 55.940% (three-way raw tie) | [TRIED] raw incumbent: 57.513% vs random 52.567% (n=3) | **[TRIED] 57.800% vs 53.073% (n=3, +4.727 pp, 95% CI [+3.120, +6.333])** | **[OUR-FINAL] 56.903 +/- 0.134% vs [REPRODUCED] 52.253 +/- 0.058% (n=3, +4.650 pp, 95% CI [+4.174, +5.126])** |
+| 384K | [TRIED] 52.280% | [TRIED] 57.520% (WARP) | [TRIED] raw incumbent: 58.980% vs random 54.400% (n=3) | **[TRIED] 59.313% vs 54.920% (n=3, +4.393 pp, 95% CI [+3.184, +5.603])** | **[OUR-FINAL] 58.143 +/- 0.153% vs [REPRODUCED] 53.657 +/- 0.328% (n=3, +4.487 pp, 95% CI [+3.515, +5.458])** |
+
+The frozen 256K and 384K checkpoints were evaluated exactly once on held-out
+test on July 29, 2026. All 12 evaluations completed successfully; these
+checkpoints are now closed to further test queries. Machine-readable source:
+`summary/table2_cifar10_compression_remaining_test.json`.
+
+### CIFAR-10 M mechanism ablation
+
+The paired three-seed, 20K component study reused the existing random and full
+V3 controls and trained only the two missing arms:
+
+| Component arm | Validation accuracy | Paired incremental effect |
+|---|---:|---:|
+| Fixed random | 54.820 +/- 0.530% | reference |
+| Balanced butterfly fan-out | 58.980 +/- 0.548% | +4.160 pp over random, 95% CI [+3.988, +4.332] |
+| Semantic first layer, no ancestry swaps | 59.253 +/- 0.153% | +0.273 pp, 95% CI [-0.780, +1.326] |
+| Full frozen V3 | 59.293 +/- 0.214% | +0.040 pp from ancestry swaps, 95% CI [-0.434, +0.514] |
+
+Full V3 remains +4.473 pp over random (95% CI [+3.624, +5.323]), but balanced
+fan-out accounts for most of that gain at this coordinate. A separate
+task-aware one-shot extension reached 59.093 +/- 0.234%: +4.273 pp over
+random but -0.200 pp versus V3. It failed the frozen promotion gate and was
+not evaluated on held-out test. Sources:
+`summary/cifar10_medium_v3_components.json` and
+`summary/cifar10_medium_task_aware.json`.
 
 The screen and selection machine-readable sources are
 `summary/table2_cifar10_compression_screen.json` and
@@ -174,6 +199,8 @@ operation accounting.
 |  | 0.40M | Light/IWP-LogicTreeNet | [PENDING] / [N/A] | Exact adaptation; no published S result |
 |  | 0.40M | WARP-LogicTreeNet | [PENDING] / [N/A] | Exact adaptation; no published S result |
 |  | **0.40M** | **CoverageDLGN-Channel** | [TRIED] 56.37% pilot / [N/A] | Exact architecture; pilot is short |
+|  | **0.40M** | **Balanced channel, no swaps** | [TRIED-SELECTION] 58.01% validation / [N/A] | Three seeds; +1.34 pp over random, CI crosses zero; no test query |
+|  | **0.40M** | **Channel-spatial leaf pairing** | [TRIED-STOPPED] 57.03% validation / [N/A] | Three seeds; -0.15 pp vs V4; failed both promotion gates |
 | LogicTreeNet-M | 3.08M | Original fixed routing | [PENDING] / **[REPORTED] 71.01%** | Exact architecture |
 |  | 3.08M | Two-stage unit tying, 30% | [PENDING] / [REPORTED] 70.77 +/- 0.07% | Exact M; approximately 0.70 x after tying |
 |  | approximately 3.08M | Scalability-boundaries CDLGN-M | [N/A] / [REPORTED] 65.23% | Minimally modified M protocol |
@@ -232,10 +259,62 @@ Additional reported-only dense CIFAR-100 references:
 
 | Method | Accuracy | Gates or parameters | Status |
 |---|---:|---:|---|
-| Scalability-boundaries dense DLGN | [REPORTED] 22.54 +/- 0.26% | 6 x 64K = 384K gates | Reported only |
-| Multilinear Soft-Mix | [REPORTED] 27.92 +/- 0.43% | 6 x 256K = 1.536M gates; 16 parameters/gate | Reported only |
+| Scalability-boundaries dense DLGN | **[REPRODUCED, topology-adapted] 20.677 +/- 0.522% test (n=3)** / [REPORTED] 22.54 +/- 0.26% | 6 x 64K = 384K gates; 6.144M trainable LUT parameters | Exact architecture/schedule; independent TorchLogix routing differs from canonical difflogic generator; see `CIFAR100_BASELINE_AUDIT.md` |
+| **CoverageDLGN V3** | **[OUR-FINAL] 21.010 +/- 0.131% test (n=3)** / [N/A] | **6 x 64K = 384K gates; 6.144M trainable LUT parameters** | Frozen V3 `swap_fraction=0.125`; paired +0.333 pp, 95% CI [-0.816, +1.483]; one-time held-out test |
+| V3 + class-conditional head | [TRIED] 21.593 +/- 0.133% validation at 20K / [N/A] | 6 x 64K = 384K gates; 6.144M trainable LUT parameters | Validation-only negative result; +0.013 pp over V3 and +0.553 pp over random; no held-out test |
+| Multilinear Soft-Mix | [TRIED] 11.680% validation at 5K (random); best frozen V3 11.060% / [REPORTED] 27.92 +/- 0.43% | 6 x 256K = 1.536M gates; 24.576M trainable LUT parameters | Exact 31-threshold architecture; screen only, not comparable to the reported full result |
 | Multilinear-CovJac | [REPORTED] 28.37 +/- 0.22% | 1.536M gates; 4 parameters/gate | Reported only |
 | Multilinear-CovJac large | [REPORTED] 32.72 +/- 0.09% | 6 x 1.28M = 7.68M gates; 4 parameters/gate | Reported only |
+
+The deep 6-by-64K screen selected the existing V3
+`swap_fraction=0.125` control at +0.640 pp. Its three-seed 20K confirmation
+was +0.540 pp, with all three paired point estimates nonnegative, and thus
+authorized the full paper-length run. Full validation was 21.577 +/- 0.067%
+for V3 versus 20.943 +/- 0.311% for random (+0.633 pp). The locked
+best-validation checkpoints were then evaluated once on the held-out test
+set, producing the table-final values above. The local random result is
+1.863 pp below the reported scalability result, so it is marked
+`[REPRODUCED]` as an exact-architecture local reproduction, not an exact
+numerical replication.
+
+For 6-by-256K, fixed random reached 11.680% validation at 5K. Frozen V3
+swap fractions 0.125, 0.25, and 0.5 reached 10.320%, 10.180%, and 11.060%.
+Because every existing V3 control was negative, the predefined rule stopped
+this branch before multi-seed confirmation, full training, or held-out test.
+The reported Soft-Mix/CovJac accuracies remain reported-only full-effort
+references and must not be compared directly with this 5K diagnostic.
+
+Controlled 384K-gate CIFAR-100 depth ablation (seed 0, 20K steps,
+validation-only):
+
+| Architecture | Random | Frozen CoverageDLGN V3 | Paired gain | Decision |
+|---|---:|---:|---:|---|
+| 3 x 128K | `[TRIED]` 21.080% | `[TRIED]` 21.860% | +0.780 pp | Positive, below predeclared +1 pp confirmation threshold |
+| 6 x 64K | `[TRIED]` 21.040% | `[TRIED]` 21.580% | +0.540 pp | Earlier three-seed 20K mean, shown as the reference rather than a seed-0 cell |
+| 12 x 32K | `[TRIED]` 1.180% | `[TRIED]` 1.180% | +0.000 pp | Chance-level optimization failure |
+| 24 x 16K | `[TRIED]` 1.200% | `[TRIED]` 1.200% | +0.000 pp | Chance-level optimization failure |
+
+The 3-, 12-, and 24-layer cells have the same 384K gates, 6.144M trainable
+LUT parameters, three-threshold encoding, temperature 10, split, batch,
+optimizer, and effort. No cell crossed the frozen +1 pp seed-0 promotion
+threshold, so no additional seeds or held-out tests were run. The reference
+6-by-64K entry is a three-seed mean from its earlier confirmation and is not
+used as though it were a matched seed-0 depth cell.
+
+Topology diagnostics explain why added depth does not automatically help V3.
+At 12 layers, the final gate already contains about 2,262 raw image sources
+under random and 2,289 under V3, while both cover all 3,072 RGB spatial
+sources globally. At 24 layers, every final gate contains all 3,072 sources
+and cross-gate ancestry Jaccard is 1.0 for both methods. Thus ancestry
+completely saturates while optimization collapses to chance.
+
+A subsequent class-conditional final-layer refinement directly reduced
+CIFAR-100's remaining per-class source-usage imbalance. Across three seeds,
+mean source-usage CV fell from 0.25655 for V3 to 0.23475 at identical
+deployment cost. Accuracy remained tied: 21.593% versus 21.580% V3
+validation at 20K. This branch failed its frozen +2 pp over random and +1 pp
+over V3 gates, so it has no full or test value and is excluded from the
+paper-final accuracy claim.
 
 ## Table 5: Convolutional CIFAR-100 S/M/L
 
@@ -399,8 +478,9 @@ frontier.
 
 1. Finish a full-schedule paper-faithful fixed-routing S baseline.
 2. Search the unchanged convolutional CoverageDLGN mechanism independently
-   for S, M, and L; V4 is the incumbent, while V5 and coverage--reuse remain
-   separate negative methods and are not candidate configurations.
+   for S, M, and L. V4 remains frozen; V5, coverage--reuse, and channel-spatial
+   leaf pairing are separate negative methods. Balanced channels without swaps
+   is a positive but inconclusive S diagnostic and is not promoted.
 3. Compare raw, Light/IWP, and WARP parameterizations within the allowed
    CoverageDLGN search and record the winning choice.
 4. Reproduce Light/IWP-LogicTreeNet and WARP-LogicTreeNet for three final

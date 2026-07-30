@@ -1,0 +1,2 @@
+step,connections_temperature,parametrization_temperature,train_loss,val_acc_discrete,val_acc_relaxed,val_loss_discrete,val_loss_relaxed
+10,0.001,1.0,2.3573835372924803,0.014799999669194222,0.010199999772012233,7.061698246002197,4.697693901062012

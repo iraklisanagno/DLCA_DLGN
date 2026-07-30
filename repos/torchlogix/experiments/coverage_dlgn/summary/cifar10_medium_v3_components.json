@@ -1,0 +1,261 @@
+{
+  "phase": "cifar10_medium_v3_components",
+  "provenance": "TRIED",
+  "test_set_used": false,
+  "controls_reused_not_rerun": true,
+  "family_stats": {
+    "random": {
+      "mean": 0.5481999878088634,
+      "sample_std": 0.005302829726569068,
+      "n": 3
+    },
+    "coverage_v3": {
+      "mean": 0.5929333206017813,
+      "sample_std": 0.0021385354960027857,
+      "n": 3
+    },
+    "balanced_butterfly": {
+      "mean": 0.589799988468488,
+      "sample_std": 0.0054808760420834825,
+      "n": 3
+    },
+    "semantic_first_no_swaps": {
+      "mean": 0.5925333203872045,
+      "sample_std": 0.0015275233196525779,
+      "n": 3
+    }
+  },
+  "paired_component_effects": {
+    "balanced_fanout": {
+      "left": "random",
+      "right": "balanced_butterfly",
+      "per_seed_gain_pp": [
+        4.199999928474418,
+        4.080000519752502,
+        4.199999749660499
+      ],
+      "paired_mean_gain_pp": 4.160000065962474,
+      "paired_95ci_pp": [
+        3.987894933024939,
+        4.332105198900008
+      ]
+    },
+    "semantic_first_layer": {
+      "left": "balanced_butterfly",
+      "right": "semantic_first_no_swaps",
+      "per_seed_gain_pp": [
+        -0.18000036478041936,
+        0.339999794960022,
+        0.6600001454353244
+      ],
+      "paired_mean_gain_pp": 0.2733331918716423,
+      "paired_95ci_pp": [
+        -0.7798168116118807,
+        1.3264831953551652
+      ]
+    },
+    "ancestry_swaps": {
+      "left": "semantic_first_no_swaps",
+      "right": "coverage_v3",
+      "per_seed_gain_pp": [
+        0.060000360012057996,
+        0.2199997901916495,
+        -0.16000008583068048
+      ],
+      "paired_mean_gain_pp": 0.04000002145767567,
+      "paired_95ci_pp": [
+        -0.43394316029727387,
+        0.5139432032126252
+      ]
+    },
+    "complete_v3": {
+      "left": "random",
+      "right": "coverage_v3",
+      "per_seed_gain_pp": [
+        4.0799999237060565,
+        4.640000104904174,
+        4.699999809265143
+      ],
+      "paired_mean_gain_pp": 4.473333279291792,
+      "paired_95ci_pp": [
+        3.623869548307653,
+        5.322797010275929
+      ]
+    }
+  },
+  "common_cost": {
+    "dense_gate_count": 512000,
+    "trainable_parameters": 8192000,
+    "deployed_routing_bits": 16640000
+  },
+  "rows": [
+    {
+      "family": "balanced_butterfly",
+      "seed": 0,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/ablate_cifar10_medium_balanced_butterfly_seed0",
+      "best_validation_hard_accuracy": 0.5959999883174896,
+      "wall_seconds": 459.15449754096335,
+      "topology_construction_seconds": 5.980813575966749,
+      "dense_gate_count": 512000,
+      "trainable_parameters": 8192000,
+      "deployed_routing_bits": 16640000,
+      "cost_recovered_from_architecture": false,
+      "connections_init_method": "butterfly",
+      "coverage_swap_fraction": 0.25
+    },
+    {
+      "family": "balanced_butterfly",
+      "seed": 1,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/ablate_cifar10_medium_balanced_butterfly_seed1",
+      "best_validation_hard_accuracy": 0.5877999901771546,
+      "wall_seconds": 462.14416964596603,
+      "topology_construction_seconds": 5.898884052992798,
+      "dense_gate_count": 512000,
+      "trainable_parameters": 8192000,
+      "deployed_routing_bits": 16640000,
+      "cost_recovered_from_architecture": false,
+      "connections_init_method": "butterfly",
+      "coverage_swap_fraction": 0.25
+    },
+    {
+      "family": "balanced_butterfly",
+      "seed": 2,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/ablate_cifar10_medium_balanced_butterfly_seed2",
+      "best_validation_hard_accuracy": 0.58559998691082,
+      "wall_seconds": 459.9103077959735,
+      "topology_construction_seconds": 4.728706865978893,
+      "dense_gate_count": 512000,
+      "trainable_parameters": 8192000,
+      "deployed_routing_bits": 16640000,
+      "cost_recovered_from_architecture": false,
+      "connections_init_method": "butterfly",
+      "coverage_swap_fraction": 0.25
+    },
+    {
+      "family": "coverage_v3",
+      "seed": 0,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/pilot_cifar10_medium_semantic_balanced_v3_seed0",
+      "best_validation_hard_accuracy": 0.594799988269806,
+      "wall_seconds": 458.53354154294357,
+      "topology_construction_seconds": 108.0402822769247,
+      "dense_gate_count": 512000,
+      "trainable_parameters": 8192000,
+      "deployed_routing_bits": 16640000,
+      "cost_recovered_from_architecture": true,
+      "connections_init_method": "semantic_balanced_hybrid",
+      "coverage_swap_fraction": 0.25
+    },
+    {
+      "family": "coverage_v3",
+      "seed": 1,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/pilot_cifar10_medium_semantic_balanced_v3_seed1",
+      "best_validation_hard_accuracy": 0.5933999860286713,
+      "wall_seconds": 463.44578750105575,
+      "topology_construction_seconds": 108.21310679381713,
+      "dense_gate_count": 512000,
+      "trainable_parameters": 8192000,
+      "deployed_routing_bits": 16640000,
+      "cost_recovered_from_architecture": true,
+      "connections_init_method": "semantic_balanced_hybrid",
+      "coverage_swap_fraction": 0.25
+    },
+    {
+      "family": "coverage_v3",
+      "seed": 2,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/pilot_cifar10_medium_semantic_balanced_v3_seed2",
+      "best_validation_hard_accuracy": 0.5905999875068665,
+      "wall_seconds": 463.43881214084104,
+      "topology_construction_seconds": 107.37076669419184,
+      "dense_gate_count": 512000,
+      "trainable_parameters": 8192000,
+      "deployed_routing_bits": 16640000,
+      "cost_recovered_from_architecture": true,
+      "connections_init_method": "semantic_balanced_hybrid",
+      "coverage_swap_fraction": 0.25
+    },
+    {
+      "family": "random",
+      "seed": 0,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/pilot_cifar10_medium_random_v3_seed0",
+      "best_validation_hard_accuracy": 0.5539999890327454,
+      "wall_seconds": 458.85040653217584,
+      "topology_construction_seconds": 5.693376813549548,
+      "dense_gate_count": 512000,
+      "trainable_parameters": 8192000,
+      "deployed_routing_bits": 16640000,
+      "cost_recovered_from_architecture": true,
+      "connections_init_method": "random",
+      "coverage_swap_fraction": 0.25
+    },
+    {
+      "family": "random",
+      "seed": 1,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/pilot_cifar10_medium_random_v3_seed1",
+      "best_validation_hard_accuracy": 0.5469999849796295,
+      "wall_seconds": 463.128725789953,
+      "topology_construction_seconds": 5.652607743628323,
+      "dense_gate_count": 512000,
+      "trainable_parameters": 8192000,
+      "deployed_routing_bits": 16640000,
+      "cost_recovered_from_architecture": true,
+      "connections_init_method": "random",
+      "coverage_swap_fraction": 0.25
+    },
+    {
+      "family": "random",
+      "seed": 2,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/pilot_cifar10_medium_random_v3_seed2",
+      "best_validation_hard_accuracy": 0.5435999894142151,
+      "wall_seconds": 461.3578310520388,
+      "topology_construction_seconds": 5.037879287265241,
+      "dense_gate_count": 512000,
+      "trainable_parameters": 8192000,
+      "deployed_routing_bits": 16640000,
+      "cost_recovered_from_architecture": true,
+      "connections_init_method": "random",
+      "coverage_swap_fraction": 0.25
+    },
+    {
+      "family": "semantic_first_no_swaps",
+      "seed": 0,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/ablate_cifar10_medium_semantic_first_no_swaps_seed0",
+      "best_validation_hard_accuracy": 0.5941999846696854,
+      "wall_seconds": 462.59792203700636,
+      "topology_construction_seconds": 12.341564966016449,
+      "dense_gate_count": 512000,
+      "trainable_parameters": 8192000,
+      "deployed_routing_bits": 16640000,
+      "cost_recovered_from_architecture": false,
+      "connections_init_method": "semantic_balanced_hybrid",
+      "coverage_swap_fraction": 0.0
+    },
+    {
+      "family": "semantic_first_no_swaps",
+      "seed": 1,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/ablate_cifar10_medium_semantic_first_no_swaps_seed1",
+      "best_validation_hard_accuracy": 0.5911999881267548,
+      "wall_seconds": 459.01282242301386,
+      "topology_construction_seconds": 12.0330701310304,
+      "dense_gate_count": 512000,
+      "trainable_parameters": 8192000,
+      "deployed_routing_bits": 16640000,
+      "cost_recovered_from_architecture": false,
+      "connections_init_method": "semantic_balanced_hybrid",
+      "coverage_swap_fraction": 0.0
+    },
+    {
+      "family": "semantic_first_no_swaps",
+      "seed": 2,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/ablate_cifar10_medium_semantic_first_no_swaps_seed2",
+      "best_validation_hard_accuracy": 0.5921999883651733,
+      "wall_seconds": 463.5120583009557,
+      "topology_construction_seconds": 12.379531376005616,
+      "dense_gate_count": 512000,
+      "trainable_parameters": 8192000,
+      "deployed_routing_bits": 16640000,
+      "cost_recovered_from_architecture": false,
+      "connections_init_method": "semantic_balanced_hybrid",
+      "coverage_swap_fraction": 0.0
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "phase": "table4_dense_cifar100_depth384k",
+  "dataset": "cifar-100",
+  "purpose": "Isolate the effect of depth on frozen CoverageDLGN V3 at an exact 384K-gate budget.",
+  "reference": {
+    "class": "DlgnCifar100Scalability64k",
+    "depth": 6,
+    "width_per_layer": 64000,
+    "total_gates": 384000,
+    "full_test_random_accuracy": 0.2067666606605053,
+    "full_test_coverage_v3_accuracy": 0.21009999446570873,
+    "full_test_paired_gain_pp": 0.33333338052034345
+  },
+  "controlled_constants": {
+    "total_gates": 384000,
+    "input_thresholds": 3,
+    "input_dimension": 9216,
+    "class_count": 100,
+    "group_sum_temperature": 10.0,
+    "lut_rank": 2,
+    "parametrization": "raw",
+    "optimizer": "Adam",
+    "learning_rate": 0.01,
+    "batch_size": 100,
+    "augmentation": "none",
+    "data_split_seed": 2027,
+    "validation_fraction": 0.1
+  },
+  "architectures": {
+    "depth3": {
+      "class": "DlgnCifar100Budget384kDepth3",
+      "depth": 3,
+      "width_per_layer": 128000,
+      "total_gates": 384000,
+      "role": "shallow-wide negative control"
+    },
+    "depth12": {
+      "class": "DlgnCifar100Budget384kDepth12",
+      "depth": 12,
+      "width_per_layer": 32000,
+      "total_gates": 384000,
+      "role": "primary deeper test"
+    },
+    "depth24": {
+      "class": "DlgnCifar100Budget384kDepth24",
+      "depth": 24,
+      "width_per_layer": 16000,
+      "total_gates": 384000,
+      "role": "strong depth and optimization-stress test"
+    }
+  },
+  "method": {
+    "algorithm": "frozen semantic_balanced_hybrid V3",
+    "mechanism_changes_allowed": false,
+    "coverage_candidate_pool_size": 8,
+    "coverage_swap_fraction": 0.125,
+    "coverage_novelty_weight": 1.0
+  },
+  "pilot": {
+    "iterations": 20000,
+    "eval_frequency": 2000,
+    "seed": 0,
+    "metric": "best hardened validation accuracy"
+  },
+  "promotion": {
+    "rule": "Run confirmation seeds 1 and 2 only when the seed-0 V3 gain is at least +1.0 percentage point.",
+    "confirmation_seeds": [
+      1,
+      2
+    ],
+    "heldout_test_policy": "Do not access held-out CIFAR-100 test data in this controlled depth study."
+  },
+  "interpretation_limits": [
+    "These controlled architectures are ablations, not published CIFAR-100 coordinates.",
+    "GroupSum temperature remains 10 across depth, exactly as predeclared; changing final width therefore changes gates per class but not the temperature.",
+    "Only depth and uniform layer width change; total gates and the frozen V3 mechanism remain fixed."
+  ]
+}

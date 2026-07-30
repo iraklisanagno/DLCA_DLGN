@@ -1,0 +1,64 @@
+{
+  "phase": "table4_cifar100_s_screen",
+  "wall_seconds": 330.0173007270205,
+  "skipped": [],
+  "finished": [
+    {
+      "name": "screen_table4_cifar100_s_random_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 80.00384578399826,
+      "log": "experiments/coverage_dlgn/logs/table4_cifar100_s_screen/screen_table4_cifar100_s_random_seed0.log"
+    },
+    {
+      "name": "screen_table4_cifar100_s_v3_incumbent_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 80.00402583600953,
+      "log": "experiments/coverage_dlgn/logs/table4_cifar100_s_screen/screen_table4_cifar100_s_v3_incumbent_seed0.log"
+    },
+    {
+      "name": "screen_table4_cifar100_s_v3_pool4_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 80.00283538200893,
+      "log": "experiments/coverage_dlgn/logs/table4_cifar100_s_screen/screen_table4_cifar100_s_v3_pool4_seed0.log"
+    },
+    {
+      "name": "screen_table4_cifar100_s_v3_pool16_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 85.00273190398002,
+      "log": "experiments/coverage_dlgn/logs/table4_cifar100_s_screen/screen_table4_cifar100_s_v3_pool16_seed0.log"
+    },
+    {
+      "name": "screen_table4_cifar100_s_v3_swap0125_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 80.00220619601896,
+      "log": "experiments/coverage_dlgn/logs/table4_cifar100_s_screen/screen_table4_cifar100_s_v3_swap0125_seed0.log"
+    },
+    {
+      "name": "screen_table4_cifar100_s_v3_swap0500_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 85.00523972895462,
+      "log": "experiments/coverage_dlgn/logs/table4_cifar100_s_screen/screen_table4_cifar100_s_v3_swap0500_seed0.log"
+    },
+    {
+      "name": "screen_table4_cifar100_s_v3_novelty050_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 80.00233375100652,
+      "log": "experiments/coverage_dlgn/logs/table4_cifar100_s_screen/screen_table4_cifar100_s_v3_novelty050_seed0.log"
+    },
+    {
+      "name": "screen_table4_cifar100_s_v3_novelty200_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 80.0020412869635,
+      "log": "experiments/coverage_dlgn/logs/table4_cifar100_s_screen/screen_table4_cifar100_s_v3_novelty200_seed0.log"
+    }
+  ],
+  "failed": []
+}

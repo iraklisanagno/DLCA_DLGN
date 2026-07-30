@@ -426,7 +426,133 @@ routing storage, framework-level hardened inference time, and peak training
 GPU allocation are unchanged; v3 adds only deterministic offline topology
 construction (about 5 seconds for Fashion and 9 seconds for CIFAR).
 
-This clears the specification's continuation criterion. It is evidence to
-proceed with the two-budget/three-depth matrix, component ablations,
-WARP/Light, and named sparse-routing baselines—not yet a standalone DATE claim.
-Exact per-seed results and experimental-history caveats are in `RESULTS.md`.
+This cleared the specification's continuation criterion. The subsequent
+budget/depth study and CIFAR-10 M component ablation are now complete;
+WARP/Light, named sparse-routing baselines, and deployment Pareto measurements
+remain—not yet a standalone DATE claim. Exact per-seed results and
+experimental-history caveats are in `RESULTS.md`.
+
+## Deep dense CIFAR-100 extension
+
+The exact 6-by-64K scalability architecture and 6-by-256K multilinear
+architecture are declared in
+`protocols/table4_dense_cifar100_deep.json`. This extension changes no V3
+mechanism. It screens only the already used V3 swap fractions 0.125, 0.25,
+and 0.5 against matched fixed random.
+
+Generate and summarize each frozen stage with:
+
+```bash
+venv/bin/python experiments/coverage_dlgn/prepare_table4_cifar100_deep_screen.py
+venv/bin/python experiments/coverage_dlgn/summarize_table4_cifar100_deep_screen.py
+venv/bin/python experiments/coverage_dlgn/prepare_table4_cifar100_deep_selection.py
+venv/bin/python experiments/coverage_dlgn/summarize_table4_cifar100_deep_selection.py
+venv/bin/python experiments/coverage_dlgn/prepare_table4_cifar100_deep_final.py
+venv/bin/python experiments/coverage_dlgn/summarize_table4_cifar100_deep_final.py
+```
+
+The queues produced by the preparation scripts contain the exact training
+commands and output directories. After the full 6-by-64K validation winner
+was frozen, its six locked checkpoints were evaluated once with:
+
+```bash
+venv/bin/python experiments/coverage_dlgn/evaluate_table4_cifar100_deep_final.py
+```
+
+The resulting held-out test means are 20.677% for random and 21.010% for
+CoverageDLGN V3 (`swap_fraction=0.125`), a paired +0.333 pp over three seeds.
+The exact 6-by-256K branch stopped at the 5K screen because all three frozen
+V3 controls trailed random; it has no multi-seed or held-out-test result.
+Machine-readable summaries are
+`summary/table4_cifar100_deep_{screen,selection,final}.json`, while the
+interruption and recovery history is recorded in `EXPERIMENT_LOG.md`.
+
+### Fixed-384K depth ablation
+
+The controlled depth experiment is frozen in
+`protocols/table4_dense_cifar100_depth384k.json`. It compares 3-by-128K,
+12-by-32K, and 24-by-16K networks at exactly 384K gates using unchanged V3.
+Generate and summarize its validation-only queue with:
+
+```bash
+venv/bin/python experiments/coverage_dlgn/prepare_table4_cifar100_depth384k_pilot.py
+venv/bin/python experiments/coverage_dlgn/run_gpu_queue.py \
+  --queue experiments/coverage_dlgn/queues/table4_cifar100_depth384k_pilot.json \
+  --gpus 0 1 --data-path /tmp/torchlogix-datasets
+venv/bin/python experiments/coverage_dlgn/summarize_table4_cifar100_depth384k_pilot.py
+```
+
+At 20K steps, 3-by-128K gains +0.780 pp (21.860% versus 21.080%), below the
+predeclared +1 pp threshold. The 12- and 24-layer pairs remain at chance,
+and depth 24 gives every final gate complete raw-source ancestry under both
+random and V3. No extra seed or held-out test was run.
+
+### Class-conditional coverage head
+
+`CLASS_CONDITIONAL_HEAD.md` documents the separate final-layer refinement,
+its invariants, and its stopped CIFAR-100 result. It does not alter frozen V3
+or V4. The three-seed 20K pilot reduced mean class source-usage CV from
+0.25655 to 0.23475 but produced only +0.013 pp over V3 and +0.553 pp over
+random. It failed both predeclared promotion gates, so no full, transfer,
+convolutional, or held-out-test run followed.
+
+### CIFAR-10 compression completion and V3 components
+
+The frozen 256K and 384K checkpoints were evaluated exactly once with:
+
+```bash
+venv/bin/python experiments/coverage_dlgn/evaluate_table2_compression_remaining.py \
+  --gpus 0 1 --data-path /tmp/torchlogix-datasets
+venv/bin/python experiments/coverage_dlgn/summarize_table2_compression_remaining_test.py
+```
+
+At 256K gates, V3 reaches 56.903% +/- 0.134% test versus
+52.253% +/- 0.058% random (+4.650 pp, 95% CI [+4.174, +5.126]). At 384K,
+V3 reaches 58.143% +/- 0.153% versus 53.657% +/- 0.328% (+4.487 pp,
+95% CI [+3.515, +5.458]). These checkpoints must not be queried on test
+again.
+
+The CIFAR-10 M component ablation is reproduced with:
+
+```bash
+venv/bin/python experiments/coverage_dlgn/prepare_cifar10_medium_v3_components.py
+venv/bin/python experiments/coverage_dlgn/run_gpu_queue.py \
+  --queue experiments/coverage_dlgn/queues/cifar10_medium_v3_components.json \
+  --gpus 0 1 --data-path /tmp/torchlogix-datasets
+venv/bin/python experiments/coverage_dlgn/summarize_cifar10_medium_v3_components.py
+```
+
+It reuses the existing random/full-V3 controls. Balanced fan-out contributes
++4.160 pp over random; semantic first-layer scheduling adds +0.273 pp and
+ancestry swaps add +0.040 pp, with the latter two intervals crossing zero.
+Full V3 remains +4.473 pp over random.
+
+### Task-aware rewiring negative result
+
+`TASK_AWARE_REWIRING.md` documents the optional one-shot
+activation-gradient extension. It is disabled by default and does not change
+frozen V3. The three-seed 20K CIFAR-10 M pilot reached 59.093% +/- 0.234%:
++4.273 pp over random but -0.200 pp versus V3. It failed its strict promotion
+gate, so no full schedule, held-out test, transfer, or convolutional run
+followed.
+
+### CIFAR-100 baseline audit
+
+`CIFAR100_BASELINE_AUDIT.md` records why the local 20.677% random result is
+`[REPRODUCED, topology-adapted]` rather than bit-faithful to the reported
+22.54%. The architecture and schedule match, but independent TorchLogix
+topology seeding differs from canonical difflogic's two-`randperm` routing.
+The audit did not retrain or re-query any checkpoint.
+
+### Convolutional V4 component and channel-spatial study
+
+`CONV_CHANNEL_SPATIAL_ADAPTER.md` defines the separate convolutional
+channel-spatial adapter, its common-RNG invariants, and promotion gate. The
+corrected three-seed CIFAR-10 S study reuses historical random/V4 controls.
+
+Balanced channel routing without swaps reached 58.013% validation
+(+1.340 pp over random, +0.827 pp over V4), but both intervals cross zero.
+The channel-spatial adapter reached 57.033% (+0.360 pp over random,
+-0.153 pp versus V4) and failed both promotion thresholds. No M or held-out
+run followed. The invalid explicit-classifier RNG attempt is preserved and
+excluded in `results/failed/cifar10_conv_small_explicit_classifier_rng_attempt1`.

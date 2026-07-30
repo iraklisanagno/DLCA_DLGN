@@ -1,0 +1,50 @@
+{
+  "phase": "table4_cifar100_depth384k_pilot",
+  "wall_seconds": 1465.0412462719833,
+  "skipped": [],
+  "finished": [
+    {
+      "name": "pilot_table4_cifar100_384k_depth3_random_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 335.00995017500827,
+      "log": "experiments/coverage_dlgn/logs/table4_cifar100_depth384k_pilot/pilot_table4_cifar100_384k_depth3_random_seed0.log"
+    },
+    {
+      "name": "pilot_table4_cifar100_384k_depth3_coverage_v3_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 380.0114771910012,
+      "log": "experiments/coverage_dlgn/logs/table4_cifar100_depth384k_pilot/pilot_table4_cifar100_384k_depth3_coverage_v3_seed0.log"
+    },
+    {
+      "name": "pilot_table4_cifar100_384k_depth12_random_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 420.01012315700063,
+      "log": "experiments/coverage_dlgn/logs/table4_cifar100_depth384k_pilot/pilot_table4_cifar100_384k_depth12_random_seed0.log"
+    },
+    {
+      "name": "pilot_table4_cifar100_384k_depth12_coverage_v3_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 455.0111393040279,
+      "log": "experiments/coverage_dlgn/logs/table4_cifar100_depth384k_pilot/pilot_table4_cifar100_384k_depth12_coverage_v3_seed0.log"
+    },
+    {
+      "name": "pilot_table4_cifar100_384k_depth24_random_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 585.0168228319963,
+      "log": "experiments/coverage_dlgn/logs/table4_cifar100_depth384k_pilot/pilot_table4_cifar100_384k_depth24_random_seed0.log"
+    },
+    {
+      "name": "pilot_table4_cifar100_384k_depth24_coverage_v3_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 630.0167021249654,
+      "log": "experiments/coverage_dlgn/logs/table4_cifar100_depth384k_pilot/pilot_table4_cifar100_384k_depth24_coverage_v3_seed0.log"
+    }
+  ],
+  "failed": []
+}

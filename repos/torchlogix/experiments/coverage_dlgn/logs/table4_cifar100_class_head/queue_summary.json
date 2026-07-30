@@ -1,0 +1,29 @@
+{
+  "phase": "table4_cifar100_class_head",
+  "wall_seconds": 790.0291858179844,
+  "skipped": [],
+  "finished": [
+    {
+      "name": "select_table4_cifar100_64k_v3_class_head_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 395.0186807650025,
+      "log": "experiments/coverage_dlgn/logs/table4_cifar100_class_head/select_table4_cifar100_64k_v3_class_head_seed0.log"
+    },
+    {
+      "name": "select_table4_cifar100_64k_v3_class_head_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 400.0191070830333,
+      "log": "experiments/coverage_dlgn/logs/table4_cifar100_class_head/select_table4_cifar100_64k_v3_class_head_seed1.log"
+    },
+    {
+      "name": "select_table4_cifar100_64k_v3_class_head_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 395.00929153501056,
+      "log": "experiments/coverage_dlgn/logs/table4_cifar100_class_head/select_table4_cifar100_64k_v3_class_head_seed2.log"
+    }
+  ],
+  "failed": []
+}

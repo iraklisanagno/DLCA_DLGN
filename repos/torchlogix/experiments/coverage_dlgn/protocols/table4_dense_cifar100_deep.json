@@ -1,0 +1,90 @@
+{
+  "phase": "table4_dense_cifar100_deep",
+  "dataset": "cifar-100",
+  "purpose": "Test frozen CoverageDLGN V3 on deeper published dense architectures after the two-layer compact ladder failed to promote.",
+  "method": {
+    "algorithm": "frozen semantic_balanced_hybrid V3",
+    "mechanism_changes_allowed": false,
+    "controls_screened_per_architecture": [
+      {
+        "label": "swap0125",
+        "coverage_candidate_pool_size": 8,
+        "coverage_swap_fraction": 0.125,
+        "coverage_novelty_weight": 1.0
+      },
+      {
+        "label": "incumbent",
+        "coverage_candidate_pool_size": 8,
+        "coverage_swap_fraction": 0.25,
+        "coverage_novelty_weight": 1.0
+      },
+      {
+        "label": "swap0500",
+        "coverage_candidate_pool_size": 8,
+        "coverage_swap_fraction": 0.5,
+        "coverage_novelty_weight": 1.0
+      }
+    ]
+  },
+  "architectures": {
+    "64k": {
+      "class": "DlgnCifar100Scalability64k",
+      "source": "From MNIST to ImageNet: Understanding the Scalability Boundaries of Differentiable Logic Gate Networks, baseline configuration and Table 12",
+      "depth": 6,
+      "width_per_layer": 64000,
+      "total_gates": 384000,
+      "input_thresholds": 3,
+      "input_dimension": 9216,
+      "group_sum_temperature": 10.0,
+      "paper_training": {
+        "optimizer": "Adam",
+        "learning_rate": 0.01,
+        "batch_size": 100,
+        "epochs": 100,
+        "validation_fraction": 0.2,
+        "augmentation": "none",
+        "independent_runs": 3,
+        "reported_test_accuracy": "22.54 +/- 0.26%"
+      }
+    },
+    "256k": {
+      "class": "DlgnCifar100Multilinear256k",
+      "source": "Fitting Multilinear Polynomials for Logic Gate Networks, Table 1 and Appendix E.1",
+      "depth": 6,
+      "width_per_layer": 256000,
+      "total_gates": 1536000,
+      "input_thresholds": 31,
+      "input_dimension": 95232,
+      "group_sum_temperature": 1.0,
+      "paper_training": {
+        "optimizer": "Adam",
+        "learning_rate": 0.01,
+        "batch_size": 512,
+        "iterations": 100000,
+        "augmentation": "none",
+        "independent_runs": 3,
+        "reported_soft_mix_last10_accuracy": "27.92 +/- 0.43%",
+        "reported_soft_mix_best_checkpoint_accuracy": "28.21 +/- 0.38%"
+      }
+    }
+  },
+  "local_selection": {
+    "data_split_seed": 2027,
+    "validation_fraction": 0.1,
+    "screen_iterations": 5000,
+    "screen_seed": 0,
+    "confirmation_iterations": 20000,
+    "confirmation_seeds": [
+      0,
+      1,
+      2
+    ],
+    "promotion_rule": "Advance an architecture to its paper-length schedule only if the paired three-seed mean best hardened validation gain over random is positive.",
+    "heldout_test_policy": "Do not use the native CIFAR-100 test set during screening or confirmation. Evaluate it once only after the winner is frozen and trained at the paper-length schedule."
+  },
+  "known_protocol_distinctions": [
+    "The 64K and 256K coordinates intentionally retain their papers' different input encodings and GroupSum temperatures.",
+    "The multilinear paper evaluates the held-out test set repeatedly. The local study instead creates a validation split for selection to prevent test leakage.",
+    "The multilinear paper uses locality-preserving stride wiring. The central local causal comparison is fixed random wiring versus frozen CoverageDLGN V3; the reported Soft-Mix number is therefore a reported-only reference rather than an exact topology-matched baseline."
+  ]
+}

@@ -1,0 +1,167 @@
+{
+  "status": "pass_with_known_nonidentical_routing",
+  "test_set_used": true,
+  "rerun_performed": false,
+  "paper_reported_random_accuracy": 0.2254,
+  "paper_reported_random_sample_std": 0.0026,
+  "local_means": {
+    "random": 0.2067666606605053,
+    "coverage_v3": 0.21009999446570873
+  },
+  "reported_minus_local_random_pp": 1.8633339339494681,
+  "matched_protocol_fields": [
+    "architecture",
+    "no_augmentation",
+    "batch_size_100",
+    "adam_lr_001",
+    "steps_40000",
+    "validation_fraction_020",
+    "split_seed_2027",
+    "thresholds_quarters",
+    "gate_count_384000",
+    "trainable_parameters_6144000",
+    "test_queried_once"
+  ],
+  "material_mismatch": "independently seeded TorchLogix NumPy routing versus the canonical difflogic two-torch-randperm generator",
+  "unresolved": [
+    "paper validation split seed",
+    "paper final-versus-validation-selected checkpoint policy",
+    "exact paper source/dependency revision"
+  ],
+  "source_revision": "a807fcd00520d27b7cc546992ea1d4913a529eeb",
+  "training_implementation_sha256": "00346071eb91f07f567f2376b639b97ec6688c92dc2a5faa9d2eb96353302f6b",
+  "rows": [
+    {
+      "family": "random",
+      "seed": 0,
+      "test_hard_accuracy": 0.21269999384880067,
+      "validation_hard_accuracy": 0.20969999447464943,
+      "topology_seed": 0,
+      "source_revision": "a807fcd00520d27b7cc546992ea1d4913a529eeb",
+      "training_implementation_sha256": "00346071eb91f07f567f2376b639b97ec6688c92dc2a5faa9d2eb96353302f6b",
+      "checks": {
+        "architecture": true,
+        "no_augmentation": true,
+        "batch_size_100": true,
+        "adam_lr_001": true,
+        "steps_40000": true,
+        "validation_fraction_020": true,
+        "split_seed_2027": true,
+        "thresholds_quarters": true,
+        "gate_count_384000": true,
+        "trainable_parameters_6144000": true,
+        "test_queried_once": true
+      }
+    },
+    {
+      "family": "random",
+      "seed": 1,
+      "test_hard_accuracy": 0.20469999395310878,
+      "validation_hard_accuracy": 0.21239999413490296,
+      "topology_seed": 1,
+      "source_revision": "a807fcd00520d27b7cc546992ea1d4913a529eeb",
+      "training_implementation_sha256": "00346071eb91f07f567f2376b639b97ec6688c92dc2a5faa9d2eb96353302f6b",
+      "checks": {
+        "architecture": true,
+        "no_augmentation": true,
+        "batch_size_100": true,
+        "adam_lr_001": true,
+        "steps_40000": true,
+        "validation_fraction_020": true,
+        "split_seed_2027": true,
+        "thresholds_quarters": true,
+        "gate_count_384000": true,
+        "trainable_parameters_6144000": true,
+        "test_queried_once": true
+      }
+    },
+    {
+      "family": "random",
+      "seed": 2,
+      "test_hard_accuracy": 0.20289999417960644,
+      "validation_hard_accuracy": 0.20619999445974826,
+      "topology_seed": 2,
+      "source_revision": "a807fcd00520d27b7cc546992ea1d4913a529eeb",
+      "training_implementation_sha256": "00346071eb91f07f567f2376b639b97ec6688c92dc2a5faa9d2eb96353302f6b",
+      "checks": {
+        "architecture": true,
+        "no_augmentation": true,
+        "batch_size_100": true,
+        "adam_lr_001": true,
+        "steps_40000": true,
+        "validation_fraction_020": true,
+        "split_seed_2027": true,
+        "thresholds_quarters": true,
+        "gate_count_384000": true,
+        "trainable_parameters_6144000": true,
+        "test_queried_once": true
+      }
+    },
+    {
+      "family": "coverage_v3",
+      "seed": 0,
+      "test_hard_accuracy": 0.21069999404251574,
+      "validation_hard_accuracy": 0.21649999387562274,
+      "topology_seed": 0,
+      "source_revision": "a807fcd00520d27b7cc546992ea1d4913a529eeb",
+      "training_implementation_sha256": "00346071eb91f07f567f2376b639b97ec6688c92dc2a5faa9d2eb96353302f6b",
+      "checks": {
+        "architecture": true,
+        "no_augmentation": true,
+        "batch_size_100": true,
+        "adam_lr_001": true,
+        "steps_40000": true,
+        "validation_fraction_020": true,
+        "split_seed_2027": true,
+        "thresholds_quarters": true,
+        "gate_count_384000": true,
+        "trainable_parameters_6144000": true,
+        "test_queried_once": true
+      }
+    },
+    {
+      "family": "coverage_v3",
+      "seed": 1,
+      "test_hard_accuracy": 0.21099999465048314,
+      "validation_hard_accuracy": 0.21519999347627164,
+      "topology_seed": 1,
+      "source_revision": "a807fcd00520d27b7cc546992ea1d4913a529eeb",
+      "training_implementation_sha256": "00346071eb91f07f567f2376b639b97ec6688c92dc2a5faa9d2eb96353302f6b",
+      "checks": {
+        "architecture": true,
+        "no_augmentation": true,
+        "batch_size_100": true,
+        "adam_lr_001": true,
+        "steps_40000": true,
+        "validation_fraction_020": true,
+        "split_seed_2027": true,
+        "thresholds_quarters": true,
+        "gate_count_384000": true,
+        "trainable_parameters_6144000": true,
+        "test_queried_once": true
+      }
+    },
+    {
+      "family": "coverage_v3",
+      "seed": 2,
+      "test_hard_accuracy": 0.20859999470412732,
+      "validation_hard_accuracy": 0.21559999391436577,
+      "topology_seed": 2,
+      "source_revision": "a807fcd00520d27b7cc546992ea1d4913a529eeb",
+      "training_implementation_sha256": "00346071eb91f07f567f2376b639b97ec6688c92dc2a5faa9d2eb96353302f6b",
+      "checks": {
+        "architecture": true,
+        "no_augmentation": true,
+        "batch_size_100": true,
+        "adam_lr_001": true,
+        "steps_40000": true,
+        "validation_fraction_020": true,
+        "split_seed_2027": true,
+        "thresholds_quarters": true,
+        "gate_count_384000": true,
+        "trainable_parameters_6144000": true,
+        "test_queried_once": true
+      }
+    }
+  ]
+}

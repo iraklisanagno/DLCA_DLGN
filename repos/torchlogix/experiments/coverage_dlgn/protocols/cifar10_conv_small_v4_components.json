@@ -1,0 +1,45 @@
+{
+  "phase": "cifar10_conv_small_v4_components",
+  "purpose": "Decompose frozen convolutional V4 into random, balanced-channel base, and coverage-swap components without rerunning completed controls.",
+  "dataset": "cifar-10",
+  "architecture": "ClgnCifar10PaperSmall",
+  "selection_metric": "best hardened validation accuracy",
+  "heldout_test_used_for_selection": false,
+  "training": {
+    "paired_seeds": [0, 1, 2],
+    "data_split_seed": 2027,
+    "iterations": 20000,
+    "eval_frequency": 2000,
+    "batch_size": 128
+  },
+  "arms": [
+    {
+      "family": "random",
+      "status": "reused_completed_control",
+      "result_pattern": "pilot_conv_cifar10_paper_small_random_seed{seed}"
+    },
+    {
+      "family": "balanced_channel_no_swaps",
+      "status": "new_missing_arm",
+      "conv_connections_init_method": "semantic_channel_hybrid",
+      "coverage_swap_fraction": 0.0
+    },
+    {
+      "family": "frozen_v4",
+      "status": "reused_completed_control",
+      "result_pattern": "pilot_conv_cifar10_paper_small_semantic_channel_v4_seed{seed}",
+      "conv_connections_init_method": "semantic_channel_hybrid",
+      "coverage_swap_fraction": 0.25
+    }
+  ],
+  "frozen_method_policy": {
+    "v3_changed": false,
+    "v4_changed": false,
+    "completed_runs_rerun": false
+  },
+  "common_rng_policy": {
+    "configuration_style": "historical component-wide method selector",
+    "reason": "Preserves identical dense classifier routing and parameter initialization between frozen V4 and its ablations.",
+    "invalid_explicit_classifier_attempt": "results/failed/cifar10_conv_small_explicit_classifier_rng_attempt1"
+  }
+}

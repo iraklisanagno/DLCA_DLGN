@@ -15,6 +15,7 @@ from torchlogix.layers import (
     OrPooling2d,
     OrPooling3d,
 )
+from torchlogix.topology import packed_identity
 
 
 class DenseModel(nn.Sequential):
@@ -24,6 +25,46 @@ class DenseModel(nn.Sequential):
             LogicDense(1000, 1000, parametrization="raw", parametrization_kwargs={"weight_init": "random"}),
         )
         self.input_shape = (1000,)
+
+
+class ClassConditionalHeadModel(nn.Sequential):
+    """Tiny fixed V3 backbone plus class-conditional export target."""
+
+    def __init__(self):
+        first = LogicDense(
+            16,
+            32,
+            parametrization="raw",
+            parametrization_kwargs={"weight_init": "random"},
+            connections_kwargs={
+                "init_method": "semantic_balanced_hybrid",
+                "topology_seed": 3,
+                "layer_index": 0,
+                "input_ancestry": packed_identity(16),
+                "candidate_pool_size": 8,
+                "swap_fraction": 0.25,
+            },
+        )
+        ancestry = first.connections.consume_output_ancestry()
+        head = LogicDense(
+            32,
+            32,
+            parametrization="raw",
+            parametrization_kwargs={"weight_init": "random"},
+            connections_kwargs={
+                "init_method": "class_conditional_coverage",
+                "topology_seed": 3,
+                "layer_index": 1,
+                "input_ancestry": ancestry,
+                "candidate_pool_size": 8,
+                "swap_fraction": 0.25,
+                "class_balance_change_fraction": 0.5,
+                "output_groups": 4,
+            },
+        )
+        head.connections.consume_output_ancestry()
+        super().__init__(first, head, GroupSum(4))
+        self.input_shape = (16,)
 
 
 # inherit from sequential
@@ -115,7 +156,16 @@ class AnyLogicModel(nn.Module):
         return torch.cat([out1, out2, out3], dim=1)                      # (B, 18)
 
 
-@pytest.mark.parametrize("model_cls", [DenseModel, ConvModel, BranchModel, AnyLogicModel])
+@pytest.mark.parametrize(
+    "model_cls",
+    [
+        DenseModel,
+        ClassConditionalHeadModel,
+        ConvModel,
+        BranchModel,
+        AnyLogicModel,
+    ],
+)
 def test_functional_equivalence(model_cls):
     model = model_cls()
     x = torch.randint(0, 2, (1, *model.input_shape), dtype=torch.bool)
@@ -220,5 +270,4 @@ def test_c_codegen_group_sum_scores(model_cls):
     # Verify scores match Python circuit.
     preds_python = circuit(x.reshape(1, -1))  # shape (1, k)
     assert preds_python.shape[-1] == k
-
 

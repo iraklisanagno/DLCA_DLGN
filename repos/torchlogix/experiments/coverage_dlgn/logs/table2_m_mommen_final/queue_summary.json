@@ -1,0 +1,15 @@
+{
+  "phase": "table2_m_mommen_final",
+  "wall_seconds": 17445.36894825002,
+  "skipped": [],
+  "finished": [
+    {
+      "name": "final_table2_cifar10_m_mommen_nc8_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 17445.368484012986,
+      "log": "experiments/coverage_dlgn/logs/table2_m_mommen_final/final_table2_cifar10_m_mommen_nc8_seed0.log"
+    }
+  ],
+  "failed": []
+}

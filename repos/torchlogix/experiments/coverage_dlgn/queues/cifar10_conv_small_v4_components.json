@@ -1,0 +1,30 @@
+{
+  "phase": "cifar10_conv_small_v4_components",
+  "purpose": "Train only the missing balanced-channel/no-swaps V4 component arm.",
+  "protocol": "experiments/coverage_dlgn/protocols/cifar10_conv_small_v4_components.json",
+  "controls_reused_not_rerun": true,
+  "heldout_test_used": false,
+  "entries": [
+    {
+      "name": "ablate_conv_cifar10_small_balanced_channel_no_swaps_seed0",
+      "family": "balanced_channel_no_swaps",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/cifar10_conv_small_v4_components/ablate_conv_cifar10_small_balanced_channel_no_swaps_seed0.json",
+      "output": "experiments/coverage_dlgn/results/ablate_conv_cifar10_small_balanced_channel_no_swaps_seed0"
+    },
+    {
+      "name": "ablate_conv_cifar10_small_balanced_channel_no_swaps_seed1",
+      "family": "balanced_channel_no_swaps",
+      "seed": 1,
+      "config": "experiments/coverage_dlgn/configs/cifar10_conv_small_v4_components/ablate_conv_cifar10_small_balanced_channel_no_swaps_seed1.json",
+      "output": "experiments/coverage_dlgn/results/ablate_conv_cifar10_small_balanced_channel_no_swaps_seed1"
+    },
+    {
+      "name": "ablate_conv_cifar10_small_balanced_channel_no_swaps_seed2",
+      "family": "balanced_channel_no_swaps",
+      "seed": 2,
+      "config": "experiments/coverage_dlgn/configs/cifar10_conv_small_v4_components/ablate_conv_cifar10_small_balanced_channel_no_swaps_seed2.json",
+      "output": "experiments/coverage_dlgn/results/ablate_conv_cifar10_small_balanced_channel_no_swaps_seed2"
+    }
+  ]
+}

@@ -112,6 +112,93 @@ def test_semantic_channel_diagnostics_explain_the_routing_change():
     assert semantic_row["unused_channels"] == 0
 
 
+def test_channel_spatial_adapter_preserves_v4_channel_pairs_and_model_rng():
+    torch.manual_seed(456)
+    v4_layer = _channel_schedule_layer(
+        "semantic_channel_hybrid",
+        topology_seed=13,
+    )
+    v4_next = torch.rand(4)
+    torch.manual_seed(456)
+    spatial_layer = _channel_schedule_layer(
+        "semantic_channel_spatial_hybrid",
+        topology_seed=13,
+    )
+    spatial_next = torch.rand(4)
+
+    assert torch.equal(
+        v4_layer.connections.channel_pairs,
+        spatial_layer.connections.channel_pairs,
+    )
+    assert torch.equal(
+        v4_layer.connections.indices[0][..., :-1],
+        spatial_layer.connections.indices[0][..., :-1],
+    )
+    assert not torch.equal(
+        v4_layer.connections.indices[0][..., -1],
+        spatial_layer.connections.indices[0][..., -1],
+    )
+    assert torch.equal(v4_next, spatial_next)
+    for v4_weight, spatial_weight in zip(
+        v4_layer.tree_weights,
+        spatial_layer.tree_weights,
+    ):
+        assert torch.equal(v4_weight, spatial_weight)
+
+
+def test_channel_spatial_adapter_is_deterministic_balanced_and_exportable():
+    first = _channel_schedule_layer(
+        "semantic_channel_spatial_hybrid",
+        topology_seed=29,
+    )
+    repeated = _channel_schedule_layer(
+        "semantic_channel_spatial_hybrid",
+        topology_seed=29,
+    )
+    assert all(
+        torch.equal(left, right)
+        for left, right in zip(
+            first.connections.indices,
+            repeated.connections.indices,
+        )
+    )
+
+    local = first.connections.indices[0][:, :, 0]
+    channels = local[..., -1]
+    assert torch.all(channels[0] != channels[1])
+    v4 = _channel_schedule_layer(
+        "semantic_channel_hybrid",
+        topology_seed=29,
+    )
+    assert torch.equal(
+        first.connections.indices[0][..., :-1],
+        v4.connections.indices[0][..., :-1],
+    )
+    row = analyze_conv_channel_topology(
+        torch.nn.Sequential(first)
+    )[0]
+    v4_row = analyze_conv_channel_topology(
+        torch.nn.Sequential(v4)
+    )[0]
+    assert row["cross_channel_leaf_pair_fraction"] == 1.0
+    assert (
+        row["spatial_coordinates_sha256"]
+        == v4_row["spatial_coordinates_sha256"]
+    )
+    assert (
+        row["spatial_offset_fanout_cv"]
+        == v4_row["spatial_offset_fanout_cv"]
+    )
+
+    inputs = torch.randint(0, 2, (2, 8, 8, 8), dtype=torch.bool)
+    first.set_export_mode()
+    with torch.inference_mode():
+        output_a = first(inputs)
+        output_b = first(inputs)
+    assert output_a.shape == (2, 16, 8, 8)
+    assert torch.equal(output_a, output_b)
+
+
 def test_ancestry_channel_schedule_preserves_spatial_rng_and_balances_pairs():
     torch.manual_seed(321)
     random_layer = _channel_schedule_layer("random", topology_seed=19)

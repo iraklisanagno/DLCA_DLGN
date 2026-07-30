@@ -1,0 +1,33 @@
+{
+  "phase": "table2_s_comparator_final",
+  "wall_seconds": 10380.238291316986,
+  "skipped": [
+    "final_table2_cifar10_s_mommen_nc8_seed0",
+    "final_table2_cifar10_s_mommen_nc8_seed1",
+    "final_table2_cifar10_s_mommen_nc8_seed2"
+  ],
+  "finished": [
+    {
+      "name": "final_table2_cifar10_s_lilogic_top32_tau30_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 5195.104551830009,
+      "log": "experiments/coverage_dlgn/logs/table2_s_comparator_final/final_table2_cifar10_s_lilogic_top32_tau30_seed0.log"
+    },
+    {
+      "name": "final_table2_cifar10_s_lilogic_top32_tau30_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 5270.106396070012,
+      "log": "experiments/coverage_dlgn/logs/table2_s_comparator_final/final_table2_cifar10_s_lilogic_top32_tau30_seed1.log"
+    },
+    {
+      "name": "final_table2_cifar10_s_lilogic_top32_tau30_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 5185.1323903050215,
+      "log": "experiments/coverage_dlgn/logs/table2_s_comparator_final/final_table2_cifar10_s_lilogic_top32_tau30_seed2.log"
+    }
+  ],
+  "failed": []
+}

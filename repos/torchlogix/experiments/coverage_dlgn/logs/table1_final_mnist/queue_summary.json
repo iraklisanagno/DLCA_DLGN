@@ -1,0 +1,82 @@
+{
+  "phase": "table1_final_mnist",
+  "wall_seconds": 21110.463745595,
+  "skipped": [
+    "final_table1_mnist_random_48k_seed0",
+    "final_table1_mnist_random_48k_seed1",
+    "final_table1_mnist_random_48k_seed2",
+    "final_table1_mnist_random_48k_seed3",
+    "final_table1_mnist_random_48k_seed4",
+    "final_table1_mnist_v3_incumbent_48k_seed0",
+    "final_table1_mnist_v3_incumbent_48k_seed1",
+    "final_table1_mnist_v3_incumbent_48k_seed2",
+    "final_table1_mnist_v3_incumbent_48k_seed3",
+    "final_table1_mnist_v3_incumbent_48k_seed4",
+    "final_table1_mnist_mommen_nc16_depth2_48k_seed0",
+    "final_table1_mnist_mommen_nc16_depth2_48k_seed1",
+    "final_table1_mnist_mommen_nc16_depth2_48k_seed2",
+    "final_table1_mnist_mommen_nc16_depth2_48k_seed3",
+    "final_table1_mnist_mommen_nc16_depth2_48k_seed4",
+    "final_table1_mnist_lilogic_top32_depth3_tau15_48k_seed0",
+    "final_table1_mnist_lilogic_top32_depth3_tau15_48k_seed1"
+  ],
+  "finished": [
+    {
+      "name": "final_table1_mnist_lilogic_top32_depth3_tau15_48k_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 4910.095352395998,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/final_table1_mnist_lilogic_top32_depth3_tau15_48k_seed2.log"
+    },
+    {
+      "name": "final_table1_mnist_lilogic_top32_depth3_tau15_48k_seed3",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 4960.096228563991,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/final_table1_mnist_lilogic_top32_depth3_tau15_48k_seed3.log"
+    },
+    {
+      "name": "final_table1_mnist_lilogic_top32_depth3_tau15_48k_seed4",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 4905.120133952994,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/final_table1_mnist_lilogic_top32_depth3_tau15_48k_seed4.log"
+    },
+    {
+      "name": "final_table1_mnist_bitlogic_48k_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 5385.128646072,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/final_table1_mnist_bitlogic_48k_seed0.log"
+    },
+    {
+      "name": "final_table1_mnist_bitlogic_48k_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 5310.104304082997,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/final_table1_mnist_bitlogic_48k_seed1.log"
+    },
+    {
+      "name": "final_table1_mnist_bitlogic_48k_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 5385.105491012,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/final_table1_mnist_bitlogic_48k_seed2.log"
+    },
+    {
+      "name": "final_table1_mnist_bitlogic_48k_seed3",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 5315.116315562002,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/final_table1_mnist_bitlogic_48k_seed3.log"
+    },
+    {
+      "name": "final_table1_mnist_bitlogic_48k_seed4",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 5380.130970978993,
+      "log": "experiments/coverage_dlgn/logs/table1_final_mnist/final_table1_mnist_bitlogic_48k_seed4.log"
+    }
+  ],
+  "failed": []
+}

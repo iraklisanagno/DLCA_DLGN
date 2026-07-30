@@ -1,0 +1,221 @@
+{
+  "phase": "cifar10_medium_task_aware",
+  "provenance": "TRIED",
+  "validation_metric": "best hardened validation accuracy",
+  "test_set_used": false,
+  "controls_reused_not_rerun": true,
+  "v3_modified": false,
+  "frozen_v3_start_hashes_verified": true,
+  "family_stats": {
+    "random": {
+      "mean": 0.5481999878088634,
+      "sample_std": 0.005302829726569068,
+      "n": 3
+    },
+    "coverage_v3": {
+      "mean": 0.5929333206017813,
+      "sample_std": 0.0021385354960027857,
+      "n": 3
+    },
+    "coverage_v3_task_aware": {
+      "mean": 0.5909333195288976,
+      "sample_std": 0.0023437827397097435,
+      "n": 3
+    }
+  },
+  "task_aware_vs_random": {
+    "left": "random",
+    "right": "coverage_v3_task_aware",
+    "per_seed_gain_pp": [
+      3.959999322891228,
+      4.220000326633455,
+      4.6399998664856
+    ],
+    "paired_mean_gain_pp": 4.2733331720034275,
+    "paired_95ci_pp": [
+      3.420968076671897,
+      5.125698267334958
+    ]
+  },
+  "task_aware_vs_v3": {
+    "left": "coverage_v3",
+    "right": "coverage_v3_task_aware",
+    "per_seed_gain_pp": [
+      -0.1200006008148291,
+      -0.41999977827071877,
+      -0.05999994277954279
+    ],
+    "paired_mean_gain_pp": -0.20000010728836357,
+    "paired_95ci_pp": [
+      -0.6791226658894367,
+      0.2791224513127095
+    ]
+  },
+  "promotion_thresholds_pp": {
+    "over_random": 2.0,
+    "over_v3": 1.0
+  },
+  "promoted": false,
+  "decision": "Stop: no full schedule, held-out test, or transfer run.",
+  "common_cost": {
+    "dense_gate_count": 512000,
+    "trainable_parameters": 8192000,
+    "training_routing_parameters": 0,
+    "deployed_routing_bits": 16640000
+  },
+  "rows": [
+    {
+      "family": "coverage_v3",
+      "seed": 0,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/pilot_cifar10_medium_semantic_balanced_v3_seed0",
+      "best_validation_hard_accuracy": 0.594799988269806,
+      "wall_seconds": 458.53354154294357,
+      "dense_gate_count": 512000,
+      "trainable_parameters": 8192000,
+      "training_routing_parameters": 0,
+      "deployed_routing_bits": 16640000,
+      "cost_recovered_from_architecture": true,
+      "connections_init_method": "semantic_balanced_hybrid",
+      "task_aware_rewire_step": null,
+      "task_aware_changed_gates": 0,
+      "task_aware_accepted_swaps": 0,
+      "task_aware_seconds": 0.0
+    },
+    {
+      "family": "coverage_v3",
+      "seed": 1,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/pilot_cifar10_medium_semantic_balanced_v3_seed1",
+      "best_validation_hard_accuracy": 0.5933999860286713,
+      "wall_seconds": 463.44578750105575,
+      "dense_gate_count": 512000,
+      "trainable_parameters": 8192000,
+      "training_routing_parameters": 0,
+      "deployed_routing_bits": 16640000,
+      "cost_recovered_from_architecture": true,
+      "connections_init_method": "semantic_balanced_hybrid",
+      "task_aware_rewire_step": null,
+      "task_aware_changed_gates": 0,
+      "task_aware_accepted_swaps": 0,
+      "task_aware_seconds": 0.0
+    },
+    {
+      "family": "coverage_v3",
+      "seed": 2,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/pilot_cifar10_medium_semantic_balanced_v3_seed2",
+      "best_validation_hard_accuracy": 0.5905999875068665,
+      "wall_seconds": 463.43881214084104,
+      "dense_gate_count": 512000,
+      "trainable_parameters": 8192000,
+      "training_routing_parameters": 0,
+      "deployed_routing_bits": 16640000,
+      "cost_recovered_from_architecture": true,
+      "connections_init_method": "semantic_balanced_hybrid",
+      "task_aware_rewire_step": null,
+      "task_aware_changed_gates": 0,
+      "task_aware_accepted_swaps": 0,
+      "task_aware_seconds": 0.0
+    },
+    {
+      "family": "coverage_v3_task_aware",
+      "seed": 0,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/pilot_cifar10_medium_v3_task_aware_seed0",
+      "best_validation_hard_accuracy": 0.5935999822616577,
+      "wall_seconds": 461.66279638704145,
+      "dense_gate_count": 512000,
+      "trainable_parameters": 8192000,
+      "training_routing_parameters": 0,
+      "deployed_routing_bits": 16640000,
+      "cost_recovered_from_architecture": false,
+      "connections_init_method": "semantic_balanced_hybrid",
+      "task_aware_rewire_step": 10000,
+      "task_aware_changed_gates": 57818,
+      "task_aware_accepted_swaps": 28909,
+      "task_aware_seconds": 3.2344943009666167
+    },
+    {
+      "family": "coverage_v3_task_aware",
+      "seed": 1,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/pilot_cifar10_medium_v3_task_aware_seed1",
+      "best_validation_hard_accuracy": 0.5891999882459641,
+      "wall_seconds": 465.98793517501326,
+      "dense_gate_count": 512000,
+      "trainable_parameters": 8192000,
+      "training_routing_parameters": 0,
+      "deployed_routing_bits": 16640000,
+      "cost_recovered_from_architecture": false,
+      "connections_init_method": "semantic_balanced_hybrid",
+      "task_aware_rewire_step": 10000,
+      "task_aware_changed_gates": 57582,
+      "task_aware_accepted_swaps": 28791,
+      "task_aware_seconds": 3.216584195033647
+    },
+    {
+      "family": "coverage_v3_task_aware",
+      "seed": 2,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/pilot_cifar10_medium_v3_task_aware_seed2",
+      "best_validation_hard_accuracy": 0.5899999880790711,
+      "wall_seconds": 462.3375207679928,
+      "dense_gate_count": 512000,
+      "trainable_parameters": 8192000,
+      "training_routing_parameters": 0,
+      "deployed_routing_bits": 16640000,
+      "cost_recovered_from_architecture": false,
+      "connections_init_method": "semantic_balanced_hybrid",
+      "task_aware_rewire_step": 10000,
+      "task_aware_changed_gates": 57722,
+      "task_aware_accepted_swaps": 28861,
+      "task_aware_seconds": 3.0932738709961995
+    },
+    {
+      "family": "random",
+      "seed": 0,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/pilot_cifar10_medium_random_v3_seed0",
+      "best_validation_hard_accuracy": 0.5539999890327454,
+      "wall_seconds": 458.85040653217584,
+      "dense_gate_count": 512000,
+      "trainable_parameters": 8192000,
+      "training_routing_parameters": 0,
+      "deployed_routing_bits": 16640000,
+      "cost_recovered_from_architecture": true,
+      "connections_init_method": "random",
+      "task_aware_rewire_step": null,
+      "task_aware_changed_gates": 0,
+      "task_aware_accepted_swaps": 0,
+      "task_aware_seconds": 0.0
+    },
+    {
+      "family": "random",
+      "seed": 1,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/pilot_cifar10_medium_random_v3_seed1",
+      "best_validation_hard_accuracy": 0.5469999849796295,
+      "wall_seconds": 463.128725789953,
+      "dense_gate_count": 512000,
+      "trainable_parameters": 8192000,
+      "training_routing_parameters": 0,
+      "deployed_routing_bits": 16640000,
+      "cost_recovered_from_architecture": true,
+      "connections_init_method": "random",
+      "task_aware_rewire_step": null,
+      "task_aware_changed_gates": 0,
+      "task_aware_accepted_swaps": 0,
+      "task_aware_seconds": 0.0
+    },
+    {
+      "family": "random",
+      "seed": 2,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/pilot_cifar10_medium_random_v3_seed2",
+      "best_validation_hard_accuracy": 0.5435999894142151,
+      "wall_seconds": 461.3578310520388,
+      "dense_gate_count": 512000,
+      "trainable_parameters": 8192000,
+      "training_routing_parameters": 0,
+      "deployed_routing_bits": 16640000,
+      "cost_recovered_from_architecture": true,
+      "connections_init_method": "random",
+      "task_aware_rewire_step": null,
+      "task_aware_changed_gates": 0,
+      "task_aware_accepted_swaps": 0,
+      "task_aware_seconds": 0.0
+    }
+  ]
+}

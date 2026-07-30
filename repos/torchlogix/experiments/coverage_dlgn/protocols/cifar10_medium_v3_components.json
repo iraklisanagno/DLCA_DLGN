@@ -1,0 +1,45 @@
+{
+  "phase": "cifar10_medium_v3_components",
+  "dataset": "cifar-10",
+  "architecture": "DlgnCifar10Medium",
+  "gate_count": 512000,
+  "training": {
+    "iterations": 20000,
+    "paired_seeds": [0, 1, 2],
+    "selection_metric": "best hardened validation accuracy",
+    "heldout_test_used": false
+  },
+  "arms": [
+    {
+      "family": "random",
+      "meaning": "seeded fixed-random routing control",
+      "reused_pattern": "pilot_cifar10_medium_random_v3_seed{seed}"
+    },
+    {
+      "family": "balanced_butterfly",
+      "meaning": "balanced deterministic fan-out backbone without image semantics or ancestry swaps",
+      "connections_init_method": "butterfly"
+    },
+    {
+      "family": "semantic_first_no_swaps",
+      "meaning": "semantic first layer plus balanced butterfly deeper layers; ancestry swaps disabled",
+      "connections_init_method": "semantic_balanced_hybrid",
+      "coverage_swap_fraction": 0.0
+    },
+    {
+      "family": "coverage_v3",
+      "meaning": "full frozen V3: semantic first layer, balanced butterfly backbone, and ancestry-novelty swaps",
+      "reused_pattern": "pilot_cifar10_medium_semantic_balanced_v3_seed{seed}",
+      "connections_init_method": "semantic_balanced_hybrid",
+      "coverage_swap_fraction": 0.25,
+      "coverage_candidate_pool_size": 8,
+      "coverage_novelty_weight": 1.0
+    }
+  ],
+  "interpretation": {
+    "balanced_fanout_effect": "balanced_butterfly minus random",
+    "semantic_first_layer_effect": "semantic_first_no_swaps minus balanced_butterfly",
+    "ancestry_swap_effect": "coverage_v3 minus semantic_first_no_swaps",
+    "complete_method_effect": "coverage_v3 minus random"
+  }
+}

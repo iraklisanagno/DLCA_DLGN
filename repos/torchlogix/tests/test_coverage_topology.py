@@ -4,11 +4,15 @@ import torch
 from argparse import Namespace
 
 from torchlogix.connections import FixedDenseConnections
+from torchlogix.layers import LogicDense
+from torchlogix.models import Dlgn
 from torchlogix.topology import (
     add_identity_to_ancestry,
     analyze_dense_indices,
     canonical_strategy,
     combine_channel_spatial_ancestry,
+    classwise_ancestry_metrics,
+    class_conditional_refine,
     coverage_reuse_refine,
     generate_conv_channel_topology,
     generate_dense_stack,
@@ -51,7 +55,12 @@ def _brute_force_stack(n_inputs, layers):
         ("coverage-hybrid", "coverage_hybrid"),
         ("semantic-balanced-hybrid", "semantic_balanced_hybrid"),
         ("semantic-classifier-hybrid", "semantic_classifier_hybrid"),
+        ("class-conditional-coverage", "class_conditional_coverage"),
         ("semantic-channel-hybrid", "semantic_channel_hybrid"),
+        (
+            "semantic-channel-spatial-hybrid",
+            "semantic_channel_spatial_hybrid",
+        ),
         ("ancestry-channel-hybrid", "ancestry_channel_hybrid"),
         ("coverage-reuse-hybrid", "coverage_reuse_hybrid"),
     ],
@@ -423,6 +432,170 @@ def test_semantic_stack_reports_source_and_group_diagnostics():
     assert rows[0]["same_source_pair_fraction"] == 0.0
     assert 0.0 <= rows[-1]["source_cross_gate_jaccard_mean"] <= 1.0
     assert 0.0 <= rows[-1]["source_group_coverage_min"] <= 1.0
+
+
+def test_classwise_ancestry_metrics_detect_group_imbalance():
+    ancestry = packed_identity(8)
+    balanced = np.asarray([
+        [0, 2, 4, 6, 0, 2, 4, 6],
+        [1, 3, 5, 7, 1, 3, 5, 7],
+    ])
+    collapsed = np.asarray([
+        [0, 0, 0, 0, 4, 4, 4, 4],
+        [1, 1, 1, 1, 5, 5, 5, 5],
+    ])
+    balanced_metrics = classwise_ancestry_metrics(
+        ancestry, balanced, n_sources=8, output_groups=2
+    )
+    collapsed_metrics = classwise_ancestry_metrics(
+        ancestry, collapsed, n_sources=8, output_groups=2
+    )
+    assert balanced_metrics["class_coverage_min"] == 1.0
+    assert balanced_metrics["class_source_usage_cv_mean"] == 0.0
+    assert balanced_metrics["class_distinct_ancestry_fraction_mean"] == 1.0
+    assert collapsed_metrics["class_coverage_min"] == 0.25
+    assert collapsed_metrics["class_source_usage_cv_mean"] > 1.0
+    assert collapsed_metrics["class_distinct_ancestry_fraction_mean"] == 0.25
+
+
+def test_class_conditional_refinement_is_deterministic_and_degree_preserving():
+    ancestry = packed_identity(32)
+    base = generate_dense_topology(
+        32,
+        64,
+        strategy="semantic_balanced_hybrid",
+        topology_seed=9,
+        layer_index=3,
+        candidate_pool_size=8,
+        swap_fraction=0.25,
+        output_groups=8,
+    )
+    refined = class_conditional_refine(
+        base.indices,
+        ancestry,
+        topology_seed=9,
+        layer_index=3,
+        change_fraction=0.5,
+        candidate_pool_size=8,
+        output_groups=8,
+    )
+    repeated = class_conditional_refine(
+        base.indices,
+        ancestry,
+        topology_seed=9,
+        layer_index=3,
+        change_fraction=0.5,
+        candidate_pool_size=8,
+        output_groups=8,
+    )
+    base_degree = np.bincount(base.indices.reshape(-1), minlength=32)
+    refined_degree = np.bincount(
+        refined.indices.reshape(-1), minlength=32
+    )
+    assert np.array_equal(refined.indices, repeated.indices)
+    assert np.array_equal(base_degree, refined_degree)
+    assert np.all(refined.indices[0] != refined.indices[1])
+    assert refined.greedy_mask.sum() <= 32
+    assert refined.greedy_mask.sum() % 2 == 0
+
+
+def test_class_conditional_strategy_keeps_v3_base_when_change_is_zero():
+    kwargs = dict(
+        in_dim=32,
+        out_dim=64,
+        topology_seed=5,
+        layer_index=4,
+        candidate_pool_size=8,
+        swap_fraction=0.25,
+        output_groups=8,
+        novelty_weight=1.0,
+    )
+    v3 = generate_dense_topology(
+        **kwargs, strategy="semantic_balanced_hybrid"
+    )
+    head = generate_dense_topology(
+        **kwargs,
+        strategy="class_conditional_coverage",
+        class_balance_change_fraction=0.0,
+    )
+    assert np.array_equal(head.indices, v3.indices)
+
+
+def test_dense_class_head_preserves_v3_backbone_rng_and_cost():
+    def build(classifier_method=None):
+        connection_kwargs = {
+            "init_method": "semantic_balanced_hybrid",
+            "topology_seed": 17,
+            "candidate_pool_size": 8,
+            "swap_fraction": 0.25,
+            "novelty_weight": 1.0,
+            "class_balance_change_fraction": 0.5,
+        }
+        if classifier_method is not None:
+            connection_kwargs["classifier_init_method"] = classifier_method
+        return Dlgn(
+            thresholds=torch.tensor([0.5]),
+            binarization="fixed",
+            binarization_kwargs={},
+            in_dim=16,
+            n_layers=3,
+            neurons_per_layer=64,
+            class_count=4,
+            tau=1.0,
+            connections="fixed",
+            connections_kwargs=connection_kwargs,
+            parametrization="raw",
+            parametrization_kwargs={"weight_init": "random"},
+            device="cpu",
+            lut_rank=2,
+        )
+
+    torch.manual_seed(23)
+    frozen_v3 = build()
+    torch.manual_seed(23)
+    explicit_none = build(None)
+    torch.manual_seed(23)
+    with_head = build("class_conditional_coverage")
+    v3_layers = [
+        module for module in frozen_v3 if isinstance(module, LogicDense)
+    ]
+    none_layers = [
+        module for module in explicit_none if isinstance(module, LogicDense)
+    ]
+    head_layers = [
+        module for module in with_head if isinstance(module, LogicDense)
+    ]
+    assert all(
+        torch.equal(left.connections.indices, right.connections.indices)
+        for left, right in zip(v3_layers, none_layers)
+    )
+    assert all(
+        torch.equal(left.connections.indices, right.connections.indices)
+        for left, right in zip(v3_layers[:-1], head_layers[:-1])
+    )
+    assert head_layers[-1].connections.strategy == (
+        "class_conditional_coverage"
+    )
+    assert not torch.equal(
+        v3_layers[-1].connections.indices,
+        head_layers[-1].connections.indices,
+    )
+    assert torch.equal(
+        torch.bincount(v3_layers[-1].connections.indices.flatten()),
+        torch.bincount(head_layers[-1].connections.indices.flatten()),
+    )
+    assert sum(layer.out_dim for layer in v3_layers) == sum(
+        layer.out_dim for layer in head_layers
+    )
+    assert sum(parameter.numel() for parameter in frozen_v3.parameters()) == (
+        sum(parameter.numel() for parameter in with_head.parameters())
+    )
+    assert all(
+        torch.equal(left, right)
+        for left, right in zip(
+            frozen_v3.parameters(), with_head.parameters()
+        )
+    )
 
 
 def test_tiny_long_range_pool_larger_than_available_pairs_terminates():

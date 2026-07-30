@@ -1,0 +1,47 @@
+{
+  "phase": "cifar10_conv_small_channel_spatial",
+  "purpose": "Test the convolutional channel-spatial domain adapter while preserving frozen dense V3 and convolutional V4.",
+  "dataset": "cifar-10",
+  "architecture": "ClgnCifar10PaperSmall",
+  "method": {
+    "conv_connections_init_method": "semantic_channel_spatial_hybrid",
+    "shared_core": "semantic_balanced_hybrid channel topology with degree-preserving coverage swaps",
+    "domain_adapter": "degree-balanced cross-channel bottom-level LUT pairing over V4's immutable receptive-field coordinates",
+    "trainable_parameters_added": 0,
+    "deployed_gates_added": 0,
+    "deployed_routing_entries_added": 0
+  },
+  "selection": {
+    "metric": "best hardened validation accuracy",
+    "heldout_test_used": false,
+    "paired_seeds": [0, 1, 2],
+    "promotion_gate_percentage_points": {
+      "over_random": 2.0,
+      "over_frozen_v4": 1.0
+    },
+    "promote_only_if_both_gates_pass": true
+  },
+  "training": {
+    "data_split_seed": 2027,
+    "iterations": 20000,
+    "eval_frequency": 2000,
+    "batch_size": 128,
+    "augmentation": "standard",
+    "learning_rate": 0.02,
+    "weight_decay": 0.002
+  },
+  "controls_reused_not_rerun": {
+    "random": "pilot_conv_cifar10_paper_small_random_seed{seed}",
+    "frozen_v4": "pilot_conv_cifar10_paper_small_semantic_channel_v4_seed{seed}"
+  },
+  "frozen_method_policy": {
+    "v3_changed": false,
+    "v4_changed": false,
+    "completed_runs_rerun": false
+  },
+  "common_rng_policy": {
+    "configuration_style": "historical component-wide method selector",
+    "reason": "Preserves identical dense classifier routing and parameter initialization between frozen V4 and the channel-spatial adapter.",
+    "invalid_explicit_classifier_attempt": "results/failed/cifar10_conv_small_explicit_classifier_rng_attempt1"
+  }
+}

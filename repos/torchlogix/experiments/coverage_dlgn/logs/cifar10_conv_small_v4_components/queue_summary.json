@@ -1,0 +1,29 @@
+{
+  "phase": "cifar10_conv_small_v4_components",
+  "wall_seconds": 3075.0872391929734,
+  "skipped": [],
+  "finished": [
+    {
+      "name": "ablate_conv_cifar10_small_balanced_channel_no_swaps_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 1025.0318257689942,
+      "log": "experiments/coverage_dlgn/logs/cifar10_conv_small_v4_components/ablate_conv_cifar10_small_balanced_channel_no_swaps_seed0.log"
+    },
+    {
+      "name": "ablate_conv_cifar10_small_balanced_channel_no_swaps_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 1025.0320608700276,
+      "log": "experiments/coverage_dlgn/logs/cifar10_conv_small_v4_components/ablate_conv_cifar10_small_balanced_channel_no_swaps_seed1.log"
+    },
+    {
+      "name": "ablate_conv_cifar10_small_balanced_channel_no_swaps_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 1025.02184804203,
+      "log": "experiments/coverage_dlgn/logs/cifar10_conv_small_v4_components/ablate_conv_cifar10_small_balanced_channel_no_swaps_seed2.log"
+    }
+  ],
+  "failed": []
+}

@@ -1,0 +1,46 @@
+{
+  "cell": "table2_cifar10_s_comparators",
+  "test_set_used": true,
+  "expected_count": 6,
+  "completed_count": 6,
+  "failures": [],
+  "missing": [],
+  "records": [
+    {
+      "name": "final_table2_cifar10_s_lilogic_top32_tau30_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table2_s_comparator_final/test/final_table2_cifar10_s_lilogic_top32_tau30_seed0.test.log"
+    },
+    {
+      "name": "final_table2_cifar10_s_lilogic_top32_tau30_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table2_s_comparator_final/test/final_table2_cifar10_s_lilogic_top32_tau30_seed1.test.log"
+    },
+    {
+      "name": "final_table2_cifar10_s_lilogic_top32_tau30_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table2_s_comparator_final/test/final_table2_cifar10_s_lilogic_top32_tau30_seed2.test.log"
+    },
+    {
+      "name": "final_table2_cifar10_s_mommen_nc8_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table2_s_comparator_final/test/final_table2_cifar10_s_mommen_nc8_seed0.test.log"
+    },
+    {
+      "name": "final_table2_cifar10_s_mommen_nc8_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table2_s_comparator_final/test/final_table2_cifar10_s_mommen_nc8_seed1.test.log"
+    },
+    {
+      "name": "final_table2_cifar10_s_mommen_nc8_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/table2_s_comparator_final/test/final_table2_cifar10_s_mommen_nc8_seed2.test.log"
+    }
+  ]
+}

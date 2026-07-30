@@ -1,0 +1,34 @@
+{
+  "phase": "cifar10_medium_task_aware",
+  "dataset": "cifar-10",
+  "architecture": "DlgnCifar10Medium",
+  "purpose": "Test one task-aware, fixed-cost intervention complementary to unchanged CoverageDLGN V3.",
+  "method": {
+    "base": "frozen semantic_balanced_hybrid V3",
+    "v3_changes_allowed": false,
+    "rewire_step": 10000,
+    "rewire_fraction": 0.125,
+    "candidate_pool_size": 8,
+    "diversity_weight": 0.25,
+    "calibration_batches": 1,
+    "calibration_source": "the ordinary step-10000 training minibatch",
+    "extra_optimizer_steps": 0,
+    "deployed_routing": "fixed integer indices only"
+  },
+  "pilot": {
+    "iterations": 20000,
+    "paired_seeds": [0, 1, 2],
+    "selection_metric": "best hardened validation accuracy",
+    "heldout_test_used": false
+  },
+  "controls": {
+    "random_pattern": "pilot_cifar10_medium_random_v3_seed{seed}",
+    "v3_pattern": "pilot_cifar10_medium_semantic_balanced_v3_seed{seed}",
+    "reuse_without_rerun": true
+  },
+  "promotion": {
+    "required_mean_gain_over_random_pp": 2.0,
+    "required_mean_gain_over_v3_pp": 1.0,
+    "rule": "Both thresholds must be met on the paired three-seed 20K validation pilot before any full schedule or held-out evaluation."
+  }
+}

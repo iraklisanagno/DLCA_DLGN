@@ -54,6 +54,11 @@ from torchlogix.models import (
     DlgnCifar100BitLogicL,
     DlgnCifar100BitLogicM,
     DlgnCifar100BitLogicS,
+    DlgnCifar100Budget384kDepth3,
+    DlgnCifar100Budget384kDepth12,
+    DlgnCifar100Budget384kDepth24,
+    DlgnCifar100Multilinear256k,
+    DlgnCifar100Scalability64k,
     DlgnFashionMnistPaperSmall,
     DlgnFashionMnistPaperSmallLearnable,
     DlgnFashionMnistBitLogic48k,
@@ -414,6 +419,120 @@ def test_paper_clgn_supports_generic_coverage_reuse_refinement():
     ) + sum(layer.out_dim for layer in dense_layers) == 83_552
 
 
+def test_channel_spatial_adapter_is_common_rng_paired_with_frozen_v4():
+    thresholds = torch.tensor([0.25, 0.5, 0.75])
+
+    def build(strategy, swap_fraction=0.25):
+        kwargs = _paper_model_kwargs(thresholds)
+        kwargs["connections_kwargs"].update({
+            "init_method": strategy,
+            "topology_seed": 17,
+            "candidate_pool_size": 8,
+            "swap_fraction": swap_fraction,
+            "novelty_weight": 1.0,
+        })
+        return ClgnCifar10PaperSmall(**kwargs)
+
+    torch.manual_seed(41)
+    frozen_v4 = build("semantic_channel_hybrid")
+    torch.manual_seed(41)
+    channel_spatial = build("semantic_channel_spatial_hybrid")
+    torch.manual_seed(41)
+    no_swaps = build("semantic_channel_hybrid", swap_fraction=0.0)
+
+    v4_conv = [
+        module for module in frozen_v4 if isinstance(module, LogicConv2d)
+    ]
+    spatial_conv = [
+        module for module in channel_spatial if isinstance(module, LogicConv2d)
+    ]
+    v4_dense = [
+        module for module in frozen_v4 if isinstance(module, LogicDense)
+    ]
+    spatial_dense = [
+        module for module in channel_spatial if isinstance(module, LogicDense)
+    ]
+    no_swap_dense = [
+        module for module in no_swaps if isinstance(module, LogicDense)
+    ]
+
+    assert all(
+        torch.equal(left, right)
+        for left, right in zip(
+            frozen_v4.parameters(),
+            channel_spatial.parameters(),
+        )
+    )
+    assert all(
+        torch.equal(left, right)
+        for left, right in zip(
+            frozen_v4.parameters(),
+            no_swaps.parameters(),
+        )
+    )
+    assert all(
+        torch.equal(left.connections.indices, right.connections.indices)
+        for left, right in zip(v4_dense, spatial_dense)
+    )
+    assert all(
+        torch.equal(left.connections.indices, right.connections.indices)
+        for left, right in zip(v4_dense, no_swap_dense)
+    )
+    assert all(
+        torch.equal(
+            left.connections.channel_pairs,
+            right.connections.channel_pairs,
+        )
+        for left, right in zip(v4_conv, spatial_conv)
+    )
+    assert all(
+        torch.equal(
+            left.connections.indices[0][..., :-1],
+            right.connections.indices[0][..., :-1],
+        )
+        for left, right in zip(v4_conv, spatial_conv)
+    )
+    assert any(
+        not torch.equal(
+            left.connections.indices[0][..., -1],
+            right.connections.indices[0][..., -1],
+        )
+        for left, right in zip(v4_conv, spatial_conv)
+    )
+
+
+def test_conv_revision_configs_preserve_historical_common_rng_style():
+    config_root = (
+        Path(__file__).parents[1]
+        / "experiments"
+        / "coverage_dlgn"
+        / "configs"
+    )
+    component_root = config_root / "cifar10_conv_small_v4_components"
+    revision_root = config_root / "cifar10_conv_small_channel_spatial"
+    for seed in (0, 1, 2):
+        component = json.loads((
+            component_root
+            / (
+                "ablate_conv_cifar10_small_balanced_channel_"
+                f"no_swaps_seed{seed}.json"
+            )
+        ).read_text())
+        revision = json.loads((
+            revision_root
+            / f"pilot_conv_cifar10_small_channel_spatial_seed{seed}.json"
+        ).read_text())
+        assert component["connections_init_method"] == (
+            "semantic_channel_hybrid"
+        )
+        assert revision["connections_init_method"] == (
+            "semantic_channel_spatial_hybrid"
+        )
+        for payload in (component, revision):
+            assert "conv_connections_init_method" not in payload
+            assert "classifier_connections_init_method" not in payload
+
+
 def test_paper_clgn_sm_pilot_pairs_differ_only_in_topology_controls():
     config_dir = (
         Path(__file__).parents[1]
@@ -557,6 +676,275 @@ def test_cifar100_bitlogic_rank2_ladder_matches_common_protocol(
         assert torch.unique(layers[0].connections.indices).numel() == 8_000
     assert model[-1].k == 100
     assert model[-1].tau == 1.0
+
+
+@pytest.mark.parametrize(
+    ("model_cls", "threshold_count", "width", "budget", "tau"),
+    [
+        (DlgnCifar100Scalability64k, 3, 64_000, 384_000, 10.0),
+        (
+            DlgnCifar100Multilinear256k,
+            31,
+            256_000,
+            1_536_000,
+            1.0,
+        ),
+    ],
+)
+def test_cifar100_deep_dense_architectures_match_published_coordinates(
+    model_cls, threshold_count, width, budget, tau
+):
+    thresholds = torch.arange(1, threshold_count + 1) / (
+        threshold_count + 1
+    )
+    model = model_cls(**_paper_model_kwargs(thresholds))
+    layers = [module for module in model if isinstance(module, LogicDense)]
+    assert model.n_input_bits == threshold_count
+    assert model.class_count == 100
+    assert len(layers) == 6
+    assert all(layer.out_dim == width for layer in layers)
+    assert sum(layer.out_dim for layer in layers) == budget
+    assert layers[0].in_dim == 3 * 32 * 32 * threshold_count
+    assert all(layer.in_dim == width for layer in layers[1:])
+    assert model[-1].k == 100
+    assert model[-1].tau == tau
+
+
+@pytest.mark.parametrize(
+    ("model_cls", "depth", "width"),
+    [
+        (DlgnCifar100Budget384kDepth3, 3, 128_000),
+        (DlgnCifar100Budget384kDepth12, 12, 32_000),
+        (DlgnCifar100Budget384kDepth24, 24, 16_000),
+    ],
+)
+def test_cifar100_384k_depth_controls_change_only_depth_and_width(
+    model_cls, depth, width
+):
+    thresholds = torch.tensor([0.25, 0.5, 0.75])
+    model = model_cls(**_paper_model_kwargs(thresholds))
+    layers = [module for module in model if isinstance(module, LogicDense)]
+    assert model.n_input_bits == 3
+    assert model.class_count == 100
+    assert len(layers) == depth
+    assert all(layer.out_dim == width for layer in layers)
+    assert sum(layer.out_dim for layer in layers) == 384_000
+    assert layers[0].in_dim == 3 * 32 * 32 * 3
+    assert all(layer.in_dim == width for layer in layers[1:])
+    assert model[-1].k == 100
+    assert model[-1].tau == 10.0
+
+
+def test_cifar100_384k_depth_pilot_is_matched_and_test_locked():
+    queue = json.loads(
+        Path(
+            "experiments/coverage_dlgn/queues/"
+            "table4_cifar100_depth384k_pilot.json"
+        ).read_text()
+    )
+    assert queue["heldout_test_used"] is False
+    assert len(queue["entries"]) == 6
+    for label in ("depth3", "depth12", "depth24"):
+        entries = [
+            entry for entry in queue["entries"]
+            if entry["architecture_label"] == label
+        ]
+        assert {entry["family"] for entry in entries} == {
+            "random", "coverage_v3"
+        }
+        configs = {
+            entry["family"]: json.loads(Path(entry["config"]).read_text())
+            for entry in entries
+        }
+        for config in configs.values():
+            assert config["dataset"] == "cifar-100"
+            assert config["seed"] == config["topology_seed"] == 0
+            assert config["num_iterations"] == 20_000
+            assert config["eval_freq"] == 2_000
+            assert config["batch_size"] == 100
+            assert config["valid_set_size"] == 0.1
+            assert config["augmentation"] == "none"
+            assert config["learning_rate"] == 0.01
+            assert config["lut_rank"] == 2
+            assert config["parametrization"] == "raw"
+        assert configs["random"]["connections_init_method"] == "random"
+        assert (
+            configs["coverage_v3"]["connections_init_method"]
+            == "semantic_balanced_hybrid"
+        )
+        assert configs["coverage_v3"]["coverage_candidate_pool_size"] == 8
+        assert configs["coverage_v3"]["coverage_swap_fraction"] == 0.125
+        assert configs["coverage_v3"]["coverage_novelty_weight"] == 1.0
+
+
+def test_cifar100_class_head_queue_changes_only_the_separate_head():
+    queue = json.loads(
+        Path(
+            "experiments/coverage_dlgn/queues/"
+            "table4_cifar100_class_head.json"
+        ).read_text()
+    )
+    assert queue["heldout_test_used"] is False
+    assert len(queue["entries"]) == 3
+    assert {entry["seed"] for entry in queue["entries"]} == {0, 1, 2}
+    for entry in queue["entries"]:
+        config = json.loads(Path(entry["config"]).read_text())
+        source = json.loads(Path(entry["selection_source"]).read_text())
+        differing = {
+            key
+            for key in set(config) | set(source)
+            if config.get(key) != source.get(key)
+        }
+        assert differing == {
+            "classifier_connections_init_method",
+            "class_balance_change_fraction",
+            "output",
+        }
+        assert config["architecture"] == "DlgnCifar100Scalability64k"
+        assert config["connections_init_method"] == (
+            "semantic_balanced_hybrid"
+        )
+        assert config["classifier_connections_init_method"] == (
+            "class_conditional_coverage"
+        )
+        assert config["coverage_candidate_pool_size"] == 8
+        assert config["coverage_swap_fraction"] == 0.125
+        assert config["coverage_novelty_weight"] == 1.0
+        assert config["class_balance_change_fraction"] == 0.25
+        assert config["num_iterations"] == 20_000
+        assert config["eval_freq"] == 2_000
+        assert config["valid_set_size"] == 0.1
+        assert config["seed"] == config["topology_seed"] == entry["seed"]
+
+
+def test_cifar100_deep_screen_preserves_published_coordinates_and_v3():
+    queue_path = (
+        Path("experiments/coverage_dlgn/queues")
+        / "table4_cifar100_deep_screen.json"
+    )
+    queue = json.loads(queue_path.read_text())
+    assert queue["heldout_test_used"] is False
+    assert len(queue["entries"]) == 8
+    expected = {
+        "64k": {
+            "architecture": "DlgnCifar100Scalability64k",
+            "batch_size": 100,
+        },
+        "256k": {
+            "architecture": "DlgnCifar100Multilinear256k",
+            "batch_size": 512,
+        },
+    }
+    for label, coordinate in expected.items():
+        entries = [
+            entry for entry in queue["entries"]
+            if entry["architecture_label"] == label
+        ]
+        assert len(entries) == 4
+        assert {entry["candidate"] for entry in entries} == {
+            "random", "swap0125", "incumbent", "swap0500"
+        }
+        for entry in entries:
+            config = json.loads(Path(entry["config"]).read_text())
+            assert config["dataset"] == "cifar-100"
+            assert config["architecture"] == coordinate["architecture"]
+            assert config["batch_size"] == coordinate["batch_size"]
+            assert config["augmentation"] == "none"
+            assert config["learning_rate"] == 0.01
+            assert "weight_decay" not in config
+            assert config["num_iterations"] == 5_000
+            assert config["valid_set_size"] == 0.1
+            assert config["seed"] == config["topology_seed"] == 0
+            assert config["lut_rank"] == 2
+            assert config["parametrization"] == "raw"
+            if entry["family"] == "coverage_v3":
+                assert (
+                    config["connections_init_method"]
+                    == "semantic_balanced_hybrid"
+                )
+                assert config["coverage_candidate_pool_size"] == 8
+                assert config["coverage_novelty_weight"] == 1.0
+            else:
+                assert config["connections_init_method"] == "random"
+
+
+def test_cifar100_deep_selection_promotes_only_positive_screen():
+    queue_path = (
+        Path("experiments/coverage_dlgn/queues")
+        / "table4_cifar100_deep_selection.json"
+    )
+    queue = json.loads(queue_path.read_text())
+    assert queue["heldout_test_used"] is False
+    assert queue["skipped_architectures"] == ["256k"]
+    assert len(queue["entries"]) == 6
+    assert {entry["architecture_label"] for entry in queue["entries"]} == {
+        "64k"
+    }
+    for seed in (0, 1, 2):
+        entries = [
+            entry for entry in queue["entries"] if entry["seed"] == seed
+        ]
+        assert {entry["family"] for entry in entries} == {
+            "random", "coverage_v3"
+        }
+        for entry in entries:
+            config = json.loads(Path(entry["config"]).read_text())
+            assert config["architecture"] == "DlgnCifar100Scalability64k"
+            assert config["seed"] == config["topology_seed"] == seed
+            assert config["num_iterations"] == 20_000
+            assert config["eval_freq"] == 2_000
+            assert config["batch_size"] == 100
+            assert config["valid_set_size"] == 0.1
+            assert config["augmentation"] == "none"
+            assert "weight_decay" not in config
+            if entry["family"] == "coverage_v3":
+                assert (
+                    config["connections_init_method"]
+                    == "semantic_balanced_hybrid"
+                )
+                assert config["coverage_candidate_pool_size"] == 8
+                assert config["coverage_swap_fraction"] == 0.125
+                assert config["coverage_novelty_weight"] == 1.0
+
+
+def test_cifar100_deep_final_uses_scalability_paper_schedule():
+    queue_path = (
+        Path("experiments/coverage_dlgn/queues")
+        / "table4_cifar100_deep_final.json"
+    )
+    queue = json.loads(queue_path.read_text())
+    assert queue["heldout_test_used"] is False
+    assert queue["paper_schedule"] == {
+        "train_examples": 40_000,
+        "batch_size": 100,
+        "steps_per_epoch": 400,
+        "epochs": 100,
+        "num_iterations": 40_000,
+        "validation_fraction": 0.2,
+        "augmentation": "none",
+        "optimizer": "Adam",
+        "learning_rate": 0.01,
+    }
+    assert len(queue["entries"]) == 6
+    for seed in (0, 1, 2):
+        entries = [
+            entry for entry in queue["entries"] if entry["seed"] == seed
+        ]
+        assert {entry["family"] for entry in entries} == {
+            "random", "coverage_v3"
+        }
+        for entry in entries:
+            config = json.loads(Path(entry["config"]).read_text())
+            assert config["architecture"] == "DlgnCifar100Scalability64k"
+            assert config["seed"] == config["topology_seed"] == seed
+            assert config["num_iterations"] == 40_000
+            assert config["eval_freq"] == 2_000
+            assert config["batch_size"] == 100
+            assert config["valid_set_size"] == 0.2
+            assert config["augmentation"] == "none"
+            assert "weight_decay" not in config
+            if entry["family"] == "coverage_v3":
+                assert config["coverage_swap_fraction"] == 0.125
 
 
 def test_cifar100_s_screen_changes_only_frozen_v3_controls():

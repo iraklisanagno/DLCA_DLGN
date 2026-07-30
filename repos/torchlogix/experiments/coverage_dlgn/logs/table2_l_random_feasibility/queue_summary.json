@@ -1,0 +1,15 @@
+{
+  "phase": "table2_l_random_feasibility",
+  "wall_seconds": 125.00290816300549,
+  "skipped": [],
+  "finished": [
+    {
+      "name": "timing_table2_cifar10_l_random_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 125.00254254500032,
+      "log": "experiments/coverage_dlgn/logs/table2_l_random_feasibility/timing_table2_cifar10_l_random_seed0.log"
+    }
+  ],
+  "failed": []
+}

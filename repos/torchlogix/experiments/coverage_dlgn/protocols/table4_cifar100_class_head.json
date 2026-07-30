@@ -1,0 +1,59 @@
+{
+  "phase": "table4_cifar100_class_head",
+  "dataset": "cifar-100",
+  "architecture": {
+    "class": "DlgnCifar100Scalability64k",
+    "depth": 6,
+    "width_per_layer": 64000,
+    "total_gates": 384000,
+    "trainable_lut_parameters": 6144000,
+    "class_count": 100
+  },
+  "hypothesis": "CIFAR-100 V3 already saturates per-class source coverage, but class-wise source usage remains substantially less uniform than on CIFAR-10. A degree-preserving final-layer refinement toward underused sources can improve accuracy without changing V3, gates, parameters, routing storage, or inference cost.",
+  "method": {
+    "name": "class-conditional coverage head",
+    "relationship_to_v3": "separate final-layer strategy constructed from the exact frozen V3 final-layer base",
+    "v3_backbone_strategy": "semantic_balanced_hybrid",
+    "classifier_strategy": "class_conditional_coverage",
+    "coverage_candidate_pool_size": 8,
+    "coverage_swap_fraction": 0.125,
+    "coverage_novelty_weight": 1.0,
+    "class_balance_change_fraction": 0.25,
+    "mechanism_changes_to_v3_or_v4_allowed": false
+  },
+  "diagnostic_source": "summary/classwise_head_diagnostics.json",
+  "pilot": {
+    "iterations": 20000,
+    "eval_frequency": 2000,
+    "batch_size": 100,
+    "validation_fraction": 0.1,
+    "data_split_seed": 2027,
+    "paired_seeds": [
+      0,
+      1,
+      2
+    ],
+    "augmentation": "none",
+    "optimizer": "Adam",
+    "learning_rate": 0.01,
+    "selection_metric": "best hardened validation accuracy",
+    "heldout_test_used": false
+  },
+  "controls": {
+    "reuse_policy": "Do not rerun completed experiments. Reuse the exact paired 20K random and frozen V3 artifacts from table4_cifar100_deep_selection.",
+    "random_pattern": "results/select_table4_cifar100_64k_random_seed{seed}",
+    "v3_pattern": "results/select_table4_cifar100_64k_v3_swap0125_seed{seed}"
+  },
+  "promotion": {
+    "required_mean_gain_over_random_pp": 2.0,
+    "required_mean_gain_over_v3_pp": 1.0,
+    "rule": "Promote only if both paired three-seed mean thresholds are met. Otherwise stop before full schedule, transfer, convolutional use, or held-out test.",
+    "full_schedule_if_promoted": "Reuse the 6x64K scalability paper schedule and evaluate held-out test exactly once after checkpoints are frozen.",
+    "transfer_if_promoted": [
+      "CIFAR-10 M",
+      "CIFAR-10 L",
+      "Fashion-MNIST",
+      "corrected convolutional CIFAR-10 S"
+    ]
+  }
+}

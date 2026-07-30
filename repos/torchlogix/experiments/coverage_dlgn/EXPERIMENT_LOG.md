@@ -681,3 +681,285 @@ This log records operational failures and protocol decisions made after commit
   reported-only paper values. No CIFAR-100 held-out test was used.
 - This closes dense CIFAR-100 under the frozen promotion/kill protocol.
   Convolutional V4 may now be revisited as a separate phase.
+
+## July 28, 2026: dense CIFAR-100 deep-architecture extension
+
+- At the user's direction, dense CIFAR-100 was reopened for the deeper
+  architectures used by the scalability and multilinear papers:
+  six layers by 64K gates (384K total, three thresholds, temperature 10) and
+  six layers by 256K gates (1.536M total, 31 thresholds, temperature 1).
+  These are separate paper coordinates from the compact BitLogic S/M/L
+  ladder. The frozen V3 implementation was not modified.
+- The machine-readable protocol is
+  `protocols/table4_dense_cifar100_deep.json`. It predeclares a seed-0 5K
+  screen of fixed random and existing V3 swap fractions 0.125, 0.25, and
+  0.5; a positive winner advances to paired seeds 0--2 at 20K; a positive
+  paired mean advances to the paper-length schedule. Held-out test remains
+  locked until the full winner is frozen.
+- Both CUDA smoke tests passed. The 6-by-64K model has 384,000 gates,
+  6,144,000 trainable LUT parameters, and about 0.795 GiB peak allocated GPU
+  memory. The 6-by-256K model has 1,536,000 gates, 24,576,000 trainable LUT
+  parameters, and about 14.18 GiB peak allocated GPU memory.
+- The first two-GPU screen supervisor was externally terminated while
+  6-by-64K `swap0500` and 6-by-256K random were incomplete. Their artifacts
+  and logs were moved intact to
+  `results/failed/table4_cifar100_deep_screen_supervisor_sigterm_attempt1/`.
+  The idempotent restart skipped the three already complete runs and
+  completed the remaining five. No incomplete result entered a summary.
+- The selection generator initially raised a `KeyError` before launching
+  training because it read the screen field `candidate` as `label`. The
+  report-only generator was corrected and rerun. This created no checkpoint
+  or accuracy result and did not alter training or V3.
+
+## July 28, 2026: dense CIFAR-100 deep results
+
+- In the 6-by-64K 5K screen, random reached `[TRIED]` 19.340% hardened
+  validation accuracy. V3 swap fractions 0.125, 0.25, and 0.5 reached
+  19.980%, 19.700%, and 19.580%; `swap0125` advanced at +0.640 pp.
+- Its paired three-seed 20K confirmation reached `[TRIED]`
+  21.580% +/- 0.100% for V3 versus 21.040% +/- 0.420% for random. Per-seed
+  gains were +1.060, +0.540, and +0.020 pp; the mean +0.540 pp satisfied the
+  frozen promotion rule.
+- The exact six-by-64K paper-length schedule used 100 epochs, a fixed 80/20
+  train/validation split, batch size 100, Adam at 0.01, three thresholds, no
+  augmentation, and three paired seeds. Full validation was
+  `[OUR-FINAL]` 21.577% +/- 0.067% for V3 versus
+  `[REPRODUCED]` 20.943% +/- 0.311% for random, a paired +0.633 pp
+  (95% CI [-0.193, +1.459]); all three validation gains were positive.
+- After freezing those checkpoints, each was evaluated exactly once on the
+  held-out test set. V3 reached `[OUR-FINAL]` 21.010% +/- 0.131% versus
+  `[REPRODUCED]` 20.677% +/- 0.522% for random. Per-seed gains were
+  -0.200, +0.630, and +0.570 pp, for +0.333 pp paired mean with 95% CI
+  [-0.816, +1.483]. The positive mean is not statistically conclusive at
+  three seeds. The paper reports 22.54% +/- 0.26% for its random baseline.
+- For 6-by-64K, random topology construction averaged about 2.07 seconds and
+  V3 `swap0125` about 37.46 seconds; peak allocated GPU memory was identical.
+  Each full training run took about 11.4 minutes excluding topology.
+- In the 6-by-256K 5K screen, random reached `[TRIED]` 11.680%. V3 swap
+  fractions 0.125, 0.25, and 0.5 reached 10.320%, 10.180%, and 11.060%.
+  Since every frozen V3 control was negative, the branch stopped before
+  multi-seed confirmation, paper-length training, or held-out test. The
+  screen is not directly comparable to the papers' 100K-step reported
+  Soft-Mix/CovJac results.
+- For 6-by-256K, topology construction ranged from 151.47 seconds at
+  `swap0125` to 554.86 seconds at `swap0500`; fixed random took 34.60
+  seconds. Each 5K training run took about 31.7 minutes excluding topology.
+  All learning curves, checkpoints, manifests, summaries, and stopped/failed
+  attempts are retained.
+
+## July 28, 2026: fixed-384K CIFAR-100 depth ablation
+
+- Three controlled architectures were added without changing V3:
+  3-by-128K, 12-by-32K, and 24-by-16K. Each has exactly 384,000 rank-2
+  gates, 6,144,000 trainable LUT parameters, three input thresholds,
+  GroupSum temperature 10, batch size 100, Adam at 0.01, no augmentation,
+  and the fixed 90/10 split with split seed 2027.
+- The frozen protocol is
+  `protocols/table4_dense_cifar100_depth384k.json`. It predeclares paired
+  seed-0 20K pilots using random versus unchanged V3 pool 8, swap fraction
+  0.125, and novelty weight 1.0. Only a gain of at least +1.0 pp authorizes
+  confirmation seeds 1 and 2. Held-out test access is prohibited.
+- Architecture and CUDA smokes passed. All six 20K runs completed with zero
+  queue failures. No prior completed experiment was rerun.
+- The shallow/wide 3-by-128K control reached `[TRIED]` 21.080% best hardened
+  validation accuracy for random and `[TRIED]` 21.860% for V3, a positive
+  +0.780 pp. It did not meet the predeclared +1 pp confirmation threshold.
+  Its final-step hard accuracies were 20.000% and 21.860%, respectively.
+- Both deeper coordinates failed to optimize. At 12-by-32K, random and V3
+  both peaked at 1.180%; final hard/relaxed accuracy was 1.060%/0.980% for
+  random and 0.780%/1.380% for V3. At 24-by-16K, both peaked at 1.200%;
+  final hard/relaxed accuracy was 1.100%/0.740% for random and
+  1.020%/0.740% for V3. Losses remained finite, so these are optimization
+  failures rather than crashes or numerical divergence.
+- Topology ancestry had already saturated before it could supply a useful
+  distinction. At depth 12, final mean raw-source ancestry was 2,262.25 for
+  random and 2,288.53 for V3 out of 3,072 sources; global source coverage
+  was complete. At depth 24, both methods gave every final gate all 3,072
+  sources and cross-gate source-ancestry Jaccard 1.0.
+- Offline topology construction was 3.34 versus 47.98 seconds at depth 3,
+  1.12 versus 33.79 seconds at depth 12, and 0.56 versus 42.43 seconds at
+  depth 24 for random versus V3. Peak GPU allocation remained matched
+  within each pair (0.890, 0.750, and 0.723 GiB).
+- No architecture crossed the promotion threshold. Consequently, no
+  confirmation seed, full schedule, or held-out-test evaluation was run.
+  The machine-readable result is
+  `summary/table4_cifar100_depth384k_pilot.json`.
+
+## July 29, 2026: class-conditional coverage-head diagnosis
+
+- Frozen CIFAR-10 S/L and CIFAR-100 6-by-64K checkpoints were analyzed
+  offline without using weights, labels, or held-out data. CIFAR-100 V3
+  already gave every class complete raw-source coverage, but seed-0 mean
+  per-class source-usage CV was 0.24650 versus 0.05289 for CIFAR-10 L V3.
+  Within-class ancestry Jaccard was 0.01042 versus 0.00502.
+- This rejected a simple additional-coverage objective. A separate
+  `class_conditional_coverage` final-layer strategy was implemented instead.
+  It starts from the exact V3 final-layer base and uses strictly improving
+  cross-class, degree-preserving two-edge swaps to favor sources underused by
+  each affected class.
+- Frozen V3 and V4 remain separate unchanged strategies. With no classifier
+  override, model-level tests recover identical V3 indices and initialization.
+  The new strategy changes no backbone layer, spatial coordinate, gate,
+  parameter, routing-bit, or inference-cost budget.
+- Seed-0 offline/CUDA checks changed 15,088 of 64,000 classifier gates, kept
+  the exact predecessor-degree vector, and reduced mean source-usage CV from
+  0.24650 to 0.22732. Circuit export and functional equivalence passed.
+- The machine-readable protocol
+  `protocols/table4_cifar100_class_head.json` froze one setting before
+  accuracy training: V3 pool 8, V3 swap 0.125, novelty 1.0, and a maximum
+  class-head change fraction of 0.25. Promotion required both +2 pp over
+  random and +1 pp over V3 across paired seeds 0--2 at 20K.
+- To honor the no-rerun policy, exact completed random and V3 20K artifacts
+  were reused. Only the three missing class-head arms were trained. They
+  completed with zero failures; no held-out test was accessed.
+- Random reached `[TRIED]` 21.040% +/- 0.420%, frozen V3 reached
+  `[TRIED]` 21.580% +/- 0.100%, and V3 plus the class head reached
+  `[TRIED]` 21.593% +/- 0.133% best hardened validation accuracy.
+  Head-minus-random was +0.553 pp (95% CI [-0.565, +1.671]); head-minus-V3
+  was +0.013 pp (95% CI [-0.385, +0.412]).
+- Across three seeds, the head reduced mean class source-usage CV from
+  0.25655 for V3 to 0.23475 and slightly reduced within-class Jaccard from
+  0.01051 to 0.01042. The intended topology effect therefore occurred, but
+  it did not translate into accuracy.
+- Mean topology construction was 2.07 seconds for random, 37.47 seconds for
+  V3, and 49.50 seconds for V3 plus the head. All three used 0.795 GiB peak
+  GPU allocation and identical deployment costs.
+- Both promotion thresholds failed. The full schedule, held-out test,
+  CIFAR-10/Fashion transfer, and convolutional V4 combination were stopped
+  by the predeclared rule. Details are in
+  `CLASS_CONDITIONAL_HEAD.md` and
+  `summary/table4_cifar100_class_head.json`.
+
+## July 29, 2026: CIFAR-10 compression held-out completion
+
+- Before evaluation, all 12 frozen 256K/384K random/V3 checkpoint directories
+  were audited: every checkpoint existed and none contained
+  `test_metrics.json`.
+- `evaluate_table2_compression_remaining.py` assigned the checkpoints across
+  both GPUs and refuses to overwrite any existing held-out result. All 12
+  evaluations completed with zero failures. No training was rerun.
+- At 256K gates, V3 reached `[OUR-FINAL]` 56.903% +/- 0.134% versus
+  `[REPRODUCED]` 52.253% +/- 0.058% for random. Every paired gain was
+  positive; the mean was +4.650 pp with 95% Student-t CI
+  [+4.174, +5.126].
+- At 384K gates, V3 reached `[OUR-FINAL]` 58.143% +/- 0.153% versus
+  `[REPRODUCED]` 53.657% +/- 0.328% for random. Every paired gain was
+  positive; the mean was +4.487 pp with 95% Student-t CI
+  [+3.515, +5.458].
+- These checkpoints are closed to additional test queries. The immutable
+  summary is `summary/table2_cifar10_compression_remaining_test.json`.
+
+## July 29, 2026: CIFAR-100 baseline reproduction audit
+
+- `audit_cifar100_baseline.py` verified the six completed random/V3 runs
+  against the scalability paper: dataset, no augmentation, 20% validation,
+  exact 0.25/0.50/0.75 thresholds, 6-by-64K architecture, temperature 10,
+  Adam at 0.01, batch 100, 100 epochs, and three seeds all match.
+- The 1.863 pp gap between the local random mean (20.677%) and the paper
+  mean (22.54%) cannot be treated as an exact numerical reproduction gap.
+  Canonical difflogic random routing uses two Torch `randperm` calls, while
+  the paired local study uses an independent NumPy topology seed. The latter
+  is necessary for matched random/V3 weight initialization but produces a
+  different fixed graph and RNG stream.
+- The paper's validation split seed and final-versus-validation-selected
+  checkpoint policy are also unresolved. No checkpoint was retrained or
+  evaluated on test during this audit. Details are in
+  `CIFAR100_BASELINE_AUDIT.md` and
+  `summary/cifar100_baseline_audit.json`.
+
+## July 29, 2026: frozen V3 component ablation on CIFAR-10 M
+
+- The machine-readable protocol
+  `protocols/cifar10_medium_v3_components.json` decomposes the unchanged V3
+  into fixed random, balanced butterfly fan-out, semantic first layer with
+  swaps disabled, and full frozen V3.
+- Existing three-seed 20K random and full-V3 controls were reused. Only the
+  six missing balanced-backbone and semantic/no-swap arms were trained.
+  All six completed successfully on two GPUs; no held-out test was accessed.
+- The first task-aware config-generation attempt failed before training
+  because only the original seed-0 V3 pilot config file exists. The generator
+  was corrected to clone that frozen template and override both `seed` and
+  `topology_seed`. This failure created no result directory.
+- The first component-summary attempt failed because old pilot controls
+  predate the `run_summary.json` cost field. The summarizer was corrected to
+  recover the analytically fixed medium cost (verified against all six new
+  arms) and mark recovered rows. No accuracy or checkpoint changed.
+- Random reached 54.820% +/- 0.530%. Balanced butterfly reached
+  58.980% +/- 0.548%, a paired +4.160 pp with 95% CI
+  [+3.988, +4.332].
+- Semantic-first/no-swaps reached 59.253% +/- 0.153%, only +0.273 pp over
+  balanced butterfly (95% CI [-0.780, +1.326]).
+- Full V3 reached 59.293% +/- 0.214%. Its ancestry-swap increment over the
+  semantic/no-swap arm was +0.040 pp (95% CI [-0.434, +0.514]), while the
+  complete V3 gain over random remained +4.473 pp
+  (95% CI [+3.624, +5.323]).
+- The dominant measured mechanism at this coordinate is therefore balanced
+  fan-out. Semantic pairing and ancestry swaps remain parts of the frozen V3
+  algorithm but do not have independently significant incremental effects in
+  this three-seed pilot.
+
+## July 29, 2026: one-shot task-aware rewiring negative result
+
+- A separate optional method was implemented in `torchlogix/task_aware.py`;
+  frozen `semantic_balanced_hybrid` V3 in `topology.py` was not edited.
+  The feature is disabled by default.
+- On the ordinary step-10K training batch, the method records
+  class-conditional absolute activation-gradient signatures, performs
+  strictly improving degree-preserving two-edge swaps once, discards the
+  calibration state, and resumes training. It adds no optimizer step,
+  trainable routing parameter, deployed routing bit, gate, or LUT parameter.
+- Focused tests passed, followed by a 10-step CUDA smoke. The three-seed
+  CIFAR-10 M protocol is
+  `protocols/cifar10_medium_task_aware.json`; promotion required both +2 pp
+  over random and +1 pp over V3 at 20K.
+- The first post-run export-equivalence test used a full `Dlgn` fixture whose
+  fixed binarizer emits floats; export-mode `LogicDense` requires Boolean
+  inputs, so the fixture failed before testing rewired routing. It was
+  replaced by the direct-`LogicDense` Boolean fixture used by the circuit
+  suite. Rewired model/circuit equivalence then passed. This test-only failure
+  did not touch any experiment artifact.
+- Existing random and V3 controls were reused. Only three task-aware arms
+  were trained. Pre-event layer-index hashes exactly matched the old frozen
+  V3 checkpoints for all seeds.
+- The event changed 57,818, 57,582, and 57,722 of 512K gates and took
+  3.23, 3.22, and 3.09 seconds of swap computation. Exact predecessor
+  degrees were preserved.
+- Task-aware V3 reached `[TRIED]` 59.093% +/- 0.234%. This is +4.273 pp over
+  random (95% CI [+3.421, +5.126]) but -0.200 pp versus V3
+  (95% CI [-0.679, +0.279]); all three paired V3 differences were negative.
+- The method failed the +1 pp-over-V3 gate. No full schedule, held-out test,
+  dataset transfer, or convolutional run is authorized. Details are in
+  `TASK_AWARE_REWIRING.md` and
+  `summary/cifar10_medium_task_aware.json`.
+
+## July 29, 2026: convolutional V4 components and channel-spatial negative result
+
+- Frozen dense V3 and convolutional V4 were not modified. The new
+  `semantic_channel_spatial_hybrid` strategy is a separate candidate that
+  preserves V4 channel pairs and spatial coordinates but forces each
+  bottom-level LUT to mix the selected channel pair.
+- The original adapter draft balanced spatial offsets. Before training, the
+  project specification was re-audited and its requirement to leave spatial
+  receptive-field indexing unchanged was found. The implementation was
+  corrected before any adapter pilot completed; four full-architecture spatial
+  hashes match V4 exactly.
+- An initial explicit classifier-override attempt exposed a second protocol
+  issue. The override gave dense routing an independent topology RNG, changing
+  later dense parameter initialization relative to historical V4. Two
+  completed no-swap runs and two partial runs were excluded and preserved
+  under
+  `results/failed/cifar10_conv_small_explicit_classifier_rng_attempt1`.
+- Corrected configs use the historical component-wide selector. A full-model
+  regression test proves bit-identical trainable parameters, dense classifier
+  indices, V4 channel pairs, and spatial coordinates for each paired seed.
+- All six corrected runs completed with zero queue failures. Existing
+  historical random and V4 controls were reused; neither was retrained and the
+  held-out test set was not accessed.
+- Balanced channels without swaps reached 58.013%, +1.340 pp over random
+  (95% CI [-0.988, +3.668]) and +0.827 pp over V4
+  (95% CI [-2.394, +4.047]). The positive direction is inconclusive.
+- Forced channel-spatial leaf pairing reached 57.033%, +0.360 pp over random
+  (95% CI [-0.501, +1.221]) and -0.153 pp versus V4
+  (95% CI [-2.714, +2.407]).
+- The adapter failed both +2 pp-over-random and +1 pp-over-V4 gates. No
+  CIFAR-10 M run or held-out evaluation was launched.

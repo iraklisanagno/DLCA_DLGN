@@ -1,0 +1,48 @@
+{
+  "wall_seconds": 73.43905330798589,
+  "best_validation_hard_accuracy": 0.0774,
+  "final_metrics": {
+    "val_loss_discrete": 6.351886728668213,
+    "val_acc_discrete": 0.0704,
+    "val_loss_relaxed": 3.709803507232666,
+    "val_acc_relaxed": 0.1432,
+    "train_loss": 1.18493896484375,
+    "connections_temperature": 0.001,
+    "parametrization_temperature": 1.0
+  },
+  "peak_gpu_memory_bytes": 28904960,
+  "topology": [
+    {
+      "strategy": "semantic_balanced_hybrid",
+      "topology_seed": 0,
+      "layer_index": 0,
+      "construction_seconds": 0.22356290800962597,
+      "generator_temporary_bytes": 5138944,
+      "swap_fraction": 0.0,
+      "output_groups": 1,
+      "novelty_weight": 2.0,
+      "reuse_change_fraction": 0.25,
+      "reuse_weight": 1.0
+    },
+    {
+      "strategy": "semantic_balanced_hybrid",
+      "topology_seed": 0,
+      "layer_index": 1,
+      "construction_seconds": 1.153746324009262,
+      "generator_temporary_bytes": 3136000,
+      "swap_fraction": 0.25,
+      "output_groups": 100,
+      "novelty_weight": 2.0,
+      "reuse_change_fraction": 0.25,
+      "reuse_weight": 1.0
+    }
+  ],
+  "cost": {
+    "dense_gate_count": 8000,
+    "trainable_parameters": 128000,
+    "training_routing_parameters": 0,
+    "deployed_routing_bits": 208000,
+    "deployed_routing_bytes_packed": 26000,
+    "candidate_indices_tensor_bytes": 128000
+  }
+}

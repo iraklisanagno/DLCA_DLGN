@@ -1,0 +1,53 @@
+{
+  "step": 10000,
+  "calibration_batches": 1,
+  "calibration_examples": 100,
+  "uses_ordinary_training_batch": true,
+  "extra_optimizer_steps": 0,
+  "layers": [
+    {
+      "layer_index": 0,
+      "changed_gates": 15502,
+      "eligible_gates": 16000,
+      "accepted_swaps": 7751,
+      "score_improvement": 3130.025058060156,
+      "construction_seconds": 0.7619166339864023,
+      "predecessor_degree_preserved": true,
+      "before_indices_sha256": "d77e6eb79428517264269d51efea4778351e0446780e293ea7460e236b142c1d",
+      "after_indices_sha256": "21f082191a4da2b10b6d16d7474d8f8e5b3327d1c94c549326aecdd293770c41"
+    },
+    {
+      "layer_index": 1,
+      "changed_gates": 14290,
+      "eligible_gates": 16000,
+      "accepted_swaps": 7145,
+      "score_improvement": 2784.9980499606368,
+      "construction_seconds": 0.8085169980186038,
+      "predecessor_degree_preserved": true,
+      "before_indices_sha256": "3922db7e7173c13509d9500bd66a7564f7630f0ea108203771a89f9043c69eeb",
+      "after_indices_sha256": "7f0118736e3a4ee930b3c8fdeb7adaaefa55c64554e1de777767d7d025d44725"
+    },
+    {
+      "layer_index": 2,
+      "changed_gates": 13914,
+      "eligible_gates": 16000,
+      "accepted_swaps": 6957,
+      "score_improvement": 2591.9836176201597,
+      "construction_seconds": 0.8215179120306857,
+      "predecessor_degree_preserved": true,
+      "before_indices_sha256": "aa2361dde4863f966e1ce2a8710d1b913f046365af4afd900cc668510e23af62",
+      "after_indices_sha256": "e12d3935ee1cae32f8238b5e8b2b0544e9fe26e013a2e2cf1fdf150e345e14d8"
+    },
+    {
+      "layer_index": 3,
+      "changed_gates": 13876,
+      "eligible_gates": 16000,
+      "accepted_swaps": 6938,
+      "score_improvement": 2028.390682879238,
+      "construction_seconds": 0.8246326509979554,
+      "predecessor_degree_preserved": true,
+      "before_indices_sha256": "552444c7a150d77ec7a78bbfcfb47da712c5e72536ebb3559147bccba4cdf95b",
+      "after_indices_sha256": "7a2189f480b49f83f7b6cf87ac5c95dc9f5f4533cfdeba0b638586165d72fe42"
+    }
+  ]
+}

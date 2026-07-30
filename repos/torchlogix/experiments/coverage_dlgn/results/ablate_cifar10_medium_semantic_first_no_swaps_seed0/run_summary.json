@@ -1,0 +1,77 @@
+{
+  "wall_seconds": 462.59792203700636,
+  "best_validation_hard_accuracy": 0.5941999846696854,
+  "final_metrics": {
+    "val_loss_discrete": 1.169547939300537,
+    "val_acc_discrete": 0.5889999848604203,
+    "val_loss_relaxed": 1.1627216386795043,
+    "val_acc_relaxed": 0.5925999855995179,
+    "train_loss": 0.22021868896484376,
+    "connections_temperature": 0.001,
+    "parametrization_temperature": 1.0
+  },
+  "peak_gpu_memory_bytes": 1206192640,
+  "topology": [
+    {
+      "strategy": "semantic_balanced_hybrid",
+      "topology_seed": 0,
+      "layer_index": 0,
+      "construction_seconds": 11.854987177008297,
+      "generator_temporary_bytes": 54738944,
+      "swap_fraction": 0.0,
+      "output_groups": 1,
+      "novelty_weight": 1.0,
+      "reuse_change_fraction": 0.25,
+      "reuse_weight": 1.0,
+      "class_balance_change_fraction": 0.25
+    },
+    {
+      "strategy": "semantic_balanced_hybrid",
+      "topology_seed": 0,
+      "layer_index": 1,
+      "construction_seconds": 0.16458643198711798,
+      "generator_temporary_bytes": 100352000,
+      "swap_fraction": 0.0,
+      "output_groups": 1,
+      "novelty_weight": 1.0,
+      "reuse_change_fraction": 0.25,
+      "reuse_weight": 1.0,
+      "class_balance_change_fraction": 0.25
+    },
+    {
+      "strategy": "semantic_balanced_hybrid",
+      "topology_seed": 0,
+      "layer_index": 2,
+      "construction_seconds": 0.1553085400373675,
+      "generator_temporary_bytes": 100352000,
+      "swap_fraction": 0.0,
+      "output_groups": 1,
+      "novelty_weight": 1.0,
+      "reuse_change_fraction": 0.25,
+      "reuse_weight": 1.0,
+      "class_balance_change_fraction": 0.25
+    },
+    {
+      "strategy": "semantic_balanced_hybrid",
+      "topology_seed": 0,
+      "layer_index": 3,
+      "construction_seconds": 0.16668281698366627,
+      "generator_temporary_bytes": 100352000,
+      "swap_fraction": 0.0,
+      "output_groups": 10,
+      "novelty_weight": 1.0,
+      "reuse_change_fraction": 0.25,
+      "reuse_weight": 1.0,
+      "class_balance_change_fraction": 0.25
+    }
+  ],
+  "cost": {
+    "dense_gate_count": 512000,
+    "trainable_parameters": 8192000,
+    "training_routing_parameters": 0,
+    "deployed_routing_bits": 16640000,
+    "deployed_routing_bytes_packed": 2080000,
+    "candidate_indices_tensor_bytes": 8192000
+  },
+  "task_aware_rewire": null
+}

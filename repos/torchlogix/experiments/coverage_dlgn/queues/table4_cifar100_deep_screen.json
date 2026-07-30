@@ -1,0 +1,73 @@
+{
+  "phase": "table4_cifar100_deep_screen",
+  "purpose": "one-seed 5K validation control screen on two published deep dense CIFAR-100 coordinates",
+  "protocol": "experiments/coverage_dlgn/protocols/table4_dense_cifar100_deep.json",
+  "selection_metric": "best hardened validation accuracy",
+  "heldout_test_used": false,
+  "entries": [
+    {
+      "name": "screen_table4_cifar100_64k_random_seed0",
+      "architecture_label": "64k",
+      "family": "random",
+      "candidate": "random",
+      "config": "experiments/coverage_dlgn/configs/table4_cifar100_deep_screen/screen_table4_cifar100_64k_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table4_cifar100_64k_random_seed0"
+    },
+    {
+      "name": "screen_table4_cifar100_64k_v3_swap0125_seed0",
+      "architecture_label": "64k",
+      "family": "coverage_v3",
+      "candidate": "swap0125",
+      "config": "experiments/coverage_dlgn/configs/table4_cifar100_deep_screen/screen_table4_cifar100_64k_v3_swap0125_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table4_cifar100_64k_v3_swap0125_seed0"
+    },
+    {
+      "name": "screen_table4_cifar100_64k_v3_incumbent_seed0",
+      "architecture_label": "64k",
+      "family": "coverage_v3",
+      "candidate": "incumbent",
+      "config": "experiments/coverage_dlgn/configs/table4_cifar100_deep_screen/screen_table4_cifar100_64k_v3_incumbent_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table4_cifar100_64k_v3_incumbent_seed0"
+    },
+    {
+      "name": "screen_table4_cifar100_64k_v3_swap0500_seed0",
+      "architecture_label": "64k",
+      "family": "coverage_v3",
+      "candidate": "swap0500",
+      "config": "experiments/coverage_dlgn/configs/table4_cifar100_deep_screen/screen_table4_cifar100_64k_v3_swap0500_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table4_cifar100_64k_v3_swap0500_seed0"
+    },
+    {
+      "name": "screen_table4_cifar100_256k_random_seed0",
+      "architecture_label": "256k",
+      "family": "random",
+      "candidate": "random",
+      "config": "experiments/coverage_dlgn/configs/table4_cifar100_deep_screen/screen_table4_cifar100_256k_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table4_cifar100_256k_random_seed0"
+    },
+    {
+      "name": "screen_table4_cifar100_256k_v3_swap0125_seed0",
+      "architecture_label": "256k",
+      "family": "coverage_v3",
+      "candidate": "swap0125",
+      "config": "experiments/coverage_dlgn/configs/table4_cifar100_deep_screen/screen_table4_cifar100_256k_v3_swap0125_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table4_cifar100_256k_v3_swap0125_seed0"
+    },
+    {
+      "name": "screen_table4_cifar100_256k_v3_incumbent_seed0",
+      "architecture_label": "256k",
+      "family": "coverage_v3",
+      "candidate": "incumbent",
+      "config": "experiments/coverage_dlgn/configs/table4_cifar100_deep_screen/screen_table4_cifar100_256k_v3_incumbent_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table4_cifar100_256k_v3_incumbent_seed0"
+    },
+    {
+      "name": "screen_table4_cifar100_256k_v3_swap0500_seed0",
+      "architecture_label": "256k",
+      "family": "coverage_v3",
+      "candidate": "swap0500",
+      "config": "experiments/coverage_dlgn/configs/table4_cifar100_deep_screen/screen_table4_cifar100_256k_v3_swap0500_seed0.json",
+      "output": "experiments/coverage_dlgn/results/screen_table4_cifar100_256k_v3_swap0500_seed0"
+    }
+  ]
+}

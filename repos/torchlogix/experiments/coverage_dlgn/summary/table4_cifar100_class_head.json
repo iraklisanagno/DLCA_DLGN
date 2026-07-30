@@ -1,0 +1,253 @@
+{
+  "phase": "table4_cifar100_class_head",
+  "provenance": "TRIED",
+  "validation_metric": "best hardened validation accuracy",
+  "test_set_used": false,
+  "controls_reused_not_rerun": true,
+  "training_implementation_sha256_by_family": {
+    "random": [
+      "00346071eb91f07f567f2376b639b97ec6688c92dc2a5faa9d2eb96353302f6b"
+    ],
+    "coverage_v3": [
+      "00346071eb91f07f567f2376b639b97ec6688c92dc2a5faa9d2eb96353302f6b"
+    ],
+    "coverage_v3_class_head": [
+      "fdc08f074b4df4842938c1b7588aff3178f7a54f8d1dafab2770723d6766d140"
+    ]
+  },
+  "family_stats": {
+    "random": {
+      "mean": 0.21039999494949976,
+      "sample_std": 0.004200000315904618,
+      "n": 3,
+      "class_coverage_min_mean": 0.999782986111111,
+      "class_source_usage_cv_mean": 0.27146335609373906,
+      "within_class_jaccard_mean": 0.010489900828671751,
+      "between_class_jaccard_mean": 0.010462188233081484
+    },
+    "coverage_v3": {
+      "mean": 0.21579999481638273,
+      "sample_std": 0.0009999997913839884,
+      "n": 3,
+      "class_coverage_min_mean": 1.0,
+      "class_source_usage_cv_mean": 0.25654509932079,
+      "within_class_jaccard_mean": 0.010509496347199922,
+      "between_class_jaccard_mean": 0.010141222786883614
+    },
+    "coverage_v3_class_head": {
+      "mean": 0.21593332747618357,
+      "sample_std": 0.0013316647416360954,
+      "n": 3,
+      "class_coverage_min_mean": 1.0,
+      "class_source_usage_cv_mean": 0.23475034842199424,
+      "within_class_jaccard_mean": 0.010416456745116296,
+      "between_class_jaccard_mean": 0.010246458314120417
+    }
+  },
+  "class_head_vs_random": {
+    "left": "random",
+    "right": "coverage_v3_class_head",
+    "per_seed_gain_pp": [
+      1.059999942779541,
+      0.40000003576278476,
+      0.19999977946281444
+    ],
+    "paired_mean_gain_pp": 0.55333325266838,
+    "paired_95ci_pp": [
+      -0.564620838832725,
+      1.671287344169485
+    ]
+  },
+  "class_head_vs_v3": {
+    "left": "coverage_v3",
+    "right": "coverage_v3_class_head",
+    "per_seed_gain_pp": [
+      -8.940696794024205e-08,
+      -0.139999881386757,
+      0.17999976873397938
+    ],
+    "paired_mean_gain_pp": 0.01333326598008481,
+    "paired_95ci_pp": [
+      -0.38516205101061557,
+      0.41182858297078523
+    ]
+  },
+  "promotion_thresholds_pp": {
+    "over_random": 2.0,
+    "over_v3": 1.0
+  },
+  "promote": false,
+  "rows": [
+    {
+      "family": "coverage_v3",
+      "seed": 0,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/select_table4_cifar100_64k_v3_swap0125_seed0",
+      "best_validation_hard_accuracy": 0.21679999500513078,
+      "wall_seconds": 339.2228680260014,
+      "topology_construction_seconds": 37.762522471894044,
+      "peak_gpu_memory_bytes": 853486080,
+      "dense_gate_count": 384000,
+      "trainable_parameters": 6144000,
+      "deployed_routing_bits": 12032000,
+      "connections_init_method": "semantic_balanced_hybrid",
+      "classifier_connections_init_method": null,
+      "class_coverage_min": 1.0,
+      "class_source_usage_cv_mean": 0.24649660408303384,
+      "within_class_jaccard_mean": 0.010418324061254697,
+      "between_class_jaccard_mean": 0.010225134885522603,
+      "training_implementation_sha256": "00346071eb91f07f567f2376b639b97ec6688c92dc2a5faa9d2eb96353302f6b"
+    },
+    {
+      "family": "coverage_v3",
+      "seed": 1,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/select_table4_cifar100_64k_v3_swap0125_seed1",
+      "best_validation_hard_accuracy": 0.21579999402165412,
+      "wall_seconds": 340.35656519199256,
+      "topology_construction_seconds": 37.37805176508846,
+      "peak_gpu_memory_bytes": 853486080,
+      "dense_gate_count": 384000,
+      "trainable_parameters": 6144000,
+      "deployed_routing_bits": 12032000,
+      "connections_init_method": "semantic_balanced_hybrid",
+      "classifier_connections_init_method": null,
+      "class_coverage_min": 1.0,
+      "class_source_usage_cv_mean": 0.2589552077303319,
+      "within_class_jaccard_mean": 0.010515900873519595,
+      "between_class_jaccard_mean": 0.009846020164477397,
+      "training_implementation_sha256": "00346071eb91f07f567f2376b639b97ec6688c92dc2a5faa9d2eb96353302f6b"
+    },
+    {
+      "family": "coverage_v3",
+      "seed": 2,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/select_table4_cifar100_64k_v3_swap0125_seed2",
+      "best_validation_hard_accuracy": 0.21479999542236328,
+      "wall_seconds": 340.8507452410413,
+      "topology_construction_seconds": 37.268581937009,
+      "peak_gpu_memory_bytes": 853486080,
+      "dense_gate_count": 384000,
+      "trainable_parameters": 6144000,
+      "deployed_routing_bits": 12032000,
+      "connections_init_method": "semantic_balanced_hybrid",
+      "classifier_connections_init_method": null,
+      "class_coverage_min": 1.0,
+      "class_source_usage_cv_mean": 0.2641834861490043,
+      "within_class_jaccard_mean": 0.010594264106825475,
+      "between_class_jaccard_mean": 0.01035251331065084,
+      "training_implementation_sha256": "00346071eb91f07f567f2376b639b97ec6688c92dc2a5faa9d2eb96353302f6b"
+    },
+    {
+      "family": "coverage_v3_class_head",
+      "seed": 0,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/select_table4_cifar100_64k_v3_class_head_seed0",
+      "best_validation_hard_accuracy": 0.2167999941110611,
+      "wall_seconds": 334.43124947400065,
+      "topology_construction_seconds": 49.91294926905539,
+      "peak_gpu_memory_bytes": 853486080,
+      "dense_gate_count": 384000,
+      "trainable_parameters": 6144000,
+      "deployed_routing_bits": 12032000,
+      "connections_init_method": "semantic_balanced_hybrid",
+      "classifier_connections_init_method": "class_conditional_coverage",
+      "class_coverage_min": 1.0,
+      "class_source_usage_cv_mean": 0.2273172315142943,
+      "within_class_jaccard_mean": 0.010324149527256571,
+      "between_class_jaccard_mean": 0.01029254825986441,
+      "training_implementation_sha256": "fdc08f074b4df4842938c1b7588aff3178f7a54f8d1dafab2770723d6766d140"
+    },
+    {
+      "family": "coverage_v3_class_head",
+      "seed": 1,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/select_table4_cifar100_64k_v3_class_head_seed1",
+      "best_validation_hard_accuracy": 0.21439999520778655,
+      "wall_seconds": 337.69964103697566,
+      "topology_construction_seconds": 49.6304832699243,
+      "peak_gpu_memory_bytes": 853486080,
+      "dense_gate_count": 384000,
+      "trainable_parameters": 6144000,
+      "deployed_routing_bits": 12032000,
+      "connections_init_method": "semantic_balanced_hybrid",
+      "classifier_connections_init_method": "class_conditional_coverage",
+      "class_coverage_min": 1.0,
+      "class_source_usage_cv_mean": 0.23637199102440218,
+      "within_class_jaccard_mean": 0.010459261899137394,
+      "between_class_jaccard_mean": 0.010022559488814578,
+      "training_implementation_sha256": "fdc08f074b4df4842938c1b7588aff3178f7a54f8d1dafab2770723d6766d140"
+    },
+    {
+      "family": "coverage_v3_class_head",
+      "seed": 2,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/select_table4_cifar100_64k_v3_class_head_seed2",
+      "best_validation_hard_accuracy": 0.21659999310970307,
+      "wall_seconds": 335.1540774400346,
+      "topology_construction_seconds": 48.949012300989125,
+      "peak_gpu_memory_bytes": 853486080,
+      "dense_gate_count": 384000,
+      "trainable_parameters": 6144000,
+      "deployed_routing_bits": 12032000,
+      "connections_init_method": "semantic_balanced_hybrid",
+      "classifier_connections_init_method": "class_conditional_coverage",
+      "class_coverage_min": 1.0,
+      "class_source_usage_cv_mean": 0.24056182272728627,
+      "within_class_jaccard_mean": 0.010465958808954921,
+      "between_class_jaccard_mean": 0.010424267193682262,
+      "training_implementation_sha256": "fdc08f074b4df4842938c1b7588aff3178f7a54f8d1dafab2770723d6766d140"
+    },
+    {
+      "family": "random",
+      "seed": 0,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/select_table4_cifar100_64k_random_seed0",
+      "best_validation_hard_accuracy": 0.2061999946832657,
+      "wall_seconds": 336.218986219028,
+      "topology_construction_seconds": 2.068041854072362,
+      "peak_gpu_memory_bytes": 853486080,
+      "dense_gate_count": 384000,
+      "trainable_parameters": 6144000,
+      "deployed_routing_bits": 12032000,
+      "connections_init_method": "random",
+      "classifier_connections_init_method": null,
+      "class_coverage_min": 0.9996744791666666,
+      "class_source_usage_cv_mean": 0.271209238540667,
+      "within_class_jaccard_mean": 0.010478737975961652,
+      "between_class_jaccard_mean": 0.010449463321867818,
+      "training_implementation_sha256": "00346071eb91f07f567f2376b639b97ec6688c92dc2a5faa9d2eb96353302f6b"
+    },
+    {
+      "family": "random",
+      "seed": 1,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/select_table4_cifar100_64k_random_seed1",
+      "best_validation_hard_accuracy": 0.2103999948501587,
+      "wall_seconds": 336.4709385149763,
+      "topology_construction_seconds": 2.0604579289793037,
+      "peak_gpu_memory_bytes": 853486080,
+      "dense_gate_count": 384000,
+      "trainable_parameters": 6144000,
+      "deployed_routing_bits": 12032000,
+      "connections_init_method": "random",
+      "classifier_connections_init_method": null,
+      "class_coverage_min": 0.9996744791666666,
+      "class_source_usage_cv_mean": 0.27146462929067267,
+      "within_class_jaccard_mean": 0.010507415851301535,
+      "between_class_jaccard_mean": 0.010521209681627881,
+      "training_implementation_sha256": "00346071eb91f07f567f2376b639b97ec6688c92dc2a5faa9d2eb96353302f6b"
+    },
+    {
+      "family": "random",
+      "seed": 2,
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/select_table4_cifar100_64k_random_seed2",
+      "best_validation_hard_accuracy": 0.21459999531507493,
+      "wall_seconds": 337.7644935150165,
+      "topology_construction_seconds": 2.080742360849399,
+      "peak_gpu_memory_bytes": 853486080,
+      "dense_gate_count": 384000,
+      "trainable_parameters": 6144000,
+      "deployed_routing_bits": 12032000,
+      "connections_init_method": "random",
+      "classifier_connections_init_method": null,
+      "class_coverage_min": 1.0,
+      "class_source_usage_cv_mean": 0.2717162004498776,
+      "within_class_jaccard_mean": 0.010483548658752067,
+      "between_class_jaccard_mean": 0.010415891695748752,
+      "training_implementation_sha256": "00346071eb91f07f567f2376b639b97ec6688c92dc2a5faa9d2eb96353302f6b"
+    }
+  ]
+}

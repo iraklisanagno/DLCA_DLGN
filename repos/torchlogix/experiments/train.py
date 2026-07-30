@@ -2,6 +2,7 @@
 """Training script for TorchLogix models."""
 
 import argparse
+from contextlib import nullcontext
 import hashlib
 import importlib.metadata
 import json
@@ -27,6 +28,10 @@ from torchlogix.topology import (
     model_topology_metadata,
     strategy_choices,
     write_topology_report,
+)
+from torchlogix.task_aware import (
+    TaskSignatureCollector,
+    rewire_fixed_dense_model,
 )
 
 try:
@@ -203,6 +208,42 @@ def get_parser():
             "Reward for retaining predecessor-pair motifs from the supplied "
             "base topology during coverage--reuse refinement"
         ),
+    )
+    parser.add_argument(
+        "--class-balance-change-fraction",
+        type=float,
+        default=0.25,
+        help=(
+            "Maximum final-layer gate fraction eligible for the separate "
+            "class-conditional coverage refinement"
+        ),
+    )
+    parser.add_argument(
+        "--task-aware-rewire-step",
+        type=int,
+        default=None,
+        help=(
+            "Optional one-shot task-aware fixed-topology refinement after this "
+            "ordinary training step. Disabled by default; frozen V3 is unchanged."
+        ),
+    )
+    parser.add_argument(
+        "--task-aware-rewire-fraction",
+        type=float,
+        default=0.125,
+        help="Maximum gate fraction eligible for the one-shot task-aware event",
+    )
+    parser.add_argument(
+        "--task-aware-rewire-candidate-pool-size",
+        type=int,
+        default=8,
+        help="Candidate partner gates scored per task-aware swap",
+    )
+    parser.add_argument(
+        "--task-aware-rewire-diversity-weight",
+        type=float,
+        default=0.25,
+        help="Input task-signature diversity weight during task-aware rewiring",
     )
     parser.add_argument("--coverage-alpha", type=float, default=1.0)
     parser.add_argument("--coverage-beta", type=float, default=1.0)
@@ -635,6 +676,15 @@ def run_training(args, callbacks=None):
         torch.manual_seed(args.seed)
         random.seed(args.seed)
         np.random.seed(args.seed)
+    if (
+        args.task_aware_rewire_step is not None
+        and not 1 <= args.task_aware_rewire_step < args.num_iterations
+    ):
+        raise ValueError(
+            "task_aware_rewire_step must be within [1, num_iterations)"
+        )
+    if args.task_aware_rewire_step is not None and args.compile_model:
+        raise ValueError("task-aware rewiring is incompatible with compile_model")
     torch.set_num_threads(1)
 
     # Load data (omit test set during training)
@@ -764,6 +814,7 @@ def run_training(args, callbacks=None):
         mininterval=1,
     )
     running_train_loss, n = 0.0, 0
+    task_aware_rewire_report = None
     for i, (x, y) in pbar:
         connection_temperature, parametrization_temperature = (
             update_model_temperatures(model, args, i)
@@ -772,13 +823,54 @@ def run_training(args, callbacks=None):
         y = y.to(args.device)
 
         dtype = torch.bfloat16 if args.half_precision else torch.float32
-        with torch.amp.autocast("cuda", dtype=dtype):
-            model.train()
-            x = model(x)
-            loss = loss_fn(x, y)
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
+        capture_task_signatures = (
+            args.task_aware_rewire_step is not None
+            and i + 1 == args.task_aware_rewire_step
+        )
+        collector = TaskSignatureCollector(model) if capture_task_signatures else None
+        context = collector if collector is not None else nullcontext()
+        with context:
+            with torch.amp.autocast("cuda", dtype=dtype):
+                model.train()
+                x = model(x)
+                loss = loss_fn(x, y)
+                optimizer.zero_grad()
+                loss.backward()
+                task_signatures = (
+                    collector.signatures(y, int(model.class_count))
+                    if collector is not None
+                    else None
+                )
+                optimizer.step()
+        if task_signatures is not None:
+            task_aware_rewire_report = {
+                "step": i + 1,
+                "calibration_batches": 1,
+                "calibration_examples": int(y.shape[0]),
+                "uses_ordinary_training_batch": True,
+                "extra_optimizer_steps": 0,
+                "layers": rewire_fixed_dense_model(
+                    model,
+                    task_signatures,
+                    topology_seed=(
+                        args.topology_seed
+                        if args.topology_seed is not None
+                        else (args.seed if args.seed is not None else 0)
+                    ),
+                    change_fraction=args.task_aware_rewire_fraction,
+                    candidate_pool_size=(
+                        args.task_aware_rewire_candidate_pool_size
+                    ),
+                    diversity_weight=(
+                        args.task_aware_rewire_diversity_weight
+                    ),
+                ),
+            }
+            if args.output is not None:
+                with open(
+                    f"{args.output}/task_aware_rewire.json", "w"
+                ) as handle:
+                    json.dump(task_aware_rewire_report, handle, indent=2)
         n += y.size(0)
         running_train_loss += loss
 
@@ -845,6 +937,7 @@ def run_training(args, callbacks=None):
             ),
             "topology": model_topology_metadata(model),
             "cost": model_cost_summary(model),
+            "task_aware_rewire": task_aware_rewire_report,
         }
         with open(f"{args.output}/run_summary.json", "w") as handle:
             json.dump(summary, handle, indent=2, default=str)
