@@ -615,6 +615,46 @@ class FixedConvConnections(Connections):
                 channel_topology.temporary_bytes,
                 self.channel_pairs.numel() * self.channel_pairs.element_size(),
             )
+        elif self.strategy == "semantic_degree_balanced":
+            if self.channel_group_size != 2:
+                raise ValueError(
+                    "semantic_degree_balanced currently requires "
+                    "channel_group_size=2"
+                )
+            if self.lut_rank != 2:
+                raise NotImplementedError(
+                    "semantic_degree_balanced currently supports rank-2 LUTs "
+                    "only"
+                )
+            # Unified candidate U1: use the same semantic/affine balanced base
+            # as the dense implementation, with no ancestry swap phase. Keep
+            # V4's receptive-field sampling unchanged and do not force channel
+            # assignments at individual leaf pairs.
+            channel_topology = generate_dense_topology(
+                in_dim=self.channels,
+                out_dim=self.num_kernels,
+                lut_rank=2,
+                strategy="semantic_degree_balanced",
+                topology_seed=(
+                    0 if self.topology_seed is None else self.topology_seed
+                ),
+                layer_index=self.layer_index,
+            )
+            self.channel_pairs = torch.from_numpy(
+                channel_topology.indices
+            ).to(device=self.device, dtype=torch.int64)
+            kernels = self._get_random_receptive_field_tensor(
+                channel_pairs=self.channel_pairs
+            )
+            if self.input_channel_ancestry is not None:
+                self._output_channel_ancestry = propagate_packed_ancestry(
+                    self.input_channel_ancestry,
+                    channel_topology.indices,
+                )
+            self.generator_temporary_bytes = max(
+                channel_topology.temporary_bytes,
+                self.channel_pairs.numel() * self.channel_pairs.element_size(),
+            )
         elif self.strategy == "semantic_channel_spatial_hybrid":
             if self.channel_group_size != 2:
                 raise ValueError(
@@ -749,6 +789,7 @@ class FixedConvConnections(Connections):
             self.topology_seed is None
             and self.strategy not in {
                 "semantic_channel_hybrid",
+                "semantic_degree_balanced",
                 "semantic_channel_spatial_hybrid",
                 "ancestry_channel_hybrid",
                 "coverage_reuse_hybrid",

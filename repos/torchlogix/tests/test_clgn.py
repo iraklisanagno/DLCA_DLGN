@@ -88,6 +88,58 @@ def test_semantic_channel_schedule_is_deterministic_balanced_and_exportable():
     assert torch.equal(output_a, output_b)
 
 
+def test_unified_candidate_matches_no_swap_v4_without_forced_leaf_pairs():
+    torch.manual_seed(234)
+    no_swap_v4 = _channel_schedule_layer(
+        "semantic_channel_hybrid",
+        topology_seed=11,
+        swap_fraction=0.0,
+    )
+    v4_next = torch.rand(4)
+    torch.manual_seed(234)
+    candidate = _channel_schedule_layer(
+        "semantic_degree_balanced",
+        topology_seed=11,
+        # The unified method must remain no-swap regardless of this legacy
+        # option's value.
+        swap_fraction=1.0,
+    )
+    candidate_next = torch.rand(4)
+
+    assert torch.equal(
+        no_swap_v4.connections.channel_pairs,
+        candidate.connections.channel_pairs,
+    )
+    assert all(
+        torch.equal(left, right)
+        for left, right in zip(
+            no_swap_v4.connections.indices,
+            candidate.connections.indices,
+        )
+    )
+    assert torch.equal(v4_next, candidate_next)
+    for old_weight, candidate_weight in zip(
+        no_swap_v4.tree_weights,
+        candidate.tree_weights,
+    ):
+        assert torch.equal(old_weight, candidate_weight)
+
+    row = analyze_conv_channel_topology(
+        torch.nn.Sequential(candidate)
+    )[0]
+    assert row["channel_fanout_cv"] == 0.0
+    assert row["unused_channels"] == 0
+    assert 0.0 < row["cross_channel_leaf_pair_fraction"] < 1.0
+
+    inputs = torch.randint(0, 2, (2, 8, 8, 8), dtype=torch.bool)
+    candidate.set_export_mode()
+    with torch.inference_mode():
+        output_a = candidate(inputs)
+        output_b = candidate(inputs)
+    assert output_a.shape == (2, 16, 8, 8)
+    assert torch.equal(output_a, output_b)
+
+
 def test_semantic_channel_diagnostics_explain_the_routing_change():
     random_layer = _channel_schedule_layer("random", topology_seed=11)
     semantic_layer = _channel_schedule_layer(

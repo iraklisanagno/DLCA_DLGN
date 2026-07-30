@@ -36,6 +36,8 @@ STRATEGY_ALIASES = {
     "coverage_hybrid": "coverage_hybrid",
     "semantic-balanced-hybrid": "semantic_balanced_hybrid",
     "semantic_balanced_hybrid": "semantic_balanced_hybrid",
+    "semantic-degree-balanced": "semantic_degree_balanced",
+    "semantic_degree_balanced": "semantic_degree_balanced",
     "semantic-classifier-hybrid": "semantic_classifier_hybrid",
     "semantic_classifier_hybrid": "semantic_classifier_hybrid",
     "class-conditional-coverage": "class_conditional_coverage",
@@ -1649,6 +1651,7 @@ def generate_dense_topology(
         "coverage_greedy",
         "coverage_hybrid",
         "semantic_balanced_hybrid",
+        "semantic_degree_balanced",
         "semantic_classifier_hybrid",
         "class_conditional_coverage",
         "coverage_reuse_hybrid",
@@ -1660,6 +1663,7 @@ def generate_dense_topology(
             input_semantics.source_ancestry()
             if strategy in {
                 "semantic_balanced_hybrid",
+                "semantic_degree_balanced",
                 "semantic_classifier_hybrid",
                 "class_conditional_coverage",
                 "coverage_reuse_hybrid",
@@ -1719,6 +1723,28 @@ def generate_dense_topology(
             hybrid_base,
         )
         temporary_bytes = max(temporary_bytes, hybrid_bytes)
+    elif strategy == "semantic_degree_balanced":
+        # Unified CoverageDLGN candidate U1. The same deterministic,
+        # degree-balanced base is used by dense and convolutional networks.
+        # Unlike frozen V3/V4, U1 has no ancestry-swap phase.
+        if input_semantics is not None:
+            if input_semantics.n_inputs != in_dim:
+                raise ValueError(
+                    "input semantics do not match the first-layer input dimension"
+                )
+            indices = _semantic_butterfly_indices(
+                input_semantics,
+                out_dim,
+                layer_index,
+                topology_seed,
+            )
+        else:
+            indices = _butterfly_indices(
+                in_dim,
+                out_dim,
+                layer_index,
+                topology_seed,
+            )
     elif strategy == "semantic_balanced_hybrid":
         if input_semantics is not None:
             if input_semantics.n_inputs != in_dim:
@@ -2229,7 +2255,10 @@ def generate_dense_stack(
     """Generate and analyze a stack of fixed rank-2 dense layers."""
     ancestry = (
         input_semantics.source_ancestry()
-        if canonical_strategy(strategy) == "semantic_balanced_hybrid"
+        if canonical_strategy(strategy) in {
+            "semantic_balanced_hybrid",
+            "semantic_degree_balanced",
+        }
         and input_semantics is not None
         else packed_identity(n_original_inputs)
     )
@@ -2246,7 +2275,10 @@ def generate_dense_stack(
         if (
             depth == 0
             and input_semantics is not None
-            and canonical_strategy(strategy) == "semantic_balanced_hybrid"
+            and canonical_strategy(strategy) in {
+                "semantic_balanced_hybrid",
+                "semantic_degree_balanced",
+            }
         ):
             layer_kwargs["swap_fraction"] = 0.0
         result = generate_dense_topology(
@@ -2265,7 +2297,10 @@ def generate_dense_stack(
             result.indices,
             n_original_inputs=(
                 input_semantics.n_sources
-                if canonical_strategy(strategy) == "semantic_balanced_hybrid"
+                if canonical_strategy(strategy) in {
+                    "semantic_balanced_hybrid",
+                    "semantic_degree_balanced",
+                }
                 and input_semantics is not None
                 else n_original_inputs
             ),

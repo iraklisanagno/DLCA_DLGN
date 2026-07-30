@@ -68,6 +68,7 @@ class Dlgn(torch.nn.Sequential):
                 "coverage_greedy",
                 "coverage_hybrid",
                 "semantic_balanced_hybrid",
+                "semantic_degree_balanced",
             }
             or (
                 llkw.get("connections", "fixed") == "fixed"
@@ -79,7 +80,10 @@ class Dlgn(torch.nn.Sequential):
         ancestry = (
             semantics.source_ancestry()
             if track_ancestry
-            and strategy == "semantic_balanced_hybrid"
+            and strategy in {
+                "semantic_balanced_hybrid",
+                "semantic_degree_balanced",
+            }
             and semantics is not None
             else packed_identity(in_dim) if track_ancestry else None
         )
@@ -94,7 +98,10 @@ class Dlgn(torch.nn.Sequential):
             if track_ancestry:
                 layer_connections_kwargs["input_ancestry"] = ancestry
             if (
-                strategy == "semantic_balanced_hybrid"
+                strategy in {
+                    "semantic_balanced_hybrid",
+                    "semantic_degree_balanced",
+                }
                 and semantics is not None
                 and i == 0
             ):

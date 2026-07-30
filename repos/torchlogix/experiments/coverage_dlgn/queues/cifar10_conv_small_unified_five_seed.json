@@ -1,0 +1,55 @@
+{
+  "phase": "cifar10_conv_small_unified_five_seed",
+  "purpose": "Five-seed promotion test for the unified semantic degree-balanced no-swap candidate",
+  "protocol": "experiments/coverage_dlgn/protocols/cifar10_conv_small_unified_five_seed.json",
+  "historical_seeds_reused_not_rerun": [
+    0,
+    1,
+    2
+  ],
+  "heldout_test_used": false,
+  "entries": [
+    {
+      "name": "pilot_conv_cifar10_paper_small_random_seed3",
+      "family": "random",
+      "seed": 3,
+      "config": "experiments/coverage_dlgn/configs/cifar10_conv_small_unified_five_seed/pilot_conv_cifar10_paper_small_random_seed3.json",
+      "output": "experiments/coverage_dlgn/results/pilot_conv_cifar10_paper_small_random_seed3"
+    },
+    {
+      "name": "pilot_conv_cifar10_paper_small_random_seed4",
+      "family": "random",
+      "seed": 4,
+      "config": "experiments/coverage_dlgn/configs/cifar10_conv_small_unified_five_seed/pilot_conv_cifar10_paper_small_random_seed4.json",
+      "output": "experiments/coverage_dlgn/results/pilot_conv_cifar10_paper_small_random_seed4"
+    },
+    {
+      "name": "pilot_conv_cifar10_paper_small_semantic_channel_v4_seed3",
+      "family": "frozen_v4",
+      "seed": 3,
+      "config": "experiments/coverage_dlgn/configs/cifar10_conv_small_unified_five_seed/pilot_conv_cifar10_paper_small_semantic_channel_v4_seed3.json",
+      "output": "experiments/coverage_dlgn/results/pilot_conv_cifar10_paper_small_semantic_channel_v4_seed3"
+    },
+    {
+      "name": "pilot_conv_cifar10_paper_small_semantic_channel_v4_seed4",
+      "family": "frozen_v4",
+      "seed": 4,
+      "config": "experiments/coverage_dlgn/configs/cifar10_conv_small_unified_five_seed/pilot_conv_cifar10_paper_small_semantic_channel_v4_seed4.json",
+      "output": "experiments/coverage_dlgn/results/pilot_conv_cifar10_paper_small_semantic_channel_v4_seed4"
+    },
+    {
+      "name": "pilot_conv_cifar10_paper_small_semantic_degree_balanced_seed3",
+      "family": "unified_candidate",
+      "seed": 3,
+      "config": "experiments/coverage_dlgn/configs/cifar10_conv_small_unified_five_seed/pilot_conv_cifar10_paper_small_semantic_degree_balanced_seed3.json",
+      "output": "experiments/coverage_dlgn/results/pilot_conv_cifar10_paper_small_semantic_degree_balanced_seed3"
+    },
+    {
+      "name": "pilot_conv_cifar10_paper_small_semantic_degree_balanced_seed4",
+      "family": "unified_candidate",
+      "seed": 4,
+      "config": "experiments/coverage_dlgn/configs/cifar10_conv_small_unified_five_seed/pilot_conv_cifar10_paper_small_semantic_degree_balanced_seed4.json",
+      "output": "experiments/coverage_dlgn/results/pilot_conv_cifar10_paper_small_semantic_degree_balanced_seed4"
+    }
+  ]
+}

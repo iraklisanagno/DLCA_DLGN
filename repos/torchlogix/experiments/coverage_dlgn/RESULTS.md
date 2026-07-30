@@ -1,8 +1,10 @@
 # CoverageDLGN implementation and experiment history
 
-**Updated:** July 24, 2026
+**Updated:** July 30, 2026
 **Status:** Dense semantic-balanced v3 and convolutional semantic-channel v4
-are implemented. The original five-seed 48K study, a five-seed 512K
+remain frozen. The separate unified semantic-degree-balanced U1 candidate
+completed its five-seed convolutional S gate but was not promoted. The
+original five-seed 48K study, a five-seed 512K
 escalation, a two-budget/three-depth study, and a three-seed convolutional
 pilot have frozen validation/test artifacts. V3 improves 512K dense CIFAR-10
 held-out accuracy by **+4.256 pp**; v4 improves the convolutional pilot by
@@ -894,6 +896,46 @@ Machine-readable sources:
 - `summary/cifar10_conv_small_v4_components.json`;
 - `summary/cifar10_conv_small_channel_spatial.json`.
 
+## July 30 unified degree-balanced U1 result
+
+The exact historical V4/no-swap checkpoints were reanalyzed per layer. V4
+preserved predecessor fan-out and spatial indices while changing 8.33%,
+20.31%, 10.68%, and 2.08% of output pairs across the four convolutional
+layers on average. It reduced duplicate pairs and increased span, but the
+largest mean predecessor-Jaccard change was only 0.00246 and mean raw ancestry
+was effectively unchanged. The no-swap learning curve overtook V4 after 12K.
+The useful base is an affine-ordered balanced butterfly, not round-robin.
+
+A separate `semantic_degree_balanced` strategy (U1) was implemented for dense
+and convolutional networks. It uses semantic input order, deterministic
+balanced butterfly pairs, the exact base fan-out schedule, no forced
+convolutional leaf pairing, and no ancestry swaps. V3 and V4 paths were not
+edited. Full-model regression proves U1 is bitwise identical to the historical
+convolutional no-swap arm, allowing seeds 0-2 to be reused.
+
+Only missing seeds 3 and 4 were trained for random, frozen V4, and U1. All six
+runs completed with zero failures:
+
+| Method | Five-seed best hard validation | Gain vs random | Paired 95% CI | Positive pairs |
+|---|---:|---:|---:|---:|
+| Random | 56.864% | -- | -- | -- |
+| Frozen V4 | 57.448% | +0.584 pp | [-0.335, +1.503] | 4/5 |
+| U1 | **57.624%** | **+0.760 pp** | **[-0.700, +2.220]** | **4/5** |
+
+U1 passed the four-of-five consistency condition but failed the predeclared
++1.0 pp mean-gain condition. It was not promoted. Consequently,
+convolutional M, CIFAR-100 transfer, full schedules, held-out test accuracy,
+and extended cost/runtime/memory evaluation were not run.
+
+For new seeds 3/4, U1 topology construction averaged 0.165 seconds versus
+0.414 seconds for V4. Mean wall time and peak GPU allocation were effectively
+identical, and all recorded gate, parameter, and routing-bit costs match.
+
+Machine-readable sources:
+
+- `summary/cifar10_conv_small_no_swap_diagnostics.json`;
+- `summary/cifar10_conv_small_unified_five_seed.json`.
+
 ## Not completed; required before a DATE claim
 
 - A protocol-identical numerical reproduction of the published CIFAR-10
@@ -944,8 +986,8 @@ Final verification after regenerating the summary artifacts:
   1,660 skipped**;
 - the July 29 topology/protocol/circuit/task-aware focused suite passes with
   **157 passed** in 208.18 seconds, including post-rewire circuit equivalence;
-- the complete TorchLogix suite passes with **3,302 passed, 3,038 skipped, and
-  one pre-existing warning** in 161.99 seconds;
+- the complete TorchLogix suite passes with **3,367 passed, 3,038 skipped, and
+  one pre-existing warning** in 244.56 seconds;
 - all three generated SVGs parse as valid XML;
 - the pre-analysis source archive passes its recorded SHA-256 check; and
 - `nvidia-smi` reports both RTX PRO 6000 GPUs at 0% utilization with no running

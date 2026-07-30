@@ -54,6 +54,7 @@ def _brute_force_stack(n_inputs, layers):
         ("coverage-greedy", "coverage_greedy"),
         ("coverage-hybrid", "coverage_hybrid"),
         ("semantic-balanced-hybrid", "semantic_balanced_hybrid"),
+        ("semantic-degree-balanced", "semantic_degree_balanced"),
         ("semantic-classifier-hybrid", "semantic_classifier_hybrid"),
         ("class-conditional-coverage", "class_conditional_coverage"),
         ("semantic-channel-hybrid", "semantic_channel_hybrid"),
@@ -102,6 +103,7 @@ def test_butterfly_expected_small_examples():
         "coverage_greedy",
         "coverage_hybrid",
         "semantic_balanced_hybrid",
+        "semantic_degree_balanced",
     ],
 )
 def test_generators_are_deterministic_and_in_bounds(strategy):
@@ -109,7 +111,10 @@ def test_generators_are_deterministic_and_in_bounds(strategy):
         image_input_semantics(
             1, 1, 17, 1, layout="pixel_interleaved"
         )
-        if strategy == "semantic_balanced_hybrid" else None
+        if strategy in {
+            "semantic_balanced_hybrid",
+            "semantic_degree_balanced",
+        } else None
     )
     kwargs = dict(
         in_dim=17,
@@ -324,6 +329,65 @@ def test_semantic_swaps_preserve_exact_predecessor_degrees():
     assert np.array_equal(swapped_degree, base_degree)
     assert np.all(swapped.indices[0] != swapped.indices[1])
     assert swapped.greedy_mask.sum() % 2 == 0
+
+
+def test_semantic_degree_balanced_is_the_frozen_no_swap_base():
+    semantics = image_input_semantics(
+        1, 4, 4, 3, layout="pixel_interleaved"
+    )
+    common = {
+        "topology_seed": 11,
+        "candidate_pool_size": 12,
+        "novelty_weight": 1.0,
+    }
+    semantic_base = generate_dense_topology(
+        semantics.n_inputs,
+        96,
+        strategy="semantic_balanced_hybrid",
+        input_semantics=semantics,
+        swap_fraction=0.0,
+        **common,
+    )
+    candidate_first = generate_dense_topology(
+        semantics.n_inputs,
+        96,
+        strategy="semantic_degree_balanced",
+        input_semantics=semantics,
+        # U1 has no swap hyperparameter: even an adversarial caller value
+        # cannot alter the declared method.
+        swap_fraction=1.0,
+        **common,
+    )
+    assert np.array_equal(candidate_first.indices, semantic_base.indices)
+    assert not candidate_first.greedy_mask.any()
+
+    butterfly_base = generate_dense_topology(
+        96,
+        128,
+        strategy="semantic_balanced_hybrid",
+        layer_index=1,
+        swap_fraction=0.0,
+        **common,
+    )
+    candidate_deeper = generate_dense_topology(
+        96,
+        128,
+        strategy="semantic_degree_balanced",
+        layer_index=1,
+        swap_fraction=1.0,
+        **common,
+    )
+    assert np.array_equal(candidate_deeper.indices, butterfly_base.indices)
+    base_degree = np.bincount(butterfly_base.indices.reshape(-1), minlength=96)
+    candidate_degree = np.bincount(
+        candidate_deeper.indices.reshape(-1), minlength=96
+    )
+    assert np.array_equal(candidate_degree, base_degree)
+    # A partial cyclic butterfly stage at a non-power-of-two width can touch
+    # both endpoints twice. The schedule remains bounded and exactly preserves
+    # the declared base degree sequence; power-of-two paper convolution widths
+    # are exactly uniform.
+    assert int(candidate_degree.max() - candidate_degree.min()) <= 2
 
 
 def test_coverage_reuse_refinement_is_bounded_degree_preserving_and_adaptive():

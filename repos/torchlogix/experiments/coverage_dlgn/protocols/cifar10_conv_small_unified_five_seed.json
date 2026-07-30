@@ -1,0 +1,59 @@
+{
+  "phase": "cifar10_conv_small_unified_five_seed",
+  "purpose": "Five-seed promotion test for the unified semantic degree-balanced no-swap candidate",
+  "dataset": "cifar-10",
+  "architecture": "ClgnCifar10PaperSmall",
+  "metric": "best hardened validation accuracy",
+  "heldout_test_used": false,
+  "training": {
+    "iterations": 20000,
+    "evaluation_frequency": 2000,
+    "batch_size": 128,
+    "data_split_seed": 2027,
+    "paired_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "new_seeds": [
+      3,
+      4
+    ]
+  },
+  "arms": {
+    "random": {
+      "connections_init_method": "random",
+      "historical_pattern": "pilot_conv_cifar10_paper_small_random_seed{seed}"
+    },
+    "frozen_v4": {
+      "connections_init_method": "semantic_channel_hybrid",
+      "coverage_swap_fraction": 0.25,
+      "historical_pattern": "pilot_conv_cifar10_paper_small_semantic_channel_v4_seed{seed}"
+    },
+    "unified_candidate": {
+      "connections_init_method": "semantic_degree_balanced",
+      "coverage_swap_fraction": 0.0,
+      "historical_equivalent_pattern": "ablate_conv_cifar10_small_balanced_channel_no_swaps_seed{seed}",
+      "equivalence_test": "tests/test_experiment_protocol.py::test_unified_candidate_is_full_model_equivalent_to_historical_no_swap_arm"
+    }
+  },
+  "historical_seeds_reused_not_rerun": [
+    0,
+    1,
+    2
+  ],
+  "promotion_rule": {
+    "reference": "random",
+    "minimum_paired_mean_gain_percentage_points": 1.0,
+    "minimum_positive_seed_count": 4,
+    "required_seed_count": 5,
+    "action_on_pass": "run matched convolutional CIFAR-10 M validation",
+    "action_on_fail": "stop before convolutional M and preserve the candidate as a negative or architecture-limited result"
+  },
+  "frozen_method_policy": {
+    "v3_changed": false,
+    "v4_changed": false
+  }
+}

@@ -963,3 +963,54 @@ This log records operational failures and protocol decisions made after commit
   (95% CI [-2.714, +2.407]).
 - The adapter failed both +2 pp-over-random and +1 pp-over-V4 gates. No
   CIFAR-10 M run or held-out evaluation was launched.
+
+## July 30, 2026: unified semantic degree-balanced candidate and stop decision
+
+- Commit `0d22b8d` captured the full frozen V3/V4 milestone, corrected
+  protocols, negative adapters, completed results, and failure history before
+  the new candidate was implemented.
+- `analyze_cifar10_conv_no_swap.py` loaded the exact three-seed S
+  checkpoints. V4 preserved the complete fan-out vector and spatial indices
+  but changed 8.33%, 20.31%, 10.68%, and 2.08% of output pairs by layer.
+  It reduced duplicate pairs and increased span, while the maximum mean change
+  in predecessor Jaccard was only 0.00246 and raw ancestry size was
+  effectively unchanged.
+- The earlier “round-robin” description was corrected: the successful
+  no-swap base is an affine-ordered balanced butterfly. Its hardened
+  validation curve overtook V4 at 12K and ended +1.173 pp above V4 at 20K
+  when averaged over the original three seeds.
+- A separate `semantic_degree_balanced` U1 strategy was implemented. Dense
+  and convolutional forms share deterministic semantic/affine butterfly
+  pairing, preserve the declared base degree schedule, do not force
+  convolutional bottom-level leaf pairs, and contain no ancestry-swap call.
+  Legacy swap/candidate controls cannot change U1.
+- Frozen `semantic_balanced_hybrid` V3 and `semantic_channel_hybrid` V4 code
+  paths were not edited. A full-model regression test proves U1 is bitwise
+  identical to historical convolutional V4/no-swaps for a matched seed,
+  including trainable parameters, convolutional indices, dense indices, and
+  spatial coordinates.
+- The final full TorchLogix suite passed with 3,367 tests passed, 3,038
+  skipped, and one pre-existing warning in 244.56 seconds.
+- The five-seed S protocol fixed a strict promotion rule before training:
+  at least +1.0 pp paired mean over random and positive gains on at least four
+  of five seeds. Existing seeds 0-2 were reused under proven equivalence.
+- Six genuinely missing seed-3/4 random, frozen-V4, and U1 runs completed on
+  both GPUs in 51.5 minutes with zero failures and no held-out test access.
+- Per-seed random accuracies were [56.10, 57.40, 56.52, 56.88, 57.42]%;
+  V4 was [57.60, 57.80, 56.16, 57.12, 58.56]%; U1 was
+  [57.92, 57.66, 58.46, 57.56, 56.52]%.
+- U1 reached 57.624% versus 56.864% random: +0.760 pp paired mean,
+  95% CI [-0.700, +2.220], positive on four of five seeds. The consistency
+  gate passed, but the +1.0 pp mean gate failed. U1 exceeded V4 by only
+  +0.176 pp on average.
+- On new seeds 3/4, topology construction averaged 0.165 seconds for U1,
+  0.414 seconds for V4, and 0.176 seconds for random. Wall time, peak GPU
+  allocation, gate/parameter count, and deployed routing bits were equal
+  within instrumentation precision.
+- The locked stop rule was applied. No convolutional CIFAR-10 M, L,
+  CIFAR-100 transfer, full schedule, held-out test, or extended deployment
+  study was launched for U1. This avoids post-hoc escalation of a candidate
+  that did not meet its declared effect-size threshold.
+- Detailed evidence is in `UNIFIED_DEGREE_BALANCED.md`,
+  `summary/cifar10_conv_small_no_swap_diagnostics.json`, and
+  `summary/cifar10_conv_small_unified_five_seed.json`.

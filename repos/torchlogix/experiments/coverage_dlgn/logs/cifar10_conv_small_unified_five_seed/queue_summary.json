@@ -1,0 +1,50 @@
+{
+  "phase": "cifar10_conv_small_unified_five_seed",
+  "wall_seconds": 3090.087645272026,
+  "skipped": [],
+  "finished": [
+    {
+      "name": "pilot_conv_cifar10_paper_small_random_seed3",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 1025.0190947930096,
+      "log": "experiments/coverage_dlgn/logs/cifar10_conv_small_unified_five_seed/pilot_conv_cifar10_paper_small_random_seed3.log"
+    },
+    {
+      "name": "pilot_conv_cifar10_paper_small_random_seed4",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 1030.0194245909806,
+      "log": "experiments/coverage_dlgn/logs/cifar10_conv_small_unified_five_seed/pilot_conv_cifar10_paper_small_random_seed4.log"
+    },
+    {
+      "name": "pilot_conv_cifar10_paper_small_semantic_channel_v4_seed3",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 1025.0298454649746,
+      "log": "experiments/coverage_dlgn/logs/cifar10_conv_small_unified_five_seed/pilot_conv_cifar10_paper_small_semantic_channel_v4_seed3.log"
+    },
+    {
+      "name": "pilot_conv_cifar10_paper_small_semantic_channel_v4_seed4",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 1030.027775701019,
+      "log": "experiments/coverage_dlgn/logs/cifar10_conv_small_unified_five_seed/pilot_conv_cifar10_paper_small_semantic_channel_v4_seed4.log"
+    },
+    {
+      "name": "pilot_conv_cifar10_paper_small_semantic_degree_balanced_seed3",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 1025.0365634710179,
+      "log": "experiments/coverage_dlgn/logs/cifar10_conv_small_unified_five_seed/pilot_conv_cifar10_paper_small_semantic_degree_balanced_seed3.log"
+    },
+    {
+      "name": "pilot_conv_cifar10_paper_small_semantic_degree_balanced_seed4",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 1030.0363730789977,
+      "log": "experiments/coverage_dlgn/logs/cifar10_conv_small_unified_five_seed/pilot_conv_cifar10_paper_small_semantic_degree_balanced_seed4.log"
+    }
+  ],
+  "failed": []
+}

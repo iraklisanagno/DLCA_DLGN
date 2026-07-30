@@ -48,6 +48,10 @@ routing parameters:
 - `coverage_hybrid`: affine-ordered butterfly/local base with a fixed fraction of greedy long-range pairs;
 - `semantic_balanced_hybrid`: a tensor-aware first layer followed by
   degree-preserving, ancestry/overlap/novelty-scored swaps.
+- `semantic_degree_balanced`: the separate unified U1 candidate. Dense image
+  inputs use semantic ordering; dense and convolutional layers then use the
+  same deterministic balanced butterfly base with no ancestry swaps. It does
+  not force convolutional leaf pairs and ignores legacy swap controls.
 - `semantic_channel_hybrid`: the frozen v3 butterfly/swap rule applied only to
   convolutional channel groups; spatial receptive-field coordinates are left
   bit-identical to the matched random run.
@@ -556,3 +560,22 @@ The channel-spatial adapter reached 57.033% (+0.360 pp over random,
 -0.153 pp versus V4) and failed both promotion thresholds. No M or held-out
 run followed. The invalid explicit-classifier RNG attempt is preserved and
 excluded in `results/failed/cifar10_conv_small_explicit_classifier_rng_attempt1`.
+
+### Unified degree-balanced U1 study
+
+`UNIFIED_DEGREE_BALANCED.md` records the checkpoint-level diagnosis of why
+the V4 no-swap component performed best and defines the separate
+`semantic_degree_balanced` strategy. Frozen V3 and V4 were not modified.
+Regression tests prove that U1 is bitwise identical to the historical
+convolutional no-swap arm for a matched seed, so seeds 0-2 were reused.
+
+The six missing seed-3/4 random, frozen-V4, and U1 runs completed with zero
+failures. Across five seeds, random reached 56.864%, V4 reached 57.448%, and
+U1 reached 57.624% best hardened validation accuracy. U1 improved over random
+by +0.760 pp (95% CI [-0.700, +2.220]) and won four of five pairs.
+
+The four-of-five consistency gate passed, but the predeclared +1.0 pp mean
+gate failed. Therefore no convolutional M, CIFAR-100 transfer, full schedule,
+or held-out test was launched. Machine-readable evidence is in
+`summary/cifar10_conv_small_unified_five_seed.json` and
+`summary/cifar10_conv_small_no_swap_diagnostics.json`.

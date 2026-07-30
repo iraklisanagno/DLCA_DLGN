@@ -193,13 +193,13 @@ operation accounting.
 
 | Architecture | Gate operations | Method | A / R accuracy | Match status |
 |---|---:|---|---:|---|
-| LogicTreeNet-S | 0.40M | Original fixed routing | [TRIED] 56.14% pilot / **[REPORTED] 60.38%** | Exact architecture; pilot is short |
+| LogicTreeNet-S | 0.40M | Original fixed routing | [TRIED-SELECTION] 56.864% validation / **[REPORTED] 60.38%** | Exact architecture; five seeds at 20K; no test query |
 |  | 0.40M | Two-stage unit tying, 30% | [PENDING] / [REPORTED] 56.70 +/- 0.08% | Exact S; approximately 0.70 x gates after tying |
 |  | 0.57M | Conv. TTNet-S | [N/A] / [REPORTED] 50.10% | Different truth-table architecture |
 |  | 0.40M | Light/IWP-LogicTreeNet | [PENDING] / [N/A] | Exact adaptation; no published S result |
 |  | 0.40M | WARP-LogicTreeNet | [PENDING] / [N/A] | Exact adaptation; no published S result |
-|  | **0.40M** | **CoverageDLGN-Channel** | [TRIED] 56.37% pilot / [N/A] | Exact architecture; pilot is short |
-|  | **0.40M** | **Balanced channel, no swaps** | [TRIED-SELECTION] 58.01% validation / [N/A] | Three seeds; +1.34 pp over random, CI crosses zero; no test query |
+|  | **0.40M** | **CoverageDLGN-Channel (frozen V4)** | [TRIED-SELECTION] 57.448% validation / [N/A] | Five seeds; +0.584 pp over random, 95% CI [-0.335, +1.503] |
+|  | **0.40M** | **Unified semantic degree-balanced (U1)** | **[TRIED-STOPPED] 57.624% validation** / [N/A] | Five seeds; +0.760 pp, 95% CI [-0.700, +2.220], wins 4/5; failed +1 pp gate |
 |  | **0.40M** | **Channel-spatial leaf pairing** | [TRIED-STOPPED] 57.03% validation / [N/A] | Three seeds; -0.15 pp vs V4; failed both promotion gates |
 | LogicTreeNet-M | 3.08M | Original fixed routing | [PENDING] / **[REPORTED] 71.01%** | Exact architecture |
 |  | 3.08M | Two-stage unit tying, 30% | [PENDING] / [REPORTED] 70.77 +/- 0.07% | Exact M; approximately 0.70 x after tying |
@@ -479,8 +479,9 @@ frontier.
 1. Finish a full-schedule paper-faithful fixed-routing S baseline.
 2. Search the unchanged convolutional CoverageDLGN mechanism independently
    for S, M, and L. V4 remains frozen; V5, coverage--reuse, and channel-spatial
-   leaf pairing are separate negative methods. Balanced channels without swaps
-   is a positive but inconclusive S diagnostic and is not promoted.
+   leaf pairing are separate negative methods. The unified no-swap U1
+   candidate completed five seeds at +0.760 pp and four wins, but failed its
+   predeclared +1 pp gate and is not promoted.
 3. Compare raw, Light/IWP, and WARP parameterizations within the allowed
    CoverageDLGN search and record the winning choice.
 4. Reproduce Light/IWP-LogicTreeNet and WARP-LogicTreeNet for three final
@@ -495,6 +496,11 @@ frontier.
 
 **Promotion condition for L:** M must show a positive mean CoverageDLGN gain
 over its matched fixed-routing baseline. Otherwise L remains reported-only.
+
+**Current stop decision:** the U1 S gate failed, so its M, L, and
+convolutional CIFAR-100 rows remain unrun. Restarting those scales requires a
+separately justified, preregistered method rather than post-hoc continuation
+of U1.
 
 ### Plan for Table 4: Dense CIFAR-100 S/M/L
 

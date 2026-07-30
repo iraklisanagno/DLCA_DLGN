@@ -1,0 +1,164 @@
+{
+  "phase": "cifar10_conv_small_unified_five_seed",
+  "dataset": "cifar-10",
+  "architecture": "ClgnCifar10PaperSmall",
+  "metric": "best hardened validation accuracy",
+  "provenance": "TRIED",
+  "heldout_test_used": false,
+  "historical_candidate_seeds_reused_under_test_proven_equivalence": [
+    0,
+    1,
+    2
+  ],
+  "per_seed_percent": {
+    "random": [
+      56.10000000000001,
+      57.4,
+      56.52,
+      56.879999999999995,
+      57.42
+    ],
+    "frozen_v4": [
+      57.599999999999994,
+      57.8,
+      56.16,
+      57.120000000000005,
+      58.56
+    ],
+    "unified_candidate": [
+      57.92,
+      57.66,
+      58.46,
+      57.56,
+      56.52
+    ]
+  },
+  "mean_percent": {
+    "random": 56.864000000000004,
+    "frozen_v4": 57.448,
+    "unified_candidate": 57.624
+  },
+  "paired_effects": {
+    "unified_candidate_minus_random": {
+      "paired_differences_percentage_points": [
+        1.8199999999999932,
+        0.259999999999998,
+        1.9399999999999977,
+        0.6800000000000068,
+        -0.8999999999999986
+      ],
+      "paired_mean_percentage_points": 0.7599999999999995,
+      "paired_std_percentage_points": 1.1755849607748452,
+      "paired_t95_ci_percentage_points": [
+        -0.6996815226239129,
+        2.2196815226239117
+      ],
+      "positive_seed_count": 4
+    },
+    "frozen_v4_minus_random": {
+      "paired_differences_percentage_points": [
+        1.4999999999999858,
+        0.3999999999999986,
+        -0.36000000000000654,
+        0.2400000000000091,
+        1.1400000000000006
+      ],
+      "paired_mean_percentage_points": 0.5839999999999975,
+      "paired_std_percentage_points": 0.740189165011212,
+      "paired_t95_ci_percentage_points": [
+        -0.3350662380549315,
+        1.5030662380549265
+      ],
+      "positive_seed_count": 4
+    },
+    "unified_candidate_minus_frozen_v4": {
+      "paired_differences_percentage_points": [
+        0.3200000000000074,
+        -0.14000000000000057,
+        2.3000000000000043,
+        0.4399999999999977,
+        -2.039999999999999
+      ],
+      "paired_mean_percentage_points": 0.17600000000000193,
+      "paired_std_percentage_points": 1.5501870854835567,
+      "paired_t95_ci_percentage_points": [
+        -1.748811494525355,
+        2.1008114945253586
+      ],
+      "positive_seed_count": 3
+    }
+  },
+  "promotion_decision": {
+    "mean_gain_gate_passed": false,
+    "positive_seed_gate_passed": true,
+    "promoted_to_convolutional_medium": false,
+    "rule": {
+      "reference": "random",
+      "minimum_paired_mean_gain_percentage_points": 1.0,
+      "minimum_positive_seed_count": 4,
+      "required_seed_count": 5,
+      "action_on_pass": "run matched convolutional CIFAR-10 M validation",
+      "action_on_fail": "stop before convolutional M and preserve the candidate as a negative or architecture-limited result"
+    }
+  },
+  "resource_check_new_seeds_3_4": {
+    "families": {
+      "random": {
+        "mean_wall_seconds": 1021.6792658804916,
+        "mean_topology_construction_seconds": 0.1760813495493494,
+        "mean_peak_gpu_memory_bytes": 1965652480,
+        "cost": {
+          "dense_gate_count": 71680,
+          "trainable_parameters": 1336832,
+          "training_routing_parameters": 0,
+          "deployed_routing_bits": 1945600,
+          "deployed_routing_bytes_packed": 243200,
+          "candidate_indices_tensor_bytes": 1146880
+        },
+        "cost_identical_across_new_seeds": true
+      },
+      "frozen_v4": {
+        "mean_wall_seconds": 1022.159488084988,
+        "mean_topology_construction_seconds": 0.4134748850192409,
+        "mean_peak_gpu_memory_bytes": 1965679616,
+        "cost": {
+          "dense_gate_count": 71680,
+          "trainable_parameters": 1336832,
+          "training_routing_parameters": 0,
+          "deployed_routing_bits": 1945600,
+          "deployed_routing_bytes_packed": 243200,
+          "candidate_indices_tensor_bytes": 1146880
+        },
+        "cost_identical_across_new_seeds": true
+      },
+      "unified_candidate": {
+        "mean_wall_seconds": 1021.505652309017,
+        "mean_topology_construction_seconds": 0.16466196405235678,
+        "mean_peak_gpu_memory_bytes": 1965679616,
+        "cost": {
+          "dense_gate_count": 71680,
+          "trainable_parameters": 1336832,
+          "training_routing_parameters": 0,
+          "deployed_routing_bits": 1945600,
+          "deployed_routing_bytes_packed": 243200,
+          "candidate_indices_tensor_bytes": 1146880
+        },
+        "cost_identical_across_new_seeds": true
+      }
+    },
+    "cost_identical_across_methods": true,
+    "common_cost": {
+      "dense_gate_count": 71680,
+      "trainable_parameters": 1336832,
+      "training_routing_parameters": 0,
+      "deployed_routing_bits": 1945600,
+      "deployed_routing_bytes_packed": 243200,
+      "candidate_indices_tensor_bytes": 1146880
+    },
+    "scope_note": "Resource instrumentation is summarized on the newly trained matched seeds 3 and 4; historical seeds predate some cost fields."
+  },
+  "frozen_method_policy": {
+    "v3_changed": false,
+    "v4_changed": false
+  }
+}

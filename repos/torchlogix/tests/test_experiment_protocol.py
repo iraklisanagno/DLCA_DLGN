@@ -501,6 +501,37 @@ def test_channel_spatial_adapter_is_common_rng_paired_with_frozen_v4():
     )
 
 
+def test_unified_candidate_is_full_model_equivalent_to_historical_no_swap_arm():
+    thresholds = torch.tensor([0.25, 0.5, 0.75])
+
+    def build(strategy, swap_fraction):
+        kwargs = _paper_model_kwargs(thresholds)
+        kwargs["connections_kwargs"].update({
+            "init_method": strategy,
+            "topology_seed": 17,
+            "candidate_pool_size": 8,
+            "swap_fraction": swap_fraction,
+            "novelty_weight": 1.0,
+        })
+        return ClgnCifar10PaperSmall(**kwargs)
+
+    torch.manual_seed(41)
+    historical_no_swap = build("semantic_channel_hybrid", 0.0)
+    torch.manual_seed(41)
+    unified_candidate = build("semantic_degree_balanced", 1.0)
+
+    historical_state = historical_no_swap.state_dict()
+    candidate_state = unified_candidate.state_dict()
+    assert historical_state.keys() == candidate_state.keys()
+    assert all(
+        torch.equal(historical_state[key], candidate_state[key])
+        for key in historical_state
+    )
+    assert sum(parameter.numel() for parameter in historical_no_swap.parameters()) == (
+        sum(parameter.numel() for parameter in unified_candidate.parameters())
+    )
+
+
 def test_conv_revision_configs_preserve_historical_common_rng_style():
     config_root = (
         Path(__file__).parents[1]
@@ -531,6 +562,91 @@ def test_conv_revision_configs_preserve_historical_common_rng_style():
         for payload in (component, revision):
             assert "conv_connections_init_method" not in payload
             assert "classifier_connections_init_method" not in payload
+
+
+def test_unified_conv_small_configs_are_matched_and_gate_is_predeclared():
+    root = (
+        Path(__file__).parents[1]
+        / "experiments"
+        / "coverage_dlgn"
+    )
+    config_root = root / "configs" / "cifar10_conv_small_unified_five_seed"
+    topology_only = {
+        "connections_init_method",
+        "coverage_candidate_pool_size",
+        "coverage_swap_fraction",
+        "coverage_novelty_weight",
+        "output",
+    }
+    for seed in (3, 4):
+        names = {
+            "random": f"pilot_conv_cifar10_paper_small_random_seed{seed}",
+            "frozen_v4": (
+                "pilot_conv_cifar10_paper_small_semantic_channel_v4_"
+                f"seed{seed}"
+            ),
+            "candidate": (
+                "pilot_conv_cifar10_paper_small_semantic_degree_balanced_"
+                f"seed{seed}"
+            ),
+        }
+        configs = {
+            family: json.loads((config_root / f"{name}.json").read_text())
+            for family, name in names.items()
+        }
+        assert configs["random"]["connections_init_method"] == "random"
+        assert configs["frozen_v4"]["connections_init_method"] == (
+            "semantic_channel_hybrid"
+        )
+        assert configs["candidate"]["connections_init_method"] == (
+            "semantic_degree_balanced"
+        )
+        assert configs["candidate"]["coverage_swap_fraction"] == 0.0
+        cores = [
+            {
+                key: value for key, value in config.items()
+                if key not in topology_only
+            }
+            for config in configs.values()
+        ]
+        assert cores[0] == cores[1] == cores[2]
+
+    protocol = json.loads((
+        root / "protocols" / "cifar10_conv_small_unified_five_seed.json"
+    ).read_text())
+    rule = protocol["promotion_rule"]
+    assert rule["minimum_paired_mean_gain_percentage_points"] == 1.0
+    assert rule["minimum_positive_seed_count"] == 4
+    assert rule["required_seed_count"] == 5
+    assert protocol["historical_seeds_reused_not_rerun"] == [0, 1, 2]
+
+
+def test_unified_conv_small_five_seed_summary_applies_locked_stop_rule():
+    root = (
+        Path(__file__).parents[1]
+        / "experiments"
+        / "coverage_dlgn"
+    )
+    summary = json.loads((
+        root / "summary" / "cifar10_conv_small_unified_five_seed.json"
+    ).read_text())
+    effect = summary["paired_effects"]["unified_candidate_minus_random"]
+    decision = summary["promotion_decision"]
+    assert effect["positive_seed_count"] == 4
+    assert effect["paired_mean_percentage_points"] == pytest.approx(0.76)
+    assert decision["positive_seed_gate_passed"] is True
+    assert decision["mean_gain_gate_passed"] is False
+    assert decision["promoted_to_convolutional_medium"] is False
+    resources = summary["resource_check_new_seeds_3_4"]
+    assert resources["cost_identical_across_methods"] is True
+
+    queue = json.loads((
+        root / "logs" / "cifar10_conv_small_unified_five_seed"
+        / "queue_summary.json"
+    ).read_text())
+    assert len(queue["finished"]) == 6
+    assert queue["skipped"] == []
+    assert queue["failed"] == []
 
 
 def test_paper_clgn_sm_pilot_pairs_differ_only_in_topology_controls():
