@@ -1,0 +1,69 @@
+{
+  "phase": "warp_fig4_cifar10_medium",
+  "provenance": "TRIED-PARTIAL",
+  "metric": "best hardened validation accuracy",
+  "heldout_test_used": false,
+  "per_seed_validation_percent": {
+    "warp_fixed_uniform": {
+      "0": 65.35,
+      "1": null,
+      "2": null
+    },
+    "warp_fixed_distributive": {
+      "0": 66.12,
+      "1": null,
+      "2": null
+    },
+    "warp_learnable": {
+      "0": 65.88000000000001,
+      "1": null,
+      "2": null
+    },
+    "paired_random_fixed_uniform": {
+      "0": 64.58,
+      "1": null,
+      "2": null
+    },
+    "legacy_v4_fixed_uniform": {
+      "0": 66.23,
+      "1": null,
+      "2": null
+    },
+    "paired_random_learnable": {
+      "0": null,
+      "1": null,
+      "2": null
+    },
+    "legacy_v4_learnable": {
+      "0": null,
+      "1": null,
+      "2": null
+    }
+  },
+  "completed_mean_validation_percent": {
+    "warp_fixed_uniform": 65.35,
+    "warp_fixed_distributive": 66.12,
+    "warp_learnable": 65.88000000000001,
+    "paired_random_fixed_uniform": 64.58,
+    "legacy_v4_fixed_uniform": 66.23
+  },
+  "difference_from_approximate_reported_endpoint_pp": {
+    "warp_fixed_uniform": 1.3499999999999943,
+    "warp_fixed_distributive": 1.1200000000000045,
+    "warp_learnable": -0.7199999999999847
+  },
+  "paired_effects": {
+    "legacy_v4_minus_paired_random_fixed_uniform": {
+      "paired_differences_percentage_points": [
+        1.6500000000000057
+      ],
+      "paired_mean_percentage_points": 1.6500000000000057,
+      "positive_seed_count": 1,
+      "seed_count": 1
+    }
+  },
+  "frozen_method_policy": {
+    "v3_changed": false,
+    "legacy_v4_changed": false
+  }
+}

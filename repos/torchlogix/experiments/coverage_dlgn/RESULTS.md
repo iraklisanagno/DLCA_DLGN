@@ -936,6 +936,50 @@ Machine-readable sources:
 - `summary/cifar10_conv_small_no_swap_diagnostics.json`;
 - `summary/cifar10_conv_small_unified_five_seed.json`.
 
+## July 31 WARP-style CIFAR-10 Medium result
+
+A separate experiment reconstructed the WARP Figure 4 Medium setting before
+combining it with frozen Legacy V4. This uses legacy
+`ClgnCifar10Medium`, two thresholds per RGB channel (six Boolean channels),
+raw rank-2 gate parameterization, no augmentation, and 30K updates. It is not
+the paper-faithful nine-channel `ClgnCifar10PaperMedium` architecture and must
+not be presented as a reproduction of the original LogicTreeNet-M 71.01%
+test result.
+
+The hardened validation results completed so far are:
+
+| Method | Seed-0 best hard validation | Approx. WARP Figure 4 endpoint |
+|---|---:|---:|
+| WARP fixed uniform | 65.35% | approximately 64.0% |
+| WARP fixed distributive | 66.12% | approximately 65.0% |
+| WARP learnable | 65.88% | approximately 66.6% |
+| Matched random, fixed uniform | 64.58% | -- |
+| Frozen Legacy V4, fixed uniform | **66.23%** | -- |
+
+Legacy V4 is +1.65 pp over its matched random control on seed 0. This is a
+single paired result, not a mean or confidence interval. The public WARP arms
+use `random-unique` routing, while the Legacy V4 attribution pair uses the
+same random sampler as the original V4 pilot; therefore the primary topology
+effect is 66.23% versus 64.58%, not a direct comparison against a WARP arm.
+Frozen V3 and V4 implementations were not changed.
+
+The fixed-uniform and fixed-distributive WARP jobs began with the plotted 50K
+budget. Both were interrupted just after their common 30K validation boundary
+once they had reached the approximate plotted endpoints. No validation after
+30K was evaluated. The 30K budget was frozen before any Medium Legacy V4
+accuracy was observed, and the remaining seed-0 arms used the same budget.
+Accordingly, the result supports “reached the reconstructed WARP accuracy
+within 30K updates,” not an exact 50K replication. All values above are
+validation accuracy; the held-out CIFAR-10 test set has not been queried.
+Seeds 1 and 2 remain pending.
+
+Machine-readable sources and protocol history:
+
+- `summary/warp_fig4_cifar10_medium.json`;
+- `summary/warp_fig4_cifar10_medium.csv`;
+- `protocols/warp_fig4_cifar10_medium.json`;
+- `WARP_FIG4_REPRODUCTION.md`.
+
 ## Not completed; required before a DATE claim
 
 - A protocol-identical numerical reproduction of the published CIFAR-10

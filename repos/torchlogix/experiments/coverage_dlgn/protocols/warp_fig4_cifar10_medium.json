@@ -1,0 +1,97 @@
+{
+  "phase": "warp_fig4_cifar10_medium",
+  "purpose": "Reproduce WARP Figure 4 and evaluate frozen Legacy V4 in the same Medium two-threshold setting",
+  "paper": "pdfs/warp_logic_neural_networks.pdf",
+  "paper_figure": 4,
+  "dataset": "cifar-10",
+  "architecture": "ClgnCifar10Medium",
+  "input_encoding": "two global thresholds per RGB channel; six Boolean channels",
+  "metric": "best hardened validation accuracy",
+  "heldout_test_used": false,
+  "reported_validation_endpoints_percent_approximate": {
+    "fixed_uniform": 64.0,
+    "fixed_distributive": 65.0,
+    "learnable": 66.6
+  },
+  "reported_value_note": "Endpoints are read from a plot, not an exact numerical table.",
+  "common_training": {
+    "iterations": 30000,
+    "paper_curve_iterations": 50000,
+    "evaluation_frequency": 2000,
+    "batch_size": 128,
+    "validation_fraction": 0.2,
+    "augmentation": "none",
+    "learning_rate": 0.02,
+    "weight_decay": 0.002,
+    "parametrization": "raw",
+    "lut_rank": 2,
+    "weight_initialization": "residual",
+    "residual_probability": 0.951,
+    "binarization_initialization_batches": 100,
+    "compile_model": false,
+    "seeds": [
+      0,
+      1,
+      2
+    ]
+  },
+  "warp_reproduction": {
+    "connection_method": "random-unique",
+    "split_policy": "public-code behavior: the run seed controls the random 80/20 split",
+    "arms": [
+      "fixed_uniform",
+      "fixed_distributive",
+      "learnable"
+    ]
+  },
+  "legacy_v4_attribution": {
+    "data_split_seed": 2027,
+    "topology_seed": "run seed",
+    "control_connection_method": "random",
+    "method_connection_method": "semantic_channel_hybrid",
+    "coverage_candidate_pool_size": 8,
+    "coverage_swap_fraction": 0.25,
+    "coverage_novelty_weight": 1.0,
+    "spatial_pairing": "unchanged relative to the matched random control",
+    "initial_arm": "fixed_uniform"
+  },
+  "learnable_thresholding": {
+    "initialization": "distributive",
+    "threshold_scope": "global",
+    "binarization_learning_rate_argument": 0.02,
+    "binarization_temperature": 0.0002,
+    "binarization_softplus_temperature": 0.01,
+    "implementation_note": "The public TorchLogix argument is interpreted as a fraction of the main learning rate."
+  },
+  "promotion_rule": {
+    "screen_seed": 0,
+    "screen_action": "complete all three WARP arms plus matched random and frozen V4 at the frozen 30K budget",
+    "full_fixed_uniform_action": "continue seeds 1 and 2 only if the WARP fixed-uniform result is within 2 percentage points of the plotted endpoint and V4 is positive on seed 0",
+    "learnable_v4_action": "combine frozen V4 with learnable thresholding only after the three-seed fixed-uniform V4 mean is positive",
+    "method_tuning_allowed": false
+  },
+  "frozen_method_policy": {
+    "v3_changed": false,
+    "legacy_v4_changed": false
+  },
+  "known_reproduction_limits": [
+    "The paper provides plotted endpoints rather than exact numerical values.",
+    "The public repository does not include the exact Figure 4 launch command, split indices, or checkpoints.",
+    "Parameters not listed in WARP Table 4 are reconstructed from the public TorchLogix defaults and README."
+  ],
+  "execution_preflight": {
+    "date_utc": "2026-07-30",
+    "compile_model_requested_by_public_readme": true,
+    "compile_model_used": false,
+    "reason": "PyTorch 2.9 CUDA 13 max-autotune remained before the first update for more than two minutes on both GPUs and emitted repeated symbolic-shape warnings. The processes were interrupted cleanly with no optimizer update or result.",
+    "scientific_effect": "Compilation is an execution optimization and does not change the declared model or training method."
+  },
+  "training_budget_revision": {
+    "date_utc": "2026-07-30",
+    "original_budget": 50000,
+    "frozen_budget": 30000,
+    "decision_basis": "Before any Legacy V4 Medium accuracy was observed, fixed-uniform and fixed-distributive seed 0 had already reached or exceeded the approximate WARP Figure 4 endpoints.",
+    "reporting_requirement": "Report as reproduction within 30K steps, not an exact 50K reproduction.",
+    "fairness_requirement": "Every remaining arm and seed receives exactly the same 30K maximum training effort, with checkpoint selection only on hardened validation accuracy."
+  }
+}

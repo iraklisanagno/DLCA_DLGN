@@ -215,6 +215,37 @@ operation accounting.
 |  | 28.9M | WARP-LogicTreeNet | [PENDING] / [N/A] | New L adaptation |
 |  | **28.9M** | **CoverageDLGN-Channel** | [PENDING] / [N/A] | Requires a paper-faithful L baseline first |
 
+### WARP-style CIFAR-10 Medium compatibility study
+
+This is a separate reconstruction of Figure 4 in the WARP paper. It uses the
+public TorchLogix `ClgnCifar10Medium` configuration with two thresholds per
+RGB channel (six Boolean input channels), raw rank-2 gates, no augmentation,
+and 30K updates. It is not the exact nine-channel LogicTreeNet-M architecture
+in the rows above and does not reproduce its reported 71.01% test result.
+The WARP paper provides three-seed validation curves rather than exact table
+values; the reported endpoints below are approximate readings of its 50K-step
+plot. Local results are seed 0 only and the held-out test set was not queried.
+
+| Method | Threshold/routing setting | Local best hard validation | Approx. WARP Figure 4 endpoint | Status |
+|---|---|---:|---:|---|
+| WARP fixed uniform | Public `random-unique`; fixed uniform thresholds | **[TRIED-PARTIAL] 65.35%** | [REPORTED-PLOT] approximately 64.0% | One seed at 30K |
+| WARP fixed distributive | Public `random-unique`; fixed distributive thresholds | **[TRIED-PARTIAL] 66.12%** | [REPORTED-PLOT] approximately 65.0% | One seed at 30K |
+| WARP learnable | Public `random-unique`; learnable thresholds | **[TRIED-PARTIAL] 65.88%** | [REPORTED-PLOT] approximately 66.6% | One seed at 30K |
+| Matched random | V4 pilot's random sampler; fixed uniform thresholds | **[TRIED-PARTIAL] 64.58%** | [N/A] | Seed-0 control for Legacy V4 |
+| **CoverageDLGN Legacy V4** | Frozen `semantic_channel_hybrid`; fixed uniform thresholds | **[TRIED-PARTIAL] 66.23%** | [N/A] | Seed 0; **+1.65 pp** over matched random |
+
+The fixed-uniform and fixed-distributive jobs were originally launched with
+50K updates and interrupted just after the common 30K validation boundary,
+after both had reached the approximate plotted endpoints. No later validation
+was evaluated, and 30K was frozen before observing the Medium Legacy V4
+result. These results therefore show that the reconstructed WARP accuracies
+are reached within 30K; they are not an exact 50K reproduction. The direct
+V4 claim uses only its matched-random row because the public WARP arms use a
+different `random-unique` routing sampler. Seeds 1 and 2 remain pending.
+
+Machine-readable source:
+`summary/warp_fig4_cifar10_medium.json`.
+
 ## Table 4: Dense CIFAR-100 S/M/L
 
 The initial compact CIFAR-100 ladder follows BitLogic's two-layer common

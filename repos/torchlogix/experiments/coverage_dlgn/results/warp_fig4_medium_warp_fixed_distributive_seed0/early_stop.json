@@ -1,0 +1,13 @@
+{
+  "status": "EARLY-STOPPED-COMPLETE",
+  "reason": "Frozen 30K budget adopted after reaching the approximate WARP Figure 4 validation endpoint.",
+  "original_requested_iterations": 50000,
+  "frozen_protocol_iterations": 30000,
+  "last_completed_validation_step": 30000,
+  "actual_interrupted_training_progress_approximate": 30049,
+  "no_validation_evaluation_after_frozen_boundary": true,
+  "best_validation_checkpoint_step": 22000,
+  "best_validation_hard_accuracy_percent": 66.12,
+  "complete_for_frozen_30000_step_protocol": true,
+  "heldout_test_used": false
+}
