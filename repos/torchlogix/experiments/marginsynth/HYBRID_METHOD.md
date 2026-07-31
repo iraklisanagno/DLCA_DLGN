@@ -1,4 +1,8 @@
-# Margin-Aware Structured Unit Tying
+# Baseline: Unit Tying + Margin Refinement
+
+> **Status:** preserved comparison baseline. This is not the proposed
+> MarginSynth method because it inherits Two-Stage Unit Tying's structured
+> constant-tie action, candidate shortlist, and fixed tie quota.
 
 ## Method
 

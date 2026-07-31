@@ -18,8 +18,14 @@ The most important direct comparison is Lee et al.,
 [*Two-Stage Unit Tying for Simplifying Differentiable Logic Gate Networks*](../../../../pdfs/two-stage_unit_tying_for_simplifying_differentiable_logic_gate_networks.pdf),
 ICML 2026.
 
-This document defines the intended contribution and the implementation plan. It
-does not claim that the method has already been implemented or validated.
+The original circuit-rewrite pipeline and the independent whole-circuit LUT
+resynthesis pipeline are implemented. The latter is in
+[`circuit_distillation.py`](circuit_distillation.py); its local-only novelty
+boundary is documented in
+[`CIRCUIT_DISTILLATION_NOVELTY_AUDIT.md`](CIRCUIT_DISTILLATION_NOVELTY_AUDIT.md),
+and its seed-0 development findings are recorded in
+[`CIRCUIT_DISTILLATION_RESULTS.md`](CIRCUIT_DISTILLATION_RESULTS.md). These are
+development results, not paper claims.
 
 ## The idea in simple words
 

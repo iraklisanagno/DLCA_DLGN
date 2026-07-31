@@ -16,6 +16,8 @@ and the held-out test policy in
 |---|---|---|---|---:|---|---|---|
 | `dev_mnist_tiny_raw_seed0` | First trained circuit for export, rewrite, and incremental-simulation development | MNIST | `DlgnMnistTiny`, rank-2 raw, fixed random connections | 0 | Completed and verified (development only) | [config](configs/dev_mnist_tiny_raw_seed0.json) | `results/dev_mnist_tiny_raw_seed0/` |
 | `pilot_fashion_mnist_paper_small_raw_seed0` | First dense scalability pilot and direct Two-Stage Unit Tying baseline | Fashion-MNIST | `DlgnFashionMnistPaperSmall`, rank-2 raw, fixed random connections; 6 × 8,000 = 48,000 nominal gates | 0 | Completed and verified; test sealed | [training config](configs/pilot_fashion_mnist_paper_small_raw_seed0.json), [unit-tying config](configs/two_stage_unit_tying_fashion_seed0.json) | `results/pilot_fashion_mnist_paper_small_raw_seed0/` |
+| `margin_all_aig_holdout_v3_seed0` | Independent whole-circuit LUT resynthesis central pilot | Fashion-MNIST | Same frozen checkpoint; four internal layers jointly optimized on GPU | 0 | Completed and synthesized; seed-0 promotion failed | [config](configs/circuit_distillation_fashion_seed0_v3.json) | `results/pilot_fashion_mnist_paper_small_raw_seed0/distillation/margin_all_aig_holdout_v3_seed0/` |
+| `ablation_matrix_v3_seed0` | Margin/MSE, action-space, proxy, group-robustness, and repair ablations | Fashion-MNIST | Same frozen checkpoint and partitions | 0 | Five ablations completed and synthesized; test sealed | [runner](run_circuit_distillation_ablations.py) | `results/pilot_fashion_mnist_paper_small_raw_seed0/distillation/ablation_matrix_v3_seed0/` |
 
 ## `dev_mnist_tiny_raw_seed0`
 

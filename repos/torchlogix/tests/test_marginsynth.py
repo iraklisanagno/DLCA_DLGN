@@ -34,6 +34,15 @@ from experiments.marginsynth.margin_aware_tying import (
     within_constraints,
     quality_tuple,
 )
+from experiments.marginsynth.circuit_distillation import (
+    AIG_LUT_COSTS,
+    allowed_lut_mask,
+    changed_lut_records,
+    decision_margin_losses,
+    initialize_resynthesis_logits,
+    materialize_change_prefix,
+    stratified_optimization_repair_split,
+)
 from experiments.marginsynth.unit_tying import (
     apply_permanent_ties,
     binary_split_identify,
@@ -61,7 +70,7 @@ from experiments.marginsynth.search_v2 import (
     within_budgets,
 )
 from torchlogix.circuit import Circuit, Gate, GateOp, SumReduction
-from torchlogix.layers import LogicDense
+from torchlogix.layers import GroupSum, LogicDense
 
 
 def test_unit_tying_binary_split_isolates_largest_distortion():
@@ -75,6 +84,65 @@ def test_unit_tying_binary_split_isolates_largest_distortion():
     harmful, path = binary_split_identify(list(costs), evaluate_pair)
     assert harmful == 2
     assert len(path) == 2
+
+
+def test_distillation_action_mask_keeps_original_and_constants():
+    original = torch.tensor([1, 0, 15, 6])
+    mask = allowed_lut_mask(original, "constants")
+    assert mask[:, 0].all() and mask[:, 15].all()
+    assert mask.gather(1, original[:, None]).all()
+    assert mask.sum(1).tolist() == [3, 2, 2, 3]
+
+
+def test_distillation_aig_costs_match_boolean_operation_classes():
+    assert AIG_LUT_COSTS[0] == AIG_LUT_COSTS[15] == 0
+    assert AIG_LUT_COSTS[3] == AIG_LUT_COSTS[5] == 0
+    assert AIG_LUT_COSTS[10] == AIG_LUT_COSTS[12] == 0
+    assert AIG_LUT_COSTS[1] == AIG_LUT_COSTS[7] == 1
+    assert AIG_LUT_COSTS[6] == AIG_LUT_COSTS[9] == 3
+
+
+def test_distillation_margin_loss_targets_teacher_winner_and_runner():
+    teacher = torch.tensor([[8.0, 6.0, 0.0], [1.0, 2.0, 9.0]])
+    safe = teacher.clone()
+    unsafe = torch.tensor([[6.0, 7.0, 0.0], [1.0, 8.5, 8.0]])
+    safe_loss, winners, runners = decision_margin_losses(safe, teacher, 0.5, 0.25, 2.0)
+    unsafe_loss, _, _ = decision_margin_losses(unsafe, teacher, 0.5, 0.25, 2.0)
+    assert winners.tolist() == [0, 2]
+    assert runners.tolist() == [1, 1]
+    assert safe_loss.tolist() == [0.0, 0.0]
+    assert torch.all(unsafe_loss > 0)
+
+
+def test_distillation_materializes_replayable_full_lut_changes():
+    first = LogicDense(
+        in_dim=4,
+        out_dim=3,
+        lut_rank=2,
+        parametrization="raw",
+        connections="fixed",
+        connections_kwargs={"init_method": "random"},
+    )
+    model = torch.nn.Sequential(first, GroupSum(1))
+    original = {0: torch.tensor([1, 6, 7])}
+    initialize_resynthesis_logits(
+        [first], [0], original, "all", initial_gap=4.0, forbidden_logit=-1000.0
+    )
+    changes = [
+        {"layer": 0, "unit": 1, "new_lut": 3},
+        {"layer": 0, "unit": 2, "new_lut": 15},
+    ]
+    materialize_change_prefix(model, original, [0], changes, 1, hard_logit=1000.0)
+    assert first.weight.argmax(1).tolist() == [1, 3, 7]
+
+
+def test_distillation_uses_disjoint_stratified_repair_holdout():
+    labels = torch.tensor([0] * 20 + [1] * 20 + [2] * 20)
+    optimize, repair = stratified_optimization_repair_split(labels, 0.75, 9)
+    assert not set(optimize.tolist()) & set(repair.tolist())
+    assert sorted(optimize.tolist() + repair.tolist()) == list(range(60))
+    assert torch.bincount(labels[optimize]).tolist() == [15, 15, 15]
+    assert torch.bincount(labels[repair]).tolist() == [5, 5, 5]
 
 
 def test_unit_tying_refinement_removes_overshoot_harm():

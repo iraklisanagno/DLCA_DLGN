@@ -36,6 +36,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("source_run", type=Path)
     parser.add_argument("method_dir", type=Path)
+    parser.add_argument(
+        "--checkpoint",
+        default="tied_checkpoint.pt",
+        help="Method checkpoint filename (supports independent distillation runs)",
+    )
     parser.add_argument("--prepare-residual-trace", action="store_true")
     parser.add_argument(
         "--resume",
@@ -51,7 +56,7 @@ def main() -> None:
             f"refusing to overwrite existing export run: {export_dir}"
         )
     export_dir.mkdir(parents=True, exist_ok=cli.resume)
-    checkpoint = method_dir / "tied_checkpoint.pt"
+    checkpoint = method_dir / cli.checkpoint
     required = [source_run / "training_config.json", checkpoint]
     missing = [str(path) for path in required if not path.exists()]
     if missing:
@@ -104,6 +109,7 @@ def main() -> None:
         "source_run": str(source_run),
         "method_dir": str(method_dir),
         "checkpoint_sha256": sha256_file(checkpoint),
+        "checkpoint": cli.checkpoint,
         "export_dir": str(export_dir),
         "exact_circuit_sha256": sha256_file(
             export_dir / "exact_simplified_circuit.json"

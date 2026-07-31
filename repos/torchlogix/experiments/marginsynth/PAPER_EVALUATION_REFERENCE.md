@@ -8,14 +8,14 @@ description remains in [README.md](README.md), and the original project brief is
 
 ## Method in one paragraph
 
-MarginSynth is a post-training method for hardened rank-2 differentiable logic
-gate networks (DLGNs). It edits the deployed Boolean circuit using constant,
-bypass, inversion, and alternative-gate rewrites. Candidates are evaluated by
-exactly resimulating only their affected fan-out cones on calibration data.
-Decision margins guide the search, while hard global and per-class behavior-loss
-budgets determine whether a rewrite may be accepted. Exact simplification
-removes logic exposed by accepted rewrites, producing an
-accuracy-versus-circuit-cost Pareto frontier.
+The current primary MarginSynth hypothesis is post-training whole-circuit LUT
+resynthesis for hardened rank-2 DLGNs. It jointly optimizes every eligible LUT
+over all 16 Boolean functions using winner--runner margins, group robustness,
+and a hardware proxy; a disjoint calibration subset then exactly repairs hard
+budget violations before identical Yosys/ABC measurement. It does not use a
+Unit-Tying warm start, Gauss--Newton shortlist, Binary Split, or fixed tie
+quota. The earlier greedy circuit-rewrite and Unit-Tying + Margin Refinement
+pipelines remain controlled baselines.
 
 MarginSynth is approximate. A rewritten circuit must not be described as
 functionally equivalent to the original unless that equivalence has separately
