@@ -1,0 +1,54 @@
+{
+  "phase": "cifar10_paper_medium_long_v4",
+  "status": "FROZEN-READY",
+  "purpose": "Measure how closely frozen CoverageDLGN Legacy V4 on the nine-channel LogicTreeNet-M architecture approaches the reported 71.01% test accuracy.",
+  "architecture": {
+    "class": "ClgnCifar10PaperMedium",
+    "paper_identifier": "LogicTreeNet-M",
+    "input_encoding": "three fixed uniform thermometer thresholds per RGB channel; nine Boolean channels",
+    "k": 256,
+    "reported_gate_operations": "approximately 3.08M",
+    "reported_test_accuracy_percent": 71.01
+  },
+  "method": {
+    "name": "CoverageDLGN Legacy V4",
+    "conv_strategy": "semantic_channel_hybrid",
+    "classifier_strategy": "random",
+    "candidate_pool_size": 8,
+    "swap_fraction": 0.25,
+    "novelty_weight": 1.0,
+    "v3_or_v4_source_changed": false
+  },
+  "training": {
+    "seed_count": 1,
+    "seed": 0,
+    "split_seed": 2027,
+    "topology_seed": 0,
+    "train_validation_split": "45000/5000",
+    "batch_size": 128,
+    "steps_per_effective_epoch": 351,
+    "iterations": 350000,
+    "effective_epochs": 997.1509971509972,
+    "evaluation_frequency_steps": 2000,
+    "optimizer": "AdamW",
+    "learning_rate": 0.02,
+    "weight_decay": 0.002,
+    "augmentation": "standard crop/flip on training only",
+    "parameterization": "raw rank-2 DLGN",
+    "residual_initialization": "probability 0.951, corresponding to paper z3 approximately 5"
+  },
+  "protocol_notes": [
+    "The paper specifies validation every 2000 steps but does not state its total epoch count in prose; its long-training plots extend to approximately 1000 epochs.",
+    "350000 steps is the largest multiple of the paper's 2000-step evaluation interval below 1000 local effective epochs (351000 steps).",
+    "Standard crop/flip augmentation is retained from the existing nine-channel V4 pilot to maximize the one-seed accuracy probe; it is an explicit adaptation because the original paper does not document augmentation.",
+    "The held-out test set remains unused during training. After the run completes, freeze the best hardened-validation checkpoint and evaluate test exactly once.",
+    "This run measures our method only and does not provide a matched long-run random control."
+  ],
+  "launch_blocker": {
+    "observed_utc_date": "2026-07-31",
+    "nvidia_smi": "failed to communicate with the NVIDIA driver",
+    "torch_cuda_available": false,
+    "torch_cuda_device_count": 0,
+    "resolution": "GPU access was restored at 2026-07-31 16:10 UTC; physical GPU 0 was empty and selected exclusively, while GPU 1 remained occupied by an unrelated VLLM process."
+  }
+}

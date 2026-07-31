@@ -1014,3 +1014,33 @@ This log records operational failures and protocol decisions made after commit
 - Detailed evidence is in `UNIFIED_DEGREE_BALANCED.md`,
   `summary/cifar10_conv_small_no_swap_diagnostics.json`, and
   `summary/cifar10_conv_small_unified_five_seed.json`.
+
+## July 31, 2026: nine-channel LogicTreeNet-M long-run launch preparation
+
+- A single-seed long run was frozen for the paper-faithful nine-channel
+  `ClgnCifar10PaperMedium` architecture and unchanged Legacy V4
+  `semantic_channel_hybrid` topology. V3 and V4 source code were not edited.
+- The budget is 350,000 updates, or 997.15 effective epochs over the 45,000
+  training examples at batch size 128. This is the largest multiple of the
+  paper's 2,000-step validation interval below the approximately 1,000-epoch
+  extent of its long-training plots.
+- The existing nine-channel pilot's training-only crop/flip augmentation is
+  retained and declared as an adaptation because the original paper does not
+  specify augmentation. The held-out test set remains locked until the best
+  hardened-validation checkpoint is frozen.
+- No earlier 5K checkpoint is resumed: the training harness does not preserve
+  optimizer, data-loader, and RNG states needed to prove exact continuation.
+  The long run will start cleanly from step zero.
+- Launch was attempted only through CUDA availability preflight. It produced
+  no output directory or training update because `nvidia-smi` could not
+  communicate with the driver and PyTorch 2.9.0+cu130 reported zero CUDA
+  devices. The frozen configuration is
+  `configs/full_conv_cifar10_paper_medium_legacy_v4_seed0.json`; protocol and
+  blocker details are in `protocols/cifar10_paper_medium_long_v4.json`.
+- The first focused architecture-test command was invoked from the parent
+  repository and failed collection because `experiments` was not on the
+  import path. Re-running unchanged from `repos/torchlogix` passed the two
+  selected nine-channel architecture/topology tests; no source fix was needed.
+- GPU access was restored at 16:10 UTC. Physical GPU 0 had 97,247 MiB free
+  and was selected for the long run; GPU 1 remained occupied by an unrelated
+  VLLM process and was left untouched.
