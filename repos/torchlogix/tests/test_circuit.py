@@ -1,4 +1,6 @@
 import pytest
+import re
+import shutil
 import subprocess
 import ctypes
 import sys
@@ -222,3 +224,123 @@ def test_c_codegen_group_sum_scores(model_cls):
     assert preds_python.shape[-1] == k
 
 
+def _small_group_sum_circuit(tau=1.0, betas=(2.0, 1.0)):
+    from torchlogix.circuit import SumReduction
+
+    return Circuit(
+        n_inputs=2,
+        input_shape=[2],
+        outputs=[2, 3],
+        output_shape=[2],
+        sum_nodes=[
+            SumReduction(node_id=2, input_ids=[0, 1], tau=tau, beta=betas[0]),
+            SumReduction(node_id=3, input_ids=[0], tau=tau, beta=betas[1]),
+        ],
+    )
+
+
+def test_verilog_group_sum_rejects_non_integer_scores():
+    with pytest.raises(ValueError, match="tau=1.0"):
+        _small_group_sum_circuit(tau=10.0).get_verilog_code()
+    with pytest.raises(ValueError, match="non-negative integer beta"):
+        _small_group_sum_circuit(betas=(0.5, 0.0)).get_verilog_code()
+    with pytest.raises(ValueError, match="non-negative integer beta"):
+        _small_group_sum_circuit(betas=(-1.0, 0.0)).get_verilog_code()
+
+
+def test_hardware_argmax_normalization_is_non_mutating_and_exact():
+    circuit = _small_group_sum_circuit(tau=10.0, betas=(1.5, 0.5))
+    normalized = circuit.normalized_for_hardware_argmax()
+    inputs = torch.tensor(
+        [[False, False], [False, True], [True, False], [True, True]]
+    )
+
+    original_scores = circuit(inputs)
+    normalized_scores = normalized(inputs)
+    assert torch.equal(
+        original_scores.argmax(dim=-1),
+        normalized_scores.argmax(dim=-1),
+    )
+    assert [node.tau for node in circuit.sum_nodes] == [10.0, 10.0]
+    assert [node.beta for node in circuit.sum_nodes] == [1.5, 0.5]
+    assert [node.tau for node in normalized.sum_nodes] == [1.0, 1.0]
+    assert [node.beta for node in normalized.sum_nodes] == [1.0, 0.0]
+
+
+@pytest.mark.skipif(shutil.which("yosys") is None, reason="Yosys is not installed")
+def test_verilog_group_sum_matches_python_and_synthesizes_with_yosys():
+    circuit = _small_group_sum_circuit()
+    verilog = circuit.get_verilog_code()
+
+    assert "scores_flat[0*8 +: 8] = s_0 + 2;" in verilog
+    assert "scores_flat[1*8 +: 8] = s_1 + 1;" in verilog
+
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        verilog_path = f"{tmp_dir}/circuit.v"
+        blif_path = f"{tmp_dir}/circuit.blif"
+        with open(verilog_path, "w") as handle:
+            handle.write(verilog)
+
+        eval_commands = "; ".join(
+            f"eval -set inp 2'b{value:02b} -show scores_flat"
+            for value in range(4)
+        )
+        result = subprocess.run(
+            [
+                "yosys",
+                "-p",
+                (
+                    f"read_verilog -sv {verilog_path}; "
+                    f"prep -top circuit; {eval_commands}"
+                ),
+            ],
+            capture_output=True,
+            text=True,
+        )
+        assert result.returncode == 0, result.stderr
+
+        flattened = [
+            int(bits, 2)
+            for bits in re.findall(
+                r"Eval result: \\scores_flat = \d+'([01]+)",
+                result.stdout,
+            )
+        ]
+        assert len(flattened) == 4
+        actual = [
+            [value & 0xFF, (value >> 8) & 0xFF]
+            for value in flattened
+        ]
+        inputs = torch.tensor(
+            [[False, False], [True, False], [False, True], [True, True]]
+        )
+        expected = circuit(inputs).to(torch.int64).tolist()
+        assert actual == expected
+
+        synthesis = subprocess.run(
+            [
+                "yosys",
+                "-q",
+                "-p",
+                (
+                    f"read_verilog -sv {verilog_path}; "
+                    f"synth -top circuit -noabc; check; write_blif {blif_path}"
+                ),
+            ],
+            capture_output=True,
+            text=True,
+        )
+        assert synthesis.returncode == 0, synthesis.stderr
+
+        abc = shutil.which("berkeley-abc") or shutil.which("abc")
+        if abc is not None:
+            mapped = subprocess.run(
+                [
+                    abc,
+                    "-q",
+                    f"read_blif {blif_path}; strash; balance; rewrite; print_stats",
+                ],
+                capture_output=True,
+                text=True,
+            )
+            assert mapped.returncode == 0, mapped.stderr

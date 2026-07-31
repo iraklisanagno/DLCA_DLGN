@@ -1,0 +1,87 @@
+{
+  "format_version": 1,
+  "frozen_cost_model": "experiments/marginsynth/results/pilot_fashion_mnist_paper_small_raw_seed0/synth_cost_model.json",
+  "frozen_cost_model_sha256": "e6f32d14dafd847770a010906a470a5f44145adb5dd0e81a2afab0ad9947835f",
+  "paired_manifest": "experiments/marginsynth/configs/paired_fashion/paired_study_manifest.json",
+  "paired_manifest_sha256": "333954c2b7c5d51074122adaa8832b4fc7817578bcd053cd543ea69988472a5e",
+  "records": [
+    {
+      "best_checkpoint_sha256": "edcc3334a9f2c1a34c8875767f08c8094d29aabd8c15ff9c1c1c8decc12a91f6",
+      "executed_stages": [],
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/pilot_fashion_mnist_paper_small_raw_seed0",
+      "seed": 0,
+      "skipped_completed_stages": [
+        "train",
+        "export",
+        "search",
+        "unit-tying",
+        "synthesize"
+      ],
+      "test_used": false
+    },
+    {
+      "best_checkpoint_sha256": "96df009b50d6782ba3d4eb47420b323e5d7bdc2ea9e9f4d02648752dc2637904",
+      "executed_stages": [],
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed1",
+      "seed": 1,
+      "skipped_completed_stages": [
+        "train",
+        "export",
+        "search",
+        "unit-tying",
+        "synthesize"
+      ],
+      "test_used": false
+    },
+    {
+      "best_checkpoint_sha256": "36dabb56f7f8afe631a9bc614c88ebee75eebfc93c84e7e37c81f57a7ebdeb5a",
+      "executed_stages": [],
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed2",
+      "seed": 2,
+      "skipped_completed_stages": [
+        "train",
+        "export",
+        "search",
+        "unit-tying",
+        "synthesize"
+      ],
+      "test_used": false
+    },
+    {
+      "best_checkpoint_sha256": "071795af47390d7d4deb827fbb63e9a9d6a7ed7992e33182b384a6084f5569cc",
+      "executed_stages": [],
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed3",
+      "seed": 3,
+      "skipped_completed_stages": [
+        "train",
+        "export",
+        "search",
+        "unit-tying",
+        "synthesize"
+      ],
+      "test_used": false
+    },
+    {
+      "best_checkpoint_sha256": "a2fb5a21afd6aa26bae02f78b58d1407c1769a5cfe4859be07e3c40677491254",
+      "executed_stages": [],
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed4",
+      "seed": 4,
+      "skipped_completed_stages": [
+        "train",
+        "export",
+        "search",
+        "unit-tying",
+        "synthesize"
+      ],
+      "test_used": false
+    }
+  ],
+  "selected_seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "test_used": false
+}

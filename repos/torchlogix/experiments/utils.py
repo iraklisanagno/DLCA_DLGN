@@ -1,5 +1,6 @@
 import argparse
 import csv
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -22,7 +23,79 @@ def split_permutation(length: int, seed=None):
     return torch.randperm(length, generator=generator).tolist()
 
 
-def load_dataset(args):
+def split_dataset_indices(
+    length: int,
+    valid_set_size: float,
+    calibration_set_size: float = 0.0,
+    seed=None,
+):
+    """Create deterministic, disjoint train/validation/calibration indices.
+
+    Fractions are relative to the original training split. Validation occupies
+    the tail of the seeded permutation, preserving the legacy validation
+    membership when ``calibration_set_size`` changes from zero. Calibration is
+    carved from the end of the remaining training indices.
+    """
+    for name, value in (
+        ("valid_set_size", valid_set_size),
+        ("calibration_set_size", calibration_set_size),
+    ):
+        if not 0.0 <= value < 1.0:
+            raise ValueError(f"{name} must be in [0, 1), got {value}")
+    if valid_set_size + calibration_set_size >= 1.0:
+        raise ValueError(
+            "valid_set_size + calibration_set_size must be smaller than 1"
+        )
+
+    def holdout_size(fraction):
+        # Preserve the previous validation rounding convention.
+        return length - math.ceil((1.0 - fraction) * length)
+
+    n_valid = holdout_size(valid_set_size)
+    n_calibration = holdout_size(calibration_set_size)
+    n_train = length - n_valid - n_calibration
+    permutation = split_permutation(length, seed)
+    calibration_end = n_train + n_calibration
+    return {
+        "train": permutation[:n_train],
+        "calibration": permutation[n_train:calibration_end],
+        "validation": permutation[calibration_end:],
+    }
+
+
+def _indices_sha256(indices):
+    values = np.asarray(indices, dtype=np.int64)
+    return hashlib.sha256(values.tobytes()).hexdigest()
+
+
+def _class_counts(dataset, indices):
+    targets = getattr(dataset, "targets", None)
+    if targets is None:
+        return {}
+    if isinstance(targets, torch.Tensor):
+        targets = targets.detach().cpu().numpy()
+    else:
+        targets = np.asarray(targets)
+    selected = targets[np.asarray(indices, dtype=np.int64)]
+    labels, counts = np.unique(selected, return_counts=True)
+    return {
+        str(int(label)): int(count)
+        for label, count in zip(labels.tolist(), counts.tolist())
+    }
+
+
+def _partition_record(source, dataset, indices):
+    indices = [int(index) for index in indices]
+    return {
+        "source": source,
+        "size": len(indices),
+        "indices_sha256": _indices_sha256(indices),
+        "class_counts": _class_counts(dataset, indices),
+        "indices": indices,
+    }
+
+
+def load_dataset(args, include_calibration=False):
     """Load a public dataset."""
     # check env varaible for dataset path
     data_path = os.getenv("DATASET_PATH", ".")
@@ -67,14 +140,24 @@ def load_dataset(args):
             f"{data_path}/data-cifar", train=False, transform=transform
         )
     
+    original_train_set = train_set
+    split_seed = getattr(args, "data_split_seed", None)
+    calibration_set_size = getattr(args, "calibration_set_size", 0.0)
+    split_indices = split_dataset_indices(
+        len(original_train_set),
+        args.valid_set_size,
+        calibration_set_size,
+        split_seed,
+    )
+    train_set = torch.utils.data.Subset(
+        original_train_set, split_indices["train"]
+    )
+    calibration_set = torch.utils.data.Subset(
+        validation_source, split_indices["calibration"]
+    )
     if args.valid_set_size > 0:
-        train_set_size = math.ceil((1 - args.valid_set_size) * len(train_set))
-        valid_set_size = len(train_set) - train_set_size
-        split_seed = getattr(args, "data_split_seed", None)
-        permutation = split_permutation(len(train_set), split_seed)
-        train_set = torch.utils.data.Subset(train_set, permutation[:train_set_size])
         validation_set = torch.utils.data.Subset(
-            validation_source, permutation[train_set_size:]
+            validation_source, split_indices["validation"]
         )
     else:
         print(f"Training on entire training set. Using test set as validation set.")
@@ -96,6 +179,13 @@ def load_dataset(args):
         pin_memory=True,
         drop_last=False,
     )
+    calibration_loader = torch.utils.data.DataLoader(
+        calibration_set,
+        batch_size=args.batch_size,
+        shuffle=False,
+        pin_memory=True,
+        drop_last=False,
+    )
     test_loader = torch.utils.data.DataLoader(
         test_set,
         batch_size=args.batch_size,
@@ -103,6 +193,57 @@ def load_dataset(args):
         pin_memory=True,
         drop_last=False,
     )
+
+    validation_source_name = (
+        "official_train" if args.valid_set_size > 0 else "official_test"
+    )
+    validation_indices = (
+        split_indices["validation"]
+        if args.valid_set_size > 0
+        else list(range(len(test_set)))
+    )
+    split_manifest = {
+        "format_version": 1,
+        "dataset": args.dataset,
+        "data_split_seed": split_seed,
+        "valid_set_size": args.valid_set_size,
+        "calibration_set_size": calibration_set_size,
+        "official_train_size": len(original_train_set),
+        "official_test_size": len(test_set),
+        "partitions": {
+            "train": _partition_record(
+                "official_train", original_train_set, split_indices["train"]
+            ),
+            "validation": _partition_record(
+                validation_source_name,
+                validation_source if args.valid_set_size > 0 else test_set,
+                validation_indices,
+            ),
+            "calibration": _partition_record(
+                "official_train",
+                validation_source,
+                split_indices["calibration"],
+            ),
+            "test": _partition_record(
+                "official_test", test_set, list(range(len(test_set)))
+            ),
+        },
+    }
+    for loader in (
+        train_loader,
+        validation_loader,
+        calibration_loader,
+        test_loader,
+    ):
+        loader.split_manifest = split_manifest
+
+    if include_calibration:
+        return (
+            train_loader,
+            validation_loader,
+            calibration_loader,
+            test_loader,
+        )
     return train_loader, validation_loader, test_loader
 
 

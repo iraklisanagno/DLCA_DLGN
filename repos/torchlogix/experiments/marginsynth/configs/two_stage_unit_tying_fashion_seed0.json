@@ -1,0 +1,24 @@
+{
+  "method": "two-stage-unit-tying",
+  "source_checkpoint": "best_checkpoint.pt",
+  "ratios": [
+    0.1,
+    0.2,
+    0.3,
+    0.4,
+    0.5
+  ],
+  "eligible_logic_layers": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "stage_a_samples": 16,
+  "stage_b_samples": 80,
+  "overshoot": 40,
+  "calibration_seed": 0,
+  "evaluation_batch_size": 512,
+  "tie_logit": 1000000.0,
+  "output": "baselines/two_stage_unit_tying"
+}

@@ -1,13 +1,19 @@
+import pytest
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 
 from experiments.train import (
+    dense_architecture_summary,
     source_manifest_files,
     source_tree_sha256,
     training_implementation_sha256,
     training_manifest_files,
 )
-from experiments.utils import evaluate_model, split_permutation
+from experiments.utils import (
+    evaluate_model,
+    split_dataset_indices,
+    split_permutation,
+)
 from torchlogix.layers import FixedBinarization, GroupSum, LogicDense
 from torchlogix.models import (
     DlgnCifar10Budget48kDepth8,
@@ -60,6 +66,13 @@ def test_paper_fashion_mnist_small_has_reported_gate_budget_and_encoding():
     assert all(layer.out_dim == 8_000 for layer in layers)
     assert all(layer.in_dim == 8_000 for layer in layers[1:])
     assert model[-1].tau == 10.0
+    assert dense_architecture_summary(model, "paper-fashion") == {
+        "architecture": "paper-fashion",
+        "logic_layer_count": 6,
+        "logic_layer_widths": [8_000] * 6,
+        "total_trained_logic_gates": 48_000,
+        "lut_ranks": [2],
+    }
 
 
 def test_legacy_fashion_mnist_small_accepts_fixed_binarization():
@@ -109,6 +122,51 @@ def test_seeded_split_is_deterministic_and_rng_independent():
     assert first == split_permutation(20, seed=2027)
     assert first != split_permutation(20, seed=2028)
     assert torch.equal(actual_next, expected_next)
+
+
+def test_calibration_split_is_deterministic_disjoint_and_preserves_validation():
+    without_calibration = split_dataset_indices(
+        100, valid_set_size=0.1, calibration_set_size=0.0, seed=2027
+    )
+    with_calibration = split_dataset_indices(
+        100, valid_set_size=0.1, calibration_set_size=0.1, seed=2027
+    )
+    repeated = split_dataset_indices(
+        100, valid_set_size=0.1, calibration_set_size=0.1, seed=2027
+    )
+
+    assert with_calibration == repeated
+    assert len(with_calibration["train"]) == 80
+    assert len(with_calibration["validation"]) == 10
+    assert len(with_calibration["calibration"]) == 10
+    assert (
+        without_calibration["validation"]
+        == with_calibration["validation"]
+    )
+
+    partitions = [set(indices) for indices in with_calibration.values()]
+    assert all(
+        left.isdisjoint(right)
+        for i, left in enumerate(partitions)
+        for right in partitions[i + 1:]
+    )
+    assert set().union(*partitions) == set(range(100))
+
+
+@pytest.mark.parametrize(
+    "valid_size,calibration_size",
+    [(-0.1, 0.1), (0.1, -0.1), (1.0, 0.0), (0.5, 0.5)],
+)
+def test_calibration_split_rejects_invalid_fractions(
+    valid_size, calibration_size
+):
+    with pytest.raises(ValueError):
+        split_dataset_indices(
+            100,
+            valid_set_size=valid_size,
+            calibration_set_size=calibration_size,
+            seed=0,
+        )
 
 
 def test_evaluation_weights_a_partial_final_batch():

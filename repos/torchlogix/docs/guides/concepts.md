@@ -343,8 +343,8 @@ layer = GroupSum(
 **How it works**:
 1. Reshape `(batch, num_classes × neurons_per_class)` → `(batch, num_classes, neurons_per_class)`
 2. Sum over neuron groups
-3. Divide by `tau` to normalize range
-4. Shift by `beta` to desired range
+3. Add `beta`
+4. Divide by `tau` to normalize the range
 
 **Why `tau`?** Each Boolean neuron outputs [0, 1], so a sum of 100 neurons is [0, 100]. Setting `tau=100` normalizes to [0, 1] range. And setting `beta` to `-42` would result in [-42, -41].
 
@@ -432,24 +432,23 @@ Export mode pre-caches each layer's discrete LUT IDs as integer buffers so that
 `torch.fx` tracing produces pure integer operations — no floating-point LUT
 lookups. This is required before calling `Circuit.from_model()`.
 
-**Tip — reset `GroupSum` scaling before export.** During training a non-unit
-`tau` (temperature) or non-zero `beta` (offset) can improve loss landscape and
-convergence. Before compiling to a Circuit, consider resetting them:
+**Tip — normalize `GroupSum` scaling before Verilog export.** During training a
+non-unit `tau` (temperature) or non-zero `beta` (offset) can improve loss
+landscape and convergence. First create the Circuit with its original score
+semantics, then derive a non-mutating, argmax-equivalent integer-score copy:
 
 ```python
-for m in model.modules():
-    if isinstance(m, GroupSum):
-        m.tau = 1.0
-        m.beta = 0.0
+hardware_circuit = circuit.normalized_for_hardware_argmax()
+hardware_circuit.write_verilog_code("circuit.v")
 ```
 
-Since argmax is invariant under monotone scaling and constant offsets, the
-predicted class is unchanged. With `tau=1, beta=0` the `SumReduction` nodes in
-the Circuit become pure integer popcounts, letting the compiler select the
-narrowest unsigned integer type that fits the group size (`uint8_t` for up to
-255 neurons per class, `uint16_t` for up to 65535, etc.) rather than falling
-back to `float`. This makes C and Verilog codegen more efficient without
-affecting accuracy.
+The conversion is accepted only when all output reductions share one positive
+temperature and their offset differences are integral. Under those conditions,
+argmax and ties are unchanged for every input. Integer `SumReduction` nodes let
+the Verilog compiler select the narrowest unsigned width that fits the group
+size (`uint8_t` for up to 255 neurons per class, `uint16_t` for up to 65535,
+etc.). Unsupported floating-point score heads fail explicitly rather than
+silently producing different scores.
 
 ### 3. Circuit: the compiled boolean IR
 

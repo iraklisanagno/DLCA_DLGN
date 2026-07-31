@@ -81,6 +81,13 @@ def get_parser():
         help="Fraction of train set for validation"
     )
     parser.add_argument(
+        "--calibration-set-size", type=float, default=0.0,
+        help=(
+            "Fraction of the official training split reserved for post-training "
+            "calibration and excluded from model training and validation"
+        ),
+    )
+    parser.add_argument(
         "--augmentation", choices=["none", "standard"], default="none",
         help="Training-only data augmentation; standard means crop/flip for CIFAR"
     )
@@ -334,6 +341,24 @@ def source_manifest_files(root: Path = Path(".")):
     return files
 
 
+def dense_architecture_summary(model, architecture_name: str) -> dict:
+    """Describe dense logic depth and gate count in logs and run metadata."""
+    layers = [
+        module
+        for module in model.modules()
+        if isinstance(module, torchlogix.layers.LogicDense)
+    ]
+    widths = [int(layer.out_dim) for layer in layers]
+    ranks = sorted({int(layer.lut_rank) for layer in layers})
+    return {
+        "architecture": architecture_name,
+        "logic_layer_count": len(layers),
+        "logic_layer_widths": widths,
+        "total_trained_logic_gates": sum(widths),
+        "lut_ranks": ranks,
+    }
+
+
 def source_tree_sha256(root: Path = Path(".")):
     """Hash stable source-relative paths and contents."""
     source_hasher = hashlib.sha256()
@@ -417,7 +442,9 @@ def run_training(args, callbacks=None):
     torch.set_num_threads(1)
 
     # Load data (omit test set during training)
-    train_loader, validation_loader, _ = load_dataset(args)
+    train_loader, validation_loader, calibration_loader, _ = load_dataset(
+        args, include_calibration=True
+    )
 
     # Initial thresholds
     data_set = torch.cat(tuple([batch[0] for batch in load_n(train_loader, args.binarization_num_batches)]))
@@ -435,6 +462,16 @@ def run_training(args, callbacks=None):
     model= get_model(thresholds, args)
     num_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
     print(f"Total trainable parameters: {num_params}")
+    architecture_summary = dense_architecture_summary(model, args.architecture)
+    print(
+        "Architecture summary: "
+        f"{architecture_summary['architecture']}; "
+        f"{architecture_summary['logic_layer_count']} logic layers; "
+        f"widths={architecture_summary['logic_layer_widths']}; "
+        f"total trained gates="
+        f"{architecture_summary['total_trained_logic_gates']}; "
+        f"LUT ranks={architecture_summary['lut_ranks']}"
+    )
 
     topology_rows = analyze_model_topology(model)
     if args.output is not None and topology_rows:
@@ -535,6 +572,13 @@ def run_training(args, callbacks=None):
     if args.output is not None:
         save_config(vars(args), args.output, "training_config.json")
         save_environment_fingerprint(args.output)
+        with (Path(args.output) / "data_split.json").open("w") as handle:
+            json.dump(
+                train_loader.split_manifest,
+                handle,
+                indent=2,
+                sort_keys=True,
+            )
 
     pbar = tqdm(
         enumerate(load_n(train_loader, args.num_iterations)),
@@ -606,8 +650,19 @@ def run_training(args, callbacks=None):
         wall_seconds = time.perf_counter() - started
         summary = {
             "wall_seconds": wall_seconds,
+            "architecture": architecture_summary,
             "best_validation_hard_accuracy": best_val_acc,
             "final_metrics": metrics,
+            "dataset_partition_sizes": {
+                name: partition["size"]
+                for name, partition in
+                train_loader.split_manifest["partitions"].items()
+            },
+            "dataset_partition_hashes": {
+                name: partition["indices_sha256"]
+                for name, partition in
+                train_loader.split_manifest["partitions"].items()
+            },
             "peak_gpu_memory_bytes": (
                 torch.cuda.max_memory_allocated() if args.device == "cuda" else 0
             ),

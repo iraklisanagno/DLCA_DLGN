@@ -30,8 +30,22 @@ module circuit (
 ```
 
 `SCORE_BITS` is the narrowest unsigned integer type that fits the maximum
-possible sum (8, 16, 32, or 64 bits, or 32-bit float when `tau ≠ 1`). Score `j`
-occupies `scores_flat[j*SCORE_BITS +: SCORE_BITS]`.
+possible sum (8, 16, 32, or 64 bits). Score `j` occupies
+`scores_flat[j*SCORE_BITS +: SCORE_BITS]`.
+
+Verilog export accepts exact integer score heads: `tau=1` and a non-negative
+integer `beta`. It rejects floating-point score heads instead of silently
+changing their values. For classification models with one shared positive
+temperature, create an argmax-equivalent integer-score copy before export:
+
+```python
+hardware_circuit = circuit.normalized_for_hardware_argmax()
+hardware_circuit.write_verilog_code("circuit.v")
+```
+
+The returned copy removes only a common positive scale and common offset, so
+class predictions and ties are unchanged for every input. The original Circuit
+and its floating-point scores are not modified.
 
 ---
 

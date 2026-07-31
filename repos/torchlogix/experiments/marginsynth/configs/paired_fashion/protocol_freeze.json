@@ -1,0 +1,560 @@
+{
+  "format_version": 2,
+  "frozen_at_utc": "2026-07-31T08:10:06.172691+00:00",
+  "method_config": "experiments/marginsynth/configs/v2_fashion_frozen75.json",
+  "method_config_sha256": "fca60f7ec4351823f231c5e5ca2316d8f933f43d7ebfbbb504451a3f9f7e9f0f",
+  "operating_point": 0.0,
+  "paired_manifest": "experiments/marginsynth/configs/paired_fashion/paired_study_manifest.json",
+  "paired_manifest_sha256": "333954c2b7c5d51074122adaa8832b4fc7817578bcd053cd543ea69988472a5e",
+  "seed_artifacts": [
+    {
+      "artifacts": {
+        "best_checkpoint": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/pilot_fashion_mnist_paper_small_raw_seed0/best_checkpoint.pt",
+          "sha256": "edcc3334a9f2c1a34c8875767f08c8094d29aabd8c15ff9c1c1c8decc12a91f6"
+        },
+        "exact_baseline": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/pilot_fashion_mnist_paper_small_raw_seed0/exact_simplified_circuit.json",
+          "sha256": "9640671288e265a0e17b3a4c85441eedbc5934676878fbaa5e389342af561d19"
+        },
+        "frontier_synthesis": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/pilot_fashion_mnist_paper_small_raw_seed0/ablations/v2_v2_full_seed0/frontier_synthesis.json",
+          "sha256": "776bae23d9fd6791d7bd3fd90bb6c46ba6249962b97689d78b5e622eb4b1e176"
+        },
+        "search_config": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/configs/paired_fashion/search_seed0.json",
+          "sha256": "be5274c91c6393043186a1baa5233d05f11e29cdd9accb23db3ef99806a7112e"
+        },
+        "search_summary": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/pilot_fashion_mnist_paper_small_raw_seed0/ablations/v2_v2_full_seed0/search_summary.json",
+          "sha256": "0d4b3bfa72e7f3f8bdf9ec81472159a53f3287b425c86951a8f6bbe2964d740b"
+        },
+        "search_verification": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/pilot_fashion_mnist_paper_small_raw_seed0/ablations/v2_v2_full_seed0/search_verification.json",
+          "sha256": "954e206642d9419a052a77e3f277da24f6951cc04030472ffa4df393042976da"
+        },
+        "selected_circuit": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/pilot_fashion_mnist_paper_small_raw_seed0/ablations/v2_v2_full_seed0/snapshots/step_0075/circuit.json",
+          "sha256": "db9f9523075617210362e276cbf27b885bcb7f2a30989ed61608915f857f2fba"
+        },
+        "training_config": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/pilot_fashion_mnist_paper_small_raw_seed0/training_config.json",
+          "sha256": "997a6ebd81bb1a0a584e87567f70f2b93415f0017e644c1793bc7ed36feed4d7"
+        },
+        "unit_tying_aggregate": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/pilot_fashion_mnist_paper_small_raw_seed0/baselines/two_stage_unit_tying/aggregate.json",
+          "sha256": "3feb4a5a953f1ca1536197982c24a9a18da89a341a26f526d6102420fc0072b9"
+        },
+        "unit_tying_circuit": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/pilot_fashion_mnist_paper_small_raw_seed0/baselines/two_stage_unit_tying/ratio_10/synthesis/exact_simplified_circuit.json",
+          "sha256": "f9626dc992cd58fe486f5ef405e9da6a388113cf7251881ba36bde5448654282"
+        },
+        "unit_tying_synthesis": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/pilot_fashion_mnist_paper_small_raw_seed0/baselines/two_stage_unit_tying/synthesis_aggregate.json",
+          "sha256": "e88b69fa5fe0c9b6205a2c8232226ed006e83f4f80403eb8ecf77468528b9abd"
+        },
+        "validation_frontier": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/pilot_fashion_mnist_paper_small_raw_seed0/ablations/v2_v2_full_seed0/validation_frontier.json",
+          "sha256": "13d048adc0d00df4fb42f860ad923a3748aa8eef9a7a64213a3598289f9fcbc5"
+        }
+      },
+      "calibration_selection": {
+        "accuracy_budget": 0.0,
+        "accuracy_loss": 0.0,
+        "disagreement": 0.013,
+        "estimated_abc_nodes": 97772.82896955812,
+        "live_gates": 32837,
+        "maximum_per_class_accuracy_loss": 0.0017825311942959443,
+        "maximum_per_class_disagreement": 0.035842293906810034,
+        "selected_step": 75,
+        "snapshot": "snapshots/step_0075"
+      },
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/pilot_fashion_mnist_paper_small_raw_seed0",
+      "search_output": "ablations/v2_v2_full_seed0",
+      "seed": 0,
+      "selected_step": 75,
+      "unit_tying_selection": {
+        "calibration_accuracy": 0.8684999942779541,
+        "calibration_disagreement": 0.020666666328907013,
+        "directory": "ratio_10",
+        "ratio": 0.1,
+        "total_tied_units": 3200,
+        "validation_accuracy": 0.8696666955947876,
+        "validation_disagreement": 0.024833332747220993,
+        "wall_seconds": 2.016038956004195
+      },
+      "validation": {
+        "accuracy": 0.8715,
+        "accuracy_loss": 0.0014999999999999458,
+        "decision_flip_count": 146,
+        "decision_flip_rate": 0.024333333333333332,
+        "maximum_per_class_disagreement": 0.07154471544715447,
+        "per_class_accuracy": [
+          0.8304195804195804,
+          0.9608843537414966,
+          0.788961038961039,
+          0.9038142620232172,
+          0.7929447852760736,
+          0.9365079365079365,
+          0.6754530477759473,
+          0.9278523489932886,
+          0.9590747330960854,
+          0.9564459930313589
+        ],
+        "per_class_disagreement": [
+          0.02735042735042735,
+          0.008710801393728223,
+          0.05067567567567568,
+          0.012944983818770227,
+          0.03538461538461538,
+          0.008156606851549755,
+          0.07154471544715447,
+          0.011570247933884297,
+          0.007104795737122558,
+          0.006837606837606838
+        ]
+      }
+    },
+    {
+      "artifacts": {
+        "best_checkpoint": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed1/best_checkpoint.pt",
+          "sha256": "96df009b50d6782ba3d4eb47420b323e5d7bdc2ea9e9f4d02648752dc2637904"
+        },
+        "exact_baseline": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed1/exact_simplified_circuit.json",
+          "sha256": "fcd6037f7dfccbd503e8a9951af74c134bbf865e0e0392c2c3b0de1b2873b867"
+        },
+        "frontier_synthesis": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed1/search_v2_frozen_seed1/frontier_synthesis.json",
+          "sha256": "4cedfd8e2c9db0769d9172ee16d7e661c6857cacd86f58a20a88ff59fac0ebda"
+        },
+        "search_config": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/configs/paired_fashion/search_seed1.json",
+          "sha256": "b6d2dba1ae11497753d98d1b09d40d7738452f87d1e29b2ef92f346ad8a17fdc"
+        },
+        "search_summary": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed1/search_v2_frozen_seed1/search_summary.json",
+          "sha256": "3a8d9bd388889a834e4c57485466e70350d9dd49b64e5c63ec76c97c23f8a647"
+        },
+        "search_verification": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed1/search_v2_frozen_seed1/search_verification.json",
+          "sha256": "0264846ef1b189f695fed6feeb459dc3e54bf0710838a229b55425a963a2482d"
+        },
+        "selected_circuit": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed1/search_v2_frozen_seed1/snapshots/step_0075/circuit.json",
+          "sha256": "b814c350c6802d808ca99f18bec119b6f350f4038bf61b2630436552b7322c8c"
+        },
+        "training_config": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed1/training_config.json",
+          "sha256": "b232dfa347c54a22f41661916af3da538e1079b3dcaf3795a7d52d717e4bb27e"
+        },
+        "unit_tying_aggregate": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed1/baselines/two_stage_unit_tying/aggregate.json",
+          "sha256": "01483ef016432cca885201b0d8142faae7019df5726598c7a3f4b1c2d21e925d"
+        },
+        "unit_tying_circuit": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed1/baselines/two_stage_unit_tying/ratio_10/synthesis/exact_simplified_circuit.json",
+          "sha256": "130ad62e4db62691a78b14783070d03c361eb078309b57829f0de3aeb4a83104"
+        },
+        "unit_tying_synthesis": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed1/baselines/two_stage_unit_tying/synthesis_aggregate.json",
+          "sha256": "f337e4d6ea45c9261d49d28cf9c22eb4911c3f0ee7cecff0f05414c10281f8f8"
+        },
+        "validation_frontier": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed1/search_v2_frozen_seed1/validation_frontier.json",
+          "sha256": "190ca4270ffbd50d96154799877db9632d3b601155423b7fcf69c5e25df38e5e"
+        }
+      },
+      "calibration_selection": {
+        "accuracy_budget": 0.0,
+        "accuracy_loss": 0.0,
+        "disagreement": 0.015166666666666667,
+        "estimated_abc_nodes": 97860.3064175939,
+        "live_gates": 32941,
+        "maximum_per_class_accuracy_loss": 0.012477718360071388,
+        "maximum_per_class_disagreement": 0.052930056710775046,
+        "selected_step": 75,
+        "snapshot": "snapshots/step_0075"
+      },
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed1",
+      "search_output": "search_v2_frozen_seed1",
+      "seed": 1,
+      "selected_step": 75,
+      "unit_tying_selection": {
+        "calibration_accuracy": 0.8663333058357239,
+        "calibration_disagreement": 0.025166666135191917,
+        "directory": "ratio_10",
+        "ratio": 0.1,
+        "total_tied_units": 3200,
+        "validation_accuracy": 0.8678333163261414,
+        "validation_disagreement": 0.02800000086426735,
+        "wall_seconds": 2.0605885830009356
+      },
+      "validation": {
+        "accuracy": 0.866,
+        "accuracy_loss": 0.0025000000000000577,
+        "decision_flip_count": 168,
+        "decision_flip_rate": 0.028,
+        "maximum_per_class_disagreement": 0.07221350078492936,
+        "per_class_accuracy": [
+          0.8479020979020979,
+          0.95578231292517,
+          0.775974025974026,
+          0.8839137645107794,
+          0.7837423312883436,
+          0.919047619047619,
+          0.6738056013179572,
+          0.9446308724832215,
+          0.9412811387900356,
+          0.9529616724738676
+        ],
+        "per_class_disagreement": [
+          0.020618556701030927,
+          0.010471204188481676,
+          0.07221350078492936,
+          0.01929260450160772,
+          0.038880248833592534,
+          0.008291873963515755,
+          0.06678082191780822,
+          0.008090614886731391,
+          0.014466546112115732,
+          0.017094017094017096
+        ]
+      }
+    },
+    {
+      "artifacts": {
+        "best_checkpoint": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed2/best_checkpoint.pt",
+          "sha256": "36dabb56f7f8afe631a9bc614c88ebee75eebfc93c84e7e37c81f57a7ebdeb5a"
+        },
+        "exact_baseline": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed2/exact_simplified_circuit.json",
+          "sha256": "17fad4bd7f30030fd02621fde218bf44242d3ea35c86df8a8f627ce12948b17b"
+        },
+        "frontier_synthesis": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed2/search_v2_frozen_seed2/frontier_synthesis.json",
+          "sha256": "1b40c698742faa6ba6dc3d4e05a98bac7e300f16991c6c08f4dfdf8868e4063a"
+        },
+        "search_config": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/configs/paired_fashion/search_seed2.json",
+          "sha256": "b0b1cf21ca2968a0784e5887ea269d8d42c64d83bcd28ff9e94839a12fc4842a"
+        },
+        "search_summary": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed2/search_v2_frozen_seed2/search_summary.json",
+          "sha256": "f1355db7aa496a0167f0482b2525bc720f305729200d580a320f1475c94dda8a"
+        },
+        "search_verification": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed2/search_v2_frozen_seed2/search_verification.json",
+          "sha256": "322199cd54e9aac0c776f02ce8eab7e18893d8ff413a26ffdcf5aa2ad9f98f93"
+        },
+        "selected_circuit": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed2/search_v2_frozen_seed2/snapshots/step_0075/circuit.json",
+          "sha256": "502f88976529b1aae1bd83ac01f4d42dbf0464c0b818c6fec9107b932b531e3c"
+        },
+        "training_config": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed2/training_config.json",
+          "sha256": "f183e1824e7066602588146427ceb9f51b4858545c0eb631d39ffb3052d037bd"
+        },
+        "unit_tying_aggregate": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed2/baselines/two_stage_unit_tying/aggregate.json",
+          "sha256": "43671c31d258204ad9c61d879ca2bc5dc81da10337249a68ee6155f395b4463d"
+        },
+        "unit_tying_circuit": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed2/baselines/two_stage_unit_tying/ratio_10/synthesis/exact_simplified_circuit.json",
+          "sha256": "ecd33fee5f7f7947d53cafa76b3ebc9cc6490eba58e674acb9e4af3c63057f69"
+        },
+        "unit_tying_synthesis": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed2/baselines/two_stage_unit_tying/synthesis_aggregate.json",
+          "sha256": "e32889bb3c97c4c291ffa1f5c05a5fbb8a88a7083fdefdfd6d125f5e2a2c3dab"
+        },
+        "validation_frontier": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed2/search_v2_frozen_seed2/validation_frontier.json",
+          "sha256": "3d4892d73a0820c6ab910dcdf136135a9c1d2367ec116bc71e78b2b698eb3477"
+        }
+      },
+      "calibration_selection": {
+        "accuracy_budget": 0.0,
+        "accuracy_loss": 0.0,
+        "disagreement": 0.013166666666666667,
+        "estimated_abc_nodes": 98517.04188012812,
+        "live_gates": 33196,
+        "maximum_per_class_accuracy_loss": 0.010471204188481686,
+        "maximum_per_class_disagreement": 0.036893203883495145,
+        "selected_step": 75,
+        "snapshot": "snapshots/step_0075"
+      },
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed2",
+      "search_output": "search_v2_frozen_seed2",
+      "seed": 2,
+      "selected_step": 75,
+      "unit_tying_selection": {
+        "calibration_accuracy": 0.8651666641235352,
+        "calibration_disagreement": 0.02500000037252903,
+        "directory": "ratio_10",
+        "ratio": 0.1,
+        "total_tied_units": 3200,
+        "validation_accuracy": 0.8681666851043701,
+        "validation_disagreement": 0.028999999165534973,
+        "wall_seconds": 2.1044170120730996
+      },
+      "validation": {
+        "accuracy": 0.8683333333333333,
+        "accuracy_loss": 0.005166666666666764,
+        "decision_flip_count": 149,
+        "decision_flip_rate": 0.024833333333333332,
+        "maximum_per_class_disagreement": 0.05335628227194492,
+        "per_class_accuracy": [
+          0.8094405594405595,
+          0.9642857142857143,
+          0.7938311688311688,
+          0.900497512437811,
+          0.7776073619631901,
+          0.9317460317460318,
+          0.6820428336079077,
+          0.9446308724832215,
+          0.9590747330960854,
+          0.9372822299651568
+        ],
+        "per_class_disagreement": [
+          0.05335628227194492,
+          0.008605851979345954,
+          0.024350649350649352,
+          0.016286644951140065,
+          0.0453857791225416,
+          0.019230769230769232,
+          0.041379310344827586,
+          0.009819967266775777,
+          0.007168458781362007,
+          0.020905923344947737
+        ]
+      }
+    },
+    {
+      "artifacts": {
+        "best_checkpoint": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed3/best_checkpoint.pt",
+          "sha256": "071795af47390d7d4deb827fbb63e9a9d6a7ed7992e33182b384a6084f5569cc"
+        },
+        "exact_baseline": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed3/exact_simplified_circuit.json",
+          "sha256": "3b07c965de630d7c701801e391cfe2ca4f6fab6a9a437c8856dee11fd9644a29"
+        },
+        "frontier_synthesis": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed3/search_v2_frozen_seed3/frontier_synthesis.json",
+          "sha256": "9c1f779f4de3a6f9c25c2f9d901c8b1da0677224f96a6d8af95f0d2765ca3252"
+        },
+        "search_config": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/configs/paired_fashion/search_seed3.json",
+          "sha256": "7aaeb95aeace4ca4fef2a1364290b4734999d0a607def471e490ee1a09e5bd1a"
+        },
+        "search_summary": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed3/search_v2_frozen_seed3/search_summary.json",
+          "sha256": "f0cc77fe253ec315d463825d8c78e72302e8f2abf78637538c0d14bf70e0d06c"
+        },
+        "search_verification": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed3/search_v2_frozen_seed3/search_verification.json",
+          "sha256": "a40ad2ce9f34247316956546809443a03451a0d5637b9d4a25bf85bad754b830"
+        },
+        "selected_circuit": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed3/search_v2_frozen_seed3/snapshots/step_0075/circuit.json",
+          "sha256": "66f2f0547cf082cbbb741571995fed77ac2b64202b0a5f5b9bed5e84b8cab2af"
+        },
+        "training_config": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed3/training_config.json",
+          "sha256": "25127a1347a8d8db9e1dfa6b26b3bf5c84d072b9d0f2c396c2324b2d99c04a2a"
+        },
+        "unit_tying_aggregate": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed3/baselines/two_stage_unit_tying/aggregate.json",
+          "sha256": "76a032f2e6e7cf3a1ff05503c39c012da1d400ad680ab83003eb304cc33b4b20"
+        },
+        "unit_tying_circuit": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed3/baselines/two_stage_unit_tying/ratio_10/synthesis/exact_simplified_circuit.json",
+          "sha256": "e7df0de9870f491473e93ae0ddaa73b2a3203a91ff682cf4d935bea08781bd06"
+        },
+        "unit_tying_synthesis": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed3/baselines/two_stage_unit_tying/synthesis_aggregate.json",
+          "sha256": "2689ac16d60eab461542d39246f52e22f121e613844ed2c460d26ba547e3a8d3"
+        },
+        "validation_frontier": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed3/search_v2_frozen_seed3/validation_frontier.json",
+          "sha256": "6012a37795c4f71cf73c105bcd111e1f37df70f04e5f469ec5b6966dc4a77cfc"
+        }
+      },
+      "calibration_selection": {
+        "accuracy_budget": 0.0,
+        "accuracy_loss": 0.0,
+        "disagreement": 0.0115,
+        "estimated_abc_nodes": 100629.00087631147,
+        "live_gates": 34532,
+        "maximum_per_class_accuracy_loss": 0.008389261744966459,
+        "maximum_per_class_disagreement": 0.03064516129032258,
+        "selected_step": 75,
+        "snapshot": "snapshots/step_0075"
+      },
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed3",
+      "search_output": "search_v2_frozen_seed3",
+      "seed": 3,
+      "selected_step": 75,
+      "unit_tying_selection": {
+        "calibration_accuracy": 0.8651666641235352,
+        "calibration_disagreement": 0.03583333268761635,
+        "directory": "ratio_10",
+        "ratio": 0.1,
+        "total_tied_units": 3200,
+        "validation_accuracy": 0.8656666874885559,
+        "validation_disagreement": 0.02866666577756405,
+        "wall_seconds": 2.167448407970369
+      },
+      "validation": {
+        "accuracy": 0.8631666666666666,
+        "accuracy_loss": 0.006500000000000061,
+        "decision_flip_count": 141,
+        "decision_flip_rate": 0.0235,
+        "maximum_per_class_disagreement": 0.048589341692789965,
+        "per_class_accuracy": [
+          0.8461538461538461,
+          0.9574829931972789,
+          0.7824675324675324,
+          0.87893864013267,
+          0.7607361963190185,
+          0.9301587301587302,
+          0.6606260296540363,
+          0.9412751677852349,
+          0.9377224199288257,
+          0.9564459930313589
+        ],
+        "per_class_disagreement": [
+          0.02618657937806874,
+          0.008695652173913044,
+          0.048589341692789965,
+          0.02618657937806874,
+          0.03464566929133858,
+          0.008156606851549755,
+          0.045060658578856154,
+          0.012965964343598054,
+          0.005484460694698354,
+          0.015625
+        ]
+      }
+    },
+    {
+      "artifacts": {
+        "best_checkpoint": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed4/best_checkpoint.pt",
+          "sha256": "a2fb5a21afd6aa26bae02f78b58d1407c1769a5cfe4859be07e3c40677491254"
+        },
+        "exact_baseline": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed4/exact_simplified_circuit.json",
+          "sha256": "24c4e62a3d6d386e0c8d355e862c328cf67b2c04ec81ab5833b54bb0dbdf7130"
+        },
+        "frontier_synthesis": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed4/search_v2_frozen_seed4/frontier_synthesis.json",
+          "sha256": "24bc89c7d87a0dc87d1da8441d201f7d1e45f11216d237d53f3d559b83bc4f25"
+        },
+        "search_config": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/configs/paired_fashion/search_seed4.json",
+          "sha256": "87f22d41bfa30ff826787998b6a9dd180bfdafefaa946f7c9517eab329fc5587"
+        },
+        "search_summary": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed4/search_v2_frozen_seed4/search_summary.json",
+          "sha256": "c5a592f740b449f828381540462ea73ef475cb46734d6550046b40923f96ff1b"
+        },
+        "search_verification": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed4/search_v2_frozen_seed4/search_verification.json",
+          "sha256": "df27c08a99394c53b9421f3ac15a3ce8509f373a510286417336cc3e97ea1a3d"
+        },
+        "selected_circuit": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed4/search_v2_frozen_seed4/snapshots/step_0075/circuit.json",
+          "sha256": "4736cc2bec8886dcbf5266f23a72acc682dbb39cdfe18eccf6867ba10be336d6"
+        },
+        "training_config": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed4/training_config.json",
+          "sha256": "56b82b62c1a3451819527837a8c560ca5b073909f7ccf01b08763d2a4647fdc5"
+        },
+        "unit_tying_aggregate": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed4/baselines/two_stage_unit_tying/aggregate.json",
+          "sha256": "aba7bd98b57573f73f0b9734bb33ff4970c2eda73f4998360fcd7920a7cb2b53"
+        },
+        "unit_tying_circuit": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed4/baselines/two_stage_unit_tying/ratio_10/synthesis/exact_simplified_circuit.json",
+          "sha256": "21ab73dcabfda9f1604b8027ecf82b6a4f110cc382a472372f202befd4299b1f"
+        },
+        "unit_tying_synthesis": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed4/baselines/two_stage_unit_tying/synthesis_aggregate.json",
+          "sha256": "898ca530d7f5f303ef505048df1a736fb2ef988c4c7b3a09c4aaf1c5a61dbfca"
+        },
+        "validation_frontier": {
+          "path": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed4/search_v2_frozen_seed4/validation_frontier.json",
+          "sha256": "87d73404a85cca956d6e57c779c4575ca12555236fd0a0f0e5f674d26b72755c"
+        }
+      },
+      "calibration_selection": {
+        "accuracy_budget": 0.0,
+        "accuracy_loss": 0.0,
+        "disagreement": 0.016166666666666666,
+        "estimated_abc_nodes": 99505.25629306023,
+        "live_gates": 33820,
+        "maximum_per_class_accuracy_loss": 0.00698080279232105,
+        "maximum_per_class_disagreement": 0.04734848484848485,
+        "selected_step": 75,
+        "snapshot": "snapshots/step_0075"
+      },
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN/repos/torchlogix/experiments/marginsynth/results/paper_fashion_mnist_raw_seed4",
+      "search_output": "search_v2_frozen_seed4",
+      "seed": 4,
+      "selected_step": 75,
+      "unit_tying_selection": {
+        "calibration_accuracy": 0.8703333139419556,
+        "calibration_disagreement": 0.030833333730697632,
+        "directory": "ratio_10",
+        "ratio": 0.1,
+        "total_tied_units": 3200,
+        "validation_accuracy": 0.8694999814033508,
+        "validation_disagreement": 0.02449999935925007,
+        "wall_seconds": 2.1042893150588498
+      },
+      "validation": {
+        "accuracy": 0.8703333333333333,
+        "accuracy_loss": 0.0038333333333333552,
+        "decision_flip_count": 134,
+        "decision_flip_rate": 0.022333333333333334,
+        "maximum_per_class_disagreement": 0.052100840336134456,
+        "per_class_accuracy": [
+          0.8409090909090909,
+          0.95578231292517,
+          0.797077922077922,
+          0.8756218905472637,
+          0.8113496932515337,
+          0.9301587301587302,
+          0.6803953871499177,
+          0.9362416107382551,
+          0.9448398576512456,
+          0.945993031358885
+        ],
+        "per_class_disagreement": [
+          0.023178807947019868,
+          0.00528169014084507,
+          0.026533996683250415,
+          0.008333333333333333,
+          0.03714710252600297,
+          0.029827315541601257,
+          0.052100840336134456,
+          0.011804384485666104,
+          0.012658227848101266,
+          0.012195121951219513
+        ]
+      }
+    }
+  ],
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "test_access_authorized_after_this_freeze": true,
+  "unit_tying_ratio": 0.1
+}

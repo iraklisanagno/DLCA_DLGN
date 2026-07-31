@@ -1,0 +1,69 @@
+{
+  "format_version": 1,
+  "paired_starting_checkpoint_required": true,
+  "records": [
+    {
+      "run_dir": "experiments/marginsynth/results/pilot_fashion_mnist_paper_small_raw_seed0",
+      "run_id": "paper_fashion_mnist_raw_seed0",
+      "search_config": "experiments/marginsynth/configs/paired_fashion/search_seed0.json",
+      "search_config_sha256": "be5274c91c6393043186a1baa5233d05f11e29cdd9accb23db3ef99806a7112e",
+      "seed": 0,
+      "training_config": "experiments/marginsynth/configs/paired_fashion/training_seed0.json",
+      "training_config_sha256": "382a82ae6955a42522a97eb4ee605a5794c3ef6384f38b1f5f4a5a684468fdb4",
+      "unit_tying_config": "experiments/marginsynth/configs/paired_fashion/unit_tying_seed0.json",
+      "unit_tying_config_sha256": "c016f479daa4a2f68d55954d48ee44195c26d11a72655c0f6de52569bde5ff02"
+    },
+    {
+      "run_dir": "experiments/marginsynth/results/paper_fashion_mnist_raw_seed1",
+      "run_id": "paper_fashion_mnist_raw_seed1",
+      "search_config": "experiments/marginsynth/configs/paired_fashion/search_seed1.json",
+      "search_config_sha256": "b6d2dba1ae11497753d98d1b09d40d7738452f87d1e29b2ef92f346ad8a17fdc",
+      "seed": 1,
+      "training_config": "experiments/marginsynth/configs/paired_fashion/training_seed1.json",
+      "training_config_sha256": "475c786ad9e38db9c2463f2c67ddfdde3fc7187cbf77cf4ba2d81c37eccfc3a4",
+      "unit_tying_config": "experiments/marginsynth/configs/paired_fashion/unit_tying_seed1.json",
+      "unit_tying_config_sha256": "05c15240d712c9a8f1ac6a5ef07e42281af67445200a05e18942c50dfb252aa8"
+    },
+    {
+      "run_dir": "experiments/marginsynth/results/paper_fashion_mnist_raw_seed2",
+      "run_id": "paper_fashion_mnist_raw_seed2",
+      "search_config": "experiments/marginsynth/configs/paired_fashion/search_seed2.json",
+      "search_config_sha256": "b0b1cf21ca2968a0784e5887ea269d8d42c64d83bcd28ff9e94839a12fc4842a",
+      "seed": 2,
+      "training_config": "experiments/marginsynth/configs/paired_fashion/training_seed2.json",
+      "training_config_sha256": "8b9a66a9098d85c6c2d0930aa6075e898e81cdaacd86184da528bcfe031402eb",
+      "unit_tying_config": "experiments/marginsynth/configs/paired_fashion/unit_tying_seed2.json",
+      "unit_tying_config_sha256": "f376d7c06e1acd6b43be30449c893272da24d4c612e95fe579ce71d5c8b60fd5"
+    },
+    {
+      "run_dir": "experiments/marginsynth/results/paper_fashion_mnist_raw_seed3",
+      "run_id": "paper_fashion_mnist_raw_seed3",
+      "search_config": "experiments/marginsynth/configs/paired_fashion/search_seed3.json",
+      "search_config_sha256": "7aaeb95aeace4ca4fef2a1364290b4734999d0a607def471e490ee1a09e5bd1a",
+      "seed": 3,
+      "training_config": "experiments/marginsynth/configs/paired_fashion/training_seed3.json",
+      "training_config_sha256": "9b96089cb9b7fb13e6c46e3d55733f5f5a2b321cdba05ccbec9fa77fa4f33b8f",
+      "unit_tying_config": "experiments/marginsynth/configs/paired_fashion/unit_tying_seed3.json",
+      "unit_tying_config_sha256": "73cee653acbfaa1b528d438aca611604920d8de36d234e5a6ac207d24bb522a3"
+    },
+    {
+      "run_dir": "experiments/marginsynth/results/paper_fashion_mnist_raw_seed4",
+      "run_id": "paper_fashion_mnist_raw_seed4",
+      "search_config": "experiments/marginsynth/configs/paired_fashion/search_seed4.json",
+      "search_config_sha256": "87f22d41bfa30ff826787998b6a9dd180bfdafefaa946f7c9517eab329fc5587",
+      "seed": 4,
+      "training_config": "experiments/marginsynth/configs/paired_fashion/training_seed4.json",
+      "training_config_sha256": "4584765448677fe616c634e68217f18329a4c9ff5f3eca2e06841179945f0813",
+      "unit_tying_config": "experiments/marginsynth/configs/paired_fashion/unit_tying_seed4.json",
+      "unit_tying_config_sha256": "aa0b9e6f1c58eecf48885210d9b3e1bc11f6e867b349a579668ec95039141f06"
+    }
+  ],
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "test_policy": "sealed until a separate frozen-protocol manifest exists"
+}

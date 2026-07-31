@@ -18,11 +18,13 @@ Each gate:
 """
 
 from __future__ import annotations
+import copy
 from dataclasses import dataclass, field
 from enum import Enum, auto
 from datetime import datetime
-import operator
 import json
+import math
+import operator
 import numpy as np
 
 import torch
@@ -211,6 +213,72 @@ class Circuit:
             f"  output_shape={self.output_shape}\n"
             f")"
         )
+
+    def normalized_for_hardware_argmax(self, atol: float = 1e-9) -> Circuit:
+        """Return an integer-score copy with the same classification argmax.
+
+        Synthesizable Verilog emitted by :meth:`get_verilog_code` represents
+        ``SumReduction`` outputs as unsigned integers. Classification DLGNs
+        commonly use one shared positive temperature and offsets that differ
+        only by integers. A common positive scale and common offset do not
+        affect argmax, so this method removes them explicitly and records the
+        remaining class-specific offsets as non-negative integers.
+
+        The original Circuit is not modified. A ``ValueError`` is raised when
+        outputs mix Boolean and reduction nodes, temperatures differ, a
+        temperature is non-positive, or offset differences are non-integral.
+        Those cases cannot be converted to integer scores while guaranteeing
+        the same argmax for every input.
+        """
+        sum_by_id = self._sum_by_id
+        reductions = [sum_by_id.get(output_id) for output_id in self.outputs]
+        if not any(reductions):
+            return copy.deepcopy(self)
+        if any(reduction is None for reduction in reductions):
+            raise ValueError(
+                "argmax normalization requires every Circuit output to be a "
+                "SumReduction"
+            )
+
+        reductions = [reduction for reduction in reductions if reduction is not None]
+        reference_tau = reductions[0].tau
+        if not math.isfinite(reference_tau) or reference_tau <= 0.0:
+            raise ValueError("classification temperature must be finite and positive")
+        if any(
+            not math.isclose(
+                reduction.tau,
+                reference_tau,
+                rel_tol=0.0,
+                abs_tol=atol,
+            )
+            for reduction in reductions[1:]
+        ):
+            raise ValueError(
+                "argmax normalization requires one shared temperature across "
+                "all output reductions"
+            )
+        if any(not math.isfinite(reduction.beta) for reduction in reductions):
+            raise ValueError("classification offsets must be finite")
+
+        common_offset = min(reduction.beta for reduction in reductions)
+        integer_offsets = []
+        for reduction in reductions:
+            shifted = reduction.beta - common_offset
+            rounded = round(shifted)
+            if not math.isclose(shifted, rounded, rel_tol=0.0, abs_tol=atol):
+                raise ValueError(
+                    "argmax normalization requires output offset differences "
+                    "to be integral"
+                )
+            integer_offsets.append(int(rounded))
+
+        normalized = copy.deepcopy(self)
+        normalized_by_id = normalized._sum_by_id
+        for output_id, beta in zip(normalized.outputs, integer_offsets):
+            reduction = normalized_by_id[output_id]
+            reduction.tau = 1.0
+            reduction.beta = float(beta)
+        return normalized
 
     @classmethod
     def from_model(cls, model: torch.nn.Module, input_shape: list[int]) -> Circuit:
@@ -1793,6 +1861,33 @@ void circuit_bench_bool(
 
         red_outs  = [sum_by_id[oid] for oid in self.outputs if oid in sum_by_id]
         has_red   = bool(red_outs)
+        if has_red:
+            for reduction in red_outs:
+                if not math.isclose(
+                    reduction.tau, 1.0, rel_tol=0.0, abs_tol=1e-9
+                ):
+                    raise ValueError(
+                        "Verilog GroupSum output requires tau=1.0 because the "
+                        "RTL interface exposes exact integer scores. For "
+                        "classification circuits, call "
+                        "normalized_for_hardware_argmax() first."
+                    )
+                rounded_beta = round(reduction.beta)
+                if (
+                    not math.isfinite(reduction.beta)
+                    or not math.isclose(
+                        reduction.beta,
+                        rounded_beta,
+                        rel_tol=0.0,
+                        abs_tol=1e-9,
+                    )
+                    or rounded_beta < 0
+                ):
+                    raise ValueError(
+                        "Verilog GroupSum output requires a finite, "
+                        "non-negative integer beta. For classification "
+                        "circuits, call normalized_for_hardware_argmax() first."
+                    )
 
         # ---- use-count for optional inlining --------------------------------
         use_count: dict[int, int] = {}
@@ -1863,14 +1958,16 @@ void circuit_bench_bool(
                     sv_vars.add(f"s_{j}")
                     start, end = sum_raw_offset_v[out_id]
                     if start == end:
-                        val = int(round(sr.beta)) if sr.tau == 1.0 else sr.beta / sr.tau
+                        val = int(round(sr.beta))
                         sv_lines.append(f"        s_{j} = 0;\n        {slot} = {val};")
                     else:
+                        beta = int(round(sr.beta))
+                        score_expr = f"s_{j} + {beta}" if beta else f"s_{j}"
                         sv_lines.append(
                             f"        s_{j} = 0;\n"
                             f"        for (i = {start}; i < {end}; i = i + 1)"
                             f" s_{j} = s_{j} + raw[i];\n"
-                            f"        {slot} = s_{j};"
+                            f"        {slot} = {score_expr};"
                         )
                 else:
                     sv_lines.append(f"        {slot} = {vexpr(out_id)};")

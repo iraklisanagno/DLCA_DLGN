@@ -1,0 +1,26 @@
+{
+  "base_config": "v2_fashion_seed0.json",
+  "development_max_accepted_rewrites": 75,
+  "variants": {
+    "v2_full": {},
+    "random_candidates": {
+      "structural_ranking": false
+    },
+    "gate_count_cost": {
+      "cost_mode": "gate-count"
+    },
+    "individual_only": {
+      "coordinated_rewrites": false
+    },
+    "constants_only": {
+      "candidate_space": "constants-only",
+      "coordinated_rewrites": false
+    },
+    "disagreement_only": {
+      "maximum_accuracy_loss": 1.0,
+      "maximum_per_class_accuracy_loss": 1.0,
+      "maximum_disagreement": 0.02,
+      "maximum_per_class_disagreement": 0.05
+    }
+  }
+}

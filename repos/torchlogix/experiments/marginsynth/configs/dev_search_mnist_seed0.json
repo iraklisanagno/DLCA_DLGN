@@ -1,0 +1,26 @@
+{
+  "mode": "decision-preserving",
+  "search_seed": 0,
+  "candidate_limit_per_iteration": 1024,
+  "exact_cost_shortlist": 64,
+  "max_accepted_rewrites": 25,
+  "maximum_global_loss": 0.02,
+  "maximum_per_class_loss": 0.05,
+  "margin_reserve": 0.1,
+  "flip_penalty": 10.0,
+  "cost_epsilon": 1e-09,
+  "connection_weight": 0.05,
+  "depth_weight": 0.25,
+  "pareto_budgets": [
+    0.0,
+    0.001,
+    0.0025,
+    0.005,
+    0.01,
+    0.02
+  ],
+  "full_resimulation_every": 1,
+  "input_circuit": "exact_simplified_circuit.json",
+  "input_trace": "calibration_trace",
+  "output": "search_dev_decision_seed0"
+}
