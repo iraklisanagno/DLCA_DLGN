@@ -753,6 +753,14 @@ If MarginSynth only marginally improves the selection of constant ties, it is
 not sufficiently different from the ICML 2026 work and should not proceed as a
 standalone DATE paper.
 
+## Hybrid redesign
+
+The follow-up implementation is documented in [HYBRID_METHOD.md](HYBRID_METHOD.md).
+It adds GPU-batched decision-margin, class-stability, and structural scoring on
+top of a Gauss--Newton Unit-Tying shortlist, exact swap refinement, an isolated
+export/synthesis bridge, and optional bounded residual cleanup. All original
+MarginSynth and Unit-Tying files and results are retained.
+
 ## Definition of done
 
 MarginSynth is ready for a paper only when:

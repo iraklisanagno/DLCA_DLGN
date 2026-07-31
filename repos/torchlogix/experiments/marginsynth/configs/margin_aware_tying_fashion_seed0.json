@@ -1,0 +1,42 @@
+{
+  "method": "margin-aware-structured-unit-tying",
+  "source_checkpoint": "best_checkpoint.pt",
+  "target_ratio": 0.1,
+  "eligible_logic_layers": [1, 2, 3, 4],
+  "stage_a_samples": 16,
+  "margin_samples": 512,
+  "stability_folds": 4,
+  "selection_rounds": 8,
+  "allocation": "per-layer-balanced",
+  "candidate_overshoot": 40,
+  "warm_start_ties": "baselines/two_stage_unit_tying/ratio_10/ties.json",
+  "swap_refinement": {"enabled": true, "counts": [8, 16, 24, 32, 40]},
+  "seed": 0,
+  "evaluation_batch_size": 512,
+  "unit_chunk_size": 512,
+  "margin_floor": 0.25,
+  "constant_cofactor_bonus": 1.0,
+  "unary_cofactor_bonus": 0.25,
+  "objective_weights": {
+    "mean_margin": 1.0,
+    "fold_worst": 1.0,
+    "fold_std": 0.5,
+    "class_worst": 1.5,
+    "projected_flip": 2.0,
+    "gauss_newton": 1.0,
+    "risk_epsilon": 0.0001
+  },
+  "budgets": {
+    "accuracy_loss": 0.0033333333333333335,
+    "disagreement": 0.03,
+    "per_class_accuracy_loss": 0.015,
+    "per_class_disagreement": 0.075
+  },
+  "tie_logit": 1000000.0,
+  "residual_cleanup": {
+    "enabled": false,
+    "maximum_rewrites": 16,
+    "required_predicted_abc_reduction": 0.001
+  },
+  "output": "hybrid/margin_aware_tying_warm_swap_seed0"
+}

@@ -23,6 +23,17 @@ from experiments.marginsynth.summarize_paired_study import (
     exact_bootstrap_mean_ci,
     summarize,
 )
+from experiments.marginsynth.margin_aware_tying import (
+    balanced_shortlist_order,
+    compose_candidate_table,
+    interleave_layers,
+    normalized_rank,
+    projected_risk_statistics,
+    stratified_fold_ids,
+    structural_tie_benefits,
+    within_constraints,
+    quality_tuple,
+)
 from experiments.marginsynth.unit_tying import (
     apply_permanent_ties,
     binary_split_identify,
@@ -99,6 +110,143 @@ def test_unit_tying_sample_selection_is_deterministic_and_unique():
     second = selection_indices(100, 16, 4)
     assert np.array_equal(first, second)
     assert len(np.unique(first)) == 16
+
+
+def test_margin_aware_folds_are_deterministic_and_class_balanced():
+    labels = np.repeat(np.arange(3), 11)
+    first = stratified_fold_ids(labels, folds=4, seed=7)
+    second = stratified_fold_ids(labels, folds=4, seed=7)
+    assert np.array_equal(first, second)
+    for label in np.unique(labels):
+        counts = np.bincount(first[labels == label], minlength=4)
+        assert counts.max() - counts.min() <= 1
+
+
+def test_projected_margin_risk_exposes_fold_and_class_failures():
+    projected = np.ones((8, 2, 2), dtype=np.float64)
+    projected[:4, 0, 0] = -1.0
+    labels = np.array([0, 0, 0, 0, 1, 1, 1, 1])
+    folds = np.array([0, 1, 0, 1, 0, 1, 0, 1])
+    result = projected_risk_statistics(projected, labels, folds, 0.25)
+    assert result["projected_flip_rate"][0, 0] == 0.5
+    assert result["maximum_class_hinge"][0, 0] > result["mean_hinge"][0, 0]
+    assert result["projected_flip_rate"][1, 1] == 0.0
+
+
+def test_margin_aware_candidate_selection_prefers_safe_high_benefit_tie():
+    gauss = np.array([[0.1, 0.2], [0.1, 0.1]])
+    zeros = np.zeros((2, 2), dtype=np.float64)
+    stats = {
+        "mean_hinge": zeros.copy(),
+        "maximum_fold_hinge": zeros.copy(),
+        "fold_standard_deviation": zeros.copy(),
+        "maximum_class_hinge": zeros.copy(),
+        "projected_flip_rate": zeros.copy(),
+    }
+    stats["projected_flip_rate"][0, 1] = 0.5
+    benefits = np.array([[1.0, 8.0], [2.0, 3.0]])
+    weights = {
+        "mean_margin": 1.0,
+        "fold_worst": 1.0,
+        "fold_std": 1.0,
+        "class_worst": 1.0,
+        "projected_flip": 10.0,
+        "gauss_newton": 0.1,
+        "risk_epsilon": 0.01,
+    }
+    records = compose_candidate_table(1, gauss, stats, benefits, weights)
+    assert records[0]["constant"] == 0
+    assert records[1]["constant"] == 1
+
+
+def test_margin_aware_constraint_gate_checks_every_budget():
+    metrics = {
+        "accuracy_loss": 0.01,
+        "decision_flip_rate": 0.02,
+        "maximum_per_class_accuracy_loss": 0.03,
+        "maximum_per_class_disagreement": 0.04,
+    }
+    budgets = {
+        "accuracy_loss": 0.01,
+        "disagreement": 0.02,
+        "per_class_accuracy_loss": 0.03,
+        "per_class_disagreement": 0.04,
+    }
+    assert within_constraints(metrics, budgets)
+    for key in budgets:
+        tightened = dict(budgets)
+        tightened[key] -= 0.001
+        assert not within_constraints(metrics, tightened)
+
+
+def test_structural_tie_benefit_rewards_constant_fanout_cofactor():
+    first = LogicDense(
+        in_dim=2,
+        out_dim=2,
+        lut_rank=2,
+        parametrization="raw",
+        connections="fixed",
+        connections_kwargs={"init_method": "random"},
+    )
+    second = LogicDense(
+        in_dim=2,
+        out_dim=2,
+        lut_rank=2,
+        parametrization="raw",
+        connections="fixed",
+        connections_kwargs={"init_method": "random"},
+    )
+    with torch.no_grad():
+        first.weight.fill_(-100.0)
+        first.weight[:, 6] = 100.0
+        second.weight.fill_(-100.0)
+        # AND has a constant cofactor for input=0 and a unary cofactor for 1.
+        second.weight[:, 8] = 100.0
+        second.connections.indices[:] = torch.tensor([[0, 1], [1, 0]])
+    benefit = structural_tie_benefits([first, second], 0)
+    assert benefit[0, 0] > benefit[0, 1]
+    assert benefit[1, 0] > benefit[1, 1]
+
+
+def test_normalized_rank_is_stable_and_directional():
+    values = np.array([3.0, 1.0, 2.0])
+    assert normalized_rank(values, True).tolist() == [1.0, 0.0, 0.5]
+    assert normalized_rank(values, False).tolist() == [0.0, 1.0, 0.5]
+
+
+def test_balanced_shortlist_preserves_layer_targets_and_gn_screen():
+    records = {
+        1: [
+            {"layer": 1, "unit": unit, "minimum_gauss_newton": float(unit), "utility": float(9 - unit)}
+            for unit in range(6)
+        ],
+        2: [
+            {"layer": 2, "unit": unit, "minimum_gauss_newton": float(unit), "utility": float(unit)}
+            for unit in range(6)
+        ],
+    }
+    ordered, pools = balanced_shortlist_order(records, {1: 2, 2: 2}, overshoot=1)
+    assert pools == {1: 3, 2: 3}
+    assert [item["layer"] for item in ordered] == [1, 2, 1, 2]
+    assert {item["unit"] for item in ordered if item["layer"] == 2} <= {0, 1, 2}
+
+
+def test_interleave_and_quality_tuple_are_deterministic():
+    candidates = [
+        {"layer": 2, "unit": 0},
+        {"layer": 1, "unit": 0},
+        {"layer": 1, "unit": 1},
+    ]
+    assert [(x["layer"], x["unit"]) for x in interleave_layers(candidates)] == [
+        (1, 0), (2, 0), (1, 1)
+    ]
+    metrics = {
+        "accuracy_loss": 0.1,
+        "maximum_per_class_accuracy_loss": 0.2,
+        "decision_flip_rate": 0.3,
+        "maximum_per_class_disagreement": 0.4,
+    }
+    assert quality_tuple(metrics) == (0.1, 0.2, 0.3, 0.4)
 
 
 def test_encoded_sample_shape_supports_multi_threshold_image_inputs():

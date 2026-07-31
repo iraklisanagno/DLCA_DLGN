@@ -760,3 +760,31 @@ respectively.
 Final verification passed: all 115 focused MarginSynth/Circuit/protocol tests
 and the complete repository suite of 3,337 tests passed; 3,038 optional or
 device-specific cases were skipped, with no failures.
+
+### Margin-aware Unit-Tying redesign: seed-0 development
+
+The original implementation was preserved on branch `mmarginsynth` at commit
+`7086fe3` before development. New outputs live under `hybrid/`; no prior result
+was deleted or reused as a destination.
+
+The first unconstrained global selector was rejected: at 3,200 ties it lost
+1.583 percentage points of validation accuracy. Restricting selection to the
+Gauss--Newton shortlist improved the loss to 0.467 points but remained worse
+than Unit Tying. These negative diagnostics are preserved.
+
+The final development variant starts from the 10% Unit-Tying set and evaluates
+deterministic margin/class/stability/synthesis-aware swaps. It selected 3,200
+ties in 3.19 seconds. Validation accuracy was 87.033% versus 86.967% for Unit
+Tying, disagreement was 2.450% versus 2.483%, live gates were 30,384 versus
+30,405, and ABC nodes were 94,070 versus 94,084.
+
+An optional 16-proposal residual cleanup took 210.67 seconds, replayed exactly,
+and preserved zero calibration accuracy loss relative to the hybrid. Held-out
+validation accuracy became 87.017%; live gates became 30,207 and measured ABC
+nodes became 93,763 at 78 levels. Thus the combined method improves over Unit
+Tying by 0.050 percentage points of validation accuracy and 321 ABC nodes
+(0.34%) on seed 0. This is a promising pilot but far below a publishable effect
+size. Test data remained sealed throughout redesign development.
+
+The final redesign-focused MarginSynth/Circuit/protocol suite passed all 123
+tests. Python compilation and `git diff --check` also passed.
