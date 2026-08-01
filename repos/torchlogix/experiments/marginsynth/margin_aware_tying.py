@@ -268,15 +268,33 @@ def constraint_metrics(
 
 
 def within_constraints(metrics: dict, budgets: dict) -> bool:
-    return (
-        metrics["accuracy_loss"] <= float(budgets["accuracy_loss"]) + 1e-12
-        and metrics["decision_flip_rate"]
-        <= float(budgets["disagreement"]) + 1e-12
-        and metrics["maximum_per_class_accuracy_loss"]
-        <= float(budgets["per_class_accuracy_loss"]) + 1e-12
-        and metrics["maximum_per_class_disagreement"]
-        <= float(budgets["per_class_disagreement"]) + 1e-12
-    )
+    """Check the behavioral budgets that are explicitly enabled.
+
+    Accuracy budgets are mandatory for every paper protocol.  Disagreement
+    budgets are optional so that the same implementation can support the
+    prespecified constrained- and unconstrained-disagreement studies without
+    hiding disagreement measurements or using non-standard JSON infinities.
+    """
+    required = ("accuracy_loss", "per_class_accuracy_loss")
+    missing = [name for name in required if name not in budgets]
+    if missing:
+        raise KeyError(f"missing mandatory constraint budgets: {missing}")
+    checks = [
+        metrics["accuracy_loss"] <= float(budgets["accuracy_loss"]) + 1e-12,
+        metrics["maximum_per_class_accuracy_loss"]
+        <= float(budgets["per_class_accuracy_loss"]) + 1e-12,
+    ]
+    if "disagreement" in budgets:
+        checks.append(
+            metrics["decision_flip_rate"]
+            <= float(budgets["disagreement"]) + 1e-12
+        )
+    if "per_class_disagreement" in budgets:
+        checks.append(
+            metrics["maximum_per_class_disagreement"]
+            <= float(budgets["per_class_disagreement"]) + 1e-12
+        )
+    return all(checks)
 
 
 def compose_candidate_table(

@@ -335,18 +335,25 @@ def main() -> None:
     _, validation_loader, calibration_loader, _ = load_dataset(
         args, include_calibration=True
     )
+    report_validation = bool(config.get("report_validation", True))
     calibration_images, calibration_labels = take_examples(
         calibration_loader, len(calibration_loader.dataset)
     )
-    validation_images, validation_labels = take_examples(
-        validation_loader, len(validation_loader.dataset)
-    )
+    validation_images = validation_labels = None
+    if report_validation:
+        validation_images, validation_labels = take_examples(
+            validation_loader, len(validation_loader.dataset)
+        )
     encoder = get_model(thresholds, args)
     encoder.load_state_dict(source_state, strict=True)
     encoder.eval()
     with torch.no_grad():
         calibration_encoded = encoder[0](calibration_images).bool().cpu()
-        validation_encoded = encoder[0](validation_images).bool().cpu()
+        validation_encoded = (
+            encoder[0](validation_images).bool().cpu()
+            if report_validation
+            else None
+        )
     del encoder, calibration_images, validation_images
 
     teacher = get_model(thresholds, args)
@@ -356,22 +363,31 @@ def main() -> None:
     teacher_calibration_scores = evaluate_encoded(
         teacher, calibration_encoded, evaluation_batch_size, device
     )
-    teacher_validation_scores = evaluate_encoded(
-        teacher, validation_encoded, evaluation_batch_size, device
+    teacher_validation_scores = (
+        evaluate_encoded(teacher, validation_encoded, evaluation_batch_size, device)
+        if report_validation
+        else None
     )
     teacher_calibration_predictions = teacher_calibration_scores.argmax(1)
-    teacher_validation_predictions = teacher_validation_scores.argmax(1)
+    teacher_validation_predictions = (
+        teacher_validation_scores.argmax(1) if report_validation else None
+    )
     baseline_calibration = metric_record(
         teacher_calibration_scores,
         calibration_labels,
         teacher_calibration_predictions,
     )
-    baseline_validation = metric_record(
-        teacher_validation_scores,
-        validation_labels,
-        teacher_validation_predictions,
+    baseline_validation = (
+        metric_record(
+            teacher_validation_scores,
+            validation_labels,
+            teacher_validation_predictions,
+        )
+        if report_validation
+        else None
     )
     guard_fraction = float(config.get("guard_fraction", 0.0))
+    partition_seed = int(config.get("partition_seed", seed))
     if guard_fraction > 0.0:
         optimization_fraction = float(config.get("optimization_fraction", 0.6))
         repair_fraction = float(config.get("repair_fraction", 0.2))
@@ -382,14 +398,14 @@ def main() -> None:
                 calibration_labels,
                 optimization_fraction,
                 repair_fraction,
-                seed + 104729,
+                partition_seed + 104729,
             )
         )
     else:
         optimization_indices, repair_indices = stratified_optimization_repair_split(
             calibration_labels,
             float(config.get("optimization_fraction", 0.75)),
-            seed + 104729,
+            partition_seed + 104729,
         )
         guard_indices = torch.empty(0, dtype=torch.long)
     repair_labels = calibration_labels[repair_indices]
@@ -711,19 +727,21 @@ def main() -> None:
         final_guard_metrics["within_budgets"] = within_constraints(
             final_guard_metrics, config["budgets"]
         )
-    final_validation_scores = evaluate_encoded(
-        repair_model, validation_encoded, evaluation_batch_size, device
-    )
-    final_validation_metrics = constraint_metrics(
-        final_validation_scores,
-        validation_labels,
-        teacher_validation_predictions,
-        baseline_validation["accuracy"],
-        baseline_validation["per_class_accuracy"],
-    )
-    final_validation_metrics["within_budgets"] = within_constraints(
-        final_validation_metrics, config["budgets"]
-    )
+    final_validation_metrics = None
+    if report_validation:
+        final_validation_scores = evaluate_encoded(
+            repair_model, validation_encoded, evaluation_batch_size, device
+        )
+        final_validation_metrics = constraint_metrics(
+            final_validation_scores,
+            validation_labels,
+            teacher_validation_predictions,
+            baseline_validation["accuracy"],
+            baseline_validation["per_class_accuracy"],
+        )
+        final_validation_metrics["within_budgets"] = within_constraints(
+            final_validation_metrics, config["budgets"]
+        )
 
     final_state = {
         key: value.detach().cpu()
@@ -778,6 +796,7 @@ def main() -> None:
     )
     samples = {
         "selection_partition": "calibration",
+        "partition_seed": partition_seed,
         "partition_indices_sha256": calibration_loader.split_manifest["partitions"]["calibration"]["indices_sha256"],
         "partition_size": len(calibration_encoded),
         "optimization_size": len(optimization_indices),
@@ -848,7 +867,8 @@ def main() -> None:
         "peak_process_rss_kib": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
         "data_policy": {
             "selection_partition": "calibration",
-            "validation_used_only_for_final_evaluation": True,
+            "validation_loaded": report_validation,
+            "validation_used_only_for_final_evaluation": report_validation,
             "test_used": False,
         },
         "independence_from_unit_tying": {

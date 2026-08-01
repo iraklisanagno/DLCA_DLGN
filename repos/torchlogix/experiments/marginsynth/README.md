@@ -767,6 +767,15 @@ top of a Gauss--Newton Unit-Tying shortlist, exact swap refinement, an isolated
 export/synthesis bridge, and optional bounded residual cleanup. All original
 MarginSynth and Unit-Tying files and results are retained.
 
+## Bayesian four-case exploration
+
+The reproducible constrained multi-objective exploration of guarded two-pass
+MarginSynth and aggressive MarginSynth plus short recovery is specified in
+[`BAYESIAN_SEARCH_PROTOCOL.md`](BAYESIAN_SEARCH_PROTOCOL.md). It implements
+separate constrained- and unconstrained-disagreement studies, a shared unseen
+calibration guard, exact feasible-only ABC objectives, resumable Optuna state,
+and trial/study tables designed for paper ablations and meta-analysis.
+
 ## Definition of done
 
 MarginSynth is ready for a paper only when:

@@ -107,6 +107,12 @@ def main():
         default=1,
         help="GCC optimization level for semantic-equivalence builds",
     )
+    parser.add_argument(
+        "--verification-split",
+        choices=["validation", "calibration"],
+        default="validation",
+        help="Held-out split used only for semantic-equivalence checks",
+    )
     cli = parser.parse_args()
     if cli.examples <= 0 or cli.examples % cli.pack_bits:
         raise ValueError("--examples must be positive and divisible by --pack-bits")
@@ -126,8 +132,15 @@ def main():
     model.load_state_dict(state_dict, strict=True)
     model.eval()
 
-    _, validation_loader, _, _ = load_dataset(args, include_calibration=True)
-    images, labels = take_examples(validation_loader, cli.examples)
+    _, validation_loader, calibration_loader, _ = load_dataset(
+        args, include_calibration=True
+    )
+    verification_loader = (
+        validation_loader
+        if cli.verification_split == "validation"
+        else calibration_loader
+    )
+    images, labels = take_examples(verification_loader, cli.examples)
     with torch.no_grad():
         encoded_inputs = model[0](images).bool()
 
@@ -246,13 +259,14 @@ def main():
             "verification_script_sha256": sha256_file(Path(__file__).resolve()),
         },
         "data_policy": {
-            "verification_partition": "validation",
+            "verification_partition": cli.verification_split,
             "examples": cli.examples,
-            "calibration_used": False,
+            "calibration_used": cli.verification_split == "calibration",
+            "validation_used": cli.verification_split == "validation",
             "test_used": False,
-            "validation_indices_sha256": validation_loader.split_manifest[
+            "verification_indices_sha256": verification_loader.split_manifest[
                 "partitions"
-            ]["validation"]["indices_sha256"],
+            ][cli.verification_split]["indices_sha256"],
             "encoded_input_tensor_sha256": tensor_sha256(encoded_inputs),
             "label_tensor_sha256": tensor_sha256(labels),
         },

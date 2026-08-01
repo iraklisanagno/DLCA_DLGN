@@ -49,6 +49,18 @@ from experiments.marginsynth.recovery_finetune import (
     initialize_recovery_logits,
     locked_row_masks,
 )
+from experiments.marginsynth.bayesian_protocol import (
+    METHOD_AGGRESSIVE,
+    METHOD_GUARDED,
+    POLICY_CONSTRAINED,
+    POLICY_UNCONSTRAINED,
+    active_budgets,
+    aggressive_recovery_configs,
+    constraint_values as bayesian_constraint_values,
+    guarded_two_pass_configs,
+    pareto_records,
+    select_promotion_records,
+)
 from experiments.marginsynth.unit_tying import (
     apply_permanent_ties,
     binary_split_identify,
@@ -208,6 +220,143 @@ def test_recovery_selection_uses_earliest_feasible_training_holdout_snapshot():
         {"step": 500, "monitor": base, "hard_hardware_cost": 0.4},
     ]
     assert choose_snapshot(records, budgets, ceiling=0.5)["step"] == 250
+
+
+def test_behavior_constraints_can_prespecify_no_disagreement_guard():
+    metrics = {
+        "accuracy_loss": 0.005,
+        "decision_flip_rate": 0.90,
+        "maximum_per_class_accuracy_loss": 0.01,
+        "maximum_per_class_disagreement": 1.0,
+    }
+    accuracy_only = {
+        "accuracy_loss": 0.01,
+        "per_class_accuracy_loss": 0.02,
+    }
+    constrained = accuracy_only | {
+        "disagreement": 0.03,
+        "per_class_disagreement": 0.075,
+    }
+    assert within_constraints(metrics, accuracy_only)
+    assert not within_constraints(metrics, constrained)
+
+
+def _bayesian_protocol_fixture():
+    path = (
+        Path(__file__).resolve().parents[1]
+        / "experiments/marginsynth/configs/bayesian_exploration_fashion_seed0.json"
+    )
+    return json.loads(path.read_text())
+
+
+def test_bayesian_protocol_builds_all_disagreement_policies_explicitly():
+    protocol = _bayesian_protocol_fixture()
+    constrained = active_budgets(protocol, POLICY_CONSTRAINED)
+    unconstrained = active_budgets(protocol, POLICY_UNCONSTRAINED)
+    assert "disagreement" in constrained
+    assert "per_class_disagreement" in constrained
+    assert "disagreement" not in unconstrained
+    assert "per_class_disagreement" not in unconstrained
+    assert constrained["accuracy_loss"] == unconstrained["accuracy_loss"]
+
+
+def test_bayesian_guarded_chain_reserves_same_unseen_guard_in_both_passes():
+    protocol = _bayesian_protocol_fixture()
+    params = protocol["reference_parameters"][METHOD_GUARDED]
+    first, second = guarded_two_pass_configs(
+        {}, {}, params, active_budgets(protocol, POLICY_UNCONSTRAINED),
+        "bayes/trial_00000", seed=7, smoke=True
+    )
+    assert first["partition_seed"] == second["partition_seed"] == 7
+    assert first["guard_fraction"] == second["guard_fraction"] == 0.2
+    assert second["source_checkpoint"] == second["lock_reference_checkpoint"]
+    assert second["source_checkpoint"].endswith(
+        "first_resynthesis/distilled_checkpoint.pt"
+    )
+    assert first["steps"] == second["steps"] == 2
+    assert "disagreement" not in second["selection_budgets"]
+
+
+def test_bayesian_aggressive_chain_is_unrepaired_locked_and_short():
+    protocol = _bayesian_protocol_fixture()
+    params = protocol["reference_parameters"][METHOD_AGGRESSIVE]
+    first, recovery = aggressive_recovery_configs(
+        {}, {}, params, active_budgets(protocol, POLICY_CONSTRAINED),
+        "bayes/trial_00000", seed=11, smoke=True
+    )
+    assert first["repair"] is False
+    assert first["guard_fraction"] == 0.2
+    assert recovery["lock_source_changes"] is True
+    assert recovery["source_checkpoint"].endswith(
+        "aggressive_resynthesis/distilled_checkpoint.pt"
+    )
+    assert recovery["steps"] == 2
+    assert recovery["snapshot_steps"] == [0, 2]
+
+
+def test_bayesian_unconstrained_case_still_enforces_accuracy_and_locking():
+    metrics = {
+        "accuracy_loss": 0.005,
+        "maximum_per_class_accuracy_loss": 0.01,
+        "decision_flip_rate": 0.9,
+        "maximum_per_class_disagreement": 1.0,
+    }
+    budgets = {"accuracy_loss": 0.01, "per_class_accuracy_loss": 0.02}
+    names, residuals = bayesian_constraint_values(
+        metrics,
+        budgets,
+        POLICY_UNCONSTRAINED,
+        METHOD_AGGRESSIVE,
+        locked_row_violations=1,
+        selected_recovery_step=2000,
+        maximum_recovery_steps=3000,
+    )
+    assert names == [
+        "accuracy_loss",
+        "maximum_per_class_accuracy_loss",
+        "locked_row_violations",
+        "recovery_step_budget",
+    ]
+    assert residuals[0] < 0 and residuals[1] < 0
+    assert residuals[2] > 0 and residuals[3] <= 0
+
+
+def test_bayesian_pareto_excludes_infeasible_and_proxy_trials():
+    records = [
+        {"trial_number": 0, "status": "completed", "feasible": True,
+         "objective_fidelity": "exact_abc", "accuracy_loss": 0.003,
+         "abc_and_nodes": 90000},
+        {"trial_number": 1, "status": "completed", "feasible": True,
+         "objective_fidelity": "exact_abc", "accuracy_loss": 0.002,
+         "abc_and_nodes": 91000},
+        {"trial_number": 2, "status": "completed", "feasible": True,
+         "objective_fidelity": "exact_abc", "accuracy_loss": 0.004,
+         "abc_and_nodes": 92000},
+        {"trial_number": 3, "status": "completed", "feasible": False,
+         "objective_fidelity": "exact_abc", "accuracy_loss": 0.0,
+         "abc_and_nodes": 1},
+        {"trial_number": 4, "status": "completed", "feasible": True,
+         "objective_fidelity": "smoke_proxy", "accuracy_loss": 0.0,
+         "abc_and_nodes": None},
+    ]
+    assert [row["trial_number"] for row in pareto_records(records)] == [1, 0]
+
+
+def test_bayesian_exact_promotion_prefers_proxy_pareto_and_diverse_fillers():
+    records = [
+        {"trial_number": 0, "status": "completed", "feasible": True,
+         "accuracy_loss": 0.0, "hardware_proxy": 100.0},
+        {"trial_number": 1, "status": "completed", "feasible": True,
+         "accuracy_loss": 0.01, "hardware_proxy": 90.0},
+        {"trial_number": 2, "status": "completed", "feasible": True,
+         "accuracy_loss": 0.02, "hardware_proxy": 80.0},
+        {"trial_number": 3, "status": "completed", "feasible": True,
+         "accuracy_loss": 0.02, "hardware_proxy": 110.0},
+        {"trial_number": 4, "status": "completed", "feasible": False,
+         "accuracy_loss": -1.0, "hardware_proxy": 1.0},
+    ]
+    selected = select_promotion_records(records, 2)
+    assert [row["trial_number"] for row in selected] == [0, 2]
 
 
 def test_unit_tying_refinement_removes_overshoot_harm():

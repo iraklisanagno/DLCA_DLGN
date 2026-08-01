@@ -136,6 +136,12 @@ def parse_args():
         default=1,
         help="GCC optimization level used only for the compiled-C equivalence build",
     )
+    parser.add_argument(
+        "--verification-split",
+        choices=["validation", "calibration"],
+        default="validation",
+        help="Held-out split used only for semantic-equivalence checks",
+    )
     return parser.parse_args()
 
 
@@ -187,8 +193,15 @@ def main():
     model.load_state_dict(state_dict, strict=True)
     model.eval()
 
-    _, validation_loader, _, _ = load_dataset(args, include_calibration=True)
-    images, labels = take_examples(validation_loader, cli.examples)
+    _, validation_loader, calibration_loader, _ = load_dataset(
+        args, include_calibration=True
+    )
+    verification_loader = (
+        validation_loader
+        if cli.verification_split == "validation"
+        else calibration_loader
+    )
+    images, labels = take_examples(verification_loader, cli.examples)
 
     with torch.no_grad():
         full_model_scores = model(images)
@@ -255,7 +268,7 @@ def main():
         for comparison in comparisons.values()
     )
 
-    split_manifest = validation_loader.split_manifest
+    split_manifest = verification_loader.split_manifest
     result = {
         "format_version": 1,
         "status": "passed" if all_checks_passed else "failed",
@@ -281,12 +294,13 @@ def main():
             ],
         },
         "data_policy": {
-            "verification_partition": "validation",
-            "calibration_used": False,
+            "verification_partition": cli.verification_split,
+            "calibration_used": cli.verification_split == "calibration",
+            "validation_used": cli.verification_split == "validation",
             "test_used": False,
             "examples": cli.examples,
-            "validation_indices_sha256": split_manifest["partitions"][
-                "validation"
+            "verification_indices_sha256": split_manifest["partitions"][
+                cli.verification_split
             ]["indices_sha256"],
             "input_tensor_sha256": tensor_sha256(images),
             "encoded_input_tensor_sha256": tensor_sha256(encoded_inputs),

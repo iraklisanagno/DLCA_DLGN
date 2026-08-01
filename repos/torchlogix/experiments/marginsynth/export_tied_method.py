@@ -43,6 +43,12 @@ def main() -> None:
     )
     parser.add_argument("--prepare-residual-trace", action="store_true")
     parser.add_argument(
+        "--verification-split",
+        choices=["validation", "calibration"],
+        default="validation",
+        help="Split used only for export/synthesis semantic verification",
+    )
+    parser.add_argument(
         "--resume",
         action="store_true",
         help="Resume a failed child export without deleting its diagnostic logs.",
@@ -83,6 +89,7 @@ def main() -> None:
             "--examples", "6000",
             "--pack-bits", "16",
             "--compile-opt-level", "0",
+            "--verification-split", cli.verification_split,
         ],
         export_dir / f"export{log_tag}.console.log",
     )
@@ -94,6 +101,7 @@ def main() -> None:
             "--examples", "6000",
             "--pack-bits", "16",
             "--compile-opt-level", "0",
+            "--verification-split", cli.verification_split,
         ],
         export_dir / f"synthesis{log_tag}.console.log",
     )
@@ -118,6 +126,9 @@ def main() -> None:
         "abc_and_nodes": synthesis["abc"]["stats"]["and_nodes"],
         "abc_levels": synthesis["abc"]["stats"]["levels"],
         "residual_trace_prepared": cli.prepare_residual_trace,
+        "verification_split": cli.verification_split,
+        "validation_used": cli.verification_split == "validation",
+        "calibration_used": cli.verification_split == "calibration",
         "test_used": False,
     }
     (method_dir / "export_summary.json").write_text(

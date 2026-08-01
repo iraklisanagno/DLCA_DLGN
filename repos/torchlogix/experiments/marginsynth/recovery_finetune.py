@@ -263,18 +263,32 @@ def main() -> None:
     train_images, train_labels = take_examples(
         deterministic_train_loader, len(deterministic_train_loader.dataset)
     )
-    calibration_images, calibration_labels = take_examples(
-        calibration_loader, len(calibration_loader.dataset)
-    )
-    validation_images, validation_labels = take_examples(
-        validation_loader, len(validation_loader.dataset)
-    )
+    report_calibration = bool(config.get("report_calibration", True))
+    report_validation = bool(config.get("report_validation", True))
+    calibration_images = calibration_labels = None
+    validation_images = validation_labels = None
+    if report_calibration:
+        calibration_images, calibration_labels = take_examples(
+            calibration_loader, len(calibration_loader.dataset)
+        )
+    if report_validation:
+        validation_images, validation_labels = take_examples(
+            validation_loader, len(validation_loader.dataset)
+        )
 
     encoder = get_model(thresholds, args)
     encoder.load_state_dict(teacher_state, strict=True)
     train_encoded = encode_partition(encoder, train_images)
-    calibration_encoded = encode_partition(encoder, calibration_images)
-    validation_encoded = encode_partition(encoder, validation_images)
+    calibration_encoded = (
+        encode_partition(encoder, calibration_images)
+        if report_calibration
+        else None
+    )
+    validation_encoded = (
+        encode_partition(encoder, validation_images)
+        if report_validation
+        else None
+    )
     del encoder, train_images, calibration_images, validation_images
 
     evaluation_batch_size = int(config["evaluation_batch_size"])
@@ -284,11 +298,15 @@ def main() -> None:
     teacher_train_scores = evaluate_encoded(
         teacher, train_encoded, evaluation_batch_size, device
     )
-    teacher_calibration_scores = evaluate_encoded(
-        teacher, calibration_encoded, evaluation_batch_size, device
+    teacher_calibration_scores = (
+        evaluate_encoded(teacher, calibration_encoded, evaluation_batch_size, device)
+        if report_calibration
+        else None
     )
-    teacher_validation_scores = evaluate_encoded(
-        teacher, validation_encoded, evaluation_batch_size, device
+    teacher_validation_scores = (
+        evaluate_encoded(teacher, validation_encoded, evaluation_batch_size, device)
+        if report_validation
+        else None
     )
     del teacher
 
@@ -519,24 +537,31 @@ def main() -> None:
     )
     model.load_state_dict(selected_payload["model_state_dict"], strict=True)
     model.to(device).eval()
-    calibration_metrics, _ = evaluate_metrics(
-        model,
-        calibration_encoded,
-        calibration_labels,
-        teacher_calibration_scores,
-        evaluation_batch_size,
-        device,
-    )
-    validation_metrics, _ = evaluate_metrics(
-        model,
-        validation_encoded,
-        validation_labels,
-        teacher_validation_scores,
-        evaluation_batch_size,
-        device,
-    )
-    for value in (calibration_metrics, validation_metrics):
-        value["within_budgets"] = within_constraints(value, config["report_budgets"])
+    calibration_metrics = validation_metrics = None
+    if report_calibration:
+        calibration_metrics, _ = evaluate_metrics(
+            model,
+            calibration_encoded,
+            calibration_labels,
+            teacher_calibration_scores,
+            evaluation_batch_size,
+            device,
+        )
+        calibration_metrics["within_budgets"] = within_constraints(
+            calibration_metrics, config["report_budgets"]
+        )
+    if report_validation:
+        validation_metrics, _ = evaluate_metrics(
+            model,
+            validation_encoded,
+            validation_labels,
+            teacher_validation_scores,
+            evaluation_batch_size,
+            device,
+        )
+        validation_metrics["within_budgets"] = within_constraints(
+            validation_metrics, config["report_budgets"]
+        )
     recovered_path = output_dir / "recovered_checkpoint.pt"
     torch.save(
         {
@@ -586,7 +611,9 @@ def main() -> None:
         "epoch_permutation_sha256": permutations,
         "recovery_examples": len(recovery_indices),
         "monitor_examples": len(monitor_indices),
+        "calibration_loaded_for_reporting": report_calibration,
         "calibration_used_for_selection": False,
+        "validation_loaded_for_reporting": report_validation,
         "validation_used_for_selection": False,
         "test_used": False,
     }
@@ -634,8 +661,10 @@ def main() -> None:
         "data_policy": {
             "gradient_partition": "original_train_recovery_subset",
             "selection_partition": "original_train_monitor_holdout",
-            "calibration_report_only": True,
-            "validation_report_only": True,
+            "calibration_report_only": report_calibration,
+            "validation_report_only": report_validation,
+            "calibration_loaded": report_calibration,
+            "validation_loaded": report_validation,
             "test_used": False,
         },
         "artifacts": {

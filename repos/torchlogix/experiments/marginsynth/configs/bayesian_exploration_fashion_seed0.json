@@ -1,0 +1,384 @@
+{
+  "format_version": 1,
+  "protocol_name": "marginsynth_bayesian_fashion_seed0_v2",
+  "objectives": [
+    "accuracy_loss",
+    "abc_and_nodes"
+  ],
+  "optimizer_objectives": [
+    "accuracy_loss",
+    "predicted_abc_and_nodes"
+  ],
+  "sampler": {
+    "name": "motpe",
+    "seed": 314159,
+    "n_startup_trials": 12,
+    "trials_per_study": 40,
+    "multivariate": true,
+    "group": true,
+    "constant_liar": false,
+    "enqueue_reference": true
+  },
+  "budgets": {
+    "accuracy_loss": 0.0033333333333333335,
+    "per_class_accuracy_loss": 0.015,
+    "disagreement": 0.03,
+    "per_class_disagreement": 0.075
+  },
+  "study_cases": {
+    "guarded_constrained": {
+      "method": "guarded_two_pass",
+      "disagreement_policy": "constrained"
+    },
+    "guarded_unconstrained": {
+      "method": "guarded_two_pass",
+      "disagreement_policy": "unconstrained"
+    },
+    "aggressive_constrained": {
+      "method": "aggressive_recovery",
+      "disagreement_policy": "constrained"
+    },
+    "aggressive_unconstrained": {
+      "method": "aggressive_recovery",
+      "disagreement_policy": "unconstrained"
+    }
+  },
+  "templates": {
+    "first_resynthesis": "circuit_distillation_fashion_seed0_v3.json",
+    "second_resynthesis": "circuit_distillation_fashion_conservative_pass2_seed0.json",
+    "recovery": "recovery_fashion_aggressive_seed0.json"
+  },
+  "execution": {
+    "model_seed": 0,
+    "maximum_primary_recovery_steps": 3000,
+    "reporting_folds": 4,
+    "stage_timeout_seconds": 1800,
+    "cost_model": "synth_cost_model.json",
+    "auto_synthesize_feasible": false,
+    "promotion_trials_per_study": 10
+  },
+  "references": {
+    "unit_tying": {
+      "ratio": 0.1,
+      "validation_accuracy": 0.8696666666666667,
+      "live_gates": 30405,
+      "abc_and_nodes": 94084,
+      "abc_levels": 79
+    },
+    "original": {
+      "validation_accuracy": 0.873,
+      "live_gates": 34740,
+      "abc_and_nodes": 107369,
+      "abc_levels": 79
+    }
+  },
+  "search_spaces": {
+    "guarded_two_pass": {
+      "cost_kind": {
+        "type": "categorical",
+        "choices": ["aig", "gate-count"]
+      },
+      "decision_weight": {
+        "type": "float",
+        "low": 0.5,
+        "high": 2.0,
+        "log": true
+      },
+      "first_class_weight": {
+        "type": "float",
+        "low": 0.1,
+        "high": 2.0,
+        "log": true
+      },
+      "first_cost_warmup_fraction": {
+        "type": "float",
+        "low": 0.05,
+        "high": 0.3
+      },
+      "first_fold_weight": {
+        "type": "float",
+        "low": 0.1,
+        "high": 2.0,
+        "log": true
+      },
+      "first_hardware_weight": {
+        "type": "float",
+        "low": 0.5,
+        "high": 5.0,
+        "log": true
+      },
+      "first_initial_logit_gap": {
+        "type": "float",
+        "low": 2.5,
+        "high": 6.0
+      },
+      "first_label_weight": {
+        "type": "float",
+        "low": 0.01,
+        "high": 0.2,
+        "log": true
+      },
+      "first_learning_rate": {
+        "type": "float",
+        "low": 0.008,
+        "high": 0.04,
+        "log": true
+      },
+      "first_steps": {
+        "type": "categorical",
+        "choices": [200, 400, 600]
+      },
+      "first_temperature_end": {
+        "type": "float",
+        "low": 0.15,
+        "high": 0.6
+      },
+      "margin_reserve": {
+        "type": "float",
+        "low": 0.1,
+        "high": 0.5
+      },
+      "margin_retention": {
+        "type": "float",
+        "low": 0.35,
+        "high": 0.8
+      },
+      "repair_scan": {
+        "type": "categorical",
+        "choices": [32, 64, 128]
+      },
+      "second_class_weight": {
+        "type": "float",
+        "low": 0.1,
+        "high": 2.0,
+        "log": true
+      },
+      "second_cost_warmup_fraction": {
+        "type": "float",
+        "low": 0.05,
+        "high": 0.3
+      },
+      "second_fold_weight": {
+        "type": "float",
+        "low": 0.1,
+        "high": 2.0,
+        "log": true
+      },
+      "second_hardware_weight": {
+        "type": "float",
+        "low": 0.5,
+        "high": 5.0,
+        "log": true
+      },
+      "second_initial_logit_gap": {
+        "type": "float",
+        "low": 2.5,
+        "high": 6.0
+      },
+      "second_label_weight": {
+        "type": "float",
+        "low": 0.01,
+        "high": 0.2,
+        "log": true
+      },
+      "second_learning_rate": {
+        "type": "float",
+        "low": 0.008,
+        "high": 0.04,
+        "log": true
+      },
+      "second_steps": {
+        "type": "categorical",
+        "choices": [200, 400, 600]
+      },
+      "second_temperature_end": {
+        "type": "float",
+        "low": 0.15,
+        "high": 0.6
+      }
+    },
+    "aggressive_recovery": {
+      "cost_kind": {
+        "type": "categorical",
+        "choices": ["aig", "gate-count"]
+      },
+      "decision_weight": {
+        "type": "float",
+        "low": 0.5,
+        "high": 2.0,
+        "log": true
+      },
+      "first_class_weight": {
+        "type": "float",
+        "low": 0.1,
+        "high": 2.0,
+        "log": true
+      },
+      "first_cost_warmup_fraction": {
+        "type": "float",
+        "low": 0.05,
+        "high": 0.3
+      },
+      "first_fold_weight": {
+        "type": "float",
+        "low": 0.1,
+        "high": 2.0,
+        "log": true
+      },
+      "first_hardware_weight": {
+        "type": "float",
+        "low": 0.5,
+        "high": 5.0,
+        "log": true
+      },
+      "first_initial_logit_gap": {
+        "type": "float",
+        "low": 2.5,
+        "high": 6.0
+      },
+      "first_label_weight": {
+        "type": "float",
+        "low": 0.01,
+        "high": 0.2,
+        "log": true
+      },
+      "first_learning_rate": {
+        "type": "float",
+        "low": 0.008,
+        "high": 0.04,
+        "log": true
+      },
+      "first_steps": {
+        "type": "categorical",
+        "choices": [200, 400, 600]
+      },
+      "first_temperature_end": {
+        "type": "float",
+        "low": 0.15,
+        "high": 0.6
+      },
+      "hardware_ceiling_tolerance": {
+        "type": "float",
+        "low": 0.0,
+        "high": 0.03
+      },
+      "margin_reserve": {
+        "type": "float",
+        "low": 0.1,
+        "high": 0.5
+      },
+      "margin_retention": {
+        "type": "float",
+        "low": 0.35,
+        "high": 0.8
+      },
+      "recovery_class_weight": {
+        "type": "float",
+        "low": 0.1,
+        "high": 2.0,
+        "log": true
+      },
+      "recovery_decision_weight": {
+        "type": "float",
+        "low": 0.25,
+        "high": 2.0,
+        "log": true
+      },
+      "recovery_entropy_weight": {
+        "type": "categorical",
+        "choices": [0.0, 0.0003, 0.001, 0.003]
+      },
+      "recovery_fold_weight": {
+        "type": "float",
+        "low": 0.1,
+        "high": 2.0,
+        "log": true
+      },
+      "recovery_hardware_weight": {
+        "type": "float",
+        "low": 5.0,
+        "high": 30.0,
+        "log": true
+      },
+      "recovery_initial_logit_gap": {
+        "type": "float",
+        "low": 2.5,
+        "high": 6.0
+      },
+      "recovery_label_weight": {
+        "type": "float",
+        "low": 0.5,
+        "high": 2.0,
+        "log": true
+      },
+      "recovery_learning_rate": {
+        "type": "float",
+        "low": 0.0005,
+        "high": 0.005,
+        "log": true
+      },
+      "recovery_steps": {
+        "type": "categorical",
+        "choices": [1000, 2000, 3000, 5000]
+      },
+      "recovery_temperature_end": {
+        "type": "float",
+        "low": 0.15,
+        "high": 0.6
+      }
+    }
+  },
+  "reference_parameters": {
+    "guarded_two_pass": {
+      "cost_kind": "gate-count",
+      "decision_weight": 1.0,
+      "first_class_weight": 0.5,
+      "first_cost_warmup_fraction": 0.1,
+      "first_fold_weight": 0.5,
+      "first_hardware_weight": 2.0,
+      "first_initial_logit_gap": 4.0,
+      "first_label_weight": 0.05,
+      "first_learning_rate": 0.02,
+      "first_steps": 400,
+      "first_temperature_end": 0.25,
+      "margin_reserve": 0.25,
+      "margin_retention": 0.5,
+      "repair_scan": 64,
+      "second_class_weight": 0.5,
+      "second_cost_warmup_fraction": 0.1,
+      "second_fold_weight": 0.5,
+      "second_hardware_weight": 2.0,
+      "second_initial_logit_gap": 4.0,
+      "second_label_weight": 0.05,
+      "second_learning_rate": 0.02,
+      "second_steps": 400,
+      "second_temperature_end": 0.25
+    },
+    "aggressive_recovery": {
+      "cost_kind": "aig",
+      "decision_weight": 1.0,
+      "first_class_weight": 0.5,
+      "first_cost_warmup_fraction": 0.1,
+      "first_fold_weight": 0.5,
+      "first_hardware_weight": 2.0,
+      "first_initial_logit_gap": 4.0,
+      "first_label_weight": 0.05,
+      "first_learning_rate": 0.02,
+      "first_steps": 400,
+      "first_temperature_end": 0.25,
+      "hardware_ceiling_tolerance": 0.0,
+      "margin_reserve": 0.25,
+      "margin_retention": 0.5,
+      "recovery_class_weight": 0.25,
+      "recovery_decision_weight": 1.0,
+      "recovery_entropy_weight": 0.001,
+      "recovery_fold_weight": 0.25,
+      "recovery_hardware_weight": 10.0,
+      "recovery_initial_logit_gap": 4.0,
+      "recovery_label_weight": 1.0,
+      "recovery_learning_rate": 0.002,
+      "recovery_steps": 3000,
+      "recovery_temperature_end": 0.25
+    }
+  }
+}
