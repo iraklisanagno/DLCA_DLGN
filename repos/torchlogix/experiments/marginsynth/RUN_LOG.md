@@ -18,6 +18,7 @@ and the held-out test policy in
 | `pilot_fashion_mnist_paper_small_raw_seed0` | First dense scalability pilot and direct Two-Stage Unit Tying baseline | Fashion-MNIST | `DlgnFashionMnistPaperSmall`, rank-2 raw, fixed random connections; 6 × 8,000 = 48,000 nominal gates | 0 | Completed and verified; test sealed | [training config](configs/pilot_fashion_mnist_paper_small_raw_seed0.json), [unit-tying config](configs/two_stage_unit_tying_fashion_seed0.json) | `results/pilot_fashion_mnist_paper_small_raw_seed0/` |
 | `margin_all_aig_holdout_v3_seed0` | Independent whole-circuit LUT resynthesis central pilot | Fashion-MNIST | Same frozen checkpoint; four internal layers jointly optimized on GPU | 0 | Completed and synthesized; seed-0 promotion failed | [config](configs/circuit_distillation_fashion_seed0_v3.json) | `results/pilot_fashion_mnist_paper_small_raw_seed0/distillation/margin_all_aig_holdout_v3_seed0/` |
 | `ablation_matrix_v3_seed0` | Margin/MSE, action-space, proxy, group-robustness, and repair ablations | Fashion-MNIST | Same frozen checkpoint and partitions | 0 | Five ablations completed and synthesized; test sealed | [runner](run_circuit_distillation_ablations.py) | `results/pilot_fashion_mnist_paper_small_raw_seed0/distillation/ablation_matrix_v3_seed0/` |
+| `marginsynth_bayesian_fashion_seed0_v2` | Four-case constrained MOTPE exploration of guarded two-pass and aggressive/recovery MarginSynth | Fashion-MNIST | Same frozen six-layer, 48,000-gate checkpoint; four editable internal layers | 0 | 160/160 acquisition trials and 27/27 exact promotions completed; validation/test sealed | [protocol](configs/bayesian_exploration_fashion_seed0.json) | `results/pilot_fashion_mnist_paper_small_raw_seed0/bayesian_search/marginsynth_bayesian_fashion_seed0_v2/` |
 
 ## `dev_mnist_tiny_raw_seed0`
 
@@ -790,3 +791,171 @@ size. Test data remained sealed throughout redesign development.
 
 The final redesign-focused MarginSynth/Circuit/protocol suite passed all 123
 tests. Python compilation and `git diff --check` also passed.
+
+### Four-case Bayesian exploration: seed-0 development
+
+This run implements the prespecified multi-objective exploration of guarded
+two-pass MarginSynth and aggressive MarginSynth plus short recovery, each with
+and without disagreement constraints. It starts from the original hardened
+checkpoint, never a Unit-Tying checkpoint. The frozen source revision used by
+all 160 trials is `7623e0eb7d7fe367eee077cc40205203a962c666`; the canonical
+protocol SHA-256 is
+`965bcab6101ea706f980a87a659046b2ac916779ddaf23fb6abc56232aee1323`.
+
+Frozen search protocol:
+
+- Optuna 4.6.0 constrained multi-objective TPE, sampler seed 314159;
+- 40 trials per case: one enqueued reference, 11 additional startup trials,
+  and 28 guided suggestions;
+- minimized guard accuracy loss and an operation-aware ABC-node estimate;
+- 0.333 percentage-point global accuracy-loss budget and 1.5-point
+  worst-class accuracy-loss budget in every case;
+- additional 3% global and 7.5% worst-class disagreement budgets only in the
+  constrained cases;
+- exact Yosys/ABC promotion of at most ten deterministic feasible
+  proxy-Pareto/diversity candidates per case; and
+- a fixed stratified 60/20/20 calibration partition. The 1,200-example guard
+  is unseen by both resynthesis gradients and exact repair.
+
+Launch commands, from `repos/torchlogix`:
+
+```bash
+DATASET_PATH=/tmp/torchlogix-datasets \
+venv/bin/python experiments/marginsynth/bayesian_search.py \
+  experiments/marginsynth/results/pilot_fashion_mnist_paper_small_raw_seed0 \
+  --protocol experiments/marginsynth/configs/bayesian_exploration_fashion_seed0.json \
+  --study all
+
+DATASET_PATH=/tmp/torchlogix-datasets \
+venv/bin/python experiments/marginsynth/promote_bayesian_trials.py \
+  experiments/marginsynth/results/pilot_fashion_mnist_paper_small_raw_seed0 \
+  --protocol experiments/marginsynth/configs/bayesian_exploration_fashion_seed0.json \
+  --study all
+
+DATASET_PATH=/tmp/torchlogix-datasets \
+venv/bin/python experiments/marginsynth/evaluate_calibration_guard.py \
+  experiments/marginsynth/results/pilot_fashion_mnist_paper_small_raw_seed0 \
+  experiments/marginsynth/results/pilot_fashion_mnist_paper_small_raw_seed0/baselines/two_stage_unit_tying/ratio_10 \
+  --checkpoint tied_checkpoint.pt \
+  --partition-config experiments/marginsynth/results/pilot_fashion_mnist_paper_small_raw_seed0/bayesian_search/marginsynth_bayesian_fashion_seed0_v2/guarded_constrained/trials/trial_00028/input_configs/first_resynthesis.json \
+  --output bayesian_guard_reference.json --report-only
+
+venv/bin/python experiments/marginsynth/summarize_bayesian_results.py \
+  experiments/marginsynth/results/pilot_fashion_mnist_paper_small_raw_seed0 \
+  --protocol experiments/marginsynth/configs/bayesian_exploration_fashion_seed0.json
+```
+
+All 160 acquisition trials completed without an execution failure. Twenty-nine
+were behaviorally feasible. The frozen promotion rule selected and exactly
+synthesized 27 candidates; all 27 passed export, compiled-C equivalence,
+hardware normalization, Yosys, and ABC.
+
+| Case | Feasible / 40 | Exact | Best trial | Guard accuracy loss | Disagreement | Worst-class loss | Worst-class disagreement | Live gates | ABC nodes | Levels | Method time |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Guarded two-pass, constrained | 4 | 4 | 28 | -0.250 pp | 2.083% | 0.893 pp | 4.464% | 27,493 | 91,919 | 79 | 28.73 s |
+| Guarded two-pass, unconstrained | 3 | 3 | 18 | -0.083 pp | 1.083% | 0.877 pp | 2.500% | 31,818 | 96,994 | 78 | 27.34 s |
+| Aggressive + recovery, constrained | 11 | 10 | 16 | -0.083 pp | 1.167% | 0.833 pp | 3.150% | 33,230 | 98,273 | 78 | 46.25 s |
+| Aggressive + recovery, unconstrained | 11 | 10 | 16 | -0.083 pp | 1.167% | 0.833 pp | 3.150% | 33,230 | 98,273 | 78 | 46.22 s |
+
+Negative accuracy loss means an improvement relative to the original teacher
+on the reserved guard. The aggressive constrained and unconstrained studies
+are identical in suggested parameters, guard outputs, and synthesized costs:
+every sampled disagreement violation also violated worst-class accuracy, so
+disagreement was redundant under the accuracy guard in this pipeline. The
+hardware-best aggressive point selected recovery step zero; short recovery did
+not produce its best hardware point.
+
+The seed-0 hardware winner is guarded-constrained trial 28. Relative to the
+10% Two-Stage Unit Tying point, it has 2,165 fewer ABC nodes (2.301%), 2,912
+fewer live gates (9.577%), and the same 79-level depth. Relative to the original
+exact circuit, it reduces ABC nodes by 14.390% and live gates by 20.861%.
+
+The Unit-Tying checkpoint was evaluated after search, in report-only mode, on
+the exact same 1,200-example guard. It loses 0.083 percentage points of global
+accuracy, has 2.000% disagreement, loses 2.632 points in its worst class, and
+has 5.042% worst-class disagreement. Trial 28 improves global guard accuracy
+by 0.250 points, has 2.083% disagreement, loses 0.893 points in its worst
+class, and has 4.464% worst-class disagreement. Thus trial 28 is one sample
+worse in global disagreement but materially better in worst-class accuracy
+and worst-class disagreement. Unit Tying violates the frozen 1.5-point
+worst-class accuracy guard; trial 28 passes every guard.
+
+Trial 28 uses the gate-count training proxy, 400 first-pass updates, and 600
+second-pass updates. The two GPU optimizations take 9.03 and 10.12 seconds;
+complete first/second resynthesis takes 10.01 and 11.21 seconds. Peak allocated
+GPU memory is 234,798,080 bytes. Exact repair retains 4,211 first-pass and
+2,017 second-pass LUT changes. Across the 6,228 retained changes, 1,626 are
+constants and 4,602 are routing/inversion functions; no alternative binary
+function survives repair. Retained changes by internal layer are 1,764,
+1,652, 1,519, and 1,293. These outcome counts are an important action-space
+ablation: the method offered all 16 rank-2 Boolean functions, but this winning
+point obtained its gain from constants and routing.
+
+Runtime is a current weakness. The frozen trial takes 28.73 seconds versus
+2.016 seconds for the existing Unit-Tying 10% implementation, approximately
+14.3 times slower before exact synthesis. The serial four-case acquisition
+takes 6,511.53 seconds (1.809 hours); summed completed-trial time is 6,474.42
+seconds. Exact promotion adds 5,259.92 seconds (1.461 hours), dominated by the
+CPU export/simplification/Yosys flow. Exploration, frozen-method application,
+and common exact synthesis must remain separate columns in paper tables.
+
+Development failures were preserved instead of removed. The first v1 smoke
+launch recorded four CUDA-not-visible failures inside the restricted sandbox
+before successful GPU reruns. The first v2 smoke recorded one cost-proxy shape
+failure per case; the proxy was corrected to take `[1, 28, 84]` from the
+source export-verification artifact and each case then completed. The v1 exact
+integration also remains archived: its guarded point was infeasible at 95,371
+nodes and its aggressive point was feasible at 98,304 nodes. None of these
+diagnostic runs enters the v2 Pareto tables.
+
+The run used PyTorch 2.9.0+cu130, CUDA 13.0, an NVIDIA RTX PRO 6000 Blackwell
+Max-Q Workstation Edition, Yosys 0.9, and Berkeley ABC 1.01. The original
+teacher checkpoint SHA-256 is
+`edcc3334a9f2c1a34c8875767f08c8094d29aabd8c15ff9c1c1c8decc12a91f6`;
+trial 28's promoted checkpoint SHA-256 is
+`ef269006bda3f0490ce087760013ff51756bc64688cdf824b4a889c58e490b3f`.
+
+Machine-readable meta-analysis artifacts include the Optuna SQLite database,
+append-only lifecycle events, all failed/infeasible trials, resolved configs,
+checkpoint and split hashes, optimization/recovery traces, per-class/fold
+metrics, subprocess commands/resources, exact circuits, synthesis logs,
+portable long-form CSV tables, per-case exact Pareto tables, and the generated
+cross-case JSON/CSV summary. The cross-case JSON/CSV SHA-256 hashes are
+`faa35f2326c542da96b730516a6e1ad2970558447185c62e5c7879f1f6cdaec2`
+and
+`937c7712688e572ed462dcc162ea55b6c5a7b8556e062060d29cd533a2b6dc72`.
+The report-only Unit-Tying same-guard result has SHA-256
+`a87bfa569e054063dc489930be4d32aeb9a5c3042806dab2ca06a73e51afbbd3`.
+The root exact-promotion summary SHA-256 is
+`1b761fe2923eb25d423cf05f86a35543765da69212f02d5e91e51d79a7107fb0`;
+the frozen protocol file SHA-256 is
+`dd520ad4d42e4f87480b6250f9ab43bee45f26ae3d3c0f49ca8c4c078e54813d`.
+
+Post-run verification used:
+
+```bash
+venv/bin/python -m py_compile \
+  experiments/marginsynth/evaluate_calibration_guard.py \
+  experiments/marginsynth/summarize_bayesian_results.py \
+  tests/test_bayesian_summary.py
+PYTHONPATH=. venv/bin/pytest -q \
+  tests/test_marginsynth.py tests/test_bayesian_summary.py
+PYTHONPATH=. venv/bin/pytest -q
+```
+
+Compilation passed, all 67 focused tests passed, and the complete repository
+suite reported 3,364 passed, 3,038 skipped, and one pre-existing tensor-copy
+warning in 146.30 seconds. An initial test collection without `PYTHONPATH=.`
+failed because this repository exposes `experiments` as a namespace from its
+root; the logged commands make that environment requirement explicit. The new
+checks cover exact-cost winner selection and baseline deltas, acquisition-only
+event timing, and the distinction between a selection measurement and a
+post-search report-only audit. `venv/bin/black` was not available, so no
+formatter was installed or applied after the frozen runs; compilation and
+`git diff --check` were used as the source-format sanity checks.
+
+This is a strong seed-0 development result, not yet a paper claim. Validation
+and test were not loaded anywhere in v2 acquisition or promotion. The next
+protocol step is to repeat the guarded-constrained configuration on seeds 1
+and 2, freeze one transferable configuration without inspecting validation,
+and only then perform the predeclared multi-seed validation/test evaluation.

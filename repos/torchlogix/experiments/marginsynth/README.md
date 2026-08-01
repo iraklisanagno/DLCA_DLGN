@@ -774,7 +774,8 @@ MarginSynth and aggressive MarginSynth plus short recovery is specified in
 [`BAYESIAN_SEARCH_PROTOCOL.md`](BAYESIAN_SEARCH_PROTOCOL.md). It implements
 separate constrained- and unconstrained-disagreement studies, a shared unseen
 calibration guard, exact feasible-only ABC objectives, resumable Optuna state,
-and trial/study tables designed for paper ablations and meta-analysis.
+trial/study tables designed for paper ablations and meta-analysis, and an
+idempotent `summarize_bayesian_results.py` cross-case JSON/CSV export.
 
 ## Definition of done
 

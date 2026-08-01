@@ -178,6 +178,20 @@ venv/bin/python experiments/marginsynth/promote_bayesian_trials.py \
   --study all
 ```
 
+Generate the idempotent cross-case JSON/CSV meta-analysis table after exact
+promotion:
+
+```bash
+venv/bin/python experiments/marginsynth/summarize_bayesian_results.py \
+  experiments/marginsynth/results/pilot_fashion_mnist_paper_small_raw_seed0 \
+  --protocol experiments/marginsynth/configs/bayesian_exploration_fashion_seed0.json
+```
+
+The optional same-guard baseline audit uses
+`evaluate_calibration_guard.py --report-only`; this marks the result as a
+post-search reference measurement and prevents it from being mistaken for a
+Bayesian-selection input.
+
 Resume safely after interruption, adding the requested number of trials to
 each selected study:
 

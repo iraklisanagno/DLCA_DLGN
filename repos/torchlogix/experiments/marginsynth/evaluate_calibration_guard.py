@@ -72,6 +72,17 @@ def metrics_for_indices(
     )
 
 
+def evaluation_data_policy(report_only: bool) -> dict[str, bool]:
+    """Describe which data were consumed and whether metrics drove selection."""
+    return {
+        "calibration_guard_only": True,
+        "validation_loaded": False,
+        "test_loaded": False,
+        "used_for_bayesian_selection": not report_only,
+        "report_only": report_only,
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("run_dir", type=Path)
@@ -81,6 +92,14 @@ def main() -> None:
     parser.add_argument("--output", default="bayesian_guard_evaluation.json")
     parser.add_argument("--batch-size", type=int, default=512)
     parser.add_argument("--reporting-folds", type=int, default=4)
+    parser.add_argument(
+        "--report-only",
+        action="store_true",
+        help=(
+            "Mark this evaluation as a post-search reference/ablation audit "
+            "rather than a Bayesian-selection measurement"
+        ),
+    )
     cli = parser.parse_args()
     if not torch.cuda.is_available():
         raise RuntimeError("calibration-guard evaluation requires CUDA")
@@ -198,12 +217,7 @@ def main() -> None:
         "calibration_labels_sha256": tensor_sha256(calibration_labels),
         "guard": aggregate,
         "reporting_folds": folds,
-        "data_policy": {
-            "calibration_guard_only": True,
-            "validation_loaded": False,
-            "test_loaded": False,
-            "used_for_bayesian_selection": True,
-        },
+        "data_policy": evaluation_data_policy(cli.report_only),
         "software": {
             "source_revision": git_revision(),
             "python": platform.python_version(),
