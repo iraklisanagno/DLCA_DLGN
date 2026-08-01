@@ -179,6 +179,45 @@ def stratified_optimization_repair_split(
     )
 
 
+def stratified_optimization_repair_guard_split(
+    labels: torch.Tensor,
+    optimization_fraction: float,
+    repair_fraction: float,
+    seed: int,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    """Three disjoint class-stratified sets for repeat resynthesis.
+
+    Optimization supplies gradients, repair chooses the hardened prefix, and
+    guard is untouched until the selected prefix has been fixed.
+    """
+    if not 0.0 < optimization_fraction < 1.0:
+        raise ValueError("optimization_fraction must be strictly between zero and one")
+    if not 0.0 < repair_fraction < 1.0 - optimization_fraction:
+        raise ValueError("repair_fraction must leave a nonempty guard fraction")
+    values = labels.detach().cpu().numpy()
+    rng = np.random.default_rng(seed)
+    optimize, repair, guard = [], [], []
+    for label in np.unique(values):
+        indices = np.flatnonzero(values == label)
+        indices = indices[rng.permutation(len(indices))]
+        first = min(
+            len(indices) - 2,
+            max(1, int(round(len(indices) * optimization_fraction))),
+        )
+        second = min(
+            len(indices) - 1,
+            max(first + 1, first + int(round(len(indices) * repair_fraction))),
+        )
+        optimize.extend(indices[:first].tolist())
+        repair.extend(indices[first:second].tolist())
+        guard.extend(indices[second:].tolist())
+    return (
+        torch.tensor(sorted(optimize), dtype=torch.long),
+        torch.tensor(sorted(repair), dtype=torch.long),
+        torch.tensor(sorted(guard), dtype=torch.long),
+    )
+
+
 def changed_lut_records(
     layers,
     eligible_layers: list[int],
@@ -280,9 +319,18 @@ def main() -> None:
     torch.cuda.reset_peak_memory_stats()
 
     checkpoint_path = run_dir / config.get("source_checkpoint", "best_checkpoint.pt")
+    teacher_checkpoint_path = run_dir / config.get(
+        "teacher_checkpoint", config.get("source_checkpoint", "best_checkpoint.pt")
+    )
     checkpoint = torch.load(checkpoint_path, map_location="cpu", weights_only=True)
-    original_state = checkpoint["model_state_dict"]
-    thresholds = original_state["0.thresholds"]
+    teacher_checkpoint = torch.load(
+        teacher_checkpoint_path, map_location="cpu", weights_only=True
+    )
+    source_state = checkpoint["model_state_dict"]
+    teacher_state = teacher_checkpoint["model_state_dict"]
+    thresholds = source_state["0.thresholds"]
+    if not torch.equal(thresholds, teacher_state["0.thresholds"]):
+        raise ValueError("source and teacher binarization thresholds differ")
 
     _, validation_loader, calibration_loader, _ = load_dataset(
         args, include_calibration=True
@@ -294,7 +342,7 @@ def main() -> None:
         validation_loader, len(validation_loader.dataset)
     )
     encoder = get_model(thresholds, args)
-    encoder.load_state_dict(original_state, strict=True)
+    encoder.load_state_dict(source_state, strict=True)
     encoder.eval()
     with torch.no_grad():
         calibration_encoded = encoder[0](calibration_images).bool().cpu()
@@ -302,7 +350,7 @@ def main() -> None:
     del encoder, calibration_images, validation_images
 
     teacher = get_model(thresholds, args)
-    teacher.load_state_dict(original_state, strict=True)
+    teacher.load_state_dict(teacher_state, strict=True)
     teacher.to(device).eval()
     evaluation_batch_size = int(config["evaluation_batch_size"])
     teacher_calibration_scores = evaluate_encoded(
@@ -323,20 +371,43 @@ def main() -> None:
         validation_labels,
         teacher_validation_predictions,
     )
-    optimization_indices, repair_indices = stratified_optimization_repair_split(
-        calibration_labels,
-        float(config.get("optimization_fraction", 0.75)),
-        seed + 104729,
-    )
+    guard_fraction = float(config.get("guard_fraction", 0.0))
+    if guard_fraction > 0.0:
+        optimization_fraction = float(config.get("optimization_fraction", 0.6))
+        repair_fraction = float(config.get("repair_fraction", 0.2))
+        if abs(optimization_fraction + repair_fraction + guard_fraction - 1.0) > 1e-12:
+            raise ValueError("optimization, repair, and guard fractions must sum to one")
+        optimization_indices, repair_indices, guard_indices = (
+            stratified_optimization_repair_guard_split(
+                calibration_labels,
+                optimization_fraction,
+                repair_fraction,
+                seed + 104729,
+            )
+        )
+    else:
+        optimization_indices, repair_indices = stratified_optimization_repair_split(
+            calibration_labels,
+            float(config.get("optimization_fraction", 0.75)),
+            seed + 104729,
+        )
+        guard_indices = torch.empty(0, dtype=torch.long)
     repair_labels = calibration_labels[repair_indices]
     repair_teacher_scores = teacher_calibration_scores[repair_indices]
     repair_teacher_predictions = teacher_calibration_predictions[repair_indices]
     baseline_repair = metric_record(
         repair_teacher_scores, repair_labels, repair_teacher_predictions
     )
+    baseline_guard = None
+    if len(guard_indices):
+        baseline_guard = metric_record(
+            teacher_calibration_scores[guard_indices],
+            calibration_labels[guard_indices],
+            teacher_calibration_predictions[guard_indices],
+        )
 
     student = get_model(thresholds, args)
-    student.load_state_dict(original_state, strict=True)
+    student.load_state_dict(source_state, strict=True)
     student.to(device).eval()
     layers = logic_layers(student)
     eligible_layers = [int(value) for value in config["eligible_logic_layers"]]
@@ -354,6 +425,37 @@ def main() -> None:
         float(config["initial_logit_gap"]),
         float(config.get("forbidden_logit", -1000.0)),
     )
+    locked_source_changes = 0
+    if bool(config.get("lock_source_changes", False)):
+        lock_reference_path = run_dir / config.get(
+            "lock_reference_checkpoint", config.get("source_checkpoint", "best_checkpoint.pt")
+        )
+        lock_reference_payload = torch.load(
+            lock_reference_path, map_location="cpu", weights_only=True
+        )
+        teacher_id_model = get_model(thresholds, args)
+        teacher_id_model.load_state_dict(teacher_state, strict=True)
+        teacher_id_layers = logic_layers(teacher_id_model)
+        lock_reference_model = get_model(thresholds, args)
+        lock_reference_model.load_state_dict(
+            lock_reference_payload["model_state_dict"], strict=True
+        )
+        lock_reference_layers = logic_layers(lock_reference_model)
+        for layer_index in eligible_layers:
+            source_layer_ids = original_ids[layer_index].to(device)
+            teacher_layer_ids = teacher_id_layers[layer_index].weight.detach().argmax(1).to(device)
+            reference_layer_ids = (
+                lock_reference_layers[layer_index].weight.detach().argmax(1).to(device)
+            )
+            locked_rows = reference_layer_ids != teacher_layer_ids
+            if bool((source_layer_ids[locked_rows] != reference_layer_ids[locked_rows]).any()):
+                raise ValueError("source altered a locked first-pass LUT function")
+            locked_source_changes += int(locked_rows.sum())
+            masks[layer_index][locked_rows] = False
+            masks[layer_index][locked_rows, source_layer_ids[locked_rows]] = True
+        del teacher_id_model, lock_reference_model
+    else:
+        lock_reference_path = None
     for parameter in student.parameters():
         parameter.requires_grad_(False)
     parameters = []
@@ -502,7 +604,7 @@ def main() -> None:
     # prefix starts with the strongest cost-reducing learned transformations.
     repair_log = []
     repair_model = get_model(thresholds, args)
-    repair_model.load_state_dict(original_state, strict=True)
+    repair_model.load_state_dict(source_state, strict=True)
     repair_model.to(device).eval()
 
     def exact_prefix_metrics(count: int) -> tuple[dict, torch.Tensor]:
@@ -536,24 +638,39 @@ def main() -> None:
     candidate_metrics, _ = exact_prefix_metrics(len(changes))
     retained = len(changes)
     if bool(config.get("repair", True)) and not candidate_metrics["within_budgets"]:
-        low, high = 0, len(changes)
-        while low + 1 < high:
-            middle = (low + high) // 2
-            metrics, _ = exact_prefix_metrics(middle)
-            if metrics["within_budgets"]:
-                low = middle
-            else:
-                high = middle
-        retained = low
-        # Probe a deterministic window because feasibility need not be perfectly
-        # monotone for interacting Boolean changes.
-        for count in range(
-            low + 1,
-            min(len(changes), low + int(config.get("repair_scan", 32))) + 1,
-        ):
-            metrics, _ = exact_prefix_metrics(count)
-            if metrics["within_budgets"]:
-                retained = count
+        zero_metrics, _ = exact_prefix_metrics(0)
+        if zero_metrics["within_budgets"]:
+            low, high = 0, len(changes)
+            while low + 1 < high:
+                middle = (low + high) // 2
+                metrics, _ = exact_prefix_metrics(middle)
+                if metrics["within_budgets"]:
+                    low = middle
+                else:
+                    high = middle
+            retained = low
+            # Probe a deterministic window because feasibility need not be perfectly
+            # monotone for interacting Boolean changes.
+            for count in range(
+                low + 1,
+                min(len(changes), low + int(config.get("repair_scan", 32))) + 1,
+            ):
+                metrics, _ = exact_prefix_metrics(count)
+                if metrics["within_budgets"]:
+                    retained = count
+        else:
+            # A repeated pass may start outside the cumulative teacher budget.
+            # Never silently treat its zero-change prefix as feasible.
+            retained = min(
+                ((0, zero_metrics), (len(changes), candidate_metrics)),
+                key=lambda pair: (
+                    pair[1]["accuracy_loss"],
+                    pair[1]["maximum_per_class_accuracy_loss"],
+                    pair[1]["decision_flip_rate"],
+                    pair[1]["maximum_per_class_disagreement"],
+                    -pair[0],
+                ),
+            )[0]
     final_repair_metrics, _ = exact_prefix_metrics(retained)
     materialize_change_prefix(
         repair_model,
@@ -576,6 +693,24 @@ def main() -> None:
     final_calibration_metrics["within_budgets"] = within_constraints(
         final_calibration_metrics, config["budgets"]
     )
+    final_guard_metrics = None
+    if len(guard_indices):
+        final_guard_scores = evaluate_encoded(
+            repair_model,
+            calibration_encoded[guard_indices],
+            evaluation_batch_size,
+            device,
+        )
+        final_guard_metrics = constraint_metrics(
+            final_guard_scores,
+            calibration_labels[guard_indices],
+            teacher_calibration_predictions[guard_indices],
+            baseline_guard["accuracy"],
+            baseline_guard["per_class_accuracy"],
+        )
+        final_guard_metrics["within_budgets"] = within_constraints(
+            final_guard_metrics, config["budgets"]
+        )
     final_validation_scores = evaluate_encoded(
         repair_model, validation_encoded, evaluation_batch_size, device
     )
@@ -606,6 +741,13 @@ def main() -> None:
                 "optimization_steps": steps,
                 "source_checkpoint": str(checkpoint_path.relative_to(run_dir)),
                 "source_checkpoint_sha256": sha256_file(checkpoint_path),
+                "teacher_checkpoint": str(teacher_checkpoint_path.relative_to(run_dir)),
+                "teacher_checkpoint_sha256": sha256_file(teacher_checkpoint_path),
+                "locked_source_changes": locked_source_changes,
+                "lock_reference_checkpoint": (
+                    None if lock_reference_path is None
+                    else str(lock_reference_path.relative_to(run_dir))
+                ),
                 "learned_changes": len(changes),
                 "retained_changes_after_exact_repair": retained,
                 "unit_tying_warm_start": False,
@@ -640,8 +782,10 @@ def main() -> None:
         "partition_size": len(calibration_encoded),
         "optimization_size": len(optimization_indices),
         "repair_size": len(repair_indices),
+        "guard_size": len(guard_indices),
         "optimization_indices_sha256": tensor_sha256(optimization_indices),
         "repair_indices_sha256": tensor_sha256(repair_indices),
+        "guard_indices_sha256": tensor_sha256(guard_indices),
         "labels_sha256": tensor_sha256(calibration_labels),
         "stratified_fold_ids_sha256": tensor_sha256(fold_ids),
         "epoch_permutation_sha256": permutations,
@@ -680,14 +824,21 @@ def main() -> None:
         "cost_kind": cost_kind,
         "learned_changes": len(changes),
         "retained_changes": retained,
+        "locked_source_changes": locked_source_changes,
         "repair_applied": retained != len(changes),
         "repair_holdout_feasible": bool(final_repair_metrics["within_budgets"]),
+        "guard_holdout_feasible": (
+            None if final_guard_metrics is None
+            else bool(final_guard_metrics["within_budgets"])
+        ),
         "calibration_feasible": bool(final_calibration_metrics["within_budgets"]),
         "baseline_calibration": baseline_calibration,
         "baseline_repair_holdout": baseline_repair,
+        "baseline_guard_holdout": baseline_guard,
         "baseline_validation": baseline_validation,
         "calibration": final_calibration_metrics,
         "repair_holdout": final_repair_metrics,
+        "guard_holdout": final_guard_metrics,
         "validation": final_validation_metrics,
         "timing": {
             "optimization_seconds": time.perf_counter() - train_started,

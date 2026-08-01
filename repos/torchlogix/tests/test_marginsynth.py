@@ -41,7 +41,13 @@ from experiments.marginsynth.circuit_distillation import (
     decision_margin_losses,
     initialize_resynthesis_logits,
     materialize_change_prefix,
+    stratified_optimization_repair_guard_split,
     stratified_optimization_repair_split,
+)
+from experiments.marginsynth.recovery_finetune import (
+    choose_snapshot,
+    initialize_recovery_logits,
+    locked_row_masks,
 )
 from experiments.marginsynth.unit_tying import (
     apply_permanent_ties,
@@ -143,6 +149,65 @@ def test_distillation_uses_disjoint_stratified_repair_holdout():
     assert sorted(optimize.tolist() + repair.tolist()) == list(range(60))
     assert torch.bincount(labels[optimize]).tolist() == [15, 15, 15]
     assert torch.bincount(labels[repair]).tolist() == [5, 5, 5]
+
+
+def test_repeat_distillation_has_untouched_stratified_guard_holdout():
+    labels = torch.tensor([0] * 20 + [1] * 20 + [2] * 20)
+    optimize, repair, guard = stratified_optimization_repair_guard_split(
+        labels, 0.6, 0.2, 9
+    )
+    assert not (set(optimize.tolist()) & set(repair.tolist()))
+    assert not (set(optimize.tolist()) & set(guard.tolist()))
+    assert not (set(repair.tolist()) & set(guard.tolist()))
+    assert sorted(optimize.tolist() + repair.tolist() + guard.tolist()) == list(range(60))
+    assert torch.bincount(labels[optimize]).tolist() == [12, 12, 12]
+    assert torch.bincount(labels[repair]).tolist() == [4, 4, 4]
+    assert torch.bincount(labels[guard]).tolist() == [4, 4, 4]
+
+
+def test_recovery_locks_only_first_pass_function_changes():
+    source = {1: torch.tensor([0, 6, 7, 15])}
+    teacher = {1: torch.tensor([1, 6, 3, 15])}
+    masks = locked_row_masks(source, teacher, True)
+    assert masks[1].tolist() == [True, False, True, False]
+    assert not locked_row_masks(source, teacher, False)[1].any()
+
+
+def test_recovery_moderate_logits_preserve_source_hard_functions():
+    layer = LogicDense(
+        in_dim=4,
+        out_dim=3,
+        lut_rank=2,
+        parametrization="raw",
+        connections="fixed",
+        connections_kwargs={"init_method": "random"},
+    )
+    source = {0: torch.tensor([0, 6, 15])}
+    initialize_recovery_logits([layer], [0], source, logit_gap=4.0)
+    assert layer.weight.argmax(1).tolist() == [0, 6, 15]
+    assert torch.isfinite(torch.softmax(layer.weight, dim=1)).all()
+
+
+def test_recovery_selection_uses_earliest_feasible_training_holdout_snapshot():
+    budgets = {
+        "accuracy_loss": 0.01,
+        "disagreement": 0.02,
+        "per_class_accuracy_loss": 0.03,
+        "per_class_disagreement": 0.04,
+    }
+    base = {
+        "accuracy_loss": 0.0,
+        "decision_flip_rate": 0.0,
+        "maximum_per_class_accuracy_loss": 0.0,
+        "maximum_per_class_disagreement": 0.0,
+        "accuracy": 0.9,
+    }
+    records = [
+        {"step": 0, "monitor": base | {"accuracy_loss": 0.02}, "hard_hardware_cost": 0.5},
+        {"step": 250, "monitor": base, "hard_hardware_cost": 0.5},
+        {"step": 500, "monitor": base, "hard_hardware_cost": 0.4},
+    ]
+    assert choose_snapshot(records, budgets, ceiling=0.5)["step"] == 250
 
 
 def test_unit_tying_refinement_removes_overshoot_harm():

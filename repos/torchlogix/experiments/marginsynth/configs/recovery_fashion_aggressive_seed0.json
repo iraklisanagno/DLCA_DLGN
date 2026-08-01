@@ -1,0 +1,48 @@
+{
+  "method": "locked-rewrite-short-recovery",
+  "teacher_checkpoint": "best_checkpoint.pt",
+  "source_checkpoint": "distillation/ablation_matrix_v3_seed0/no_exact_repair/distilled_checkpoint.pt",
+  "eligible_logic_layers": [1, 2, 3, 4],
+  "lock_source_changes": true,
+  "recovery_fraction": 0.9,
+  "steps": 5000,
+  "snapshot_steps": [0, 250, 500, 1000, 2000, 3000, 5000],
+  "batch_size": 256,
+  "encoding_batch_size": 512,
+  "evaluation_batch_size": 512,
+  "learning_rate": 0.002,
+  "initial_logit_gap": 4.0,
+  "forward_sampling": "hard",
+  "temperature_start": 1.0,
+  "temperature_end": 0.25,
+  "margin_retention": 0.5,
+  "margin_reserve": 0.25,
+  "margin_target_cap": 2.0,
+  "stability_folds": 4,
+  "cost_kind": "aig",
+  "hardware_ceiling_tolerance": 0.0,
+  "gradient_clip": 5.0,
+  "loss_weights": {
+    "labels": 1.0,
+    "decision": 1.0,
+    "class_worst": 0.25,
+    "fold_worst": 0.25,
+    "hardware_ceiling": 10.0,
+    "entropy": 0.001
+  },
+  "selection_budgets": {
+    "accuracy_loss": 0.0033333333333333335,
+    "disagreement": 0.03,
+    "per_class_accuracy_loss": 0.015,
+    "per_class_disagreement": 0.075
+  },
+  "report_budgets": {
+    "accuracy_loss": 0.0033333333333333335,
+    "disagreement": 0.03,
+    "per_class_accuracy_loss": 0.015,
+    "per_class_disagreement": 0.075
+  },
+  "log_every": 100,
+  "seed": 0,
+  "output": "recovery/aggressive_locked_curve_seed0"
+}
