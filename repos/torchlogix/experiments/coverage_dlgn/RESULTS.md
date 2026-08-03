@@ -1,6 +1,6 @@
 # CoverageDLGN implementation and experiment history
 
-**Updated:** July 30, 2026
+**Updated:** August 3, 2026
 **Status:** Dense semantic-balanced v3 and convolutional semantic-channel v4
 remain frozen. The separate unified semantic-degree-balanced U1 candidate
 completed its five-seed convolutional S gate but was not promoted. The
@@ -8,8 +8,10 @@ original five-seed 48K study, a five-seed 512K
 escalation, a two-budget/three-depth study, and a three-seed convolutional
 pilot have frozen validation/test artifacts. V3 improves 512K dense CIFAR-10
 held-out accuracy by **+4.256 pp**; v4 improves the convolutional pilot by
-**+2.000 pp**. Component ablations, long-training convolutional reproduction,
-and protocol-identical named-method comparisons remain before a DATE claim.
+**+2.000 pp**. Component ablations and a one-seed 200K nine-channel
+LogicTreeNet-M comparison are complete; multi-seed long convolutional
+confirmation and protocol-identical named-method comparisons remain before a
+DATE claim.
 
 ## Paper-architecture convolutional correction
 
@@ -980,6 +982,61 @@ Machine-readable sources and protocol history:
 - `protocols/warp_fig4_cifar10_medium.json`;
 - `WARP_FIG4_REPRODUCTION.md`.
 
+## August 3 nine-channel LogicTreeNet-M matched 200K result
+
+Frozen Legacy V4 and original fixed-random routing were compared on the exact
+nine-channel `ClgnCifar10PaperMedium` architecture for 200K updates. Both use
+seed 0, split seed 2027, topology seed 0, the same 45K/5K split, batch 128,
+AdamW at 0.02 with 0.002 weight decay, standard training-only crop/flip, raw
+rank-2 gates, residual probability 0.951, and validation every 2K updates.
+Only the convolutional fixed-topology rule differs; both dense classifier
+tails use fixed random routing.
+
+The original V4 job was configured for 350K updates, but its trajectory had
+plateaued. It was stopped by a guarded `SIGINT` only after the 200K checkpoint,
+metrics, and thresholds were present. The random control then ran normally to
+200K. Both produced 100 matched validation evaluations:
+
+| Statistic | Legacy V4 | Fixed random | V4 gain |
+|---|---:|---:|---:|
+| Best hardened validation | **71.26% at 194K** | 70.68% at 164K | **+0.58 pp** |
+| Final 200K hardened validation | 70.28% | 70.10% | +0.18 pp |
+| Best relaxed validation, any step | 72.96% | 72.56% | +0.40 pp |
+| Hardened held-out test at best-hard checkpoint | **69.96%** | 69.57% | **+0.39 pp** |
+| Relaxed held-out test at the same checkpoint | **72.18%** | 71.28% | **+0.90 pp** |
+
+V4 led on 97 of 100 hardened validation evaluations. Its mean and median
+advantages across the full trajectory were +1.055 and +0.960 pp, respectively,
+and it first reached 70% hardened validation at 36K rather than random's 66K.
+This supports a one-seed optimization/learning-curve signal, but the +0.39 pp
+held-out gain is not a statistical paper claim.
+
+The two best-hard-validation checkpoints were SHA-256 frozen before the test
+set was accessed, then each was evaluated exactly once on all 10,000 held-out
+examples. The reported LogicTreeNet-M accuracy is 71.01% test: local V4 is
+1.05 pp below it and local random is 1.44 pp below it. The local protocol uses
+a 45K/5K selection split and explicitly adapted crop/flip augmentation, so it
+is a controlled topology comparison rather than an exact numerical
+reproduction of the paper's training protocol.
+
+The topology is constructed offline. V4 required 6.182 seconds versus 2.478
+seconds for random, an added 3.704 seconds over approximately 25.5 hours of
+training. A matched hardened PyTorch/CUDA timing pass measured 74.573 versus
+74.891 ms per batch of 128; the sub-percent difference is noise, not a speed
+claim. Peak inference allocations were 2,949,915,136 and 2,949,698,048 bytes.
+The architecture and deployed costs match: approximately 3.08M reported gate
+operations, 10,694,656 trainable gate parameters, zero trainable routing
+parameters, and 2,375,680 packed deployed-routing bytes. The random run
+recorded 15,691,860,480 bytes peak training allocation; V4's exact peak was not
+emitted because its normal finalizer was bypassed by the controlled stop.
+
+Machine-readable sources:
+
+- `summary/cifar10_paper_medium_200k_freeze.json`;
+- `summary/cifar10_paper_medium_200k_paired.json`;
+- `summary/cifar10_paper_medium_200k_curve.csv`;
+- `protocols/cifar10_paper_medium_200k_paired.json`.
+
 ## Not completed; required before a DATE claim
 
 - A protocol-identical numerical reproduction of the published CIFAR-10
@@ -997,9 +1054,10 @@ Machine-readable sources and protocol history:
 - WARP/Light repetition.
 - Mommen partial-learnable, LILogic Top-K, BitLogic, and RigL comparisons under
   identical splits, budgets, and training effort.
-- Long-training/five-seed convolutional reproduction. The implemented v4
-  extension is currently a positive three-seed, 20K-step pilot and does not
-  reproduce the paper's long LogicTreeNet result.
+- Multi-seed long-training convolutional confirmation. The one-seed 200K
+  nine-channel M comparison is positive by +0.39 pp on held-out test but is
+  1.05 pp below the paper's reported test accuracy and has no confidence
+  interval.
 - Exported-circuit equivalence and compiled CPU latency/energy measurements;
   the completed inference benchmark is framework-level PyTorch GPU timing.
 - A true accuracy/cost Pareto improvement. The present methods have identical

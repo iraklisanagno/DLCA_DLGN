@@ -1,0 +1,114 @@
+{
+  "phase": "cifar10_paper_medium_200k_paired",
+  "status": "ONE-SEED-COMPLETE",
+  "purpose": "Compare frozen CoverageDLGN Legacy V4 against the original fixed-random topology on the identical nine-channel LogicTreeNet-M architecture through 200,000 updates.",
+  "architecture": {
+    "class": "ClgnCifar10PaperMedium",
+    "paper_identifier": "LogicTreeNet-M",
+    "input_encoding": "three fixed uniform thermometer thresholds per RGB channel; nine Boolean channels",
+    "k": 256,
+    "reported_gate_operations": "approximately 3.08M",
+    "reported_test_accuracy_percent": 71.01
+  },
+  "methods": {
+    "coverage": {
+      "name": "CoverageDLGN Legacy V4",
+      "conv_strategy": "semantic_channel_hybrid",
+      "classifier_strategy": "random",
+      "candidate_pool_size": 8,
+      "swap_fraction": 0.25,
+      "novelty_weight": 1.0,
+      "source_changed": false,
+      "config": "configs/full_conv_cifar10_paper_medium_legacy_v4_seed0.json",
+      "output": "results/full_conv_cifar10_paper_medium_legacy_v4_seed0"
+    },
+    "control": {
+      "name": "Original fixed-random topology",
+      "conv_strategy": "random",
+      "classifier_strategy": "random",
+      "config": "configs/full_conv_cifar10_paper_medium_random_seed0_200k.json",
+      "output": "results/full_conv_cifar10_paper_medium_random_seed0_200k"
+    }
+  },
+  "matched_training": {
+    "seed_count": 1,
+    "seed": 0,
+    "split_seed": 2027,
+    "topology_seed": 0,
+    "train_validation_split": "45000/5000",
+    "batch_size": 128,
+    "steps_per_effective_epoch": 351,
+    "iterations": 200000,
+    "effective_epochs": 569.8005698005698,
+    "evaluation_frequency_steps": 2000,
+    "optimizer": "AdamW",
+    "learning_rate": 0.02,
+    "weight_decay": 0.002,
+    "augmentation": "standard crop/flip on training only",
+    "parameterization": "raw rank-2 DLGN",
+    "residual_initialization": "probability 0.951, corresponding to paper z3 approximately 5"
+  },
+  "logging": {
+    "validation_history": "metrics.csv records loss, hardened and relaxed validation accuracy every 2000 updates",
+    "threshold_history": "thresholds.csv records input thresholds every 2000 updates",
+    "topology_diagnostics": "topology.json/csv and conv_topology.json/csv are written at initialization",
+    "reproducibility": "training_config.json and environment.json are written at initialization",
+    "checkpoint_selection": "best_checkpoint.pt and best_model.pt track the best hardened-validation checkpoint"
+  },
+  "stop_and_test_policy": [
+    "The already-running V4 job was originally frozen for 350,000 updates; it will be interrupted only after its completed 200,000-step validation and checkpoint write are observed.",
+    "The random control terminates normally at exactly 200,000 updates.",
+    "The held-out test set remained unused until both methods completed and their best hardened-validation checkpoints were SHA-256 frozen; each selected checkpoint was then evaluated exactly once.",
+    "The training harness does not save optimizer, data-loader, or RNG state, so an interrupted V4 trajectory cannot later be resumed exactly."
+  ],
+  "comparison_scope": "The topology rule is the only intended method difference. Coverage-only candidate-pool, swap-fraction, and novelty fields remain in the random JSON for configuration-shape parity but are ignored by the random topology generator.",
+  "v4_outcome": {
+    "status": "EARLY-STOPPED-COMPLETE",
+    "last_completed_validation_step": 200000,
+    "best_hardened_validation_accuracy": 0.7126,
+    "best_hardened_validation_step": 194000,
+    "best_relaxed_validation_accuracy": 0.7296,
+    "best_relaxed_validation_step": 146000,
+    "final_hardened_validation_accuracy": 0.7028,
+    "final_relaxed_validation_accuracy": 0.729,
+    "held_out_test_evaluated": true,
+    "test_hardened_accuracy": 0.6996,
+    "test_relaxed_accuracy": 0.7218,
+    "test_queries": 1,
+    "metadata": "results/full_conv_cifar10_paper_medium_legacy_v4_seed0/early_stop.json"
+  },
+  "control_outcome": {
+    "status": "COMPLETE",
+    "last_completed_validation_step": 200000,
+    "best_hardened_validation_accuracy": 0.7068,
+    "best_hardened_validation_step": 164000,
+    "best_relaxed_validation_accuracy": 0.7256,
+    "best_relaxed_validation_step": 180000,
+    "final_hardened_validation_accuracy": 0.701,
+    "final_relaxed_validation_accuracy": 0.721,
+    "held_out_test_evaluated": true,
+    "test_hardened_accuracy": 0.6957,
+    "test_relaxed_accuracy": 0.7128,
+    "test_queries": 1,
+    "wall_seconds": 91690.33289619093,
+    "peak_gpu_memory_bytes": 15691860480
+  },
+  "paired_outcome": {
+    "best_hardened_validation_gain_pp": 0.58,
+    "heldout_hardened_gain_pp": 0.39,
+    "heldout_relaxed_gain_pp": 0.90,
+    "v4_hardened_curve_wins": 97,
+    "matched_evaluations": 100,
+    "mean_hardened_curve_gain_pp": 1.0548,
+    "offline_topology_overhead_seconds": 3.704499511164613,
+    "reported_test_accuracy_percent": 71.01,
+    "v4_gap_to_reported_pp": -1.05,
+    "interpretation": "Positive one-seed result; insufficient for a statistical paper claim."
+  },
+  "frozen_artifacts": {
+    "checkpoint_manifest": "summary/cifar10_paper_medium_200k_freeze.json",
+    "paired_summary": "summary/cifar10_paper_medium_200k_paired.json",
+    "learning_curve": "summary/cifar10_paper_medium_200k_curve.csv",
+    "test_evaluation_summary": "logs/cifar10_paper_medium_200k/test/test_evaluation_summary.json"
+  }
+}

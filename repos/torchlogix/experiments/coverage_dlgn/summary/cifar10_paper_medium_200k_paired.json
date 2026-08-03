@@ -1,0 +1,292 @@
+{
+  "architecture": "ClgnCifar10PaperMedium",
+  "checkpoint_freeze_manifest": "summary/cifar10_paper_medium_200k_freeze.json",
+  "hardened_inference": {
+    "coverage_v4": {
+      "batch_size": 128,
+      "checkpoint": "best_checkpoint.pt",
+      "device": "cuda",
+      "examples_per_second": 1716.4279566974894,
+      "input_transfer_excluded": true,
+      "microseconds_per_example": 582.6052856445312,
+      "milliseconds_per_batch": 74.5734765625,
+      "mode": "hardened",
+      "peak_device_memory_bytes": 2949915136,
+      "timed_batches": 100,
+      "total_milliseconds": 7457.34765625,
+      "warmup_batches": 20
+    },
+    "fixed_random": {
+      "batch_size": 128,
+      "checkpoint": "best_checkpoint.pt",
+      "device": "cuda",
+      "examples_per_second": 1709.157853256426,
+      "input_transfer_excluded": true,
+      "microseconds_per_example": 585.0834655761719,
+      "milliseconds_per_batch": 74.89068359375,
+      "mode": "hardened",
+      "peak_device_memory_bytes": 2949698048,
+      "timed_batches": 100,
+      "total_milliseconds": 7489.068359375,
+      "warmup_batches": 20
+    },
+    "interpretation": "One timing pass; the sub-percent difference is measurement noise, not a speed claim.",
+    "peak_memory_delta_bytes": 217088,
+    "runtime_delta_percent": -0.4235600691945951
+  },
+  "heldout_queries_per_checkpoint": 1,
+  "heldout_test": {
+    "coverage_v4": {
+      "checkpoint": "best_checkpoint.pt",
+      "test_examples": 10000,
+      "test_hard_accuracy": 0.6996,
+      "test_hard_loss": 0.8601979772567749,
+      "test_relaxed_accuracy": 0.7218,
+      "test_relaxed_loss": 0.8034811114311218,
+      "validation_hard_accuracy": 0.7126,
+      "validation_selection_step": 194000
+    },
+    "fixed_random": {
+      "checkpoint": "best_checkpoint.pt",
+      "test_examples": 10000,
+      "test_hard_accuracy": 0.6957,
+      "test_hard_loss": 0.8833625136375427,
+      "test_relaxed_accuracy": 0.7128,
+      "test_relaxed_loss": 0.8253502587318421,
+      "validation_hard_accuracy": 0.7068,
+      "validation_selection_step": 164000
+    },
+    "gap_to_reported_pp": {
+      "coverage_v4": -1.0499999999999954,
+      "fixed_random": -1.4399999999999968
+    },
+    "hard_delta_pp": 0.39000000000000146,
+    "relaxed_delta_pp": 0.9000000000000008,
+    "reported_logic_tree_net_m_test_accuracy": 0.7101,
+    "validation_to_test_hard_gap_pp": {
+      "coverage_v4": -1.3000000000000012,
+      "fixed_random": -1.1099999999999999
+    }
+  },
+  "input_boolean_channels": 9,
+  "learning_curve_comparison": {
+    "first_step_at_70_percent_hard": {
+      "coverage_v4": 36000,
+      "fixed_random": 66000
+    },
+    "mean_hard_delta_pp": 1.0548000000000006,
+    "mean_relaxed_delta_pp": 0.45900000000000063,
+    "median_hard_delta_pp": 0.9600000000000053,
+    "ties": 0,
+    "v4_hard_losses": 3,
+    "v4_hard_wins": 97
+  },
+  "learning_curve_csv": "summary/cifar10_paper_medium_200k_curve.csv",
+  "limitations": [
+    "This is one seed and is not a statistical accuracy claim.",
+    "The 71.01% paper value is reported test accuracy; local validation values are not compared directly to it.",
+    "Training-only crop/flip augmentation is an explicit local adaptation because the paper does not document augmentation."
+  ],
+  "matched_deployment_cost": {
+    "candidate_indices_tensor_bytes": 9175040,
+    "dense_gate_count": 573440,
+    "dense_gate_count_note": "dense_gate_count covers the three classifier layers; the paper's operation count includes spatially instantiated convolution gates.",
+    "deployed_routing_bits": 19005440,
+    "deployed_routing_bytes_packed": 2375680,
+    "reported_logic_gate_operations": 3080000,
+    "reported_logic_gate_operations_are_approximate": true,
+    "trainable_parameters": 10694656,
+    "training_routing_parameters": 0
+  },
+  "offline_topology_overhead_seconds": 3.704499511164613,
+  "paper_identifier": "LogicTreeNet-M",
+  "phase": "cifar10_paper_medium_200k_paired",
+  "seed": 0,
+  "status": "ONE-SEED-COMPLETE",
+  "steps": 200000,
+  "test_set_used": true,
+  "topology": {
+    "coverage_v4": {
+      "construction_seconds": {
+        "convolutional": 4.85954871494323,
+        "dense_classifier": 1.3228406350826845,
+        "total": 6.182389350025915
+      },
+      "convolutional_layers": [
+        {
+          "channel_fanout_cv": 0.012955565587325782,
+          "channel_fanout_max": 58,
+          "channel_fanout_min": 56,
+          "channel_pair_span_mean": 2.7890625,
+          "construction_seconds": 0.06395204702857882,
+          "cross_channel_leaf_pair_fraction": 0.568359375,
+          "depth": 0,
+          "distinct_channel_groups": 35,
+          "duplicate_channel_groups": 221,
+          "in_channels": 9,
+          "out_kernels": 256,
+          "raw_channel_ancestry_mean": 2.0,
+          "raw_channel_coverage_fraction": 1.0,
+          "raw_predecessor_jaccard_mean": 0.0,
+          "strategy": "semantic_channel_hybrid",
+          "unique_spatial_offsets_mean": 5.4375
+        },
+        {
+          "channel_fanout_cv": 0.0,
+          "channel_fanout_max": 8,
+          "channel_fanout_min": 8,
+          "channel_pair_span_mean": 35.1328125,
+          "construction_seconds": 0.2248454389628023,
+          "cross_channel_leaf_pair_fraction": 0.5751953125,
+          "depth": 1,
+          "distinct_channel_groups": 1024,
+          "duplicate_channel_groups": 0,
+          "in_channels": 256,
+          "out_kernels": 1024,
+          "raw_channel_ancestry_mean": 3.5830078125,
+          "raw_channel_coverage_fraction": 1.0,
+          "raw_predecessor_jaccard_mean": 0.1474609375,
+          "strategy": "semantic_channel_hybrid",
+          "unique_spatial_offsets_mean": 5.521484375
+        },
+        {
+          "channel_fanout_cv": 0.0,
+          "channel_fanout_max": 8,
+          "channel_fanout_min": 8,
+          "channel_pair_span_mean": 129.84814453125,
+          "construction_seconds": 1.1306589939631522,
+          "cross_channel_leaf_pair_fraction": 0.5672607421875,
+          "depth": 2,
+          "distinct_channel_groups": 4096,
+          "duplicate_channel_groups": 0,
+          "in_channels": 1024,
+          "out_kernels": 4096,
+          "raw_channel_ancestry_mean": 5.7080078125,
+          "raw_channel_coverage_fraction": 1.0,
+          "raw_predecessor_jaccard_mean": 0.2773135230654762,
+          "strategy": "semantic_channel_hybrid",
+          "unique_spatial_offsets_mean": 5.503173828125
+        },
+        {
+          "channel_fanout_cv": 0.0,
+          "channel_fanout_max": 4,
+          "channel_fanout_min": 4,
+          "channel_pair_span_mean": 32.129150390625,
+          "construction_seconds": 3.440092234988697,
+          "cross_channel_leaf_pair_fraction": 0.5736083984375,
+          "depth": 3,
+          "distinct_channel_groups": 8192,
+          "duplicate_channel_groups": 0,
+          "in_channels": 4096,
+          "out_kernels": 8192,
+          "raw_channel_ancestry_mean": 7.77490234375,
+          "raw_channel_coverage_fraction": 1.0,
+          "raw_predecessor_jaccard_mean": 0.47717023577008927,
+          "strategy": "semantic_channel_hybrid",
+          "unique_spatial_offsets_mean": 5.489013671875
+        }
+      ]
+    },
+    "fixed_random": {
+      "construction_seconds": {
+        "convolutional": 1.1353287618840113,
+        "dense_classifier": 1.3425610769772902,
+        "total": 2.4778898388613015
+      },
+      "convolutional_layers": [
+        {
+          "channel_fanout_cv": 0.23385358667337136,
+          "channel_fanout_max": 64,
+          "channel_fanout_min": 32,
+          "channel_pair_span_mean": 1.0,
+          "construction_seconds": 0.0640291350428015,
+          "cross_channel_leaf_pair_fraction": 0.568359375,
+          "depth": 0,
+          "distinct_channel_groups": 8,
+          "duplicate_channel_groups": 248,
+          "in_channels": 9,
+          "out_kernels": 256,
+          "raw_channel_ancestry_mean": 2.0,
+          "raw_channel_coverage_fraction": 1.0,
+          "raw_predecessor_jaccard_mean": 0.0,
+          "strategy": "random",
+          "unique_spatial_offsets_mean": 5.4375
+        },
+        {
+          "channel_fanout_cv": 0.048159484398195125,
+          "channel_fanout_max": 10,
+          "channel_fanout_min": 4,
+          "channel_pair_span_mean": 1.0,
+          "construction_seconds": 0.08388403290882707,
+          "cross_channel_leaf_pair_fraction": 0.5751953125,
+          "depth": 1,
+          "distinct_channel_groups": 255,
+          "duplicate_channel_groups": 769,
+          "in_channels": 256,
+          "out_kernels": 1024,
+          "raw_channel_ancestry_mean": 3.12109375,
+          "raw_channel_coverage_fraction": 1.0,
+          "raw_predecessor_jaccard_mean": 0.29296874999999994,
+          "strategy": "random",
+          "unique_spatial_offsets_mean": 5.521484375
+        },
+        {
+          "channel_fanout_cv": 0.024079742199097563,
+          "channel_fanout_max": 10,
+          "channel_fanout_min": 4,
+          "channel_pair_span_mean": 1.0,
+          "construction_seconds": 0.3294168249703944,
+          "cross_channel_leaf_pair_fraction": 0.5672607421875,
+          "depth": 2,
+          "distinct_channel_groups": 1023,
+          "duplicate_channel_groups": 3073,
+          "in_channels": 1024,
+          "out_kernels": 4096,
+          "raw_channel_ancestry_mean": 4.25,
+          "raw_channel_coverage_fraction": 1.0,
+          "raw_predecessor_jaccard_mean": 0.47382812500000004,
+          "strategy": "random",
+          "unique_spatial_offsets_mean": 5.503173828125
+        },
+        {
+          "channel_fanout_cv": 0.012352647110032733,
+          "channel_fanout_max": 6,
+          "channel_fanout_min": 2,
+          "channel_pair_span_mean": 1.0,
+          "construction_seconds": 0.6579987689619884,
+          "cross_channel_leaf_pair_fraction": 0.5736083984375,
+          "depth": 3,
+          "distinct_channel_groups": 4095,
+          "duplicate_channel_groups": 4097,
+          "in_channels": 4096,
+          "out_kernels": 8192,
+          "raw_channel_ancestry_mean": 5.3798828125,
+          "raw_channel_coverage_fraction": 1.0,
+          "raw_predecessor_jaccard_mean": 0.5822544642857141,
+          "strategy": "random",
+          "unique_spatial_offsets_mean": 5.489013671875
+        }
+      ]
+    }
+  },
+  "training_runtime": {
+    "coverage_v4_artifact_span_seconds": 91771.4758298397,
+    "coverage_v4_peak_training_memory": "not recorded because the run ended by controlled SIGINT",
+    "coverage_v4_span_is_approximate": true,
+    "fixed_random_peak_gpu_memory_bytes": 15691860480,
+    "fixed_random_wall_seconds": 91690.33289619093
+  },
+  "validation_evaluations": 100,
+  "validation_selection": {
+    "coverage_v4": {
+      "hard_accuracy": 0.7126,
+      "relaxed_accuracy_at_selected_checkpoint": 0.725,
+      "step": 194000
+    },
+    "fixed_random": {
+      "hard_accuracy": 0.7068,
+      "relaxed_accuracy_at_selected_checkpoint": 0.7194,
+      "step": 164000
+    }
+  }
+}

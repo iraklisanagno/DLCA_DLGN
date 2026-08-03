@@ -1,0 +1,40 @@
+{
+  "status": "EARLY-STOPPED-COMPLETE",
+  "method": "CoverageDLGN Legacy V4",
+  "requested_stop_step": 200000,
+  "last_completed_validation_step": 200000,
+  "original_configured_iterations": 350000,
+  "completed_validation_evaluations": 100,
+  "evaluation_frequency_steps": 2000,
+  "signal": "SIGINT",
+  "signal_guard": "Sent only after both metrics.csv and thresholds.csv contained step 200000",
+  "stop_reason": "The hardened-validation trajectory had plateaued; a matched 200K fixed-random control was prioritized over the remaining 150K updates.",
+  "best_hardened_validation_accuracy": 0.7126,
+  "best_hardened_validation_step": 194000,
+  "best_relaxed_validation_accuracy": 0.7296,
+  "best_relaxed_validation_step": 146000,
+  "final_hardened_validation_accuracy": 0.7028,
+  "final_relaxed_validation_accuracy": 0.729,
+  "best_checkpoint": "best_checkpoint.pt",
+  "held_out_test_evaluated_at_stop": false,
+  "subsequent_one_time_test": {
+    "evaluated": true,
+    "selection_step": 194000,
+    "hardened_accuracy": 0.6996,
+    "relaxed_accuracy": 0.7218,
+    "examples": 10000,
+    "metrics": "test_metrics.json"
+  },
+  "exact_resume_supported": false,
+  "missing_for_exact_resume": [
+    "optimizer state",
+    "data-loader state",
+    "global RNG states"
+  ],
+  "normal_final_artifacts_absent": [
+    "final_model.pt",
+    "final_checkpoint.pt",
+    "run_summary.json"
+  ],
+  "note": "The missing normal-final artifacts are expected after the controlled SIGINT. The validation-selected best model and self-describing best checkpoint are intact."
+}

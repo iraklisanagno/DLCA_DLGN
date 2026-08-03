@@ -1044,3 +1044,87 @@ This log records operational failures and protocol decisions made after commit
 - GPU access was restored at 16:10 UTC. Physical GPU 0 had 97,247 MiB free
   and was selected for the long run; GPU 1 remained occupied by an unrelated
   VLLM process and was left untouched.
+
+## August 1, 2026: LogicTreeNet-M matched 200K control decision
+
+- The one-seed nine-channel Legacy V4 run showed a hardened-validation
+  plateau after its early maximum. The global best through 184K was 71.220%
+  at 68K; the 100K--184K hardened values had not exceeded 71.080%.
+- To prioritize a direct causal comparison, the declared run length was
+  revised from 350K to 200K for both Legacy V4 and an otherwise identical
+  original fixed-random control. The V4 source and topology are unchanged.
+- V4 will be interrupted only after the completed 200K validation/checkpoint
+  write is visible. Exact continuation will not be claimed because optimizer,
+  data-loader, and RNG states are not stored in checkpoints.
+- The paired protocol is
+  `protocols/cifar10_paper_medium_200k_paired.json`; the random-control config
+  is `configs/full_conv_cifar10_paper_medium_random_seed0_200k.json`.
+- Both methods use seed 0, split seed 2027, topology seed 0, 45K/5K split,
+  batch 128, AdamW at 0.02 with 0.002 weight decay, standard training-only
+  crop/flip, raw rank-2 gates, residual probability 0.951, and evaluation
+  every 2K updates. The topology is the only intended method difference.
+- Every intermediate evaluation, threshold snapshot, topology diagnostic,
+  environment record, training configuration, and best-validation checkpoint
+  is retained. The held-out test set remains locked until both validation
+  trajectories are complete and their checkpoints are frozen.
+- Legacy V4 stopped as declared after its 200K metrics and thresholds had
+  been written. It completed 100 validation evaluations. Its best hardened
+  validation was 71.260% at 194K, best relaxed validation was 72.960% at
+  146K, and final 200K values were 70.280% hardened and 72.900% relaxed.
+  The controlled `SIGINT` means normal-final artifacts were not emitted, but
+  the validation-selected `best_checkpoint.pt` and `best_model.pt` are intact.
+  Full termination metadata is stored in the run's `early_stop.json`.
+- The fixed-random control passed its 200K/configuration guard and launched
+  automatically on physical GPU 0. Its output is
+  `results/full_conv_cifar10_paper_medium_random_seed0_200k/`.
+
+## August 3, 2026: LogicTreeNet-M paired completion and held-out test
+
+- The fixed-random control completed all 200K updates normally in 91,690.33
+  seconds, with all 100 validation evaluations, final checkpoint, run summary,
+  topology diagnostics, thresholds, configuration, and environment retained.
+- V4's best hardened validation was 71.260% at 194K versus 70.680% for random
+  at 164K, a +0.580 pp selected-checkpoint gain. V4 led on 97/100 matched
+  hardened evaluations with a +1.055 pp mean curve advantage and reached 70%
+  at 36K rather than 66K.
+- `freeze_cifar10_paper_medium_200k.py` verified the complete curves and
+  matched training settings, then froze both best checkpoints by SHA-256
+  before test access. The V4 digest begins `2fa5ccd955a7`; random begins
+  `19d5a2fa50da`.
+- The two checkpoints were each evaluated exactly once on all 10,000 held-out
+  CIFAR-10 examples. V4 reached 69.960% hardened and 72.180% relaxed; random
+  reached 69.570% hardened and 71.280% relaxed. The one-seed gains are +0.390
+  and +0.900 pp, respectively. Neither checkpoint will be queried on this test
+  set again.
+- The reported LogicTreeNet-M value is 71.01% test. V4 is -1.05 pp and random
+  -1.44 pp from that number. The controlled local comparison is not an exact
+  paper-protocol reproduction because it uses a 45K/5K selection split and
+  explicitly adapted training-only crop/flip augmentation.
+- Offline topology construction totaled 6.182 seconds for V4 and 2.478 seconds
+  for random, a +3.704-second V4 cost. The matched hardened GPU benchmark was
+  74.573/74.891 ms per batch of 128 and 2,949,915,136/2,949,698,048 bytes peak
+  allocation (V4/random). These tiny differences are timing/allocation noise;
+  no runtime advantage is claimed.
+- Gate/parameter/routing cost is identical: approximately 3.08M reported gate
+  operations, 10,694,656 trainable parameters, zero training routing
+  parameters, and 2,375,680 packed routing bytes. Random recorded
+  15,691,860,480 bytes peak training allocation. V4's exact training peak is
+  unavailable because controlled interruption bypassed the normal finalizer.
+- Reproducible sources are
+  `summary/cifar10_paper_medium_200k_freeze.json`,
+  `summary/cifar10_paper_medium_200k_paired.json`, and
+  `summary/cifar10_paper_medium_200k_curve.csv`.
+- Two pre-test commands failed without accessing held-out data or writing a
+  freeze manifest: the first used `repos/torchlogix/venv/bin/python` while
+  already inside `repos/torchlogix`; the second strict guard exposed the
+  expected saved `config`-path difference. The invocation and normalizer were
+  corrected, and all subsequent freeze, test, benchmark, and summary commands
+  succeeded.
+- Python compilation of the four evaluation/summary scripts passed. The first
+  focused pytest invocation reproduced the repository's known import-path
+  collection error because `PYTHONPATH` was omitted. Re-running the unchanged
+  suite with `PYTHONPATH=.` passed **103 tests** in 98.80 seconds.
+- The first commit attempt was blocked by `git diff --check` because Python's
+  default CSV writer emitted CRLF line endings, which Git reported as trailing
+  whitespace. No commit was created. The summarizer now explicitly emits Unix
+  newlines; the curve was regenerated before the successful commit attempt.

@@ -1,6 +1,6 @@
 {
   "phase": "cifar10_paper_medium_long_v4",
-  "status": "FROZEN-READY",
+  "status": "SUPERSEDED-BY-COMPLETE-PAIRED-200K",
   "purpose": "Measure how closely frozen CoverageDLGN Legacy V4 on the nine-channel LogicTreeNet-M architecture approaches the reported 71.01% test accuracy.",
   "architecture": {
     "class": "ClgnCifar10PaperMedium",
@@ -50,5 +50,15 @@
     "torch_cuda_available": false,
     "torch_cuda_device_count": 0,
     "resolution": "GPU access was restored at 2026-07-31 16:10 UTC; physical GPU 0 was empty and selected exclusively, while GPU 1 remained occupied by an unrelated VLLM process."
+  },
+  "outcome": {
+    "actual_completed_validation_step": 200000,
+    "reason_for_revision": "The validation trajectory plateaued and a matched fixed-random control was prioritized over the remaining 150K updates.",
+    "best_hardened_validation_accuracy": 0.7126,
+    "best_hardened_validation_step": 194000,
+    "test_hardened_accuracy": 0.6996,
+    "test_relaxed_accuracy": 0.7218,
+    "paired_protocol": "protocols/cifar10_paper_medium_200k_paired.json",
+    "paired_summary": "summary/cifar10_paper_medium_200k_paired.json"
   }
 }

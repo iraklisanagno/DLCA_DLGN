@@ -32,6 +32,8 @@ def benchmark_run(run_dir: Path, device: str, warmup: int, repeats: int):
     _, _, test_loader = load_dataset(args)
     inputs, _ = next(iter(test_loader))
     inputs = inputs.to(device)
+    if device == "cuda":
+        torch.cuda.reset_peak_memory_stats()
     with torch.inference_mode():
         for _ in range(warmup):
             model(inputs)
@@ -60,6 +62,9 @@ def benchmark_run(run_dir: Path, device: str, warmup: int, repeats: int):
         "warmup_batches": warmup,
         "timed_batches": repeats,
         "input_transfer_excluded": True,
+        "peak_device_memory_bytes": (
+            torch.cuda.max_memory_allocated() if device == "cuda" else None
+        ),
         "total_milliseconds": total_ms,
         "milliseconds_per_batch": total_ms / repeats,
         "microseconds_per_example": 1000 * total_ms / (repeats * len(inputs)),

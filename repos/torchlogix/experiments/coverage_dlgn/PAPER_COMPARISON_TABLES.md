@@ -14,6 +14,9 @@ its table cell:
 
 - `[TRIED]` is a valid local exploratory, pilot, short-schedule, or superseded
   result that is not eligible as the final comparison value.
+- `[TRIED-ONE-SEED]` is a completed local protocol with one seed; it is useful
+  for feasibility and paired diagnostics but has no uncertainty estimate and
+  is not eligible as a final statistical claim.
 - `[REPRODUCED]` is a local result from a paper-faithful implementation and
   protocol.
 - `[ADAPTED]` is a local result from a published method adapted to our common
@@ -201,13 +204,13 @@ operation accounting.
 |  | **0.40M** | **CoverageDLGN-Channel (frozen V4)** | [TRIED-SELECTION] 57.448% validation / [N/A] | Five seeds; +0.584 pp over random, 95% CI [-0.335, +1.503] |
 |  | **0.40M** | **Unified semantic degree-balanced (U1)** | **[TRIED-STOPPED] 57.624% validation** / [N/A] | Five seeds; +0.760 pp, 95% CI [-0.700, +2.220], wins 4/5; failed +1 pp gate |
 |  | **0.40M** | **Channel-spatial leaf pairing** | [TRIED-STOPPED] 57.03% validation / [N/A] | Three seeds; -0.15 pp vs V4; failed both promotion gates |
-| LogicTreeNet-M | 3.08M | Original fixed routing | [PENDING] / **[REPORTED] 71.01%** | Exact architecture |
+| LogicTreeNet-M | 3.08M | Original fixed routing | **[TRIED-ONE-SEED] 69.57% test / [REPORTED] 71.01% test** | Exact nine-channel architecture; best-hard-validation checkpoint from 200K matched run |
 |  | 3.08M | Two-stage unit tying, 30% | [PENDING] / [REPORTED] 70.77 +/- 0.07% | Exact M; approximately 0.70 x after tying |
 |  | approximately 3.08M | Scalability-boundaries CDLGN-M | [N/A] / [REPORTED] 65.23% | Minimally modified M protocol |
 |  | 189M | Conv. TTNet-L | [N/A] / [REPORTED] 70.75% | Different, much larger architecture |
 |  | 3.08M | Light/IWP-LogicTreeNet | [PENDING] / [N/A] | Exact adaptation |
 |  | 3.08M | WARP-LogicTreeNet | [PENDING] / [N/A] | Exact adaptation |
-|  | **3.08M** | **CoverageDLGN-Channel** | [PENDING] / [N/A] | Existing 61.56% is `[TRIED]` 5K validation only |
+|  | **3.08M** | **CoverageDLGN-Channel (frozen V4)** | **[TRIED-ONE-SEED] 69.96% test / [N/A]** | Exact architecture; +0.39 pp test, +0.58 pp best validation; V4 led 97/100 evaluations |
 | LogicTreeNet-L | 28.9M | Original fixed routing | [PENDING] / **[REPORTED] 84.99%** | Exact replication requires 5-bit input and teacher |
 |  | 189M | Conv. TTNet-L | [N/A] / [REPORTED] 70.75% | Different architecture |
 |  | 3.08M | Scalability-boundaries CDLGN-M | [N/A] / [REPORTED] 65.23% | M architecture, not L |

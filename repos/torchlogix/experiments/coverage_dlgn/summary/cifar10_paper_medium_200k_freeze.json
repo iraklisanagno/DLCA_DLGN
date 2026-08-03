@@ -1,0 +1,43 @@
+{
+  "actual_budget_note": "V4 was configured for 350K but stopped after its completed 200K evaluation; the control terminated normally at 200K.",
+  "architecture": "ClgnCifar10PaperMedium",
+  "frozen_at_utc": "2026-08-03T03:31:13.908536+00:00",
+  "intended_method_difference": {
+    "classifier_routing": "random for both",
+    "coverage_v4": "semantic_channel_hybrid convolution routing",
+    "fixed_random": "random convolution routing"
+  },
+  "paper_identifier": "LogicTreeNet-M",
+  "phase": "cifar10_paper_medium_200k_paired",
+  "runs": {
+    "coverage_v4": {
+      "checkpoint": "best_checkpoint.pt",
+      "checkpoint_bytes": 228130670,
+      "checkpoint_sha256": "2fa5ccd955a710b12072a23948c2f284b7041db32771acb760a412603b33bbae",
+      "last_validation_step": 200000,
+      "metrics_sha256": "ae7183648c3f99b851923b6be602839d623382db97363358400e5a05b698266f",
+      "run_dir": "results/full_conv_cifar10_paper_medium_legacy_v4_seed0",
+      "selection_step": 194000,
+      "training_config_sha256": "1a2c12087cefa651b08657151c878405f355db45aef5c245d64ac8b05c49e919",
+      "validation_evaluations": 100,
+      "validation_hard_accuracy": 0.7126,
+      "validation_relaxed_accuracy_at_selection": 0.725
+    },
+    "fixed_random": {
+      "checkpoint": "best_checkpoint.pt",
+      "checkpoint_bytes": 228130606,
+      "checkpoint_sha256": "19d5a2fa50da88caa1bdb353b7122b5daa269c72885e019bff7c73af889fa40e",
+      "last_validation_step": 200000,
+      "metrics_sha256": "b77c5c7398a4014dab733017f67ea94c5faa5e96510214a6c7dd56a66e799fe3",
+      "run_dir": "results/full_conv_cifar10_paper_medium_random_seed0_200k",
+      "selection_step": 164000,
+      "training_config_sha256": "f7ec50684417e8cb1087f2e97e6e828b63114404a7dfd2808518555ece2a7b3a",
+      "validation_evaluations": 100,
+      "validation_hard_accuracy": 0.7068,
+      "validation_relaxed_accuracy_at_selection": 0.7194
+    }
+  },
+  "selection_metric": "maximum hardened validation accuracy",
+  "test_queries_per_checkpoint": 0,
+  "test_set_used": false
+}

@@ -1,0 +1,23 @@
+{
+  "completed_count": 2,
+  "expected_count": 2,
+  "missing": [],
+  "phase": "cifar10_paper_medium_200k_paired",
+  "records": [
+    {
+      "gpu": 0,
+      "log": "logs/cifar10_paper_medium_200k/test/full_conv_cifar10_paper_medium_legacy_v4_seed0.test.log",
+      "method": "coverage_v4",
+      "return_code": 0,
+      "run_dir": "results/full_conv_cifar10_paper_medium_legacy_v4_seed0"
+    },
+    {
+      "gpu": 0,
+      "log": "logs/cifar10_paper_medium_200k/test/full_conv_cifar10_paper_medium_random_seed0_200k.test.log",
+      "method": "fixed_random",
+      "return_code": 0,
+      "run_dir": "results/full_conv_cifar10_paper_medium_random_seed0_200k"
+    }
+  ],
+  "test_set_used": true
+}
