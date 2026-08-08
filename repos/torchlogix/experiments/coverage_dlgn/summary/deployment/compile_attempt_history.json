@@ -1,0 +1,14 @@
+{
+  "attempts": [
+    {
+      "run_label": "paper_s_random",
+      "compiler": "gcc -O1 through Circuit.compile",
+      "started_utc": "2026-08-04T21:36:45Z",
+      "stopped_utc": "2026-08-04T21:45:31Z",
+      "elapsed_lower_bound_seconds": 526,
+      "outcome": "manually interrupted feasibility attempt",
+      "reason": "The original unbounded fully unrolled compile had not completed after approximately 8.75 minutes. No model, checkpoint, accuracy metric, or dataset state was modified.",
+      "followup": "The benchmark was changed to preserve intermediate measurements and use a bounded compiler subprocess. The same circuit subsequently compiled successfully with gcc -O0."
+    }
+  ]
+}

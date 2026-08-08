@@ -1,0 +1,772 @@
+{
+  "architecture_audit": {
+    "paper_faithful_m": {
+      "architecture": "ClgnCifar10PaperMedium",
+      "augmentation": "standard",
+      "binarization": "fixed",
+      "binarization_initialization": "uniform",
+      "boolean_input_channels": 9,
+      "convolutional_stages": 4,
+      "data_split_seed": 2027,
+      "group_sum_tau": 40,
+      "input_precision_bits": 2,
+      "k_num": 256,
+      "logic_tree_depth": 3,
+      "parameterization": "raw",
+      "receptive_field": "3x3",
+      "thresholds_per_rgb_channel": 3
+    },
+    "paper_faithful_s": {
+      "architecture": "ClgnCifar10PaperSmall",
+      "augmentation": "standard",
+      "binarization": "fixed",
+      "binarization_initialization": "uniform",
+      "boolean_input_channels": 9,
+      "convolutional_stages": 4,
+      "data_split_seed": 2027,
+      "group_sum_tau": 20,
+      "input_precision_bits": 2,
+      "k_num": 32,
+      "logic_tree_depth": 3,
+      "parameterization": "raw",
+      "receptive_field": "3x3",
+      "thresholds_per_rgb_channel": 3
+    },
+    "paper_faithful_s_m_same_principle": {
+      "differences": "width scale (k_num 32 vs 256) and GroupSum tau (20 vs 40)",
+      "same_boolean_channels": true,
+      "same_convolutional_stage_pattern": true,
+      "same_gate_parameterization": true,
+      "same_threshold_encoding": true
+    },
+    "warp_is_separate": "The WARP-style Medium uses two thresholds/six Boolean channels and must not be pooled with the paper-faithful nine-channel S/M results.",
+    "warp_style_medium": {
+      "architecture": "ClgnCifar10Medium",
+      "augmentation": "none",
+      "binarization": "fixed",
+      "binarization_initialization": "uniform",
+      "boolean_input_channels": 6,
+      "convolutional_stages": 4,
+      "data_split_seed": 2027,
+      "group_sum_tau": 40,
+      "input_precision_bits": 2,
+      "k_num": 256,
+      "logic_tree_depth": 3,
+      "parameterization": "raw",
+      "receptive_field": "3x3",
+      "thresholds_per_rgb_channel": 2
+    }
+  },
+  "deployment": {
+    "csv": "summary/convolutional_deployment.csv",
+    "input_policy": "synthetic Boolean inputs; no dataset access",
+    "summary": "summary/convolutional_deployment.json"
+  },
+  "freeze_manifest": "summary/convolutional_evidence_freeze.json",
+  "freeze_run_count": 22,
+  "interpretation_constraints": [
+    "Do not pool nine-channel and six-channel accuracies.",
+    "Do not present U1 as having held-out test accuracy.",
+    "Do not attach a confidence interval to the one-seed Medium result.",
+    "Matched random/V4/U1 architectures have equal gate and parameter budgets."
+  ],
+  "paper_faithful_nine_channel": {
+    "medium_200k": {
+      "architecture": "ClgnCifar10PaperMedium",
+      "checkpoint_freeze_manifest": "summary/cifar10_paper_medium_200k_freeze.json",
+      "hardened_inference": {
+        "coverage_v4": {
+          "batch_size": 128,
+          "checkpoint": "best_checkpoint.pt",
+          "device": "cuda",
+          "examples_per_second": 1716.4279566974894,
+          "input_transfer_excluded": true,
+          "microseconds_per_example": 582.6052856445312,
+          "milliseconds_per_batch": 74.5734765625,
+          "mode": "hardened",
+          "peak_device_memory_bytes": 2949915136,
+          "timed_batches": 100,
+          "total_milliseconds": 7457.34765625,
+          "warmup_batches": 20
+        },
+        "fixed_random": {
+          "batch_size": 128,
+          "checkpoint": "best_checkpoint.pt",
+          "device": "cuda",
+          "examples_per_second": 1709.157853256426,
+          "input_transfer_excluded": true,
+          "microseconds_per_example": 585.0834655761719,
+          "milliseconds_per_batch": 74.89068359375,
+          "mode": "hardened",
+          "peak_device_memory_bytes": 2949698048,
+          "timed_batches": 100,
+          "total_milliseconds": 7489.068359375,
+          "warmup_batches": 20
+        },
+        "interpretation": "One timing pass; the sub-percent difference is measurement noise, not a speed claim.",
+        "peak_memory_delta_bytes": 217088,
+        "runtime_delta_percent": -0.4235600691945951
+      },
+      "heldout_queries_per_checkpoint": 1,
+      "heldout_test": {
+        "coverage_v4": {
+          "checkpoint": "best_checkpoint.pt",
+          "test_examples": 10000,
+          "test_hard_accuracy": 0.6996,
+          "test_hard_loss": 0.8601979772567749,
+          "test_relaxed_accuracy": 0.7218,
+          "test_relaxed_loss": 0.8034811114311218,
+          "validation_hard_accuracy": 0.7126,
+          "validation_selection_step": 194000
+        },
+        "fixed_random": {
+          "checkpoint": "best_checkpoint.pt",
+          "test_examples": 10000,
+          "test_hard_accuracy": 0.6957,
+          "test_hard_loss": 0.8833625136375427,
+          "test_relaxed_accuracy": 0.7128,
+          "test_relaxed_loss": 0.8253502587318421,
+          "validation_hard_accuracy": 0.7068,
+          "validation_selection_step": 164000
+        },
+        "gap_to_reported_pp": {
+          "coverage_v4": -1.0499999999999954,
+          "fixed_random": -1.4399999999999968
+        },
+        "hard_delta_pp": 0.39000000000000146,
+        "relaxed_delta_pp": 0.9000000000000008,
+        "reported_logic_tree_net_m_test_accuracy": 0.7101,
+        "validation_to_test_hard_gap_pp": {
+          "coverage_v4": -1.3000000000000012,
+          "fixed_random": -1.1099999999999999
+        }
+      },
+      "input_boolean_channels": 9,
+      "learning_curve_comparison": {
+        "first_step_at_70_percent_hard": {
+          "coverage_v4": 36000,
+          "fixed_random": 66000
+        },
+        "mean_hard_delta_pp": 1.0548000000000006,
+        "mean_relaxed_delta_pp": 0.45900000000000063,
+        "median_hard_delta_pp": 0.9600000000000053,
+        "ties": 0,
+        "v4_hard_losses": 3,
+        "v4_hard_wins": 97
+      },
+      "learning_curve_csv": "summary/cifar10_paper_medium_200k_curve.csv",
+      "limitations": [
+        "This is one seed and is not a statistical accuracy claim.",
+        "The 71.01% paper value is reported test accuracy; local validation values are not compared directly to it.",
+        "Training-only crop/flip augmentation is an explicit local adaptation because the paper does not document augmentation."
+      ],
+      "matched_deployment_cost": {
+        "candidate_indices_tensor_bytes": 9175040,
+        "dense_gate_count": 573440,
+        "dense_gate_count_note": "dense_gate_count covers the three classifier layers; the paper's operation count includes spatially instantiated convolution gates.",
+        "deployed_routing_bits": 19005440,
+        "deployed_routing_bytes_packed": 2375680,
+        "reported_logic_gate_operations": 3080000,
+        "reported_logic_gate_operations_are_approximate": true,
+        "trainable_parameters": 10694656,
+        "training_routing_parameters": 0
+      },
+      "offline_topology_overhead_seconds": 3.704499511164613,
+      "paper_identifier": "LogicTreeNet-M",
+      "phase": "cifar10_paper_medium_200k_paired",
+      "seed": 0,
+      "status": "ONE-SEED-COMPLETE",
+      "steps": 200000,
+      "test_set_used": true,
+      "topology": {
+        "coverage_v4": {
+          "construction_seconds": {
+            "convolutional": 4.85954871494323,
+            "dense_classifier": 1.3228406350826845,
+            "total": 6.182389350025915
+          },
+          "convolutional_layers": [
+            {
+              "channel_fanout_cv": 0.012955565587325782,
+              "channel_fanout_max": 58,
+              "channel_fanout_min": 56,
+              "channel_pair_span_mean": 2.7890625,
+              "construction_seconds": 0.06395204702857882,
+              "cross_channel_leaf_pair_fraction": 0.568359375,
+              "depth": 0,
+              "distinct_channel_groups": 35,
+              "duplicate_channel_groups": 221,
+              "in_channels": 9,
+              "out_kernels": 256,
+              "raw_channel_ancestry_mean": 2.0,
+              "raw_channel_coverage_fraction": 1.0,
+              "raw_predecessor_jaccard_mean": 0.0,
+              "strategy": "semantic_channel_hybrid",
+              "unique_spatial_offsets_mean": 5.4375
+            },
+            {
+              "channel_fanout_cv": 0.0,
+              "channel_fanout_max": 8,
+              "channel_fanout_min": 8,
+              "channel_pair_span_mean": 35.1328125,
+              "construction_seconds": 0.2248454389628023,
+              "cross_channel_leaf_pair_fraction": 0.5751953125,
+              "depth": 1,
+              "distinct_channel_groups": 1024,
+              "duplicate_channel_groups": 0,
+              "in_channels": 256,
+              "out_kernels": 1024,
+              "raw_channel_ancestry_mean": 3.5830078125,
+              "raw_channel_coverage_fraction": 1.0,
+              "raw_predecessor_jaccard_mean": 0.1474609375,
+              "strategy": "semantic_channel_hybrid",
+              "unique_spatial_offsets_mean": 5.521484375
+            },
+            {
+              "channel_fanout_cv": 0.0,
+              "channel_fanout_max": 8,
+              "channel_fanout_min": 8,
+              "channel_pair_span_mean": 129.84814453125,
+              "construction_seconds": 1.1306589939631522,
+              "cross_channel_leaf_pair_fraction": 0.5672607421875,
+              "depth": 2,
+              "distinct_channel_groups": 4096,
+              "duplicate_channel_groups": 0,
+              "in_channels": 1024,
+              "out_kernels": 4096,
+              "raw_channel_ancestry_mean": 5.7080078125,
+              "raw_channel_coverage_fraction": 1.0,
+              "raw_predecessor_jaccard_mean": 0.2773135230654762,
+              "strategy": "semantic_channel_hybrid",
+              "unique_spatial_offsets_mean": 5.503173828125
+            },
+            {
+              "channel_fanout_cv": 0.0,
+              "channel_fanout_max": 4,
+              "channel_fanout_min": 4,
+              "channel_pair_span_mean": 32.129150390625,
+              "construction_seconds": 3.440092234988697,
+              "cross_channel_leaf_pair_fraction": 0.5736083984375,
+              "depth": 3,
+              "distinct_channel_groups": 8192,
+              "duplicate_channel_groups": 0,
+              "in_channels": 4096,
+              "out_kernels": 8192,
+              "raw_channel_ancestry_mean": 7.77490234375,
+              "raw_channel_coverage_fraction": 1.0,
+              "raw_predecessor_jaccard_mean": 0.47717023577008927,
+              "strategy": "semantic_channel_hybrid",
+              "unique_spatial_offsets_mean": 5.489013671875
+            }
+          ]
+        },
+        "fixed_random": {
+          "construction_seconds": {
+            "convolutional": 1.1353287618840113,
+            "dense_classifier": 1.3425610769772902,
+            "total": 2.4778898388613015
+          },
+          "convolutional_layers": [
+            {
+              "channel_fanout_cv": 0.23385358667337136,
+              "channel_fanout_max": 64,
+              "channel_fanout_min": 32,
+              "channel_pair_span_mean": 1.0,
+              "construction_seconds": 0.0640291350428015,
+              "cross_channel_leaf_pair_fraction": 0.568359375,
+              "depth": 0,
+              "distinct_channel_groups": 8,
+              "duplicate_channel_groups": 248,
+              "in_channels": 9,
+              "out_kernels": 256,
+              "raw_channel_ancestry_mean": 2.0,
+              "raw_channel_coverage_fraction": 1.0,
+              "raw_predecessor_jaccard_mean": 0.0,
+              "strategy": "random",
+              "unique_spatial_offsets_mean": 5.4375
+            },
+            {
+              "channel_fanout_cv": 0.048159484398195125,
+              "channel_fanout_max": 10,
+              "channel_fanout_min": 4,
+              "channel_pair_span_mean": 1.0,
+              "construction_seconds": 0.08388403290882707,
+              "cross_channel_leaf_pair_fraction": 0.5751953125,
+              "depth": 1,
+              "distinct_channel_groups": 255,
+              "duplicate_channel_groups": 769,
+              "in_channels": 256,
+              "out_kernels": 1024,
+              "raw_channel_ancestry_mean": 3.12109375,
+              "raw_channel_coverage_fraction": 1.0,
+              "raw_predecessor_jaccard_mean": 0.29296874999999994,
+              "strategy": "random",
+              "unique_spatial_offsets_mean": 5.521484375
+            },
+            {
+              "channel_fanout_cv": 0.024079742199097563,
+              "channel_fanout_max": 10,
+              "channel_fanout_min": 4,
+              "channel_pair_span_mean": 1.0,
+              "construction_seconds": 0.3294168249703944,
+              "cross_channel_leaf_pair_fraction": 0.5672607421875,
+              "depth": 2,
+              "distinct_channel_groups": 1023,
+              "duplicate_channel_groups": 3073,
+              "in_channels": 1024,
+              "out_kernels": 4096,
+              "raw_channel_ancestry_mean": 4.25,
+              "raw_channel_coverage_fraction": 1.0,
+              "raw_predecessor_jaccard_mean": 0.47382812500000004,
+              "strategy": "random",
+              "unique_spatial_offsets_mean": 5.503173828125
+            },
+            {
+              "channel_fanout_cv": 0.012352647110032733,
+              "channel_fanout_max": 6,
+              "channel_fanout_min": 2,
+              "channel_pair_span_mean": 1.0,
+              "construction_seconds": 0.6579987689619884,
+              "cross_channel_leaf_pair_fraction": 0.5736083984375,
+              "depth": 3,
+              "distinct_channel_groups": 4095,
+              "duplicate_channel_groups": 4097,
+              "in_channels": 4096,
+              "out_kernels": 8192,
+              "raw_channel_ancestry_mean": 5.3798828125,
+              "raw_channel_coverage_fraction": 1.0,
+              "raw_predecessor_jaccard_mean": 0.5822544642857141,
+              "strategy": "random",
+              "unique_spatial_offsets_mean": 5.489013671875
+            }
+          ]
+        }
+      },
+      "training_runtime": {
+        "coverage_v4_artifact_span_seconds": 91771.4758298397,
+        "coverage_v4_peak_training_memory": "not recorded because the run ended by controlled SIGINT",
+        "coverage_v4_span_is_approximate": true,
+        "fixed_random_peak_gpu_memory_bytes": 15691860480,
+        "fixed_random_wall_seconds": 91690.33289619093
+      },
+      "validation_evaluations": 100,
+      "validation_selection": {
+        "coverage_v4": {
+          "hard_accuracy": 0.7126,
+          "relaxed_accuracy_at_selected_checkpoint": 0.725,
+          "step": 194000
+        },
+        "fixed_random": {
+          "hard_accuracy": 0.7068,
+          "relaxed_accuracy_at_selected_checkpoint": 0.7194,
+          "step": 164000
+        }
+      }
+    },
+    "small_20k": {
+      "component_ablation": {
+        "architecture": "ClgnCifar10PaperSmall",
+        "controls_reused_not_rerun": true,
+        "dataset": "cifar-10",
+        "frozen_method_policy": {
+          "v3_changed": false,
+          "v4_changed": false
+        },
+        "heldout_test_used": false,
+        "mean_percent": {
+          "balanced_channel_no_swaps": 58.013333333333335,
+          "frozen_v4": 57.18666666666666,
+          "random": 56.67333333333334
+        },
+        "metric": "best hardened validation accuracy",
+        "paired_effects": {
+          "balanced_channel_minus_random": {
+            "paired_differences_percentage_points": [
+              1.8199999999999932,
+              0.259999999999998,
+              1.9399999999999977
+            ],
+            "paired_mean_percentage_points": 1.3399999999999963,
+            "paired_std_percentage_points": 0.9372299611087972,
+            "paired_t95_ci_percentage_points": [
+              -0.9882082909724121,
+              3.6682082909724048
+            ]
+          },
+          "frozen_v4_minus_balanced_channel": {
+            "paired_differences_percentage_points": [
+              -0.3200000000000074,
+              0.14000000000000057,
+              -2.3000000000000043
+            ],
+            "paired_mean_percentage_points": -0.8266666666666703,
+            "paired_std_percentage_points": 1.296508130839655,
+            "paired_t95_ci_percentage_points": [
+              -4.047371408076043,
+              2.394038074742703
+            ]
+          },
+          "frozen_v4_minus_random": {
+            "paired_differences_percentage_points": [
+              1.4999999999999858,
+              0.3999999999999986,
+              -0.36000000000000654
+            ],
+            "paired_mean_percentage_points": 0.513333333333326,
+            "paired_std_percentage_points": 0.9351648695996472,
+            "paired_t95_ci_percentage_points": [
+              -1.809744985942988,
+              2.83641165260964
+            ]
+          }
+        },
+        "per_seed_percent": {
+          "balanced_channel_no_swaps": [
+            57.92,
+            57.66,
+            58.46
+          ],
+          "frozen_v4": [
+            57.599999999999994,
+            57.8,
+            56.16
+          ],
+          "random": [
+            56.10000000000001,
+            57.4,
+            56.52
+          ]
+        },
+        "phase": "cifar10_conv_small_v4_components"
+      },
+      "five_seed_validation": {
+        "mean_percent": {
+          "frozen_v4": 57.448,
+          "random": 56.864000000000004,
+          "unified_candidate": 57.624
+        },
+        "paired_effects": {
+          "frozen_v4_minus_random": {
+            "paired_differences_percentage_points": [
+              1.4999999999999858,
+              0.3999999999999986,
+              -0.36000000000000654,
+              0.2400000000000091,
+              1.1400000000000006
+            ],
+            "paired_mean_percentage_points": 0.5839999999999975,
+            "paired_std_percentage_points": 0.740189165011212,
+            "paired_t95_ci_percentage_points": [
+              -0.3350662380549315,
+              1.5030662380549265
+            ],
+            "positive_seed_count": 4
+          },
+          "unified_candidate_minus_frozen_v4": {
+            "paired_differences_percentage_points": [
+              0.3200000000000074,
+              -0.14000000000000057,
+              2.3000000000000043,
+              0.4399999999999977,
+              -2.039999999999999
+            ],
+            "paired_mean_percentage_points": 0.17600000000000193,
+            "paired_std_percentage_points": 1.5501870854835567,
+            "paired_t95_ci_percentage_points": [
+              -1.748811494525355,
+              2.1008114945253586
+            ],
+            "positive_seed_count": 3
+          },
+          "unified_candidate_minus_random": {
+            "paired_differences_percentage_points": [
+              1.8199999999999932,
+              0.259999999999998,
+              1.9399999999999977,
+              0.6800000000000068,
+              -0.8999999999999986
+            ],
+            "paired_mean_percentage_points": 0.7599999999999995,
+            "paired_std_percentage_points": 1.1755849607748452,
+            "paired_t95_ci_percentage_points": [
+              -0.6996815226239129,
+              2.2196815226239117
+            ],
+            "positive_seed_count": 4
+          }
+        },
+        "promotion_decision": {
+          "mean_gain_gate_passed": false,
+          "positive_seed_gate_passed": true,
+          "promoted_to_convolutional_medium": false,
+          "rule": {
+            "action_on_fail": "stop before convolutional M and preserve the candidate as a negative or architecture-limited result",
+            "action_on_pass": "run matched convolutional CIFAR-10 M validation",
+            "minimum_paired_mean_gain_percentage_points": 1.0,
+            "minimum_positive_seed_count": 4,
+            "reference": "random",
+            "required_seed_count": 5
+          }
+        }
+      },
+      "heldout_policy": "Do not evaluate U1 or seeds 3-4 on test during this evidence pass.",
+      "historical_three_seed_test": {
+        "frozen_v4_minus_random": {
+          "paired_differences_percentage_points": [
+            2.5800000000000054,
+            -0.13999999999999346,
+            -1.7600000000000051
+          ],
+          "paired_mean_percentage_points": 0.22666666666666893,
+          "paired_std_percentage_points": 2.193110424336484,
+          "paired_t95_ci_percentage_points": [
+            -5.221321644777589,
+            5.674654978110928
+          ],
+          "positive_seed_count": 1,
+          "seed_count": 3
+        },
+        "frozen_v4_percent": [
+          57.730000000000004,
+          56.21000000000001,
+          55.16
+        ],
+        "mean_percent": {
+          "frozen_v4": 56.36666666666667,
+          "random": 56.14
+        },
+        "provenance": "TRIED-HISTORICAL-TEST",
+        "random_percent": [
+          55.15,
+          56.35,
+          56.92
+        ],
+        "scope": "random versus V4 seeds 0-2 only; U1 was never tested"
+      },
+      "learning_efficiency": {
+        "curve_csv": "summary/convolutional_evidence_curves.csv",
+        "mean_first_step_at_threshold_percent": {
+          "50.0": {
+            "fixed_random": 4000,
+            "frozen_v4": 4000,
+            "unified_u1": 4000
+          },
+          "55.0": {
+            "fixed_random": 10000,
+            "frozen_v4": 8000,
+            "unified_u1": 8000
+          },
+          "57.0": {
+            "fixed_random": null,
+            "frozen_v4": 18000,
+            "unified_u1": 18000
+          }
+        }
+      },
+      "matched_resource_accounting": {
+        "common_cost": {
+          "candidate_indices_tensor_bytes": 1146880,
+          "dense_gate_count": 71680,
+          "deployed_routing_bits": 1945600,
+          "deployed_routing_bytes_packed": 243200,
+          "trainable_parameters": 1336832,
+          "training_routing_parameters": 0
+        },
+        "cost_identical_across_methods": true,
+        "families": {
+          "frozen_v4": {
+            "cost": {
+              "candidate_indices_tensor_bytes": 1146880,
+              "dense_gate_count": 71680,
+              "deployed_routing_bits": 1945600,
+              "deployed_routing_bytes_packed": 243200,
+              "trainable_parameters": 1336832,
+              "training_routing_parameters": 0
+            },
+            "cost_identical_across_new_seeds": true,
+            "mean_peak_gpu_memory_bytes": 1965679616,
+            "mean_topology_construction_seconds": 0.4134748850192409,
+            "mean_wall_seconds": 1022.159488084988
+          },
+          "random": {
+            "cost": {
+              "candidate_indices_tensor_bytes": 1146880,
+              "dense_gate_count": 71680,
+              "deployed_routing_bits": 1945600,
+              "deployed_routing_bytes_packed": 243200,
+              "trainable_parameters": 1336832,
+              "training_routing_parameters": 0
+            },
+            "cost_identical_across_new_seeds": true,
+            "mean_peak_gpu_memory_bytes": 1965652480,
+            "mean_topology_construction_seconds": 0.1760813495493494,
+            "mean_wall_seconds": 1021.6792658804916
+          },
+          "unified_candidate": {
+            "cost": {
+              "candidate_indices_tensor_bytes": 1146880,
+              "dense_gate_count": 71680,
+              "deployed_routing_bits": 1945600,
+              "deployed_routing_bytes_packed": 243200,
+              "trainable_parameters": 1336832,
+              "training_routing_parameters": 0
+            },
+            "cost_identical_across_new_seeds": true,
+            "mean_peak_gpu_memory_bytes": 1965679616,
+            "mean_topology_construction_seconds": 0.16466196405235678,
+            "mean_wall_seconds": 1021.505652309017
+          }
+        },
+        "scope_note": "Resource instrumentation is summarized on the newly trained matched seeds 3 and 4; historical seeds predate some cost fields."
+      },
+      "negative_channel_spatial_adapter": {
+        "architecture": "ClgnCifar10PaperSmall",
+        "controls_reused_not_rerun": true,
+        "cost": {
+          "additional_deployed_gates": 0,
+          "additional_deployed_routing_entries": 0,
+          "additional_trainable_parameters": 0
+        },
+        "dataset": "cifar-10",
+        "frozen_method_policy": {
+          "v3_changed": false,
+          "v4_changed": false
+        },
+        "heldout_test_used": false,
+        "mean_percent": {
+          "channel_spatial": 57.03333333333333,
+          "frozen_v4": 57.18666666666666,
+          "random": 56.67333333333334
+        },
+        "metric": "best hardened validation accuracy",
+        "paired_effects": {
+          "channel_spatial_minus_frozen_v4": {
+            "paired_differences_percentage_points": [
+              -1.3399999999999963,
+              0.36000000000000654,
+              0.5200000000000031
+            ],
+            "paired_mean_percentage_points": -0.15333333333332888,
+            "paired_std_percentage_points": 1.0307925753192708,
+            "paired_t95_ci_percentage_points": [
+              -2.7139640426758973,
+              2.4072973760092395
+            ]
+          },
+          "channel_spatial_minus_random": {
+            "paired_differences_percentage_points": [
+              0.15999999999998948,
+              0.7600000000000051,
+              0.1599999999999966
+            ],
+            "paired_mean_percentage_points": 0.35999999999999704,
+            "paired_std_percentage_points": 0.34641016151378246,
+            "paired_t95_ci_percentage_points": [
+              -0.5005305459498204,
+              1.2205305459498146
+            ]
+          }
+        },
+        "per_seed_percent": {
+          "channel_spatial": [
+            56.26,
+            58.160000000000004,
+            56.68
+          ],
+          "frozen_v4": [
+            57.599999999999994,
+            57.8,
+            56.16
+          ],
+          "random": [
+            56.10000000000001,
+            57.4,
+            56.52
+          ]
+        },
+        "phase": "cifar10_conv_small_channel_spatial",
+        "promotion_gate": {
+          "passes_random_gate": false,
+          "passes_v4_gate": false,
+          "promote_to_medium": false,
+          "required_gain_over_frozen_v4_percentage_points": 1.0,
+          "required_gain_over_random_percentage_points": 2.0
+        }
+      },
+      "provenance": "TRIED-SELECTION",
+      "selection_metric": "best hardened validation accuracy"
+    }
+  },
+  "scope": "existing convolutional results only; no new accuracy training or test query",
+  "status": "COMPLETED-EVIDENCE-SNAPSHOT",
+  "warp_style_six_channel_medium_30k": {
+    "comparison_scope": "Separate validation-only compatibility study; approximate reported Figure 4 endpoints and one local seed, not a paper-faithful LogicTreeNet-M reproduction.",
+    "completed_mean_validation_percent": {
+      "legacy_v4_fixed_uniform": 66.23,
+      "paired_random_fixed_uniform": 64.58,
+      "warp_fixed_distributive": 66.12,
+      "warp_fixed_uniform": 65.35,
+      "warp_learnable": 65.88000000000001
+    },
+    "difference_from_approximate_reported_endpoint_pp": {
+      "warp_fixed_distributive": 1.1200000000000045,
+      "warp_fixed_uniform": 1.3499999999999943,
+      "warp_learnable": -0.7199999999999847
+    },
+    "frozen_method_policy": {
+      "legacy_v4_changed": false,
+      "v3_changed": false
+    },
+    "heldout_test_used": false,
+    "metric": "best hardened validation accuracy",
+    "paired_effects": {
+      "legacy_v4_minus_paired_random_fixed_uniform": {
+        "paired_differences_percentage_points": [
+          1.6500000000000057
+        ],
+        "paired_mean_percentage_points": 1.6500000000000057,
+        "positive_seed_count": 1,
+        "seed_count": 1
+      }
+    },
+    "per_seed_validation_percent": {
+      "legacy_v4_fixed_uniform": {
+        "0": 66.23,
+        "1": null,
+        "2": null
+      },
+      "legacy_v4_learnable": {
+        "0": null,
+        "1": null,
+        "2": null
+      },
+      "paired_random_fixed_uniform": {
+        "0": 64.58,
+        "1": null,
+        "2": null
+      },
+      "paired_random_learnable": {
+        "0": null,
+        "1": null,
+        "2": null
+      },
+      "warp_fixed_distributive": {
+        "0": 66.12,
+        "1": null,
+        "2": null
+      },
+      "warp_fixed_uniform": {
+        "0": 65.35,
+        "1": null,
+        "2": null
+      },
+      "warp_learnable": {
+        "0": 65.88000000000001,
+        "1": null,
+        "2": null
+      }
+    },
+    "phase": "warp_fig4_cifar10_medium",
+    "provenance": "TRIED-PARTIAL"
+  }
+}

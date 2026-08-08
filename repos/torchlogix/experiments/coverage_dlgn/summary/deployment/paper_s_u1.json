@@ -1,0 +1,66 @@
+{
+  "architecture": "ClgnCifar10PaperSmall",
+  "boolean_input_channels": 9,
+  "c_source_generation_seconds": 0.09889779391232878,
+  "checkpoint": "best_checkpoint.pt",
+  "checkpoint_sha256": "12fcd52bfecb1142ebcfda1103b52b1427d0768732b45ff8d0693425d0c781df",
+  "circuit_after_simplification": {
+    "logic_gates": 214883,
+    "outputs": 10,
+    "sum_reductions": 10
+  },
+  "circuit_before_simplification": {
+    "input_bits": 9216,
+    "logic_gates": 505240,
+    "outputs": 10,
+    "sum_reductions": 10
+  },
+  "classifier_connections_init_method": null,
+  "compile": {
+    "completed": true,
+    "opt_level": 0,
+    "seconds": 44.72297002200503,
+    "shared_object_bytes": 5762288
+  },
+  "compile_peak_rss_bytes": 1153196032,
+  "compile_peak_rss_delta_bytes": 0,
+  "compiled_cpu_benchmark": {
+    "batch_size": 128,
+    "examples_per_second": 41351.95847126341,
+    "includes_boolean_input_packing": true,
+    "latency_milliseconds_per_batch_mean": 3.0953793902881444,
+    "latency_milliseconds_per_batch_std": 0.015366716702307078,
+    "microseconds_per_example_mean": 24.182651486626128,
+    "pack_bits": 64,
+    "single_process_single_generated_c_entrypoint": true,
+    "timed_batches": 10,
+    "warmup_batches": 3
+  },
+  "connections_init_method": "semantic_channel_hybrid",
+  "conv_connections_init_method": null,
+  "cpu": "x86_64",
+  "equivalence": {
+    "compiled_c_vs_python_circuit": true,
+    "hardened_class_vs_python_circuit": true,
+    "pytorch_export_scores_vs_python_circuit": true,
+    "pytorch_export_vs_simplified_circuit": true,
+    "synthetic_examples": 1
+  },
+  "final_peak_rss_bytes": 1153196032,
+  "generated_c_source_bytes": 9752712,
+  "heldout_test_accessed": false,
+  "input_source": "deterministic synthetic Boolean tensors only",
+  "model_load_seconds": 0.057850699056871235,
+  "parameterization": "raw",
+  "python_circuit_one_example_seconds": 0.09507149597629905,
+  "run_label": "paper_s_u1",
+  "run_name": "ablate_conv_cifar10_small_balanced_channel_no_swaps_seed0",
+  "simplification_seconds": 6.585827877977863,
+  "status": "COMPLETE",
+  "thresholds_per_rgb_channel": 3,
+  "torch_threads": 24,
+  "trace_peak_rss_bytes": 1153196032,
+  "trace_peak_rss_delta_bytes": 446984192,
+  "trace_seconds": 3.9177761250175536,
+  "training_config_sha256": "e6b2db3964ae57ee5c3c9c327e36a3870eefa8327408a69bd7b81734a21f52cd"
+}

@@ -1128,3 +1128,39 @@ This log records operational failures and protocol decisions made after commit
   default CSV writer emitted CRLF line endings, which Git reported as trailing
   whitespace. No commit was created. The summarizer now explicitly emits Unix
   newlines; the curve was regenerated before the successful commit attempt.
+
+## August 4, 2026: convolutional evidence freeze and deployment accounting
+
+- No accuracy training or dataset evaluation was launched. A new immutable
+  evidence manifest SHA-256-froze configurations, metrics, checkpoints, test
+  records, topology records, and inference records across 22 paper-faithful
+  S/M and WARP-style run directories.
+- The architecture audit confirmed that paper-faithful S and M use the same
+  three-threshold-per-RGB, nine-Boolean-channel principle and four depth-3
+  convolutional-stage pattern. Their scale parameters are `k_num=32`, tau 20
+  and `k_num=256`, tau 40. WARP-style Medium is explicitly separate at two
+  thresholds/six channels.
+- The five-seed paper-S validation cohort and historical three-seed test
+  cohort were separated. U1 has no held-out test result; no new test query was
+  made. The dense CIFAR-10 S ledger was corrected from mislabeled validation
+  values 49.692/53.116% to the frozen test values 49.056/52.358%.
+- Frozen seed-0 S random, V4, and U1 checkpoints exported successfully on
+  deterministic synthetic Boolean inputs. Hardened class, export-mode,
+  Python Circuit, simplified Circuit, and generated C outputs agreed.
+- The first random-S `gcc -O1` compile began at 21:36:45 UTC and was manually
+  interrupted at 21:45:31 UTC after approximately 526 seconds. It had not
+  failed, but the unbounded compile was not a practical measurement. The
+  benchmark was changed to persist every stage and bound the compiler
+  subprocess; no checkpoint or experimental artifact was modified.
+- Bounded `gcc -O0`, 64-way bit-packed S compiles completed in 37.75, 39.75,
+  and 44.72 seconds for random, V4, and U1. Mean batch-128 latencies were
+  3.057, 3.076, and 3.095 ms over ten timed batches. These single-pass
+  differences do not establish a speed claim.
+- Exact nine-channel M and six-channel WARP-style M random/V4 pairs passed
+  synthetic trace, Python-Circuit equivalence, and simplification. Fully
+  unrolled M C compilation was not attempted after the S feasibility result.
+- Detailed records are in `summary/convolutional_evidence_*`,
+  `summary/convolutional_deployment.*`, and `summary/deployment/`.
+- The final evidence-consistency audit passed all 16 checks. Focused
+  convolutional, circuit, and experiment-protocol verification completed with
+  **1,933 passed and 1,660 skipped in 228.11 seconds**.

@@ -93,12 +93,12 @@ exactly-once test evaluation.
 
 | Architecture | Target gates | Raw training parameters | Method | A / R accuracy | Reported configuration |
 |---|---:|---:|---|---:|---|
-| S: 4 x 12K | 48K | 0.768M | Deep DLGN random | **[REPRODUCED] 49.692% (n=5) / [REPORTED] 51.27%** | Exact 48K architecture; one-time held-out test |
+| S: 4 x 12K | 48K | 0.768M | Deep DLGN random | **[REPRODUCED] 49.056 +/- 0.356% test (n=5) / [REPORTED] 51.27%** | Exact 48K architecture; one-time held-out test; source: `summary/paper_cifar10_semantic_v3.json` |
 |  |  | 1.536M | Mommen learned connectivity | **[ADAPTED] 50.950 +/- 0.244% (n=3) / [N/A]** | Exact-48K \(N_c=8\) adaptation; one-time held-out test; source: `summary/table2_s_comparator_final.json` |
 |  |  | 3.840M | LILogicNet | **[ADAPTED] 50.743 +/- 0.574% (n=3) / [REPORTED] 55.11%** | Exact-48K Top-32 adaptation; one-time held-out test; reported value uses 8K nonmatched gates; local source as above |
 |  |  |  | WARP-LUT | [PENDING] / [REPORTED] 52.12 +/- 0.01% | 128K total gates under the BitLogic protocol, nonmatched |
 |  |  |  | BitLogic best-of-space | [PENDING] / [REPORTED] 58.06 +/- 0.14% | 128K total rank-4 gates, nonmatched |
-|  |  |  | **CoverageDLGN** | **[OUR-FINAL] 53.116% (n=5) / [N/A]** | Exact 48K target; +3.424 pp paired test gain |
+|  |  |  | **CoverageDLGN** | **[OUR-FINAL] 52.358 +/- 0.282% test (n=5) / [N/A]** | Exact 48K target; +3.302 pp paired test gain, 95% CI [+2.767, +3.837] |
 | M: 4 x 128K | 512K | 8.192M | Deep DLGN random | **[REPRODUCED] 54.028% (n=5) / [REPORTED] 57.39%** | Exact 512K architecture; one-time held-out test |
 |  |  | 16.384M | Mommen learned connectivity | **[TRIED] 54.420% test (n=1) / [N/A]** | Exact-512K \(N_c=8\) adaptation; conditional policy stops at one seed; one-time held-out test |
 |  |  |  | LILogicNet | [PENDING] / [REPORTED] 57.66 +/- 0.17% | 64K gates, nonmatched |
@@ -111,6 +111,13 @@ exactly-once test evaluation.
 |  |  |  | WARP-LUT | [PENDING] / [REPORTED] 52.12 +/- 0.01% | 128K total gates, nonmatched |
 |  |  |  | BitLogic best-of-space | [PENDING] / [REPORTED] 58.06 +/- 0.14% | 128K total rank-4 gates, nonmatched |
 |  |  |  | **CoverageDLGN** | **[OUR-FINAL] raw V3 swap-0.50 61.020 +/- 0.336% test (n=5) / [N/A]** | Exact 1.28M target; +5.060 pp paired, 95% CI [+4.555, +5.565]; one-time held-out test |
+
+The earlier 49.692% random and 53.116% CoverageDLGN S values are mean best
+hardened **validation** accuracies, not held-out test accuracies. They remain
+in `summary/paper_cifar10_semantic_v3.json` and the experiment history, but
+the primary S cells above now use the exactly-once test means of 49.056% and
+52.358%. This correction changes the paired gain from +3.424 validation pp to
++3.302 test pp; it does not change the selected checkpoints or method.
 
 The one-seed 5K compression screen is complete; these are validation
 selection values, not held-out test or paper-final values:
@@ -191,32 +198,41 @@ The frozen checkpoints were then evaluated exactly once on the held-out test.
 
 ## Table 3: Convolutional CIFAR-10 S/M/L
 
-Gate count follows the convolutional DLGN paper's spatially instantiated
-operation accounting.
+Paper-faithful S and M both use 2-bit RGB precision represented by three
+thermometer thresholds per channel, or nine Boolean input channels. They use
+the same four depth-3 convolutional-stage pattern, raw LUT parameterization,
+group size 2, and classifier pattern. S uses `k_num=32`, tau 20; M uses
+`k_num=256`, tau 40. The WARP-style study below is a separate six-channel
+protocol and is never pooled with these rows.
 
-| Architecture | Gate operations | Method | A / R accuracy | Match status |
-|---|---:|---|---:|---|
-| LogicTreeNet-S | 0.40M | Original fixed routing | [TRIED-SELECTION] 56.864% validation / **[REPORTED] 60.38%** | Exact architecture; five seeds at 20K; no test query |
-|  | 0.40M | Two-stage unit tying, 30% | [PENDING] / [REPORTED] 56.70 +/- 0.08% | Exact S; approximately 0.70 x gates after tying |
-|  | 0.57M | Conv. TTNet-S | [N/A] / [REPORTED] 50.10% | Different truth-table architecture |
-|  | 0.40M | Light/IWP-LogicTreeNet | [PENDING] / [N/A] | Exact adaptation; no published S result |
-|  | 0.40M | WARP-LogicTreeNet | [PENDING] / [N/A] | Exact adaptation; no published S result |
-|  | **0.40M** | **CoverageDLGN-Channel (frozen V4)** | [TRIED-SELECTION] 57.448% validation / [N/A] | Five seeds; +0.584 pp over random, 95% CI [-0.335, +1.503] |
-|  | **0.40M** | **Unified semantic degree-balanced (U1)** | **[TRIED-STOPPED] 57.624% validation** / [N/A] | Five seeds; +0.760 pp, 95% CI [-0.700, +2.220], wins 4/5; failed +1 pp gate |
-|  | **0.40M** | **Channel-spatial leaf pairing** | [TRIED-STOPPED] 57.03% validation / [N/A] | Three seeds; -0.15 pp vs V4; failed both promotion gates |
-| LogicTreeNet-M | 3.08M | Original fixed routing | **[TRIED-ONE-SEED] 69.57% test / [REPORTED] 71.01% test** | Exact nine-channel architecture; best-hard-validation checkpoint from 200K matched run |
-|  | 3.08M | Two-stage unit tying, 30% | [PENDING] / [REPORTED] 70.77 +/- 0.07% | Exact M; approximately 0.70 x after tying |
-|  | approximately 3.08M | Scalability-boundaries CDLGN-M | [N/A] / [REPORTED] 65.23% | Minimally modified M protocol |
-|  | 189M | Conv. TTNet-L | [N/A] / [REPORTED] 70.75% | Different, much larger architecture |
-|  | 3.08M | Light/IWP-LogicTreeNet | [PENDING] / [N/A] | Exact adaptation |
-|  | 3.08M | WARP-LogicTreeNet | [PENDING] / [N/A] | Exact adaptation |
-|  | **3.08M** | **CoverageDLGN-Channel (frozen V4)** | **[TRIED-ONE-SEED] 69.96% test / [N/A]** | Exact architecture; +0.39 pp test, +0.58 pp best validation; V4 led 97/100 evaluations |
-| LogicTreeNet-L | 28.9M | Original fixed routing | [PENDING] / **[REPORTED] 84.99%** | Exact replication requires 5-bit input and teacher |
-|  | 189M | Conv. TTNet-L | [N/A] / [REPORTED] 70.75% | Different architecture |
-|  | 3.08M | Scalability-boundaries CDLGN-M | [N/A] / [REPORTED] 65.23% | M architecture, not L |
-|  | 28.9M | Light/IWP-LogicTreeNet | [PENDING] / [N/A] | New L adaptation |
-|  | 28.9M | WARP-LogicTreeNet | [PENDING] / [N/A] | New L adaptation |
-|  | **28.9M** | **CoverageDLGN-Channel** | [PENDING] / [N/A] | Requires a paper-faithful L baseline first |
+The cost column prints three definitions when available: the source paper's
+approximate gate-operation value, locally learned LUT units, and locally
+spatially instantiated gate applications. These definitions are not
+interchangeable.
+
+| Architecture | Input | Cost definitions | Method | Local achieved accuracy | Paper-reported accuracy | Provenance / match status |
+|---|---:|---|---|---:|---:|---|
+| LogicTreeNet-S | 3 thresholds/RGB = 9 channels | paper ~0.40M; 83,552 LUTs; 874,496 spatial applications | Original fixed routing | [TRIED-SELECTION] 56.864% best hard validation (n=5); [TRIED-HISTORICAL-TEST] 56.140% hard test (n=3) | **[REPORTED] 60.38% test** | Exact architecture; 20K local schedule; five-seed cohort is validation-only |
+|  |  | ~0.70 x source gates | Two-stage unit tying, 30% | [N/A] | [REPORTED] 56.70 +/- 0.08% validation | Exact S architecture, different gate count and validation metric |
+|  |  | 0.57M reported | Conv. TTNet-S | [N/A] | [REPORTED] 50.10% | Different truth-table architecture |
+|  |  | same declared S budget | Light/IWP-LogicTreeNet | [PENDING] | [N/A] | Exact adaptation not run |
+|  |  | same declared S budget | WARP-LogicTreeNet | [PENDING] | [N/A] | Exact adaptation not run |
+|  |  | same declared S budget | **CoverageDLGN-Channel (frozen V4)** | [TRIED-SELECTION] 57.448% validation (n=5); [TRIED-HISTORICAL-TEST] 56.367% test (n=3) | [N/A] | +0.584 validation pp, 95% CI [-0.335, +1.503]; historical test +0.227 pp, CI crosses zero |
+|  |  | same declared S budget | **Unified semantic degree-balanced (U1)** | **[TRIED-STOPPED] 57.624% validation (n=5)** | [N/A] | +0.760 pp, 95% CI [-0.700, +2.220], wins 4/5; no test query; failed +1 pp gate |
+|  |  | same declared S budget | Channel-spatial leaf pairing | [TRIED-STOPPED] 57.033% validation (n=3) | [N/A] | -0.153 pp vs V4; failed both promotion gates |
+| LogicTreeNet-M | 3 thresholds/RGB = 9 channels | paper ~3.08M; 668,416 LUTs; 6,995,968 spatial applications | Original fixed routing | **[TRIED-ONE-SEED] 70.68% best hard validation; 69.57% hard test** | **[REPORTED] 71.01% test** | Exact architecture; best-validation checkpoint from matched 200K run |
+|  |  | ~0.70 x source gates | Two-stage unit tying, 30% | [N/A] | [REPORTED] 70.77 +/- 0.07% validation | Exact M architecture, different gate count and validation metric |
+|  |  | approximately 3.08M reported | Scalability-boundaries CDLGN-M | [N/A] | [REPORTED] 65.23% | Minimally modified M protocol |
+|  |  | 189M reported | Conv. TTNet-L | [N/A] | [REPORTED] 70.75% | Different, much larger architecture |
+|  |  | same declared M budget | Light/IWP-LogicTreeNet | [PENDING] | [N/A] | Exact adaptation not run |
+|  |  | same declared M budget | WARP-LogicTreeNet | [PENDING] | [N/A] | Exact adaptation not run |
+|  |  | same declared M budget | **CoverageDLGN-Channel (frozen V4)** | **[TRIED-ONE-SEED] 71.26% best hard validation; 69.96% hard test** | [N/A] | +0.58 validation pp and +0.39 test pp; V4 led 97/100 validation evaluations |
+| LogicTreeNet-L | 5-bit paper input | paper ~28.9M | Original fixed routing | [PENDING] | **[REPORTED] 84.99% test** | Exact replication requires 5-bit input and teacher |
+|  |  | 189M reported | Conv. TTNet-L | [N/A] | [REPORTED] 70.75% | Different architecture |
+|  |  | M architecture | Scalability-boundaries CDLGN-M | [N/A] | [REPORTED] 65.23% | Not LogicTreeNet-L |
+|  |  | same declared L budget | Light/IWP-LogicTreeNet | [PENDING] | [N/A] | New L adaptation |
+|  |  | same declared L budget | WARP-LogicTreeNet | [PENDING] | [N/A] | New L adaptation |
+|  |  | same declared L budget | **CoverageDLGN-Channel** | [PENDING] | [N/A] | Requires a paper-faithful L baseline first |
 
 ### WARP-style CIFAR-10 Medium compatibility study
 
@@ -248,6 +264,39 @@ different `random-unique` routing sampler. Seeds 1 and 2 remain pending.
 
 Machine-readable source:
 `summary/warp_fig4_cifar10_medium.json`.
+
+### Convolutional circuit and deployment accounting
+
+All rows below use synthetic thresholded Boolean inputs and therefore make no
+validation or test-set query. Functional equivalence passed from hardened
+PyTorch class output through export mode, Python `Circuit`, circuit
+simplification, and, for S, compiled C. Declared LUT/spatial budgets are equal
+within every matched architecture; simplified IR nodes are checkpoint-dependent
+because constant, wire, and duplicate functions can be removed after training.
+
+| Protocol | Method | Simplified IR nodes | Peak export RSS | Compiled CPU, batch 128 | Interpretation |
+|---|---|---:|---:|---:|---|
+| Paper-faithful S, 9 channels | Fixed random | 197,851 | 1.071 GiB | 3.057 ms / 41.87K examples/s | Reference |
+|  | Frozen V4 | 202,827 (+2.52%) | 1.073 GiB | 3.076 ms / 41.61K examples/s | +0.62% latency; no speed claim |
+|  | U1 | 214,883 (+8.61%) | 1.074 GiB | 3.095 ms / 41.35K examples/s | +1.26% latency; no speed claim |
+| Paper-faithful M, 9 channels | Fixed random | 1,676,852 | 6.103 GiB | [N/A] | Trace/equivalence only |
+|  | Frozen V4 | 1,702,350 (+1.52%) | 6.092 GiB | [N/A] | Trace/equivalence only |
+| WARP-style M, 6 channels | Matched random | 1,101,364 | 4.070 GiB | [N/A] | Separate protocol; trace/equivalence only |
+|  | Legacy V4 | 1,129,547 (+2.56%) | 4.077 GiB | [N/A] | Separate protocol; trace/equivalence only |
+
+The S circuits were compiled with bit packing at 64 examples per machine word
+and `gcc -O0`; timings include Boolean input packing. An initial unbounded
+`gcc -O1` random-S attempt was stopped after approximately 8.75 minutes. The
+bounded `-O0` compiles completed in 37.75, 39.75, and 44.72 seconds for
+random, V4, and U1. Fully unrolled M compilation was not attempted after this
+feasibility result. This backend result does not imply that optimized FPGA or
+specialized bit-packed kernels have the same limitation.
+
+Machine-readable sources:
+
+- `summary/convolutional_deployment.json` and CSV export;
+- `summary/deployment/*.json` per-run records;
+- `summary/deployment/compile_attempt_history.json`.
 
 ## Table 4: Dense CIFAR-100 S/M/L
 

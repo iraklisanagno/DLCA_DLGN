@@ -1,0 +1,30 @@
+{
+  "checks": {
+    "all_deployment_equivalence_passed": true,
+    "dense_cifar10_s_gain_is_test_3_302": true,
+    "dense_cifar10_s_random_test_49_056": true,
+    "dense_cifar10_s_v3_test_52_358": true,
+    "deployment_complete": true,
+    "deployment_used_no_dataset": true,
+    "fashion_final_random_test_86_308": true,
+    "fashion_final_v3_test_87_102": true,
+    "medium_random_test_69_57": true,
+    "medium_test_query_count_is_one": true,
+    "medium_v4_test_69_96": true,
+    "paper_s_and_m_are_nine_channel": true,
+    "table_no_longer_labels_49_692_as_test": true,
+    "table_no_longer_labels_53_116_as_final": true,
+    "u1_remains_validation_only": true,
+    "warp_medium_is_six_channel": true
+  },
+  "failed": [],
+  "source_files": [
+    "summary/paper_cifar10_semantic_v3.json",
+    "summary/table1_fashion_final.json",
+    "summary/convolutional_evidence_snapshot.json",
+    "summary/convolutional_deployment.json",
+    "summary/cifar10_paper_medium_200k_paired.json",
+    "PAPER_COMPARISON_TABLES.md"
+  ],
+  "status": "pass"
+}

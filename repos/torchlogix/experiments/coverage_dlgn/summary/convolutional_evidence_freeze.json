@@ -1,0 +1,691 @@
+{
+  "purpose": "immutable input manifest for convolutional evidence consolidation",
+  "runs": {
+    "ablate_conv_cifar10_small_balanced_channel_no_swaps_seed0": {
+      "files": {
+        "best_checkpoint.pt": {
+          "bytes": 28530478,
+          "sha256": "12fcd52bfecb1142ebcfda1103b52b1427d0768732b45ff8d0693425d0c781df"
+        },
+        "conv_topology.json": {
+          "bytes": 5853,
+          "sha256": "25509b26717088d44b51bcdcdead598c48df00d5b016b87ab390b34ea68db9ff"
+        },
+        "metrics.csv": {
+          "bytes": 991,
+          "sha256": "058c27bcfe91bd1d74430df173869709cd1833a705c6466f847b4c916e635a05"
+        },
+        "run_summary.json": {
+          "bytes": 3246,
+          "sha256": "a8aa3a0399ff4ee53f02e460925d21a47effe12e62940210b6ba990e011563f2"
+        },
+        "topology.json": {
+          "bytes": 3122,
+          "sha256": "843476a657895f061bd382af0dc48224457d41dcc9f769b817bababb1b80bf54"
+        },
+        "training_config.json": {
+          "bytes": 2444,
+          "sha256": "e6b2db3964ae57ee5c3c9c327e36a3870eefa8327408a69bd7b81734a21f52cd"
+        }
+      }
+    },
+    "ablate_conv_cifar10_small_balanced_channel_no_swaps_seed1": {
+      "files": {
+        "best_checkpoint.pt": {
+          "bytes": 28530478,
+          "sha256": "db75c7b06add4785bf669a13225d29e62061bd88682d065916b255602db46786"
+        },
+        "conv_topology.json": {
+          "bytes": 5842,
+          "sha256": "f40d7d7b472450b77bbfe81dce0a4b7d9c06a8ddedd6c4a5abd28b34488effd8"
+        },
+        "metrics.csv": {
+          "bytes": 995,
+          "sha256": "5a3cb7594910eea222437426af1ea098cbdc3f4fcdb7f3da92d4013081c08c88"
+        },
+        "run_summary.json": {
+          "bytes": 3248,
+          "sha256": "2964fc565d3d0c6c335e80874972214ca75c0c1b6c19936df65636d2fbf8482f"
+        },
+        "topology.json": {
+          "bytes": 3120,
+          "sha256": "e437311c95d2f8371195715c661cd6052ff19bfefa640ddf23a75e05f22b9bb0"
+        },
+        "training_config.json": {
+          "bytes": 2444,
+          "sha256": "e15f4359a832e507ab32ceffa3deca5540902aae6f5a9f391f95257e6f6d6d6f"
+        }
+      }
+    },
+    "ablate_conv_cifar10_small_balanced_channel_no_swaps_seed2": {
+      "files": {
+        "best_checkpoint.pt": {
+          "bytes": 28530478,
+          "sha256": "ea9e8b1c283c7f6893562dbd989767a72d95302a4577ef5e493097b8c85d3149"
+        },
+        "conv_topology.json": {
+          "bytes": 5834,
+          "sha256": "cba5d66bd5907444327d25df057a78b932ee06539ac1485c9863921ba9d3734f"
+        },
+        "metrics.csv": {
+          "bytes": 1001,
+          "sha256": "7384884be94e401345d43b3d235ef59eeb548996795ac4c101e248df25d7b4df"
+        },
+        "run_summary.json": {
+          "bytes": 3245,
+          "sha256": "3b2c589dd909068b58842067177a8924ebfc7324f804d3642964426ccc533ae3"
+        },
+        "topology.json": {
+          "bytes": 3128,
+          "sha256": "b1ec7172abbc6171d6e85744b30df2f5983f9254906cefeb2c8d7a630d5afda4"
+        },
+        "training_config.json": {
+          "bytes": 2444,
+          "sha256": "8c5b79cfd23ec7f915352e3a9cf9c99c293b25958b6ca2949c54ca9d81eb0b89"
+        }
+      }
+    },
+    "full_conv_cifar10_paper_medium_legacy_v4_seed0": {
+      "files": {
+        "best_checkpoint.pt": {
+          "bytes": 228130670,
+          "sha256": "2fa5ccd955a710b12072a23948c2f284b7041db32771acb760a412603b33bbae"
+        },
+        "conv_topology.json": {
+          "bytes": 5937,
+          "sha256": "80ad36632fcbbd4d63c1beb3b3cf82c4b691d9741f8a2e24e60e2c5929a765ed"
+        },
+        "early_stop.json": {
+          "bytes": 1556,
+          "sha256": "bd0129368b159fcf51989c6962393ac76d7fd7c20354deeb96336a12e34faf93"
+        },
+        "inference_benchmark.json": {
+          "bytes": 405,
+          "sha256": "279659c085148da8c2b6511917d5975879ca5fe23a7bf3fa3a8933784acaf0b7"
+        },
+        "metrics.csv": {
+          "bytes": 8892,
+          "sha256": "ae7183648c3f99b851923b6be602839d623382db97363358400e5a05b698266f"
+        },
+        "test_metrics.json": {
+          "bytes": 294,
+          "sha256": "fd2bf1b2837a3fd1e9d540b4b1ea8f5649128ff2627254033aa72a04bb62d023"
+        },
+        "topology.json": {
+          "bytes": 3229,
+          "sha256": "25bba0ed93283652ec45dbcc40a77d45173918e3020fcdd043f238cca2532b2a"
+        },
+        "training_config.json": {
+          "bytes": 2400,
+          "sha256": "1a2c12087cefa651b08657151c878405f355db45aef5c245d64ac8b05c49e919"
+        }
+      }
+    },
+    "full_conv_cifar10_paper_medium_random_seed0_200k": {
+      "files": {
+        "best_checkpoint.pt": {
+          "bytes": 228130606,
+          "sha256": "19d5a2fa50da88caa1bdb353b7122b5daa269c72885e019bff7c73af889fa40e"
+        },
+        "conv_topology.json": {
+          "bytes": 5855,
+          "sha256": "de11a851df8d43330405ac3d9fb036b9fc6707a5215cb3f873cb1a0ea9722560"
+        },
+        "inference_benchmark.json": {
+          "bytes": 406,
+          "sha256": "1dacec065a1d83094b13495965dcc2e804f123c63eda9847977440f9f1f504f4"
+        },
+        "metrics.csv": {
+          "bytes": 8888,
+          "sha256": "b77c5c7398a4014dab733017f67ea94c5faa5e96510214a6c7dd56a66e799fe3"
+        },
+        "run_summary.json": {
+          "bytes": 3257,
+          "sha256": "d66214122c614394b5d0d43cc8e7cf914f70f59fdc91e66153b0f811c755d0a9"
+        },
+        "test_metrics.json": {
+          "bytes": 294,
+          "sha256": "784c10eea03090a033715eadad2d6a6af4e168a71d28d01e11c7ed5c75fb54da"
+        },
+        "topology.json": {
+          "bytes": 3229,
+          "sha256": "adee80d09535ff7acaa967df8761696299c6882a8319bea4436ffdafa6276fa4"
+        },
+        "training_config.json": {
+          "bytes": 2387,
+          "sha256": "f7ec50684417e8cb1087f2e97e6e828b63114404a7dfd2808518555ece2a7b3a"
+        }
+      }
+    },
+    "pilot_conv_cifar10_paper_small_random_seed0": {
+      "files": {
+        "best_checkpoint.pt": {
+          "bytes": 28529262,
+          "sha256": "5752813c9c083d3260b493e05237bafdfa14c1dec2a031f6d6f183c120e5a2c2"
+        },
+        "conv_topology.json": {
+          "bytes": 3739,
+          "sha256": "42da79ff74637c49cc6363d71c39e8cee59d4c59f6e1effdd380bd194cb1fae5"
+        },
+        "inference_benchmark.json": {
+          "bytes": 371,
+          "sha256": "17046f4904691a0466cbe694fcbc588807f71b65f205bee5a20fe9c833ac6899"
+        },
+        "metrics.csv": {
+          "bytes": 859,
+          "sha256": "93194f7fba161178c00f9d09997649124f4f1b3b9b359ee84b74c085facefe68"
+        },
+        "run_summary.json": {
+          "bytes": 2494,
+          "sha256": "39cd37161d0d14633dabb4d67453b3b7c5f975ee85bdd1a58001123fd366b005"
+        },
+        "test_metrics.json": {
+          "bytes": 292,
+          "sha256": "cdecaa297b74cc8242c748428cdf7dc7e53b986834772e79a532ef80c4ccfa93"
+        },
+        "topology.json": {
+          "bytes": 3105,
+          "sha256": "61689f9c47c3663a9d63a5f9d6f64beea5343078d5f276610986cb1c4dbe80db"
+        },
+        "training_config.json": {
+          "bytes": 1572,
+          "sha256": "aed1af8ac94f1c2678d0e25e2f7ab835c40b2561506d29a7e1a463594dbcc1a6"
+        }
+      }
+    },
+    "pilot_conv_cifar10_paper_small_random_seed1": {
+      "files": {
+        "best_checkpoint.pt": {
+          "bytes": 28529262,
+          "sha256": "499d5d6ea4bac0360ae1d665fd4ee2da76c684a96506a31a95dbda8cef12e16a"
+        },
+        "conv_topology.json": {
+          "bytes": 3739,
+          "sha256": "d57389045edb50b8f195320d7d4bf07bc303fc79c3eaa954c3828bac0bfdafea"
+        },
+        "inference_benchmark.json": {
+          "bytes": 371,
+          "sha256": "7a59501897029ab9d18584c538dd1f0d54c739a706a577209cde5f6e994c19ff"
+        },
+        "metrics.csv": {
+          "bytes": 858,
+          "sha256": "a9f405f3081e389bebeeac91a6351e450c75f2c4cd612d9ebf895c22961a310f"
+        },
+        "run_summary.json": {
+          "bytes": 2493,
+          "sha256": "3f90cbba1bb90a201a4a37cfbb84c6197230c6e1ec51b17f360ff87add0b5e94"
+        },
+        "test_metrics.json": {
+          "bytes": 292,
+          "sha256": "c897fa57ae03ff16d3681bee9130de4e7b2c137a20a5126ce5d2829e455ba561"
+        },
+        "topology.json": {
+          "bytes": 3103,
+          "sha256": "c57227ae025724fcfab0575fab2a316d51ce204800e76cdf9092b490527be6e6"
+        },
+        "training_config.json": {
+          "bytes": 1572,
+          "sha256": "7c9eaee483131f61cd52c158b70da0332c586f0b32fd0eec4f11b7b35e2e2907"
+        }
+      }
+    },
+    "pilot_conv_cifar10_paper_small_random_seed2": {
+      "files": {
+        "best_checkpoint.pt": {
+          "bytes": 28529262,
+          "sha256": "51041f2578d93ad60827f8497d84c609dc63a311020b4b8d9425a8fd8383dea0"
+        },
+        "conv_topology.json": {
+          "bytes": 3740,
+          "sha256": "2bff24cd1edc139b69cf69ca41337eacf3c844a0246c12c0dee516099a2ecdb9"
+        },
+        "inference_benchmark.json": {
+          "bytes": 370,
+          "sha256": "334d3460a8503ddea8c61b871d4224ee04472130e474988e265d5525ddafdaec"
+        },
+        "metrics.csv": {
+          "bytes": 864,
+          "sha256": "87f0a0715df48309a305611675ae65c11892a1bee960d064e8357d343bed5f68"
+        },
+        "run_summary.json": {
+          "bytes": 2498,
+          "sha256": "78708f2a43d0d6267f7ce2c1ff34101df3dca3edb9ecfa920e2d9ead0a3bb444"
+        },
+        "test_metrics.json": {
+          "bytes": 290,
+          "sha256": "76be323a4f1942e02b589f2e74ab4717ddebc0eab79fbee189842ffe1da5df79"
+        },
+        "topology.json": {
+          "bytes": 3111,
+          "sha256": "820d40fb1fb2ec94c526c56455b28eedeeeae386d107d5d7b7a965c1095dbc52"
+        },
+        "training_config.json": {
+          "bytes": 1572,
+          "sha256": "bfcf6d53c488e8c72a7d561270e96a188109f5cd5ff77f5e0fe1e66c5fd0713b"
+        }
+      }
+    },
+    "pilot_conv_cifar10_paper_small_random_seed3": {
+      "files": {
+        "best_checkpoint.pt": {
+          "bytes": 28530414,
+          "sha256": "6992e6df26294e999a2e956defe1779c6e5b085613fa0e2cab03352ae387974d"
+        },
+        "conv_topology.json": {
+          "bytes": 5786,
+          "sha256": "a5d07662a3f4db1bc155adcf79fbc3c45bdd753881cf2d299ca7927f7cbbecf9"
+        },
+        "metrics.csv": {
+          "bytes": 994,
+          "sha256": "91f259b2a1f2d2d08b824358c808fe901083662890413cc5d4809bb788c3afd8"
+        },
+        "run_summary.json": {
+          "bytes": 3181,
+          "sha256": "39f2d60411a030cb455512f14f3086c68fc6981de92d3d1eb9bc998f2efe1820"
+        },
+        "topology.json": {
+          "bytes": 3105,
+          "sha256": "ec6dbd8595f3976509167ed41c84004fca688e8324063a8a6896192720f60810"
+        },
+        "training_config.json": {
+          "bytes": 2405,
+          "sha256": "0151048e7a207c1eafefc9c29fb6f7c81a87d24d5c6bc08b7eb12d7136d8a72e"
+        }
+      }
+    },
+    "pilot_conv_cifar10_paper_small_random_seed4": {
+      "files": {
+        "best_checkpoint.pt": {
+          "bytes": 28530414,
+          "sha256": "a3544ab13c308a98df1abac509f1f0a3f2d5d961bde4abcebcc43b7dff56d843"
+        },
+        "conv_topology.json": {
+          "bytes": 5789,
+          "sha256": "f088fecabd076f62dc7ab3030596bb7a83c73934bb67ef8878622a4321f18bfa"
+        },
+        "metrics.csv": {
+          "bytes": 999,
+          "sha256": "050da527f79838d1962342dc7512a4fe63ccf1729d7750053d56f3a9aaa6d9a4"
+        },
+        "run_summary.json": {
+          "bytes": 3183,
+          "sha256": "a8713a01b34cc9266f51ec1983e7e6124755b496d240bcc131e7ffcd8cd210bb"
+        },
+        "topology.json": {
+          "bytes": 3104,
+          "sha256": "bfcff2a65612228103b9277480c73de17e2b78042b0699c588551ae96cddb7db"
+        },
+        "training_config.json": {
+          "bytes": 2405,
+          "sha256": "ae3528e2bc3e1954e9f28bb27346a088d15cd9366af7808356312586f13e89ed"
+        }
+      }
+    },
+    "pilot_conv_cifar10_paper_small_semantic_channel_v4_seed0": {
+      "files": {
+        "best_checkpoint.pt": {
+          "bytes": 28529390,
+          "sha256": "b6f0550c1bdd23d78223497bf3db1783fef13244b2745a93aee97b24df9ab816"
+        },
+        "conv_topology.json": {
+          "bytes": 3815,
+          "sha256": "fe0f1f09e42c46782e66671565696cc97e9e311a7937ed281d5d519ee7f04693"
+        },
+        "inference_benchmark.json": {
+          "bytes": 370,
+          "sha256": "ed932173fd2f728362a2577b111d870315204b0bc653e59143fca6a050f96a8d"
+        },
+        "metrics.csv": {
+          "bytes": 857,
+          "sha256": "c2b1180c7fab4537729ca78eff77c61a20aae70dc3a5016b914b57ee2fd79063"
+        },
+        "run_summary.json": {
+          "bytes": 2560,
+          "sha256": "2ccdbc90dcec7128afefb43cc1c553972795626315a1ca5e012674e05f8ac7f2"
+        },
+        "test_metrics.json": {
+          "bytes": 292,
+          "sha256": "8e3a8ecb1cc731c218937e05f66323ea52d01ea258d2d19bfec35a843c804803"
+        },
+        "topology.json": {
+          "bytes": 3122,
+          "sha256": "843476a657895f061bd382af0dc48224457d41dcc9f769b817bababb1b80bf54"
+        },
+        "training_config.json": {
+          "bytes": 1614,
+          "sha256": "d242ad472442821e6f1cbd01098bce4b0c7fc31c0606a10bc9fcc9829f3bda6f"
+        }
+      }
+    },
+    "pilot_conv_cifar10_paper_small_semantic_channel_v4_seed1": {
+      "files": {
+        "best_checkpoint.pt": {
+          "bytes": 28529390,
+          "sha256": "6ee3f19bdb5411ee07adb5fd4940fb77efbf10bdb78922b302356e0f5fb91201"
+        },
+        "conv_topology.json": {
+          "bytes": 3821,
+          "sha256": "242690cbd528c54b2e6b60bb3736a4a78b2cec205cfa99b9844e43cd44349ccb"
+        },
+        "inference_benchmark.json": {
+          "bytes": 371,
+          "sha256": "cccb657c48a349f5a846092c5b77e9f8ce4a676bc691992430f1bbe0a1a81409"
+        },
+        "metrics.csv": {
+          "bytes": 856,
+          "sha256": "3a4333cbdf0d4e507888aa86e62b982112e1973543a2216bc347f2daa7bad613"
+        },
+        "run_summary.json": {
+          "bytes": 2562,
+          "sha256": "b1435cd8f01e6c724ff8e6d73d7150d972e8b32a7b96697f16c20c2325a202a8"
+        },
+        "test_metrics.json": {
+          "bytes": 292,
+          "sha256": "5854b015490d51db3e3c2242d5d5d9c9fbc80236db596975528d1380959a691f"
+        },
+        "topology.json": {
+          "bytes": 3120,
+          "sha256": "e437311c95d2f8371195715c661cd6052ff19bfefa640ddf23a75e05f22b9bb0"
+        },
+        "training_config.json": {
+          "bytes": 1614,
+          "sha256": "e15c5437d6e52139086980de7ee996dffbe2fca9dbd4985ea4e1b9b6597fbe27"
+        }
+      }
+    },
+    "pilot_conv_cifar10_paper_small_semantic_channel_v4_seed2": {
+      "files": {
+        "best_checkpoint.pt": {
+          "bytes": 28529390,
+          "sha256": "a134fc8b9bfcc350d93b4376c3056bccf885c2494a2a5b375908ddd84115b1b1"
+        },
+        "conv_topology.json": {
+          "bytes": 3815,
+          "sha256": "58242a257f153f8e9191a3c179c5176506a94cda9df366ead6ed8fa33a64d788"
+        },
+        "inference_benchmark.json": {
+          "bytes": 371,
+          "sha256": "f0fcf3375c9b58df9151573a8356d53caf37c6cce33a990f19a1efa29cc5148f"
+        },
+        "metrics.csv": {
+          "bytes": 853,
+          "sha256": "df933384700c3c7ee3dc720519a5842d5217a31cd8b9ff5d34aa431fe7ee5b82"
+        },
+        "run_summary.json": {
+          "bytes": 2562,
+          "sha256": "4845bdec262ca434605c4cb2d9109d14d200084d61b56abbbbedc02efbd66ea7"
+        },
+        "test_metrics.json": {
+          "bytes": 290,
+          "sha256": "4ed2fdb38ddf847486f74d5c02af200244cecd3861a6e4189f32615863f0b361"
+        },
+        "topology.json": {
+          "bytes": 3128,
+          "sha256": "b1ec7172abbc6171d6e85744b30df2f5983f9254906cefeb2c8d7a630d5afda4"
+        },
+        "training_config.json": {
+          "bytes": 1614,
+          "sha256": "a8557a060ea9a86cc4345f94aa4a6681ad6abd2ea4c1e31606a61dc90ef365d2"
+        }
+      }
+    },
+    "pilot_conv_cifar10_paper_small_semantic_channel_v4_seed3": {
+      "files": {
+        "best_checkpoint.pt": {
+          "bytes": 28530478,
+          "sha256": "880622b1b533db0c6c9bd347c059253a0543f9e71fb7e2b37460f167e2c9d6b0"
+        },
+        "conv_topology.json": {
+          "bytes": 5861,
+          "sha256": "90945d65802870203b2bc911685fa883d17e07ba76a9684b419d37ab95a2129c"
+        },
+        "metrics.csv": {
+          "bytes": 997,
+          "sha256": "44c078f036071dee3cd9a490bf399005e4736334380c24206002062e0abd25e2"
+        },
+        "run_summary.json": {
+          "bytes": 3251,
+          "sha256": "ecf3ca12d248b246643f28235457c7288957a6f818a9b2875b7dbda00ca395bb"
+        },
+        "topology.json": {
+          "bytes": 3122,
+          "sha256": "5ba162b27d1b8a071c89edac74ddf0e490f75bcd3dc931b615065d09887851c8"
+        },
+        "training_config.json": {
+          "bytes": 2447,
+          "sha256": "061ab9bd79d459569013bf2aa2d96fb61b53458e61ef8e063badf60c22fe4a1f"
+        }
+      }
+    },
+    "pilot_conv_cifar10_paper_small_semantic_channel_v4_seed4": {
+      "files": {
+        "best_checkpoint.pt": {
+          "bytes": 28530478,
+          "sha256": "353abe61295a00f7a49624bcb3e30e6b2141524f05a69f3506b5e4630a1a38db"
+        },
+        "conv_topology.json": {
+          "bytes": 5867,
+          "sha256": "258b8276b00e10acfde02013c80fa10d195b4adeab5aa8ef6c8f1f532dda714b"
+        },
+        "metrics.csv": {
+          "bytes": 998,
+          "sha256": "23df17191032edf7cdde333f6e68b951166c4ae05452ad0f6dca6abb5a7118e9"
+        },
+        "run_summary.json": {
+          "bytes": 3248,
+          "sha256": "534b9623b01b5ea868c2511260ab4dc8855cceda0a508b499bdf1fd6355c13e8"
+        },
+        "topology.json": {
+          "bytes": 3121,
+          "sha256": "7f380759a85b1a88c4088b96550f2f828dfaa82af171b449be7f8f7bb7199cea"
+        },
+        "training_config.json": {
+          "bytes": 2447,
+          "sha256": "d37a9dcce5d8d06f6c191ce4ea06c4f2323b862bcbf9d691ffe5ecb21d05c497"
+        }
+      }
+    },
+    "pilot_conv_cifar10_paper_small_semantic_degree_balanced_seed3": {
+      "files": {
+        "best_checkpoint.pt": {
+          "bytes": 28530478,
+          "sha256": "433471d576bd93d837b3d9ee70373baf3054cc8fab53b901fa719d328e463e72"
+        },
+        "conv_topology.json": {
+          "bytes": 5844,
+          "sha256": "d41e0fed734d9e51471aa8cb24ce915c18c29203587e4f180b60274a047e867a"
+        },
+        "metrics.csv": {
+          "bytes": 997,
+          "sha256": "f554c714a161b0d225ad52535d8e3af5ae0ed643b26e55406cb9e2fa5039396e"
+        },
+        "run_summary.json": {
+          "bytes": 3249,
+          "sha256": "23c76c91e85d20ec702b5c2873f6dc3de562932539314c3ee3d6a43f9e63516b"
+        },
+        "topology.json": {
+          "bytes": 3123,
+          "sha256": "e1dd19412d09b0e45c03a53865ca26de83a8c221a383cf32c1f7da3f95f4c8f2"
+        },
+        "training_config.json": {
+          "bytes": 2457,
+          "sha256": "67fe80554e091c73a02beb1634959581aa6450e72b19e434f53d3b4b1ab75861"
+        }
+      }
+    },
+    "pilot_conv_cifar10_paper_small_semantic_degree_balanced_seed4": {
+      "files": {
+        "best_checkpoint.pt": {
+          "bytes": 28530478,
+          "sha256": "d76ebee5fe35bc2ba9b0e0c193d73dd4f063f1356ec615699eec4db9425f1f67"
+        },
+        "conv_topology.json": {
+          "bytes": 5862,
+          "sha256": "4818ca35a4280edc3b9cf720ae98358514abf0e3f5d386b64bc310c4f0e803b8"
+        },
+        "metrics.csv": {
+          "bytes": 996,
+          "sha256": "023aa8d485db220a717fd2c995a9e722d756b9ca1af0e02820642a8b6248dc0a"
+        },
+        "run_summary.json": {
+          "bytes": 3251,
+          "sha256": "7bd13d27caac80ac3283105e25aa51310a677aa0a38ca443d70165b21dd44eab"
+        },
+        "topology.json": {
+          "bytes": 3122,
+          "sha256": "2345c031afaa83ce665a1cb13705d41c300b71f2930e52dcc84bb15d8f3bde71"
+        },
+        "training_config.json": {
+          "bytes": 2457,
+          "sha256": "e6ae2f819ac8d3d6079790c9bde6d0015d7a77288ae04f0721c58c7c1f0463e3"
+        }
+      }
+    },
+    "warp_fig4_medium_legacy_v4_fixed_uniform_seed0": {
+      "files": {
+        "best_checkpoint.pt": {
+          "bytes": 228130606,
+          "sha256": "8dc928a0aeae1be4d99475a631d15f2be60f17cf898d0c6d070e2f9eb0cff971"
+        },
+        "conv_topology.json": {
+          "bytes": 5935,
+          "sha256": "d34a39e9f827143b85c3903b9a570288d06ae0b7104ce4f5576e0dc886549318"
+        },
+        "metrics.csv": {
+          "bytes": 1438,
+          "sha256": "119d09b224b89b456bb5d0a5f46c9a2df04b3fb22f8ee694839a7e6d41d3b7d7"
+        },
+        "run_summary.json": {
+          "bytes": 3260,
+          "sha256": "eb9ba031956ca4ebf3c32a2d3e6e9491b3d22b501265b21658a5e01c1a810a97"
+        },
+        "topology.json": {
+          "bytes": 3173,
+          "sha256": "7c99c8b6fdebf83c502d3e12cf30c7df63eccaa24fa5bf907a612b72c6899a9a"
+        },
+        "training_config.json": {
+          "bytes": 2390,
+          "sha256": "cb3a2dcc6fafa4b640288fa7296fe56ad3fe05a542d23f2417c092ea63192ffc"
+        }
+      }
+    },
+    "warp_fig4_medium_paired_random_fixed_uniform_seed0": {
+      "files": {
+        "best_checkpoint.pt": {
+          "bytes": 228130542,
+          "sha256": "313cf0cb50bcd5429c80e1cb7180013812cc3dd4464d23cd274f11665d67d64d"
+        },
+        "conv_topology.json": {
+          "bytes": 5866,
+          "sha256": "30a64da76823a59ffa78013573a46f537ec3bdd2cf40e83dd3a71cfd5657dc81"
+        },
+        "metrics.csv": {
+          "bytes": 1434,
+          "sha256": "d63396a977cf4220f9457c1a11c4a8802d894ef86e8cbce033072965c1927c0a"
+        },
+        "run_summary.json": {
+          "bytes": 3195,
+          "sha256": "f22873a9f3d22e07f37a3361c5f9fc246802c3db4b7c96385f2f2d068b0a7ec6"
+        },
+        "topology.json": {
+          "bytes": 3156,
+          "sha256": "82dfb379898d60d21c88c783deb672c9c286016a1c51522137cc607efdddaeb7"
+        },
+        "training_config.json": {
+          "bytes": 2382,
+          "sha256": "7a8b2c204e6be2df59b8be3a8689c30d14534ab314e13d7e93474e368a349117"
+        }
+      }
+    },
+    "warp_fig4_medium_warp_fixed_distributive_seed0": {
+      "files": {
+        "best_checkpoint.pt": {
+          "bytes": 228130606,
+          "sha256": "fd8533ab981812a552901418611d1c65aa99701ee33e70d19bc154e12c9b8a69"
+        },
+        "conv_topology.json": {
+          "bytes": 5869,
+          "sha256": "44bd3423a3217ca6f10e6f79e62a3d8af4f68b0c1afea068c699b77a2ef7f249"
+        },
+        "early_stop.json": {
+          "bytes": 566,
+          "sha256": "965af038e00ca546d806c0ae5d86aa6a20dcda637bea60242a94b1440c55a089"
+        },
+        "metrics.csv": {
+          "bytes": 1439,
+          "sha256": "427c0378f58e98cd7e8417efdabf93fd0c7fb71641865afe94cfc52a796e2659"
+        },
+        "topology.json": {
+          "bytes": 3152,
+          "sha256": "557e8a651544dcb939d8a82db5dd94e82f357644ec04164ef1a9f46209dab70f"
+        },
+        "training_config.json": {
+          "bytes": 2389,
+          "sha256": "fe1691a4be1648086629b3109a7ef8e157f9471c8233a86d0ff416a0d0919a21"
+        }
+      }
+    },
+    "warp_fig4_medium_warp_fixed_uniform_seed0": {
+      "files": {
+        "best_checkpoint.pt": {
+          "bytes": 228130542,
+          "sha256": "acd7f39736d2b7d6fd4d473caf7b4a333c261bd86c14b4a9a64d1cf57743322f"
+        },
+        "conv_topology.json": {
+          "bytes": 5870,
+          "sha256": "616d867552267c0a89e921da8c203a553698b5a56b24dee1b5a91e003558f7a5"
+        },
+        "early_stop.json": {
+          "bytes": 566,
+          "sha256": "a53533c0e3d94be3b65faa7dc780fd1f95d2fddb74aad86027eacab041354cca"
+        },
+        "metrics.csv": {
+          "bytes": 1435,
+          "sha256": "9b9faba742699f728d17a45ce23ec0a07b14021b0c9d400a7369e8d2cbcff9af"
+        },
+        "topology.json": {
+          "bytes": 3152,
+          "sha256": "557e8a651544dcb939d8a82db5dd94e82f357644ec04164ef1a9f46209dab70f"
+        },
+        "training_config.json": {
+          "bytes": 2374,
+          "sha256": "b9855bccdb6eaa578878dc2ae789ad01dbf5557513b1387fdab9f3ffb3b4c1f0"
+        }
+      }
+    },
+    "warp_fig4_medium_warp_learnable_seed0": {
+      "files": {
+        "best_checkpoint.pt": {
+          "bytes": 228130867,
+          "sha256": "f0007eee9cd9d73b745f7fa023870bca0effc03e2f2015498bc5c995dd80f2da"
+        },
+        "conv_topology.json": {
+          "bytes": 5871,
+          "sha256": "19936fdc11795522179685ba1699ec12d8ad7b71b613621306d693cd8bb091c6"
+        },
+        "metrics.csv": {
+          "bytes": 1443,
+          "sha256": "34b1d3f37a7c1a94da9c69228e206ade7acc546a6c6bdd4474f787db9775d155"
+        },
+        "run_summary.json": {
+          "bytes": 3237,
+          "sha256": "e38eb1fe19ade286c3012eaecee0529202f944eefa1bb0d30ed3de86faa10596"
+        },
+        "topology.json": {
+          "bytes": 3152,
+          "sha256": "557e8a651544dcb939d8a82db5dd94e82f357644ec04164ef1a9f46209dab70f"
+        },
+        "training_config.json": {
+          "bytes": 2376,
+          "sha256": "60ecfa0ddae129695532bb1bf5aa78964cf70e4b0247bec81ff2f1b3fdb6993e"
+        }
+      }
+    }
+  },
+  "source_revision_at_freeze": "cfa905fd4beb1e556cb51579c6b66248f9628b50",
+  "test_policy": {
+    "paper_faithful_m": "Both frozen best-validation checkpoints have exactly one existing held-out test record and must not be queried again.",
+    "paper_faithful_s": "Historical random/V4 seeds 0-2 already have one test record; U1 and seeds 3-4 remain validation-only. No test evaluation is performed by the consolidation or deployment scripts.",
+    "warp_style_medium": "Validation-only; no held-out test record."
+  }
+}

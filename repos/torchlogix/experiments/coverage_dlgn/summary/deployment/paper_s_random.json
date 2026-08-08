@@ -1,0 +1,66 @@
+{
+  "architecture": "ClgnCifar10PaperSmall",
+  "boolean_input_channels": 9,
+  "c_source_generation_seconds": 0.09345931501593441,
+  "checkpoint": "best_checkpoint.pt",
+  "checkpoint_sha256": "5752813c9c083d3260b493e05237bafdfa14c1dec2a031f6d6f183c120e5a2c2",
+  "circuit_after_simplification": {
+    "logic_gates": 197851,
+    "outputs": 10,
+    "sum_reductions": 10
+  },
+  "circuit_before_simplification": {
+    "input_bits": 9216,
+    "logic_gates": 470845,
+    "outputs": 10,
+    "sum_reductions": 10
+  },
+  "classifier_connections_init_method": null,
+  "compile": {
+    "completed": true,
+    "opt_level": 0,
+    "seconds": 37.74878876202274,
+    "shared_object_bytes": 5160176
+  },
+  "compile_peak_rss_bytes": 1149784064,
+  "compile_peak_rss_delta_bytes": 0,
+  "compiled_cpu_benchmark": {
+    "batch_size": 128,
+    "examples_per_second": 41872.60982430564,
+    "includes_boolean_input_packing": true,
+    "latency_milliseconds_per_batch_mean": 3.056890901643783,
+    "latency_milliseconds_per_batch_std": 0.014878034824211657,
+    "microseconds_per_example_mean": 23.881960169092054,
+    "pack_bits": 64,
+    "single_process_single_generated_c_entrypoint": true,
+    "timed_batches": 10,
+    "warmup_batches": 3
+  },
+  "connections_init_method": "random",
+  "conv_connections_init_method": null,
+  "cpu": "x86_64",
+  "equivalence": {
+    "compiled_c_vs_python_circuit": true,
+    "hardened_class_vs_python_circuit": true,
+    "pytorch_export_scores_vs_python_circuit": true,
+    "pytorch_export_vs_simplified_circuit": true,
+    "synthetic_examples": 1
+  },
+  "final_peak_rss_bytes": 1149784064,
+  "generated_c_source_bytes": 8977085,
+  "heldout_test_accessed": false,
+  "input_source": "deterministic synthetic Boolean tensors only",
+  "model_load_seconds": 0.1263730040518567,
+  "parameterization": "raw",
+  "python_circuit_one_example_seconds": 0.08447552600409836,
+  "run_label": "paper_s_random",
+  "run_name": "pilot_conv_cifar10_paper_small_random_seed0",
+  "simplification_seconds": 6.057650808012113,
+  "status": "COMPLETE",
+  "thresholds_per_rgb_channel": 3,
+  "torch_threads": 24,
+  "trace_peak_rss_bytes": 1149784064,
+  "trace_peak_rss_delta_bytes": 444923904,
+  "trace_seconds": 4.473144993069582,
+  "training_config_sha256": "aed1af8ac94f1c2678d0e25e2f7ab835c40b2561506d29a7e1a463594dbcc1a6"
+}

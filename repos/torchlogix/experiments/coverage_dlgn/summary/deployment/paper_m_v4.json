@@ -1,0 +1,43 @@
+{
+  "architecture": "ClgnCifar10PaperMedium",
+  "boolean_input_channels": 9,
+  "checkpoint": "best_checkpoint.pt",
+  "checkpoint_sha256": "2fa5ccd955a710b12072a23948c2f284b7041db32771acb760a412603b33bbae",
+  "circuit_after_simplification": {
+    "logic_gates": 1702350,
+    "outputs": 10,
+    "sum_reductions": 10
+  },
+  "circuit_before_simplification": {
+    "input_bits": 9216,
+    "logic_gates": 4156729,
+    "outputs": 10,
+    "sum_reductions": 10
+  },
+  "classifier_connections_init_method": "random",
+  "connections_init_method": "random",
+  "conv_connections_init_method": "semantic_channel_hybrid",
+  "cpu": "x86_64",
+  "equivalence": {
+    "hardened_class_vs_python_circuit": true,
+    "pytorch_export_scores_vs_python_circuit": true,
+    "pytorch_export_vs_simplified_circuit": true,
+    "synthetic_examples": 1
+  },
+  "final_peak_rss_bytes": 6541742080,
+  "heldout_test_accessed": false,
+  "input_source": "deterministic synthetic Boolean tensors only",
+  "model_load_seconds": 5.809908025083132,
+  "parameterization": "raw",
+  "python_circuit_one_example_seconds": 0.6614566870266572,
+  "run_label": "paper_m_v4",
+  "run_name": "full_conv_cifar10_paper_medium_legacy_v4_seed0",
+  "simplification_seconds": 60.595243384013884,
+  "status": "COMPLETE",
+  "thresholds_per_rgb_channel": 3,
+  "torch_threads": 24,
+  "trace_peak_rss_bytes": 6541742080,
+  "trace_peak_rss_delta_bytes": 1281855488,
+  "trace_seconds": 24.265283732907847,
+  "training_config_sha256": "1a2c12087cefa651b08657151c878405f355db45aef5c245d64ac8b05c49e919"
+}

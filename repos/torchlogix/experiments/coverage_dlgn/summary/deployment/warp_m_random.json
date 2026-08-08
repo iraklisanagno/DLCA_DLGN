@@ -1,0 +1,43 @@
+{
+  "architecture": "ClgnCifar10Medium",
+  "boolean_input_channels": 6,
+  "checkpoint": "best_checkpoint.pt",
+  "checkpoint_sha256": "313cf0cb50bcd5429c80e1cb7180013812cc3dd4464d23cd274f11665d67d64d",
+  "circuit_after_simplification": {
+    "logic_gates": 1101364,
+    "outputs": 10,
+    "sum_reductions": 10
+  },
+  "circuit_before_simplification": {
+    "input_bits": 6144,
+    "logic_gates": 3240500,
+    "outputs": 10,
+    "sum_reductions": 10
+  },
+  "classifier_connections_init_method": null,
+  "connections_init_method": "random",
+  "conv_connections_init_method": null,
+  "cpu": "x86_64",
+  "equivalence": {
+    "hardened_class_vs_python_circuit": true,
+    "pytorch_export_scores_vs_python_circuit": true,
+    "pytorch_export_vs_simplified_circuit": true,
+    "synthetic_examples": 1
+  },
+  "final_peak_rss_bytes": 4369899520,
+  "heldout_test_accessed": false,
+  "input_source": "deterministic synthetic Boolean tensors only",
+  "model_load_seconds": 0.6256053340621293,
+  "parameterization": "raw",
+  "python_circuit_one_example_seconds": 0.5246370689710602,
+  "run_label": "warp_m_random",
+  "run_name": "warp_fig4_medium_paired_random_fixed_uniform_seed0",
+  "simplification_seconds": 55.61860558693297,
+  "status": "COMPLETE",
+  "thresholds_per_rgb_channel": 2,
+  "torch_threads": 24,
+  "trace_peak_rss_bytes": 4369899520,
+  "trace_peak_rss_delta_bytes": 3158495232,
+  "trace_seconds": 21.964459692011587,
+  "training_config_sha256": "7a8b2c204e6be2df59b8be3a8689c30d14534ab314e13d7e93474e368a349117"
+}

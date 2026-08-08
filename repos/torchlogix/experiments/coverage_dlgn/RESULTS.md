@@ -1037,6 +1037,71 @@ Machine-readable sources:
 - `summary/cifar10_paper_medium_200k_curve.csv`;
 - `protocols/cifar10_paper_medium_200k_paired.json`.
 
+## August 4 convolutional evidence and deployment snapshot
+
+The completed convolutional artifacts were frozen by SHA-256 and consolidated
+without loading a dataset, launching accuracy training, or making another
+test-set query. The snapshot covers 22 valid run directories and keeps two
+protocol families separate:
+
+- paper-faithful LogicTreeNet-S/M use three thermometer thresholds per RGB
+  channel, nine Boolean channels, four depth-3 convolutional stages, raw LUTs,
+  and group size 2; S uses `k_num=32`, tau 20, while M uses `k_num=256`, tau
+  40;
+- WARP-style Medium uses the legacy `ClgnCifar10Medium` class with two
+  thresholds per RGB channel, six Boolean channels, and no augmentation.
+
+The paper-faithful S cohort has two distinct evidence scopes. The five-seed
+validation-only promotion cohort is random 56.864%, V4 57.448%, and U1
+57.624%. U1 is +0.760 pp over random, positive on four of five seeds, but its
+95% interval [-0.700, +2.220] crosses zero and it failed the predeclared +1 pp
+mean gate. Historical random/V4 seeds 0--2 had already been evaluated once on
+test before the U1 decision: random averaged 56.140% and V4 56.367%, a mixed
++0.227 pp paired effect with 95% interval [-5.221, +5.675]. U1 and S seeds 3/4
+remain unqueried on test. These cohorts are now labelled separately.
+
+Mean S learning curves show that V4 and U1 reached 55% hardened validation at
+8K updates versus 10K for random, and reached 57% at 18K while the random mean
+never reached 57% within 20K. These are descriptive validation-curve metrics,
+not additional selection criteria.
+
+Synthetic Boolean circuit export was then measured on frozen seed-0
+checkpoints. No CIFAR data was loaded. All checked models passed hardened
+class, PyTorch export, Python `Circuit`, simplified-Circuit, and, where
+compiled, generated-C equivalence.
+
+| Protocol | Method | Declared learned LUTs | Spatial gate applications | Simplified IR nodes | Peak process RSS | Compiled CPU batch-128 |
+|---|---|---:|---:|---:|---:|---:|
+| Paper S, 9ch | Random | 83,552 | 874,496 | 197,851 | 1.071 GiB | 3.057 ms |
+|  | V4 | 83,552 | 874,496 | 202,827 | 1.073 GiB | 3.076 ms |
+|  | U1 | 83,552 | 874,496 | 214,883 | 1.074 GiB | 3.095 ms |
+| Paper M, 9ch | Random | 668,416 | 6,995,968 | 1,676,852 | 6.103 GiB | not compiled |
+|  | V4 | 668,416 | 6,995,968 | 1,702,350 | 6.092 GiB | not compiled |
+| WARP M, 6ch | Matched random | 668,416 | 6,995,968 | 1,101,364 | 4.070 GiB | not compiled |
+|  | Legacy V4 | 668,416 | 6,995,968 | 1,129,547 | 4.077 GiB | not compiled |
+
+Declared architecture budgets, trainable gate parameters, zero trainable
+routing parameters, and routing-entry counts are identical within each
+matched group. Simplified IR nodes are not required to be identical because
+the learned truth tables determine which constants, wires, duplicates, and
+dead nodes the circuit compiler can remove. Relative to random, simplified IR
+size is +2.52% for S V4, +8.61% for S U1, +1.52% for paper-M V4, and +2.56%
+for WARP-style M V4. The S CPU latency changes are +0.62% and +1.26% for V4
+and U1 and do not support a speed claim.
+
+An initial fully unrolled random-S `gcc -O1` compilation was interrupted after
+approximately 8.75 minutes. The bounded `gcc -O0`, 64-way bit-packed compiles
+completed in 37.75, 39.75, and 44.72 seconds for random, V4, and U1. M circuit
+construction and equivalence were feasible, but M compilation was not
+attempted after the S scaling result. Energy remains unmeasured.
+
+Machine-readable sources:
+
+- `summary/convolutional_evidence_freeze.json`;
+- `summary/convolutional_evidence_snapshot.json` and curve CSV;
+- `summary/convolutional_deployment.json` and CSV;
+- `summary/deployment/*.json` and `compile_attempt_history.json`.
+
 ## Not completed; required before a DATE claim
 
 - A protocol-identical numerical reproduction of the published CIFAR-10
@@ -1058,8 +1123,9 @@ Machine-readable sources:
   nine-channel M comparison is positive by +0.39 pp on held-out test but is
   1.05 pp below the paper's reported test accuracy and has no confidence
   interval.
-- Exported-circuit equivalence and compiled CPU latency/energy measurements;
-  the completed inference benchmark is framework-level PyTorch GPU timing.
+- Optimized compiled CPU latency for M and direct energy measurements. Circuit
+  equivalence and an `-O0` compiled CPU measurement are complete for S; M has
+  trace, simplification, equivalence, and framework-level PyTorch GPU timing.
 - A true accuracy/cost Pareto improvement. The present methods have identical
   gates, operations, and deployed routing storage.
 
