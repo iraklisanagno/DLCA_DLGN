@@ -54,19 +54,27 @@ ledger.
   printed because size labels are not comparable across papers.
 - Bold type in the final manuscript will identify the best protocol-matched
   `A` result, never the largest `R-only` value.
+- Training time is the arithmetic mean wall time of one completed training
+  run unless a row is explicitly labelled one-seed or approximate. Peak GPU
+  memory is the maximum PyTorch device allocation recorded in the local
+  cohort, converted from bytes to GiB. Neither value includes hyperparameter
+  search, queue time, held-out evaluation, circuit export, or compilation.
+  CoverageDLGN topology construction is an offline, CPU-side preprocessing
+  cost and is reported separately when it was instrumented. `N/R` means the
+  resource was not recorded; it never denotes zero cost.
 
 ## Table 1: Dense MNIST and Fashion-MNIST
 
 Target architecture: six layers, 48K total rank-2 gates, and 768K raw gate
 logits during training.
 
-| Method | Matched gates | MNIST A / R | Fashion-MNIST A / R | Match status |
-|---|---:|---:|---:|---|
-| Deep DLGN fixed random | 48K | **[REPRODUCED] 97.090 +/- 0.180% (n=5) / [REPORTED] 97.69%** | **[REPRODUCED] 86.308 +/- 0.186% (n=5) / [REPORTED] 87.17%** | Exact architecture; sources: `summary/table1_mnist_final.json`, `summary/table1_fashion_final.json` |
-| Mommen, \(N_c=16\) | 48K | [ADAPTED] 98.084 +/- 0.066% (n=5) / [REPORTED] 98.14% `[12K, nonmatched]` | [ADAPTED] 87.260 +/- 0.282% (n=3) / [REPORTED] 87.16% `[8K, nonmatched]` | Adapted to 48K; Fashion selected \(N_c=8\), depth 3; final sources as above |
-| LILogicNet Top-32 | 48K | [ADAPTED] 98.124 +/- 0.029% (n=5) / [REPORTED] 98.95 +/- 0.09% `[32K, nonmatched]` | [ADAPTED] 88.437 +/- 0.159% (n=3) / [REPORTED] 90.26 +/- 0.11% `[64K, nonmatched]` | Adapted to 48K; Fashion Top-32, depth 2, tau 30; final sources as above |
-| BitLogic best-of-space | 48K | [ADAPTED] 98.204 +/- 0.042% (n=5) / [REPORTED] 97.84 +/- 0.04% `[128K total, nonmatched]` | [ADAPTED] 89.740 +/- 0.243% (n=3) / [REPORTED] 89.16 +/- 0.08% `[128K total, nonmatched]` | Adapted to 48K; final sources as above |
-| **CoverageDLGN** | **48K** | **[OUR-FINAL] 97.500 +/- 0.099% (n=5) / [N/A]** | **[OUR-FINAL] 87.102 +/- 0.357% (n=5) / [N/A]** | Exact target; final sources as above |
+| Method | Matched gates | MNIST A / R | MNIST train / peak GPU | Fashion-MNIST A / R | Fashion train / peak GPU | Match status |
+|---|---:|---:|---:|---:|---:|---|
+| Deep DLGN fixed random | 48K | **[REPRODUCED] 97.090 +/- 0.180% (n=5) / [REPORTED] 97.69%** | 15.03 min / 0.099 GiB | **[REPRODUCED] 86.308 +/- 0.186% (n=5) / [REPORTED] 87.17%** | 14.97 min / 0.099 GiB | Exact architecture; sources: `summary/table1_mnist_final.json`, `summary/table1_fashion_final.json` |
+| Mommen, \(N_c=16\) | 48K | [ADAPTED] 98.084 +/- 0.066% (n=5) / [REPORTED] 98.14% `[12K, nonmatched]` | 35.92 min / 1.002 GiB | [ADAPTED] 87.260 +/- 0.282% (n=3) / [REPORTED] 87.16% `[8K, nonmatched]` | 24.04 min / 0.498 GiB | Adapted to 48K; Fashion selected \(N_c=8\), depth 3; final sources as above |
+| LILogicNet Top-32 | 48K | [ADAPTED] 98.124 +/- 0.029% (n=5) / [REPORTED] 98.95 +/- 0.09% `[32K, nonmatched]` | 82.02 min / 4.187 GiB | [ADAPTED] 88.437 +/- 0.159% (n=3) / [REPORTED] 90.26 +/- 0.11% `[64K, nonmatched]` | 70.84 min / 4.676 GiB | Adapted to 48K; Fashion Top-32, depth 2, tau 30; final sources as above |
+| BitLogic best-of-space | 48K | [ADAPTED] 98.204 +/- 0.042% (n=5) / [REPORTED] 97.84 +/- 0.04% `[128K total, nonmatched]` | 89.18 min / 3.557 GiB | [ADAPTED] 89.740 +/- 0.243% (n=3) / [REPORTED] 89.16 +/- 0.08% `[128K total, nonmatched]` | 88.94 min / 3.557 GiB | Adapted to 48K; final sources as above |
+| **CoverageDLGN** | **48K** | **[OUR-FINAL] 97.500 +/- 0.099% (n=5) / [N/A]** | **15.02 min / 0.099 GiB** | **[OUR-FINAL] 87.102 +/- 0.357% (n=5) / [N/A]** | **15.02 min / 0.099 GiB** | Exact target; final sources as above |
 
 Mommen \(N_c=16\) adds approximately 32 routing logits per gate during
 training but retains one hard predecessor per gate input after training.
@@ -91,26 +99,26 @@ exactly-once test evaluation.
 
 ## Table 2: Dense CIFAR-10 S/M/L
 
-| Architecture | Target gates | Raw training parameters | Method | A / R accuracy | Reported configuration |
-|---|---:|---:|---|---:|---|
-| S: 4 x 12K | 48K | 0.768M | Deep DLGN random | **[REPRODUCED] 49.056 +/- 0.356% test (n=5) / [REPORTED] 51.27%** | Exact 48K architecture; one-time held-out test; source: `summary/paper_cifar10_semantic_v3.json` |
-|  |  | 1.536M | Mommen learned connectivity | **[ADAPTED] 50.950 +/- 0.244% (n=3) / [N/A]** | Exact-48K \(N_c=8\) adaptation; one-time held-out test; source: `summary/table2_s_comparator_final.json` |
-|  |  | 3.840M | LILogicNet | **[ADAPTED] 50.743 +/- 0.574% (n=3) / [REPORTED] 55.11%** | Exact-48K Top-32 adaptation; one-time held-out test; reported value uses 8K nonmatched gates; local source as above |
-|  |  |  | WARP-LUT | [PENDING] / [REPORTED] 52.12 +/- 0.01% | 128K total gates under the BitLogic protocol, nonmatched |
-|  |  |  | BitLogic best-of-space | [PENDING] / [REPORTED] 58.06 +/- 0.14% | 128K total rank-4 gates, nonmatched |
-|  |  |  | **CoverageDLGN** | **[OUR-FINAL] 52.358 +/- 0.282% test (n=5) / [N/A]** | Exact 48K target; +3.302 pp paired test gain, 95% CI [+2.767, +3.837] |
-| M: 4 x 128K | 512K | 8.192M | Deep DLGN random | **[REPRODUCED] 54.028% (n=5) / [REPORTED] 57.39%** | Exact 512K architecture; one-time held-out test |
-|  |  | 16.384M | Mommen learned connectivity | **[TRIED] 54.420% test (n=1) / [N/A]** | Exact-512K \(N_c=8\) adaptation; conditional policy stops at one seed; one-time held-out test |
-|  |  |  | LILogicNet | [PENDING] / [REPORTED] 57.66 +/- 0.17% | 64K gates, nonmatched |
-|  |  |  | WARP-LUT | [PENDING] / [REPORTED] 52.12 +/- 0.01% | 128K total gates, nonmatched |
-|  |  |  | BitLogic best-of-space | [PENDING] / [REPORTED] 58.06 +/- 0.14% | 128K total rank-4 gates, nonmatched |
-|  |  |  | **CoverageDLGN** | **[OUR-FINAL] 58.284% (n=5) / [N/A]** | Exact 512K target; +4.256 pp paired test gain |
-| L: 5 x 256K | 1.28M | 20.48M | Deep DLGN random | **[REPRODUCED] 55.960 +/- 0.251% test (n=5) / [REPORTED] 60.78%** | Exact 1.28M architecture; one-time held-out test; source: `summary/table2_l_final.json` |
-|  |  | 40.960M | Mommen learned connectivity | **[TRIED] 54.340% test (n=1) / [N/A]** | Exact-1.28M \(N_c=8\) adaptation; conditional policy stops at one seed; one-time held-out test |
-|  |  |  | LILogicNet-L | [PENDING] / [REPORTED] 60.98 +/- 0.19% | 256K gates, nonmatched |
-|  |  |  | WARP-LUT | [PENDING] / [REPORTED] 52.12 +/- 0.01% | 128K total gates, nonmatched |
-|  |  |  | BitLogic best-of-space | [PENDING] / [REPORTED] 58.06 +/- 0.14% | 128K total rank-4 gates, nonmatched |
-|  |  |  | **CoverageDLGN** | **[OUR-FINAL] raw V3 swap-0.50 61.020 +/- 0.336% test (n=5) / [N/A]** | Exact 1.28M target; +5.060 pp paired, 95% CI [+4.555, +5.565]; one-time held-out test |
+| Architecture | Target gates | Raw training parameters | Method | A / R accuracy | Mean train time / peak GPU | Reported configuration |
+|---|---:|---:|---|---:|---:|---|
+| S: 4 x 12K | 48K | 0.768M | Deep DLGN random | **[REPRODUCED] 49.056 +/- 0.356% test (n=5) / [REPORTED] 51.27%** | 12.24 min / 0.106 GiB | Exact 48K architecture; one-time held-out test; source: `summary/paper_cifar10_semantic_v3.json` |
+|  |  | 1.536M | Mommen learned connectivity | **[ADAPTED] 50.950 +/- 0.244% (n=3) / [N/A]** | 26.45 min / 0.480 GiB | Exact-48K \(N_c=8\) adaptation; one-time held-out test; source: `summary/table2_s_comparator_final.json` |
+|  |  | 3.840M | LILogicNet | **[ADAPTED] 50.743 +/- 0.574% (n=3) / [REPORTED] 55.11%** | 86.87 min / 3.949 GiB | Exact-48K Top-32 adaptation; one-time held-out test; reported value uses 8K nonmatched gates; local source as above |
+|  |  |  | WARP-LUT | [PENDING] / [REPORTED] 52.12 +/- 0.01% | [N/A] | 128K total gates under the BitLogic protocol, nonmatched |
+|  |  |  | BitLogic best-of-space | [PENDING] / [REPORTED] 58.06 +/- 0.14% | [N/A] | 128K total rank-4 gates, nonmatched |
+|  |  |  | **CoverageDLGN** | **[OUR-FINAL] 52.358 +/- 0.282% test (n=5) / [N/A]** | **12.26 min / 0.106 GiB** | Exact 48K target; +3.302 pp paired test gain, 95% CI [+2.767, +3.837] |
+| M: 4 x 128K | 512K | 8.192M | Deep DLGN random | **[REPRODUCED] 54.028% (n=5) / [REPORTED] 57.39%** | 41.55 min / 1.123 GiB | Exact 512K architecture; one-time held-out test |
+|  |  | 16.384M | Mommen learned connectivity | **[TRIED] 54.420% test (n=1) / [N/A]** | 4.84 h / 4.918 GiB | Exact-512K \(N_c=8\) adaptation; conditional policy stops at one seed; one-time held-out test |
+|  |  |  | LILogicNet | [PENDING] / [REPORTED] 57.66 +/- 0.17% | [N/A] | 64K gates, nonmatched |
+|  |  |  | WARP-LUT | [PENDING] / [REPORTED] 52.12 +/- 0.01% | [N/A] | 128K total gates, nonmatched |
+|  |  |  | BitLogic best-of-space | [PENDING] / [REPORTED] 58.06 +/- 0.14% | [N/A] | 128K total rank-4 gates, nonmatched |
+|  |  |  | **CoverageDLGN** | **[OUR-FINAL] 58.284% (n=5) / [N/A]** | **41.48 min / 1.123 GiB** | Exact 512K target; +4.256 pp paired test gain |
+| L: 5 x 256K | 1.28M | 20.48M | Deep DLGN random | **[REPRODUCED] 55.960 +/- 0.251% test (n=5) / [REPORTED] 60.78%** | 1.89 h / 2.717 GiB | Exact 1.28M architecture; one-time held-out test; source: `summary/table2_l_final.json` |
+|  |  | 40.960M | Mommen learned connectivity | **[TRIED] 54.340% test (n=1) / [N/A]** | 13.39 h / 11.904 GiB | Exact-1.28M \(N_c=8\) adaptation; conditional policy stops at one seed; one-time held-out test |
+|  |  |  | LILogicNet-L | [PENDING] / [REPORTED] 60.98 +/- 0.19% | [N/A] | 256K gates, nonmatched |
+|  |  |  | WARP-LUT | [PENDING] / [REPORTED] 52.12 +/- 0.01% | [N/A] | 128K total gates, nonmatched |
+|  |  |  | BitLogic best-of-space | [PENDING] / [REPORTED] 58.06 +/- 0.14% | [N/A] | 128K total rank-4 gates, nonmatched |
+|  |  |  | **CoverageDLGN** | **[OUR-FINAL] raw V3 swap-0.50 61.020 +/- 0.336% test (n=5) / [N/A]** | **1.89 h / 2.717 GiB** | Exact 1.28M target; +5.060 pp paired, 95% CI [+4.555, +5.565]; one-time held-out test |
 
 The earlier 49.692% random and 53.116% CoverageDLGN S values are mean best
 hardened **validation** accuracies, not held-out test accuracies. They remain
@@ -158,6 +166,26 @@ on test again.
 | 128K | [TRIED] 49.780% | [TRIED] 54.300% (raw, pool 4) | [TRIED] raw swap 0.50: 54.853% vs random 50.000% (n=3) | [OUR-FINAL] 55.140% vs [REPRODUCED] 50.760% (n=5, +4.380 pp) | **[OUR-FINAL] 53.910% vs [REPRODUCED] 49.748% (n=5, +4.162 pp, 95% CI [+3.759, +4.565])** |
 | 256K | [TRIED] 51.600% | [TRIED] 55.940% (three-way raw tie) | [TRIED] raw incumbent: 57.513% vs random 52.567% (n=3) | **[TRIED] 57.800% vs 53.073% (n=3, +4.727 pp, 95% CI [+3.120, +6.333])** | **[OUR-FINAL] 56.903 +/- 0.134% vs [REPRODUCED] 52.253 +/- 0.058% (n=3, +4.650 pp, 95% CI [+4.174, +5.126])** |
 | 384K | [TRIED] 52.280% | [TRIED] 57.520% (WARP) | [TRIED] raw incumbent: 58.980% vs random 54.400% (n=3) | **[TRIED] 59.313% vs 54.920% (n=3, +4.393 pp, 95% CI [+3.184, +5.603])** | **[OUR-FINAL] 58.143 +/- 0.153% vs [REPRODUCED] 53.657 +/- 0.328% (n=3, +4.487 pp, 95% CI [+3.515, +5.458])** |
+
+Measured full-run resource scaling for the matched fixed-random and raw-V3
+arms is:
+
+| Gate budget | Random train time | V3 train time | Random / V3 peak GPU |
+|---:|---:|---:|---:|
+| 48K | 12.24 min | 12.26 min | 0.106 / 0.106 GiB |
+| 128K | 12.44 min | 12.44 min | 0.281 / 0.281 GiB |
+| 256K | 19.14 min | 19.17 min | 0.562 / 0.562 GiB |
+| 384K | 29.83 min | 29.82 min | 0.845 / 0.845 GiB |
+| 512K | 41.55 min | 41.48 min | 1.123 / 1.123 GiB |
+| 1.28M | 1.89 h | 1.89 h | 2.717 / 2.717 GiB |
+
+These measurements show no material GPU-training overhead from V3 once its
+fixed indices have been constructed. At 48K, the recorded offline topology
+construction means were 0.05 seconds for random and 9.33 seconds for V3. At
+512K, the optimized exact builder required about 5 seconds for random and
+107 seconds for V3. The original 209-second V3 construction was superseded
+by the bit-identical lazy-heap implementation. Final L runs used cached
+topologies, so a comparable uncached L construction time is not recorded.
 
 The frozen 256K and 384K checkpoints were evaluated exactly once on held-out
 test on July 29, 2026. All 12 evaluations completed successfully; these
@@ -234,6 +262,24 @@ interchangeable.
 |  |  | same declared L budget | WARP-LogicTreeNet | [PENDING] | [N/A] | New L adaptation |
 |  |  | same declared L budget | **CoverageDLGN-Channel** | [PENDING] | [N/A] | Requires a paper-faithful L baseline first |
 
+Measured training resources for the locally completed paper-faithful arms
+are shown separately to keep validation and test metrics readable:
+
+| Architecture | Method | Training wall time / run | Peak training GPU | Offline topology construction |
+|---|---|---:|---:|---:|
+| LogicTreeNet-S, 20K | Fixed random | 17.03 min | 1.831 GiB | 0.176 s |
+|  | Frozen V4 | 17.04 min | 1.831 GiB | 0.413 s |
+|  | Unified U1 | 17.03 min | 1.831 GiB | 0.165 s |
+| LogicTreeNet-M, 200K | Fixed random | 25.47 h | 14.615 GiB | 2.478 s |
+|  | Frozen V4 | approximately 25.49 h | N/R | 6.182 s |
+
+The S resource values summarize the newly instrumented seeds 3 and 4; the
+older seeds predate complete resource fields. The V4 M wall time is the
+artifact span and is approximate. Its training-memory peak was not finalized
+because the run ended by controlled `SIGINT`; the matched fixed-random run
+recorded 14.615 GiB. V4's measured one-time M topology overhead relative to
+random is 3.704 seconds.
+
 ### WARP-style CIFAR-10 Medium compatibility study
 
 This is a separate reconstruction of Figure 4 in the WARP paper. It uses the
@@ -252,6 +298,14 @@ plot. Local results are seed 0 only and the held-out test set was not queried.
 | WARP learnable | Public `random-unique`; learnable thresholds | **[TRIED-PARTIAL] 65.88%** | [REPORTED-PLOT] approximately 66.6% | One seed at 30K |
 | Matched random | V4 pilot's random sampler; fixed uniform thresholds | **[TRIED-PARTIAL] 64.58%** | [N/A] | Seed-0 control for Legacy V4 |
 | **CoverageDLGN Legacy V4** | Frozen `semantic_channel_hybrid`; fixed uniform thresholds | **[TRIED-PARTIAL] 66.23%** | [N/A] | Seed 0; **+1.65 pp** over matched random |
+
+| Method | Training wall time / run | Peak training GPU | Resource status |
+|---|---:|---:|---|
+| WARP fixed uniform | N/R | N/R | Controlled interruption at the frozen 30K boundary |
+| WARP fixed distributive | N/R | N/R | Controlled interruption at the frozen 30K boundary |
+| WARP learnable | 4.29 h | 14.619 GiB | Complete seed-0 run |
+| Matched random | 3.87 h | 14.614 GiB | Complete seed-0 run |
+| **CoverageDLGN Legacy V4** | **3.85 h** | **14.614 GiB** | Complete seed-0 run |
 
 The fixed-uniform and fixed-distributive jobs were originally launched with
 50K updates and interrupted just after the common 30K validation boundary,
@@ -348,6 +402,21 @@ Additional reported-only dense CIFAR-100 references:
 | Multilinear Soft-Mix | [TRIED] 11.680% validation at 5K (random); best frozen V3 11.060% / [REPORTED] 27.92 +/- 0.43% | 6 x 256K = 1.536M gates; 24.576M trainable LUT parameters | Exact 31-threshold architecture; screen only, not comparable to the reported full result |
 | Multilinear-CovJac | [REPORTED] 28.37 +/- 0.22% | 1.536M gates; 4 parameters/gate | Reported only |
 | Multilinear-CovJac large | [REPORTED] 32.72 +/- 0.09% | 6 x 1.28M = 7.68M gates; 4 parameters/gate | Reported only |
+
+Measured resource cost for the locally executed dense CIFAR-100 coordinates:
+
+| Architecture / schedule | Method | Training wall time / run | Peak training GPU | Offline topology construction |
+|---|---|---:|---:|---:|
+| 6 x 64K, full | Fixed random | 11.37 min | 0.795 GiB | 2.07 s |
+|  | CoverageDLGN V3 | 11.49 min | 0.795 GiB | 37.46 s |
+| 6 x 64K, 20K ablation | CoverageDLGN V3 | 5.67 min | 0.795 GiB | 37.47 s |
+|  | V3 + class-conditional head | 5.60 min | 0.795 GiB | 49.50 s |
+| 6 x 256K, 5K screen | Fixed random | 32.03 min | 14.181 GiB | 34.60 s |
+|  | Best screened V3 (`swap_fraction=0.5`) | 31.59 min | 14.181 GiB | 554.86 s |
+
+The 6-by-256K values are short-screen resource measurements and must not be
+presented as the cost of a full paper-length training run. No local resource
+claim is made for reported-only Multilinear-CovJac rows.
 
 The deep 6-by-64K screen selected the existing V3
 `swap_fraction=0.125` control at +0.640 pp. Its three-seed 20K confirmation
