@@ -142,6 +142,56 @@ data partitions and the same synthesis flow.
 - method, recovery, exploration, and synthesis wall-clock time; and
 - peak CPU memory and peak GPU memory.
 
+## Ten-step execution roadmap
+
+1. **Freeze the seed-0 winner.** Freeze guarded two-pass, constrained
+   MarginSynth trial 28 and stop tuning on Fashion-MNIST seed 0. Record the
+   complete configuration and all input-artifact hashes.
+2. **Test configuration transfer.** Apply that identical frozen configuration
+   to Fashion-MNIST seeds 1 and 2 without a new Bayesian search. Use only the
+   predeclared calibration partitions to determine whether the method transfers
+   beyond seed 0; keep validation and test sealed.
+3. **Freeze the complete method protocol.** If the configuration transfers,
+   freeze its hyperparameters, accuracy and disagreement budgets, recovery
+   rule, operating-point selection rule, synthesis scripts, datasets, and seed
+   list before paper evaluation. Any necessary adjustment must be declared as
+   a new development protocol rather than silently changing the seed-0 winner.
+4. **Run the five-paper comparison.** Evaluate the five selected external
+   methods using the two comparison groups defined above. Use identical source
+   checkpoints for MarginSynth and Unit Tying, and matched end-to-end conditions
+   for the four training-time alternatives.
+5. **Report the complete metric set.** For every method and seed, record
+   accuracy, macro-F1, disagreement, worst-class losses, live gates, ABC nodes,
+   levels, mapped cost when available, runtime, exploration time, recovery
+   time, synthesis time, and peak memory. Generate paper tables directly from
+   the saved machine-readable records.
+6. **Run the mechanism ablations.** At minimum evaluate constrained versus
+   unconstrained disagreement, one pass versus two passes, constants only,
+   routing/inversion only, the full 16-function action space, gate-count versus
+   operation-aware cost, and exact repair enabled versus disabled.
+7. **Reduce frozen-method runtime.** Implement and measure batched candidate
+   evaluation, cached encoded inputs and graph information, and fewer exact
+   repair evaluations. Preserve the current implementation and results as the
+   reference version. Target less than ten seconds for one frozen application
+   on the Fashion-MNIST model without weakening the accuracy guards.
+8. **Establish dataset scalability.** Use CIFAR-10 as the central DATE result,
+   with adequately trained convolutional DLGNs and five seeds. Retain
+   Fashion-MNIST as the secondary dense benchmark, and add CIFAR-100 only after
+   the CIFAR-10 method and synthesis flow are stable.
+9. **Perform identical hardware verification.** Export every selected circuit,
+   verify model-to-circuit and compiled-C predictions, and run identical
+   Yosys/ABC scripts and libraries. Report ABC nodes and depth, plus mapped area
+   or FPGA LUTs when a defensible common target is available.
+10. **Release validation and test only after freezing.** Open validation only
+    for the predeclared operating-point decision and evaluate the held-out test
+    exactly once under the frozen protocol. Complete paired multi-seed
+    confidence intervals, failure accounting, plots, and final paper tables
+    without returning to hyperparameter tuning.
+
+The immediate next experiment is step 2: apply trial 28 unchanged to
+Fashion-MNIST seeds 1 and 2. Its outcome determines whether the current result
+is transferable or specific to the seed-0 development checkpoint.
+
 ## Priority
 
 If implementation time becomes limited, comparisons should be completed in
