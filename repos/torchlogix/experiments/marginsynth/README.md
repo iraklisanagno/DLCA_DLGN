@@ -14,6 +14,8 @@ question is:
 
 The original project brief is
 [`ideas/date_ideas/margin_synth.md`](../../../../ideas/date_ideas/margin_synth.md).
+The frozen external-paper comparison set and evaluation rules are recorded in
+[`PAPER_COMPARISON_PLAN.md`](PAPER_COMPARISON_PLAN.md).
 The most important direct comparison is Lee et al.,
 [*Two-Stage Unit Tying for Simplifying Differentiable Logic Gate Networks*](../../../../pdfs/two-stage_unit_tying_for_simplifying_differentiable_logic_gate_networks.pdf),
 ICML 2026.
