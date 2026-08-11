@@ -8,13 +8,20 @@ import pytest
 import torch
 
 from experiments.marginsynth.trace import PackedCalibrationTrace, build_trace
+from experiments.marginsynth.export_tied_method import retry_log_path
 from experiments.marginsynth.incremental import evaluate_proposal, evaluate_rewrite
 from experiments.marginsynth.cost_model import (
     SynthCostEstimator,
     circuit_features,
 )
-from experiments.marginsynth.verify_checkpoint import encoded_sample_shape
-from experiments.marginsynth.verify_synthesis import integer_score_predictions
+from experiments.marginsynth.verify_checkpoint import (
+    encoded_sample_shape,
+    score_comparison,
+)
+from experiments.marginsynth.verify_synthesis import (
+    integer_score_predictions,
+    normalized_integer_score_comparison,
+)
 from experiments.marginsynth.freeze_protocol import (
     find_budget_point,
     unit_tying_circuit_path,
@@ -108,6 +115,57 @@ def test_unit_tying_binary_split_isolates_largest_distortion():
     harmful, path = binary_split_identify(list(costs), evaluate_pair)
     assert harmful == 2
     assert len(path) == 2
+
+
+def test_resume_logs_preserve_every_failed_attempt(tmp_path):
+    assert retry_log_path(tmp_path, "synthesis", False).name == (
+        "synthesis.console.log"
+    )
+    (tmp_path / "synthesis.resume.console.log").write_text("failed\n")
+    assert retry_log_path(tmp_path, "synthesis", True).name == (
+        "synthesis.resume2.console.log"
+    )
+
+
+def test_score_comparison_records_roundoff_without_failing_semantics():
+    reference = torch.tensor([[10.0, 9.0]])
+    candidate = torch.tensor([[10.0 + 2e-6, 9.0]])
+    comparison = score_comparison(reference, candidate)
+    assert not comparison["scores_exact"]
+    assert comparison["scores_close"]
+    assert comparison["predictions_exact"]
+
+
+def test_score_comparison_rejects_material_score_drift():
+    reference = torch.tensor([[10.0, 9.0]])
+    candidate = torch.tensor([[10.0 + 2e-4, 9.0]])
+    comparison = score_comparison(reference, candidate)
+    assert not comparison["scores_close"]
+
+
+def test_normalized_integer_scores_allow_reversible_float_roundoff():
+    source = torch.tensor([[30.0000019, 29.9700019]])
+    hardware = torch.tensor([[1000, 999]], dtype=torch.uint16)
+    comparison = normalized_integer_score_comparison(
+        source,
+        hardware,
+        tau=33.333333333333336,
+        offset=0.0,
+    )
+    assert comparison["integer_scores_exact"]
+    assert comparison["maximum_score_transformation_difference"] > 1e-5
+
+
+def test_normalized_integer_scores_reject_wrong_hardware_count():
+    source = torch.tensor([[30.0]])
+    hardware = torch.tensor([[999]], dtype=torch.uint16)
+    comparison = normalized_integer_score_comparison(
+        source,
+        hardware,
+        tau=33.333333333333336,
+        offset=0.0,
+    )
+    assert not comparison["integer_scores_exact"]
 
 
 def test_distillation_action_mask_keeps_original_and_constants():

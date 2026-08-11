@@ -32,6 +32,27 @@ def run(command: list[str], log_path: Path) -> None:
         raise RuntimeError(f"command failed; see {log_path}")
 
 
+def completed(path: Path) -> bool:
+    if not path.exists():
+        return False
+    try:
+        return json.loads(path.read_text()).get("status") in {"completed", "passed"}
+    except (json.JSONDecodeError, OSError):
+        return False
+
+
+def retry_log_path(export_dir: Path, stem: str, resume: bool) -> Path:
+    if not resume:
+        return export_dir / f"{stem}.console.log"
+    attempt = 1
+    while True:
+        suffix = ".resume" if attempt == 1 else f".resume{attempt}"
+        candidate = export_dir / f"{stem}{suffix}.console.log"
+        if not candidate.exists():
+            return candidate
+        attempt += 1
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("source_run", type=Path)
@@ -86,35 +107,39 @@ def main() -> None:
     torch.save(tied_payload, export_dir / "best_checkpoint.pt")
     python = sys.executable
     script_dir = Path(__file__).resolve().parent
-    log_tag = ".resume" if cli.resume else ""
-    run(
-        [
-            python,
-            str(script_dir / "verify_checkpoint.py"),
-            str(export_dir),
-            "--examples", str(cli.examples),
-            "--pack-bits", "16",
-            "--compile-opt-level", "0",
-            "--verification-split", cli.verification_split,
-        ],
-        export_dir / f"export{log_tag}.console.log",
-    )
-    run(
-        [
-            python,
-            str(script_dir / "verify_synthesis.py"),
-            str(export_dir),
-            "--examples", str(cli.examples),
-            "--pack-bits", "16",
-            "--compile-opt-level", "0",
-            "--verification-split", cli.verification_split,
-        ],
-        export_dir / f"synthesis{log_tag}.console.log",
-    )
-    if cli.prepare_residual_trace:
+    verification_path = export_dir / "export_verification.json"
+    if not (cli.resume and completed(verification_path)):
+        run(
+            [
+                python,
+                str(script_dir / "verify_checkpoint.py"),
+                str(export_dir),
+                "--examples", str(cli.examples),
+                "--pack-bits", "16",
+                "--compile-opt-level", "0",
+                "--verification-split", cli.verification_split,
+            ],
+            retry_log_path(export_dir, "export", cli.resume),
+        )
+    synthesis_path = export_dir / "synthesis_verification.json"
+    if not (cli.resume and completed(synthesis_path)):
+        run(
+            [
+                python,
+                str(script_dir / "verify_synthesis.py"),
+                str(export_dir),
+                "--examples", str(cli.examples),
+                "--pack-bits", "16",
+                "--compile-opt-level", "0",
+                "--verification-split", cli.verification_split,
+            ],
+            retry_log_path(export_dir, "synthesis", cli.resume),
+        )
+    trace_path = export_dir / "calibration_trace" / "metadata.json"
+    if cli.prepare_residual_trace and not (cli.resume and completed(trace_path)):
         run(
             [python, str(script_dir / "build_trace.py"), str(export_dir)],
-            export_dir / f"trace{log_tag}.console.log",
+            retry_log_path(export_dir, "trace", cli.resume),
         )
     synthesis = json.loads((export_dir / "synthesis_verification.json").read_text())
     payload = {

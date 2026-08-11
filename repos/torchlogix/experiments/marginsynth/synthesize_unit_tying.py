@@ -41,8 +41,10 @@ from experiments.marginsynth.verify_checkpoint import (
     write_artifact_manifest,
 )
 from experiments.marginsynth.verify_synthesis import (
+    MAX_INTEGER_ROUNDING_RESIDUAL,
     command_version,
     integer_score_predictions,
+    normalized_integer_score_comparison,
     parse_abc_stats,
     parse_yosys_cells,
 )
@@ -233,9 +235,11 @@ def main():
             hardware(encoded_inputs.numpy(), use_compiled=True)
         )
         timings["hardware_compiled_c_seconds"] = time.perf_counter() - start
-        expected_hardware_scores = exact_compiled_scores * common_tau - common_offset
-        transformation_difference = float(
-            (expected_hardware_scores - hardware_scores).abs().max()
+        normalization_comparison = normalized_integer_score_comparison(
+            exact_compiled_scores,
+            hardware_scores,
+            common_tau,
+            common_offset,
         )
         compiled_predictions_exact = bool(
             torch.equal(
@@ -279,13 +283,11 @@ def main():
             "model_vs_hardware_predictions_full_validation": (
                 compiled_predictions_exact
             ),
-            "hardware_score_transformation_maximum_difference": (
-                transformation_difference
-            ),
+            "hardware_score_normalization": normalization_comparison,
         }
         status = (
             all(
-                record["scores_exact"] and record["predictions_exact"]
+                record["scores_close"] and record["predictions_exact"]
                 for record in (
                     equivalence["backend_vs_hardened"],
                     equivalence["backend_vs_exact_simplified"],
@@ -293,7 +295,9 @@ def main():
                 )
             )
             and compiled_predictions_exact
-            and transformation_difference <= 1e-5
+            and normalization_comparison["integer_scores_exact"]
+            and normalization_comparison["maximum_integer_rounding_residual"]
+            <= MAX_INTEGER_ROUNDING_RESIDUAL
             and yosys_result.returncode == 0
             and abc_result.returncode == 0
         )

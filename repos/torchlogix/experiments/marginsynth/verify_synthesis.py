@@ -90,6 +90,39 @@ def integer_score_predictions(scores: torch.Tensor) -> torch.Tensor:
     return scores.to(torch.int64).argmax(dim=-1)
 
 
+MAX_INTEGER_ROUNDING_RESIDUAL = 0.25
+
+
+def normalized_integer_score_comparison(
+    source_scores: torch.Tensor,
+    hardware_scores: torch.Tensor,
+    tau: float,
+    offset: float,
+) -> dict:
+    """Verify hardware count scores despite reversible float32 roundoff.
+
+    GroupSum scores are integer counts divided by ``tau`` plus a common
+    offset.  Multiplying float32 scores back by ``tau`` is not bit-exact for
+    wide reductions, so compare the recovered integer counts after rounding
+    and separately bound the distance to the nearest integer.
+    """
+    expected = source_scores.detach().cpu().to(torch.float64) * tau - offset
+    hardware = hardware_scores.detach().cpu().to(torch.int64)
+    rounded = expected.round().to(torch.int64)
+    return {
+        "integer_scores_exact": bool(torch.equal(rounded, hardware)),
+        "maximum_score_transformation_difference": float(
+            (expected - hardware.to(torch.float64)).abs().max().item()
+        ),
+        "maximum_integer_rounding_residual": float(
+            (expected - rounded.to(torch.float64)).abs().max().item()
+        ),
+        "maximum_allowed_integer_rounding_residual": (
+            MAX_INTEGER_ROUNDING_RESIDUAL
+        ),
+    }
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("run_dir", type=Path)
@@ -187,9 +220,11 @@ def main():
     )
     compiled_equivalence_seconds = time.perf_counter() - start
 
-    expected_hardware_scores = original_scores * common_tau - common_offset
-    maximum_transformation_difference = float(
-        (expected_hardware_scores - hardware_scores).abs().max().item()
+    normalization_comparison = normalized_integer_score_comparison(
+        original_scores,
+        hardware_scores,
+        common_tau,
+        common_offset,
     )
     predictions_exact = bool(
         torch.equal(
@@ -240,7 +275,9 @@ def main():
 
     status = (
         predictions_exact
-        and maximum_transformation_difference <= 1e-5
+        and normalization_comparison["integer_scores_exact"]
+        and normalization_comparison["maximum_integer_rounding_residual"]
+        <= MAX_INTEGER_ROUNDING_RESIDUAL
         and yosys_result.returncode == 0
         and abc_result.returncode == 0
     )
@@ -278,9 +315,7 @@ def main():
             "original_betas": original_betas,
             "hardware_betas": [node.beta for node in hardware.sum_nodes],
             "predictions_exact": predictions_exact,
-            "maximum_score_transformation_difference": (
-                maximum_transformation_difference
-            ),
+            **normalization_comparison,
         },
         "hardware_circuit": {
             "json": hardware_json_path.name,

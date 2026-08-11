@@ -101,6 +101,11 @@ def execute_stage(
         raise RuntimeError(f"stage {name} did not create a completed summary")
 
 
+def resume_args(resume: bool) -> list[str]:
+    """Forward orchestration resume semantics to resumable child commands."""
+    return ["--resume"] if resume else []
+
+
 def stage_config(
     base: dict,
     overlay: dict,
@@ -192,6 +197,7 @@ def main() -> None:
                 protocol.get("verification_split", "calibration"),
                 "--examples",
                 str(protocol.get("verification_examples", 6000)),
+                *resume_args(cli.resume),
             ],
             exact_dir / "export_summary.json",
             log_dir,
@@ -235,6 +241,7 @@ def main() -> None:
                 protocol.get("verification_split", "calibration"),
                 "--examples",
                 str(protocol.get("verification_examples", 6000)),
+                *resume_args(cli.resume),
             ],
             ratio_dir / "export_summary.json",
             log_dir,
@@ -333,6 +340,7 @@ def main() -> None:
                 protocol.get("verification_split", "calibration"),
                 "--examples",
                 str(protocol.get("verification_examples", 6000)),
+                *resume_args(cli.resume),
             ],
             method_dir / "export_summary.json",
             log_dir,
@@ -374,6 +382,7 @@ def main() -> None:
                 protocol.get("verification_split", "calibration"),
                 "--examples",
                 str(protocol.get("verification_examples", 6000)),
+                *resume_args(cli.resume),
             ],
             method_dir / "export_summary.json",
             log_dir,

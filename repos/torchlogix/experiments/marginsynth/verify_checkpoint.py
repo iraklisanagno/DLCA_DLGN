@@ -99,17 +99,35 @@ def circuit_record(circuit: Circuit) -> dict:
     }
 
 
-def score_comparison(reference: torch.Tensor, candidate: torch.Tensor) -> dict:
+DEFAULT_SCORE_ATOL = 1e-5
+
+
+def score_comparison(
+    reference: torch.Tensor,
+    candidate: torch.Tensor,
+    *,
+    atol: float = DEFAULT_SCORE_ATOL,
+) -> dict:
+    """Compare scores while separating semantic and bitwise equivalence.
+
+    Exact circuit simplification can change the floating-point addition order of
+    a sum reduction without changing its Boolean function.  Keep reporting
+    bitwise equality, but use a small absolute tolerance plus exact predictions
+    for the semantic pass/fail decision.
+    """
     reference = reference.detach().cpu()
     candidate = candidate.detach().cpu().to(reference.dtype)
+    maximum_difference = float((reference - candidate).abs().max().item())
     return {
         "scores_exact": bool(torch.equal(reference, candidate)),
+        "scores_close": bool(
+            torch.allclose(reference, candidate, rtol=0.0, atol=atol)
+        ),
+        "score_absolute_tolerance": atol,
         "predictions_exact": bool(
             torch.equal(reference.argmax(dim=-1), candidate.argmax(dim=-1))
         ),
-        "maximum_absolute_score_difference": float(
-            (reference - candidate).abs().max().item()
-        ),
+        "maximum_absolute_score_difference": maximum_difference,
     }
 
 
@@ -264,7 +282,7 @@ def main():
         ),
     }
     all_checks_passed = all(
-        comparison["scores_exact"] and comparison["predictions_exact"]
+        comparison["scores_close"] and comparison["predictions_exact"]
         for comparison in comparisons.values()
     )
 
