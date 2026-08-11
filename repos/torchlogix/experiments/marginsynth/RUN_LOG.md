@@ -959,3 +959,41 @@ and test were not loaded anywhere in v2 acquisition or promotion. The next
 protocol step is to repeat the guarded-constrained configuration on seeds 1
 and 2, freeze one transferable configuration without inspecting validation,
 and only then perform the predeclared multi-seed validation/test evaluation.
+
+## 2026-08-11: component isolation and dense-CIFAR preparation
+
+No new accuracy or hardware result is claimed in this entry. A source audit
+found that the archived 48K/512K CIFAR standard-random result directories keep
+configs and metrics but not their git-ignored checkpoints. Their training
+configs also set no calibration holdout. Reusing trained examples for
+post-training selection would violate the paper data boundary, so the new
+dense-source protocol regenerates standard-random checkpoints with split seed
+2027 and a 10% calibration partition excluded from source training. Coverage
+connectivity remains excluded from the primary study.
+
+The implemented component mechanisms are:
+
+- safe topological reachability masks that follow both fixed inputs;
+- descriptive current-LUT algebraic liveness;
+- constants-plus-routing/inversion action masks;
+- source-to-candidate activity mismatch measured on the calibration
+  optimization subset, with worst global/class/fold risk used only to order
+  exact repair; and
+- a post-training Silicon-Aware control using the paper's 16-entry SkyWater
+  cell-area table and `CE + 0.01 * expected area`.
+
+Tracked, resumable runners now freeze configs and record commands, source and
+checkpoint hashes, partition hashes, optimization/repair traces, wall time,
+memory, export equivalence, compiled C, Yosys, and ABC artifacts. Dense seed
+transfer is predeclared to require guard feasibility plus at least 10% measured
+two-pass method-time acceleration from liveness; optimizable-gate reduction by
+itself is not accepted as acceleration. Test data remains sealed.
+
+Development verification at this point reports 69/69 focused MarginSynth tests
+and the complete 3,369-test repository suite passing, with 3,038 skips and one
+pre-existing tensor-copy warning. Python compilation and `git diff --check`
+also pass. The venv
+contains PyTorch 2.9.0+cu130; escalated hardware preflight sees two NVIDIA RTX
+PRO 6000 Blackwell GPUs, with GPU 0 initially providing about 97 GB free.
+Yosys 0.9 and Berkeley ABC are installed. No component or CIFAR experiment was
+started before committing the implementation revision.

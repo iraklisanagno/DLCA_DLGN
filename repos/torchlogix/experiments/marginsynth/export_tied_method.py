@@ -49,6 +49,12 @@ def main() -> None:
         help="Split used only for export/synthesis semantic verification",
     )
     parser.add_argument(
+        "--examples",
+        type=int,
+        default=6000,
+        help="Maximum examples used for exact export and synthesis verification",
+    )
+    parser.add_argument(
         "--resume",
         action="store_true",
         help="Resume a failed child export without deleting its diagnostic logs.",
@@ -86,7 +92,7 @@ def main() -> None:
             python,
             str(script_dir / "verify_checkpoint.py"),
             str(export_dir),
-            "--examples", "6000",
+            "--examples", str(cli.examples),
             "--pack-bits", "16",
             "--compile-opt-level", "0",
             "--verification-split", cli.verification_split,
@@ -98,7 +104,7 @@ def main() -> None:
             python,
             str(script_dir / "verify_synthesis.py"),
             str(export_dir),
-            "--examples", "6000",
+            "--examples", str(cli.examples),
             "--pack-bits", "16",
             "--compile-opt-level", "0",
             "--verification-split", cli.verification_split,
@@ -130,6 +136,7 @@ def main() -> None:
         "validation_used": cli.verification_split == "validation",
         "calibration_used": cli.verification_split == "calibration",
         "test_used": False,
+        "verification_examples_requested": cli.examples,
     }
     (method_dir / "export_summary.json").write_text(
         json.dumps(payload, indent=2, sort_keys=True) + "\n"

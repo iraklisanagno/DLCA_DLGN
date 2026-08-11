@@ -188,9 +188,16 @@ data partitions and the same synthesis flow.
     confidence intervals, failure accounting, plots, and final paper tables
     without returning to hyperparameter tuning.
 
-The immediate next experiment is step 2: apply trial 28 unchanged to
-Fashion-MNIST seeds 1 and 2. Its outcome determines whether the current result
-is transferable or specific to the seed-0 development checkpoint.
+The immediate mechanism gate now precedes multi-seed transfer: hold trial-28
+hyperparameters fixed while isolating Fashion-MNIST liveness, restricted
+constants/routing actions, and class-aware activity repair ordering. Select a
+guard-feasible component using exact ABC cost, validate its complete pipeline
+on the 48K standard-random dense CIFAR-10 model, and then run the six-way
+same-checkpoint comparison on the 512K seed-0 source. Transfer to dense seeds 1
+and 2 only if seed 0 remains guard-feasible and the liveness implementation
+provides the predeclared measured runtime gain. The source must reserve an
+independent calibration split; older no-calibration CIFAR metadata is reference
+provenance only.
 
 ## Priority
 

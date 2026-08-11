@@ -137,6 +137,16 @@ test partitions. The exact split sizes and hashes are frozen before baseline
 training. Test labels remain inaccessible during checkpoint selection, rewrite
 search, budget selection, and Pareto-point selection.
 
+The archived dense CIFAR standard-random result directories predate this rule:
+they used no independent calibration split, and their git-ignored checkpoints
+are not present in the repository. They must not be used by selecting rewrites
+on formerly trained examples. The MarginSynth dense study regenerates the same
+fixed-random 48K- and 512K-gate architectures with split seed 2027 and a 10%
+calibration partition excluded from training and validation. The original
+configs and run summaries remain hashed provenance references; the regenerated
+checkpoint is the common source for exact simplification, Unit Tying, and all
+post-training controls.
+
 ### Conditional CIFAR-100 comparison set
 
 If CIFAR-100 is promoted from an optional extension to a central result, revise

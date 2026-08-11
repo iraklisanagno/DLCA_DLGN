@@ -1,0 +1,51 @@
+{
+  "format_version": 1,
+  "protocol_name": "marginsynth_dense_cifar_standard_random_sources_v1",
+  "dataset_path": "/tmp/torchlogix-datasets",
+  "execution_root": "experiments/marginsynth/results/dense_cifar_sources",
+  "policy": {
+    "connectivity": "fixed standard-random",
+    "coverage_connectivity_used": false,
+    "validation_selects_source_checkpoint": true,
+    "calibration_used_only_after_source_freeze": true,
+    "test_sealed": true
+  },
+  "sources": {
+    "small_seed0": {
+      "architecture": "DlgnCifar10Small",
+      "seed": 0,
+      "data_split_seed": 2027,
+      "calibration_set_size": 0.1,
+      "base_config": "experiments/coverage_dlgn/configs/paper_cifar10_small_random_seed0.json",
+      "historical_run": "experiments/coverage_dlgn/results/paper_cifar10_small_random_seed0",
+      "output": "experiments/marginsynth/results/dense_cifar_sources/small_standard_random_seed0"
+    },
+    "medium_seed0": {
+      "architecture": "DlgnCifar10Medium",
+      "seed": 0,
+      "data_split_seed": 2027,
+      "calibration_set_size": 0.1,
+      "base_config": "experiments/coverage_dlgn/configs/paper_cifar10_medium_random_seed0.json",
+      "historical_run": "experiments/coverage_dlgn/results/paper_cifar10_medium_random_seed0",
+      "output": "experiments/marginsynth/results/dense_cifar_sources/medium_standard_random_seed0"
+    },
+    "medium_seed1": {
+      "architecture": "DlgnCifar10Medium",
+      "seed": 1,
+      "data_split_seed": 2027,
+      "calibration_set_size": 0.1,
+      "base_config": "experiments/coverage_dlgn/configs/paper_cifar10_medium_random_seed0.json",
+      "historical_run": "experiments/coverage_dlgn/results/paper_cifar10_medium_random_seed1",
+      "output": "experiments/marginsynth/results/dense_cifar_sources/medium_standard_random_seed1"
+    },
+    "medium_seed2": {
+      "architecture": "DlgnCifar10Medium",
+      "seed": 2,
+      "data_split_seed": 2027,
+      "calibration_set_size": 0.1,
+      "base_config": "experiments/coverage_dlgn/configs/paper_cifar10_medium_random_seed0.json",
+      "historical_run": "experiments/coverage_dlgn/results/paper_cifar10_medium_random_seed2",
+      "output": "experiments/marginsynth/results/dense_cifar_sources/medium_standard_random_seed2"
+    }
+  }
+}

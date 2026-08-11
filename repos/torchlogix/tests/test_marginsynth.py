@@ -36,6 +36,7 @@ from experiments.marginsynth.margin_aware_tying import (
 )
 from experiments.marginsynth.circuit_distillation import (
     AIG_LUT_COSTS,
+    SKY130_CELL_AREA_LUT_COSTS,
     allowed_lut_mask,
     changed_lut_records,
     decision_margin_losses,
@@ -43,6 +44,11 @@ from experiments.marginsynth.circuit_distillation import (
     materialize_change_prefix,
     stratified_optimization_repair_guard_split,
     stratified_optimization_repair_split,
+)
+from experiments.marginsynth.liveness_activity import (
+    algebraic_live_masks,
+    collect_activity_risks,
+    topological_live_masks,
 )
 from experiments.marginsynth.recovery_finetune import (
     choose_snapshot,
@@ -112,12 +118,127 @@ def test_distillation_action_mask_keeps_original_and_constants():
     assert mask.sum(1).tolist() == [3, 2, 2, 3]
 
 
+def test_distillation_constants_routing_mask_includes_all_structural_luts():
+    original = torch.tensor([1, 3, 15, 6])
+    mask = allowed_lut_mask(original, "constants-routing")
+    structural = {0, 3, 5, 10, 12, 15}
+    for row, original_id in zip(mask, original.tolist()):
+        assert set(torch.nonzero(row).flatten().tolist()) == structural | {original_id}
+
+
 def test_distillation_aig_costs_match_boolean_operation_classes():
     assert AIG_LUT_COSTS[0] == AIG_LUT_COSTS[15] == 0
     assert AIG_LUT_COSTS[3] == AIG_LUT_COSTS[5] == 0
     assert AIG_LUT_COSTS[10] == AIG_LUT_COSTS[12] == 0
     assert AIG_LUT_COSTS[1] == AIG_LUT_COSTS[7] == 1
     assert AIG_LUT_COSTS[6] == AIG_LUT_COSTS[9] == 3
+    assert len(SKY130_CELL_AREA_LUT_COSTS) == 16
+    assert SKY130_CELL_AREA_LUT_COSTS[0] == SKY130_CELL_AREA_LUT_COSTS[15]
+
+
+def _liveness_fixture():
+    first = LogicDense(
+        in_dim=4,
+        out_dim=4,
+        lut_rank=2,
+        parametrization="raw",
+        connections="fixed",
+        connections_kwargs={"init_method": "random"},
+    )
+    second = LogicDense(
+        in_dim=4,
+        out_dim=2,
+        lut_rank=2,
+        parametrization="raw",
+        connections="fixed",
+        connections_kwargs={"init_method": "random"},
+    )
+    first.connections.indices.copy_(torch.tensor([[0, 1, 2, 3], [1, 2, 3, 0]]))
+    # Only first-layer gates 0 and 2 can reach a final output.
+    second.connections.indices.copy_(torch.tensor([[0, 2], [2, 0]]))
+    return [first, second]
+
+
+def test_topological_liveness_is_safe_and_ignores_current_lut_functions():
+    layers = _liveness_fixture()
+    masks = topological_live_masks(layers)
+    assert masks[1].tolist() == [True, True]
+    assert masks[0].tolist() == [True, False, True, False]
+
+
+def test_algebraic_liveness_follows_only_inputs_used_by_current_luts():
+    layers = _liveness_fixture()
+    ids = {
+        0: torch.tensor([1, 1, 1, 1]),
+        1: torch.tensor([3, 0]),  # final gate 0 uses A only; gate 1 is constant
+    }
+    masks = algebraic_live_masks(layers, ids)
+    assert masks[1].tolist() == [True, True]
+    assert masks[0].tolist() == [True, False, False, False]
+
+
+def test_class_fold_activity_risk_is_zero_for_original_and_robust_for_change():
+    layer = LogicDense(
+        in_dim=2,
+        out_dim=2,
+        lut_rank=2,
+        parametrization="raw",
+        connections="fixed",
+        connections_kwargs={"init_method": "random"},
+    )
+    layer.connections.indices.copy_(torch.tensor([[0, 0], [1, 1]]))
+    with torch.no_grad():
+        layer.weight.fill_(-1000.0)
+        layer.weight[0, 1] = 1000.0  # AND
+        layer.weight[1, 7] = 1000.0  # OR
+    model = torch.nn.Sequential(torch.nn.Flatten(), layer, GroupSum(1))
+    encoded = torch.tensor([[0, 0], [0, 1], [1, 0], [1, 1]], dtype=torch.bool)
+    labels = torch.tensor([0, 0, 1, 1])
+    folds = torch.tensor([0, 1, 0, 1])
+    risks, summary = collect_activity_risks(
+        model,
+        encoded,
+        labels,
+        folds,
+        torch.arange(4),
+        [0],
+        batch_size=2,
+        device=torch.device("cpu"),
+    )
+    assert risks[0][0, 1] == 0.0
+    assert risks[0][1, 7] == 0.0
+    assert risks[0][0, 15] == 1.0  # one fold observes only an AND=0 case
+    assert summary["examples"] == 4
+
+
+def test_activity_ranking_breaks_equal_cost_ties_before_logit_preference():
+    layer = LogicDense(
+        in_dim=2,
+        out_dim=2,
+        lut_rank=2,
+        parametrization="raw",
+        connections="fixed",
+        connections_kwargs={"init_method": "random"},
+    )
+    original = {0: torch.tensor([1, 1])}
+    with torch.no_grad():
+        layer.weight.fill_(-10.0)
+        layer.weight[0, 0] = 1.0
+        layer.weight[0, 1] = 0.0
+        layer.weight[1, 0] = 2.0
+        layer.weight[1, 1] = 0.0
+    risks = {0: torch.zeros(2, 16)}
+    risks[0][0, 0] = 0.1
+    risks[0][1, 0] = 0.2
+    records = changed_lut_records(
+        [layer],
+        [0],
+        original,
+        "gate-count",
+        activity_risks=risks,
+        activity_ranking="class-fold",
+    )
+    assert [record["unit"] for record in records] == [0, 1]
 
 
 def test_distillation_margin_loss_targets_teacher_winner_and_runner():

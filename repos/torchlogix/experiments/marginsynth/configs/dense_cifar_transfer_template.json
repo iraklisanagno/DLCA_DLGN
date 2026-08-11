@@ -1,0 +1,32 @@
+{
+  "format_version": 1,
+  "protocol_name": "dense_cifar_trial28_transfer_template_v1",
+  "eligible_logic_layers": [1, 2],
+  "small_overrides": {
+    "evaluation_batch_size": 256,
+    "activity_batch_size": 64
+  },
+  "medium_overrides": {
+    "evaluation_batch_size": 64,
+    "activity_batch_size": 16
+  },
+  "unit_tying": {
+    "method": "two-stage-unit-tying",
+    "source_checkpoint": "best_checkpoint.pt",
+    "ratios": [0.1],
+    "selected_ratio": 0.1,
+    "eligible_logic_layers": [1, 2],
+    "stage_a_samples": 16,
+    "stage_b_samples": 80,
+    "overshoot": 40,
+    "calibration_seed": 0,
+    "evaluation_batch_size": 64,
+    "tie_logit": 1000000.0
+  },
+  "transfer_notes": {
+    "eligible_layers": "Only internal layers 1 and 2 are rewritten; the input-facing and class-sum-facing layers remain fixed.",
+    "verification_examples": "4992 is the largest multiple of 16 not exceeding the 5000-example CIFAR calibration partition.",
+    "unit_tying_ratio": "10% is the fixed paper comparison point used in the Fashion-MNIST study.",
+    "silicon_control": "CE + 0.01 expected SkyWater cell area is a post-training control, not a from-scratch reproduction."
+  }
+}

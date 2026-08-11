@@ -792,3 +792,71 @@ MarginSynth is ready for a paper only when:
 - compiled measurements support any software-runtime claim;
 - same-flow synthesis supports any FPGA/ASIC resource claim; and
 - five paired central seeds support the claimed advantage.
+
+## Fixed component and dense-CIFAR escalation protocol
+
+The post-Bayesian development path is frozen in
+`configs/components_fashion_trial28.json`. It keeps guarded-constrained trial
+28 unchanged and isolates four inexpensive Fashion-MNIST questions:
+
+1. characterize structural redundancy and calibration activity;
+2. mask gates with no fixed-connection path to any class output;
+3. restrict candidate LUTs to constants, routing, and inversion; and
+4. use worst-global/class/fold source-to-candidate activity mismatch to order
+   exact repair.
+
+Topological liveness is safe because it follows both fixed inputs regardless
+of the current LUT. Algebraic liveness and calibration activity are diagnostic
+only: a LUT replacement can reactivate an input that the original LUT ignored.
+The current liveness implementation masks unsafe-to-optimize rows but retains
+the dense forward graph, so any runtime gain must be measured and must not be
+inferred from the smaller optimizable gate count.
+
+Run the fixed Fashion-MNIST study on GPU 0 and summarize it with:
+
+```bash
+CUDA_VISIBLE_DEVICES=0 DATASET_PATH=/tmp/torchlogix-datasets \
+venv/bin/python experiments/marginsynth/run_component_protocol.py \
+  --protocol experiments/marginsynth/configs/components_fashion_trial28.json
+
+venv/bin/python experiments/marginsynth/summarize_component_protocol.py \
+  experiments/marginsynth/results/pilot_fashion_mnist_paper_small_raw_seed0 \
+  --protocol experiments/marginsynth/configs/components_fashion_trial28.json
+```
+
+The summarizer selects only among guard-feasible MarginSynth variants, using
+exact ABC AND nodes as the primary key and guard accuracy loss and application
+time as deterministic tie-breakers. The Silicon-Aware-style control uses the
+paper's `CE + 0.01 * expected SkyWater cell area` objective after training. It
+is explicitly a post-training control, not a protocol-identical reproduction
+of that paper's from-scratch method.
+
+Historical dense CIFAR result folders do not contain their ignored checkpoint
+files and used no calibration holdout. They are therefore provenance
+references, not valid post-training sources. Regenerate fixed standard-random
+sources with a sealed 10% calibration partition using:
+
+```bash
+CUDA_VISIBLE_DEVICES=0 DATASET_PATH=/tmp/torchlogix-datasets \
+venv/bin/python experiments/marginsynth/train_dense_sources.py \
+  --protocol experiments/marginsynth/configs/dense_cifar_standard_random_sources.json \
+  --sources small_seed0 medium_seed0
+```
+
+`prepare_dense_protocol.py` materializes a checkpoint-hashed smoke, comparison,
+or transfer protocol from the frozen trial-28 settings. The small smoke runs
+the selected component plus exact export/synthesis. The seed-0 medium
+comparison adds exact simplification, 10% Two-Stage Unit Tying, current
+MarginSynth, liveness-aware MarginSynth, class-aware repair ordering, and the
+Silicon-Aware-style post-training control. All use the same checkpoint and
+Yosys/ABC flow. `summarize_dense_comparison.py` reports the full comparison and
+applies the predeclared seed-transfer gate: the selected method and liveness
+variant must satisfy the guard, and liveness must reduce two-pass method wall
+time by at least 10%. Seeds 1 and 2 are not trained or processed unless that
+gate passes.
+
+Coverage-aware connectivity is never used as a primary source in this
+protocol. The dense source config, checkpoint, split indices, code revision,
+commands, timings, GPU memory, learned changes, repair trace, exact circuits,
+and synthesis logs are retained as machine-readable artifacts. The held-out
+test set remains sealed throughout component selection and dense escalation.

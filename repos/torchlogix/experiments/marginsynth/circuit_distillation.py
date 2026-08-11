@@ -43,6 +43,11 @@ from experiments.marginsynth.margin_aware_tying import (
     stratified_fold_ids,
     within_constraints,
 )
+from experiments.marginsynth.liveness_activity import (
+    CONSTANTS_AND_ROUTING_IDS,
+    collect_activity_risks,
+    liveness_summary,
+)
 from experiments.marginsynth.unit_tying import (
     evaluate_encoded,
     forward_encoded,
@@ -62,6 +67,14 @@ from experiments.marginsynth.verify_checkpoint import (
 # and constants are free in ABC's AND-node statistic; XOR/XNOR require three.
 AIG_LUT_COSTS = (0, 1, 1, 0, 1, 0, 3, 1, 1, 3, 0, 1, 0, 1, 1, 0)
 GATE_COUNT_LUT_COSTS = (0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0)
+# SkyWater 130 nm Cadence standard-cell areas (in square micrometres) reported
+# by the Silicon-Aware Neural Networks paper for the 16 rank-2 functions.
+SKY130_CELL_AREA_LUT_COSTS = (
+    5.713, 9.522, 13.331, 7.618,
+    13.331, 7.618, 15.235, 9.522,
+    7.618, 15.235, 5.713, 13.331,
+    5.713, 13.331, 7.618, 5.713,
+)
 
 
 def cost_vector(kind: str, device: torch.device | str = "cpu") -> torch.Tensor:
@@ -69,8 +82,12 @@ def cost_vector(kind: str, device: torch.device | str = "cpu") -> torch.Tensor:
         values = AIG_LUT_COSTS
     elif kind == "gate-count":
         values = GATE_COUNT_LUT_COSTS
+    elif kind == "sky130-cell-area":
+        values = SKY130_CELL_AREA_LUT_COSTS
     else:
-        raise ValueError("cost kind must be 'aig' or 'gate-count'")
+        raise ValueError(
+            "cost kind must be 'aig', 'gate-count', or 'sky130-cell-area'"
+        )
     return torch.tensor(values, dtype=torch.float32, device=device)
 
 
@@ -78,11 +95,15 @@ def allowed_lut_mask(original_ids: torch.Tensor, action_space: str) -> torch.Ten
     """Return a per-unit mask while always retaining the original LUT."""
     if action_space == "all":
         return torch.ones((len(original_ids), 16), dtype=torch.bool, device=original_ids.device)
-    if action_space != "constants":
-        raise ValueError("action_space must be 'all' or 'constants'")
+    if action_space not in {"constants", "constants-routing"}:
+        raise ValueError(
+            "action_space must be 'all', 'constants', or 'constants-routing'"
+        )
     mask = torch.zeros((len(original_ids), 16), dtype=torch.bool, device=original_ids.device)
-    mask[:, 0] = True
-    mask[:, 15] = True
+    allowed = (
+        (0, 15) if action_space == "constants" else CONSTANTS_AND_ROUTING_IDS
+    )
+    mask[:, list(allowed)] = True
     mask.scatter_(1, original_ids[:, None], True)
     return mask
 
@@ -223,6 +244,8 @@ def changed_lut_records(
     eligible_layers: list[int],
     original_ids: dict[int, torch.Tensor],
     cost_kind: str,
+    activity_risks: dict[int, torch.Tensor] | None = None,
+    activity_ranking: str = "none",
 ) -> list[dict]:
     costs = cost_vector(cost_kind)
     records = []
@@ -244,18 +267,38 @@ def changed_lut_records(
                     "new_lut": new_id,
                     "proxy_benefit": benefit,
                     "preference_margin": confidence,
+                    "activity_risk": (
+                        None
+                        if activity_risks is None
+                        else float(activity_risks[layer_index][unit, new_id])
+                    ),
                 }
             )
     # Prefixes keep the transformations most likely to save synthesis cost and
     # most strongly preferred by joint optimization. This order is replayable.
-    records.sort(
-        key=lambda item: (
-            -item["proxy_benefit"],
-            -item["preference_margin"],
-            item["layer"],
-            item["unit"],
+    if activity_ranking == "none":
+        records.sort(
+            key=lambda item: (
+                -item["proxy_benefit"],
+                -item["preference_margin"],
+                item["layer"],
+                item["unit"],
+            )
         )
-    )
+    elif activity_ranking == "class-fold":
+        if activity_risks is None:
+            raise ValueError("class-fold activity ranking requires activity risks")
+        records.sort(
+            key=lambda item: (
+                -item["proxy_benefit"],
+                item["activity_risk"],
+                -item["preference_margin"],
+                item["layer"],
+                item["unit"],
+            )
+        )
+    else:
+        raise ValueError("activity_ranking must be 'none' or 'class-fold'")
     return records
 
 
@@ -433,6 +476,16 @@ def main() -> None:
         index: layers[index].weight.detach().argmax(dim=1).cpu()
         for index in eligible_layers
     }
+    all_source_ids = {
+        index: layer.weight.detach().argmax(dim=1).cpu()
+        for index, layer in enumerate(layers)
+    }
+    graph_liveness, topological_masks = liveness_summary(
+        layers, all_source_ids, eligible_layers
+    )
+    liveness_mode = config.get("liveness_mask", "none")
+    if liveness_mode not in {"none", "topological"}:
+        raise ValueError("liveness_mask must be 'none' or 'topological'")
     masks = initialize_resynthesis_logits(
         layers,
         eligible_layers,
@@ -472,6 +525,15 @@ def main() -> None:
         del teacher_id_model, lock_reference_model
     else:
         lock_reference_path = None
+    if liveness_mode == "topological":
+        for layer_index in eligible_layers:
+            live_rows = topological_masks[layer_index].to(device)
+            source_layer_ids = original_ids[layer_index].to(device)
+            masks[layer_index][~live_rows] = False
+            masks[layer_index][~live_rows, source_layer_ids[~live_rows]] = True
+    optimizable_gate_count = sum(
+        int((masks[index].sum(1) > 1).sum()) for index in eligible_layers
+    )
     for parameter in student.parameters():
         parameter.requires_grad_(False)
     parameters = []
@@ -487,6 +549,35 @@ def main() -> None:
         calibration_labels.numpy(), int(config["stability_folds"]), seed + 7919
     )
     fold_ids = torch.from_numpy(fold_ids_np)
+    activity_ranking = config.get("activity_ranking", "none")
+    activity_risks = None
+    activity_analysis = None
+    if activity_ranking == "class-fold":
+        activity_started = time.perf_counter()
+        activity_risks, activity_analysis = collect_activity_risks(
+            student,
+            calibration_encoded,
+            calibration_labels,
+            fold_ids,
+            optimization_indices,
+            eligible_layers,
+            int(config.get("activity_batch_size", min(evaluation_batch_size, 64))),
+            device,
+        )
+        activity_analysis["elapsed_seconds"] = time.perf_counter() - activity_started
+        (output_dir / "activity_analysis.json").write_text(
+            json.dumps(activity_analysis, indent=2, sort_keys=True) + "\n"
+        )
+        # Activity collection deliberately evaluates the hard source model.
+        # Restore the eligible layers to training mode for straight-through
+        # resynthesis after the collector's model.eval() call.
+        for layer_index in eligible_layers:
+            layers[layer_index].train(True)
+    elif activity_ranking != "none":
+        raise ValueError("activity_ranking must be 'none' or 'class-fold'")
+    (output_dir / "liveness_analysis.json").write_text(
+        json.dumps(graph_liveness, indent=2, sort_keys=True) + "\n"
+    )
     generator = torch.Generator().manual_seed(seed + 17)
     permutations = []
     trace = []
@@ -542,8 +633,14 @@ def main() -> None:
             decision_loss = mse_loss
             class_loss = mse_loss.new_zeros(())
             fold_loss = mse_loss.new_zeros(())
+        elif config["objective"] == "cross-entropy":
+            label_objective = F.cross_entropy(student_scores, labels)
+            decision_loss = label_objective
+            mse_loss = label_objective.new_zeros(())
+            class_loss = label_objective.new_zeros(())
+            fold_loss = label_objective.new_zeros(())
         else:
-            raise ValueError("objective must be 'margin' or 'mse'")
+            raise ValueError("objective must be 'margin', 'mse', or 'cross-entropy'")
         label_loss = F.cross_entropy(student_scores, labels)
         hardware_cost = expected_hardware_cost(
             layers, eligible_layers, costs, max(temperature, 1e-4)
@@ -610,7 +707,12 @@ def main() -> None:
     )
 
     changes = changed_lut_records(
-        layers, eligible_layers, original_ids, cost_kind
+        layers,
+        eligible_layers,
+        original_ids,
+        cost_kind,
+        activity_risks=activity_risks,
+        activity_ranking=activity_ranking,
     )
     (output_dir / "learned_changes.json").write_text(
         json.dumps(changes, indent=2, sort_keys=True) + "\n"
@@ -755,6 +857,7 @@ def main() -> None:
             "model_state_dict": final_state,
             "metadata": {
                 "method": "margin-constrained-whole-circuit-lut-resynthesis",
+                "experiment_variant": config.get("method"),
                 "step": int(checkpoint.get("metadata", {}).get("step", 0)),
                 "optimization_steps": steps,
                 "source_checkpoint": str(checkpoint_path.relative_to(run_dir)),
@@ -830,8 +933,9 @@ def main() -> None:
     summary = {
         "format_version": 1,
         "status": "completed",
-        "development_run": True,
+        "development_run": bool(config.get("development_run", True)),
         "method": "margin-constrained-whole-circuit-lut-resynthesis",
+        "experiment_variant": config.get("method"),
         "architecture": training_config["architecture"],
         "dataset": training_config["dataset"],
         "nominal_logic_gates": sum(layer.out_dim for layer in layers),
@@ -841,6 +945,11 @@ def main() -> None:
         "action_space": config["action_space"],
         "objective": config["objective"],
         "cost_kind": cost_kind,
+        "liveness_mask": liveness_mode,
+        "activity_ranking": activity_ranking,
+        "optimizable_logic_gates": optimizable_gate_count,
+        "liveness": graph_liveness,
+        "activity_analysis": activity_analysis,
         "learned_changes": len(changes),
         "retained_changes": retained,
         "locked_source_changes": locked_source_changes,
@@ -885,6 +994,14 @@ def main() -> None:
             "distilled_checkpoint_sha256": sha256_file(hard_checkpoint),
             "learned_changes_sha256": sha256_file(output_dir / "learned_changes.json"),
             "repair_log_sha256": sha256_file(output_dir / "repair_log.json"),
+            "liveness_analysis_sha256": sha256_file(
+                output_dir / "liveness_analysis.json"
+            ),
+            "activity_analysis_sha256": (
+                None
+                if activity_analysis is None
+                else sha256_file(output_dir / "activity_analysis.json")
+            ),
         },
         "software": software,
     }
