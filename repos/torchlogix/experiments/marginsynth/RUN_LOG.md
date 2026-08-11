@@ -997,3 +997,50 @@ contains PyTorch 2.9.0+cu130; escalated hardware preflight sees two NVIDIA RTX
 PRO 6000 Blackwell GPUs, with GPU 0 initially providing about 97 GB free.
 Yosys 0.9 and Berkeley ABC are installed. No component or CIFAR experiment was
 started before committing the implementation revision.
+
+### Fashion-MNIST fixed trial-28 component outcomes
+
+Commit `467282f` was used for every run. All four component/control checkpoints
+passed model-to-circuit, exact simplification, compiled-C, hardware
+normalization, Yosys, and ABC verification on all 6,000 calibration examples.
+The source checkpoint hash remained
+`edcc3334a9f2c1a34c8875767f08c8094d29aabd8c15ff9c1c1c8decc12a91f6`.
+
+| MarginSynth variant | Guard feasible | Guard accuracy loss | Disagreement | Worst-class loss | Live gates | ABC nodes | Levels | Two-pass method time |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Current trial 28 | yes | -0.250 pp | 2.083% | 0.893 pp | 27,493 | 91,919 | 79 | 21.227 s |
+| Safe topological liveness | yes | -0.250 pp | 2.083% | 0.893 pp | 27,493 | 91,919 | 79 | 21.493 s |
+| Constants + routing/inversion only | no | +0.167 pp | 1.583% | 1.786 pp | 27,577 | 92,181 | 78 | 22.466 s |
+| Class/fold activity repair ordering | no | +0.667 pp | 3.333% | 3.125 pp | 25,320 | 89,817 | 78 | 22.984 s |
+
+The safe structural analysis found all 32,000 eligible internal gates
+topologically reachable. It found 1,465 algebraically dead gates under the
+checkpoint's current LUT functions, but these were not masked because changing
+a LUT can reactivate such paths. Consequently the liveness result is exactly
+identical to current trial 28 and is 1.25% slower in total two-pass method time
+(2.31% slower for optimization alone). It provides no Fashion-MNIST runtime
+claim.
+
+The class-aware ordering exposes a useful but currently unsafe direction: it
+reduces ABC cost by 2,102 nodes (2.287%) relative to current MarginSynth, but
+fails all global accuracy, disagreement, and worst-class guard limits. The
+restricted action space also fails the worst-class accuracy guard and has 262
+more ABC nodes. Under the predeclared feasible-first exact-ABC selection rule,
+the scaling candidate is therefore **current trial-28 MarginSynth**. The dense
+small smoke will additionally retain a liveness arm to determine whether the
+CIFAR topology contains safe dead gates.
+
+The Silicon-Aware-style post-training control finished 1,000 updates in 13.46
+seconds and synthesized to 29,025 live gates, 91,736 ABC nodes, and 80 levels.
+It is infeasible: its unseen guard loses 1.333 percentage points globally,
+11.607 points in the worst class, and has 10.667% disagreement. Its apparent
+6.900-point accuracy improvement on the full calibration set is therefore
+optimization-subset overfitting, not a valid gain.
+
+One-time characterization took 2.60 seconds. The four export/synthesis stages
+took 171.14, 171.80, 163.61, and 176.14 seconds, confirming that common exact
+hardware verification dominates component wall time. The machine-readable
+comparison JSON and CSV hashes are
+`15d7341861dbbb59c578ea4139dea8830bbd9f1505b31efb382a2aea7033f459`
+and `8ec15cc8d14cf0c79105a591efe71c35e17d16c9f9873b2b7df004cdca0b8151`.
+Validation and test were not loaded by component selection.

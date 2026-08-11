@@ -101,7 +101,12 @@ def main() -> None:
 
     selected = cli.selected_component
     if cli.profile == "smoke":
-        components = {selected: COMPONENT_OVERLAYS[selected]}
+        names = [selected]
+        # The smoke must exercise safe liveness mapping even when the fixed
+        # Fashion-MNIST selection rule retains the unmasked current method.
+        if "liveness" not in names:
+            names.append("liveness")
+        components = {name: COMPONENT_OVERLAYS[name] for name in names}
     elif cli.profile == "comparison":
         names = ["current", "liveness", "class_activity"]
         if selected not in names:
