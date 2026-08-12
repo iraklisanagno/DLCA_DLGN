@@ -1,6 +1,6 @@
 # LogicTreeNet-M U2 protocol
 
-Status: preregistered; training and held-out test not yet run.
+Status: CUDA smoke passed; full training and held-out test not yet run.
 
 ## Purpose
 
@@ -55,3 +55,13 @@ The paper reports 71.01% test accuracy for LogicTreeNet-M. That value is an
 external reference, not a matched claim: this run uses the repository's frozen
 TorchLogix reproduction protocol. The matched primary comparison is U2 versus
 the already completed fixed-random seed-0 run at the same 200,000-update budget.
+
+## CUDA smoke outcome
+
+The ten-update preflight completed on physical GPU 0 with PyTorch 2.9.0+cu130
+and CUDA build 13.0. Metrics were finite, hardened and relaxed validation both
+ran at step 10, and the expected topology, threshold, environment,
+configuration, best-checkpoint, and final-checkpoint artifacts were created.
+Peak allocated CUDA memory was 15,692,077,568 bytes. The smoke output is
+`results/smoke_conv_cifar10_paper_medium_u2_seed0`; model/checkpoint binaries
+remain excluded from Git.
