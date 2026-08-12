@@ -1222,3 +1222,105 @@ Final verification used Python compilation, the focused dense-transfer tests,
 comparison artifacts, and `PYTHONPATH=. venv/bin/pytest -q`. The focused tests
 reported 2 passed. The complete repository suite reported 3,376 passed, 3,038
 skipped, and one pre-existing tensor-copy warning in 120.45 seconds.
+
+## 2026-08-12: operation-aware ranking and feasible-snapshot fallback
+
+This run implemented the next hardware-aware MarginSynth iteration without
+altering or deleting any earlier result. Raw artifacts live under the
+versioned `marginsynth_hardware_ablation/structural_rank_v2` root. The official
+CIFAR-10 test set remained sealed.
+
+### Method and calibration
+
+The implementation adds four static rewrite features: local two-input AIG
+operation reduction, exact-Boolean-cofactor constant-propagation gain, direct
+fan-out, and fixed-topology downstream influence. Nonnegative ridge
+coefficients were fitted only to earlier seed-0 development circuits. Unit
+Tying was removed from the fit and retained solely as an estimator check. No
+images, validation predictions, or test predictions were loaded during
+calibration.
+
+The frozen model SHA-256 is
+`2a1e154bcd4d67ae90fd02289ba04cfb167a9b3d33c3c71ea9bebe7176aa2046`.
+Its coefficients for operation gain, constant propagation, log fan-out, and
+log downstream influence are 0.596458, 1.184420, 0.027643, and effectively
+zero. In-sample Pearson/Spearman were 0.988/1.000; leave-one-fit-method-out
+Pearson/Spearman were 0.914/0.800. The held-out Unit-Tying reduction was
+predicted as 62,525 nodes versus 64,343 observed, an absolute error of 1,818
+nodes (2.82%).
+
+All 16 LUTs remained legal. Alternative binary LUTs alone received a fixed
+two-AIG-unit prior penalty; the original LUT was exempt. Source, pass-one, and
+pass-two checkpoints were selected by repair, complete-calibration, and
+untouched-guard feasibility followed by the frozen structural estimate. The
+source's byte-identical exact export was reused only when the source fallback
+won and after checkpoint, split, tool-flow, and test-sealing checks.
+
+An initial version-1 diagnostic had included Unit Tying as a coefficient-fit
+point. This violated its intended held-out role. The run was interrupted before
+completion, its diagnostic artifacts were preserved under `structural_rank_v1`,
+and no value from it was used for the final result. Version 2 corrected the
+calibration boundary before the reported ablation.
+
+### Seed-0 ablation
+
+The source is `DlgnCifar10Medium`, with four 128,000-gate layers (512,000
+trained gates), of which the two middle layers (256,000 gates) are eligible.
+The source checkpoint and split are identical to the earlier dense-CIFAR study.
+All optimization ran with the repository virtual environment on GPU 0;
+export, exact Boolean simplification, compiled-C verification, Yosys, and ABC
+were CPU/compiler stages.
+
+| Method | Snapshot | Guard feasible | Retained edits | Validation accuracy | Disagreement | Worst-class validation loss | Live gates | ABC nodes | Levels | Yosys cells | Area proxy (um2) | Method time | Optimization time | Peak GPU allocation |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Exact simplification | source | yes | 0 | 54.64% | 0.00% | 0.000 pp | 389,970 | 1,484,154 | 105 | 1,180,212 | 4,354,161 | 0.00 s | 0.00 s | 0 B |
+| 10% Unit Tying | tied | n/a | 20,797 | 54.16% | 5.60% | 3.353 pp | 353,549 | 1,419,811 | 106 | 1,115,763 | 3,953,329 | 10.86 s | 10.86 s | n/a |
+| Prior current MarginSynth | second | yes | 13,034 | 54.40% | 2.28% | not recorded in old summary | 380,330 | 1,472,970 | 105 | 1,166,026 | 4,253,383 | 210.41 s | 161.25 s | 2,044,764,672 B |
+| Focused control | source fallback | yes | 0 selected | 54.64% | 0.00% | n/a | 389,970 | 1,484,154 | 105 | 1,180,212 | 4,354,161 | 177.34 s | 126.24 s | 2,061,640,192 B |
+| Hardware-aware | second | yes | 314 | 54.52% | 2.30% | 1.386 pp | 388,326 | 1,480,257 | 104 | 1,177,324 | 4,333,693 | 176.51 s | 123.11 s | 2,061,640,192 B |
+| Class + hardware-aware | second | yes | 2,075 | 54.68% | 1.14% | 1.183 pp | 384,998 | 1,475,742 | 105 | 1,172,283 | 4,297,589 | 232.48 s | 175.95 s | 2,061,640,192 B |
+
+The focused control learned 13,401 and then 6,674 retained edits, but both
+candidate checkpoints failed the untouched guard; the source fallback worked
+as designed. Hardware-aware retained 314 constants and no routing or binary
+edits. Class + hardware-aware retained 1,643 constants and 432 routing or
+inversion edits, with no alternative binary LUTs. Its validation accuracy was
+0.04 percentage points above the source while disagreement stayed at 1.14%,
+but its hardware reduction was smaller than the prior current method.
+
+Across source plus the three new predeclared observations, predicted versus
+observed ABC reductions were `[0, 9777.6, 0, 3432.5]` and
+`[0, 8412, 0, 3897]`. Pearson was 0.993 and Spearman was 1.000, above the
+frozen 0.5 transfer threshold. The remaining bottleneck is therefore not the
+relative ranking signal. It is the optimizer/repair interaction: hardware-only
+ranking is too conservative, while the 75/25 class/hardware combination does
+not retain enough high-impact guard-feasible edits.
+
+### Frozen no-go decision and artifacts
+
+The predeclared seed-0 selector minimizes exact ABC nodes among guard-feasible
+MarginSynth variants. It selected the prior current reference at 1,472,970
+nodes; class + hardware-aware had 1,475,742 and hardware-aware had 1,480,257.
+The freeze record is consequently `not-frozen`. An explicit seed-1 transfer
+preparation attempt failed as intended with `transfer freeze record is not
+frozen`. Seeds 1 and 2 were not run for this variant, and the official test set
+was not opened.
+
+The v2 ablation protocol SHA-256 is
+`adcf0ca71203b87480c9490dc7c6e38e08b0f4f69a42f922e145d88f86a7a366`.
+The machine-readable ablation JSON/CSV SHA-256 values are
+`7dd1134e6010ea6b8eb45730f69f4adb4c26185e339344265cd4c98d1c169436`
+and `ef291b00cfe46d3a2fd2a00c4cb8cf52373485152bfe9ed8aed8d41cde5780d1`.
+The no-go freeze-record SHA-256 is
+`0b8e91bb88c7791249db790a74360146177baf9de0ab01ed6798a76d54b1bc40`.
+Every executed stage returned zero; every exact export passed compiled-C,
+Yosys, and ABC verification; every selection and synthesis record states
+`test_used: false`.
+
+Final verification comprised `git diff --check`, an explicit 12-stage
+completion/test-sealing assertion, the expected rejection of an attempted
+seed-1 protocol generated from the `not-frozen` record, 82 focused MarginSynth
+tests, and the complete repository suite. The complete suite reported 3,384
+passed, 3,038 skipped, and the same pre-existing tensor-copy warning in 142.89
+seconds. No seed-1/2 hardware-aware protocol, checkpoint, or test result was
+created.

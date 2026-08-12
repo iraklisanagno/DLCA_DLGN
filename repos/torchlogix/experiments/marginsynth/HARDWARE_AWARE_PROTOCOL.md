@@ -116,3 +116,42 @@ proxy.
 - Test: sealed until the full multi-seed method is frozen.
 - Connectivity: fixed standard-random only; Coverage connectivity is excluded
   from the primary experiment.
+
+## Executed seed-0 outcome (2026-08-12)
+
+The version-2 protocol completed on the 512K-gate CIFAR-10 seed-0 source. The
+structural estimator was fitted without loading any dataset and without using
+Unit Tying as a fit point. It obtained in-sample Pearson/Spearman correlations
+of 0.988/1.000, leave-one-fit-method-out correlations of 0.914/0.800, and a
+1,817.6-node absolute error when Unit Tying was used only as a held-out point.
+On the three new predeclared seed-0 observations, estimated gain versus exact
+ABC reduction had Pearson 0.993 and Spearman 1.000.
+
+| Method | Selected snapshot | Guard feasible | Validation accuracy | Disagreement | Live gates | ABC nodes | Levels | Area-proxy reduction | Method time |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Exact simplification | source | yes | 54.64% | 0.00% | 389,970 | 1,484,154 | 105 | 0.000% | 0.00 s |
+| 10% Unit Tying | tied | unconstrained baseline | 54.16% | 5.60% | 353,549 | 1,419,811 | 106 | 9.206% | 10.86 s |
+| Prior current MarginSynth | second | yes | 54.40% | 2.28% | 380,330 | 1,472,970 | 105 | 2.315% | 210.41 s |
+| Focused control | source fallback | yes | 54.64% | 0.00% | 389,970 | 1,484,154 | 105 | 0.000% | 177.34 s |
+| Hardware-aware | second | yes | 54.52% | 2.30% | 388,326 | 1,480,257 | 104 | 0.470% | 176.51 s |
+| Class + hardware-aware | second | yes | 54.68% | 1.14% | 384,998 | 1,475,742 | 105 | 1.299% | 232.48 s |
+
+The focused control's first and second passes both failed the untouched guard,
+so the predeclared fallback correctly returned the source snapshot. The pure
+hardware method retained 314 cumulative edits, all constants. The combined
+method retained 2,075 edits (1,643 constants and 432 routing/inversion edits).
+No selected new result used an alternative binary LUT.
+
+The estimator validation threshold passed, but neither new component beat the
+prior current result's 1,472,970 exact ABC nodes. The frozen selection therefore
+returned `current_reference`, and the freeze record is intentionally marked
+`not-frozen`. Seed-1/2 transfer and official-test evaluation were not run. The
+transfer protocol generator independently rejects this record with `transfer
+freeze record is not frozen`.
+
+This is a useful negative result: operation-aware ranking predicts the relative
+exact gains well, but it does not by itself generate enough guard-compatible
+edits. The next method change should improve joint candidate generation and
+class-aware repair under the hardware rank; another fit of the estimator to
+these same seed-0 observations would be post-hoc and is not authorized by this
+protocol.
