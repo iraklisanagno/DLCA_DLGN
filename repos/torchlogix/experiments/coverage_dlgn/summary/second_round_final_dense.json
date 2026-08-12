@@ -1,0 +1,639 @@
+{
+  "validation_freeze": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/summary/second_round_final_validation_freeze.json",
+  "held_out_test_evaluated_once": true,
+  "cells": {
+    "mnist_8k": {
+      "random": {
+        "validation_hard_pct": [
+          91.41666442155838,
+          91.76666488250098,
+          91.1999981602033
+        ],
+        "validation_hard_mean_pct": 91.46110915475421,
+        "validation_hard_std_pct": 0.2859358219453039,
+        "test_hard_pct": [
+          91.18999797105789,
+          91.51999789476395,
+          91.10999810695648
+        ],
+        "test_hard_mean_pct": 91.27333132425944,
+        "test_hard_std_pct": 0.21733221647377085,
+        "mean_training_wall_minutes": 15.064778039983421,
+        "maximum_peak_gpu_gib": 0.01682138442993164,
+        "mean_topology_construction_seconds": 0.0014160415933777888,
+        "representative_seed0_synthetic_gpu": {
+          "milliseconds_per_batch128": 1.138037796020508,
+          "examples_per_second": 112474.2960625654,
+          "peak_device_memory_gib": 0.004889488220214844,
+          "input_source": "torch.rand seed 2027; no dataset access"
+        },
+        "cost": {
+          "dense_gate_count": 8000,
+          "trainable_parameters": 128000,
+          "training_routing_parameters": 0,
+          "deployed_routing_bits": 173332,
+          "deployed_routing_bytes_packed": 21667,
+          "candidate_indices_tensor_bytes": 128000
+        }
+      },
+      "v3": {
+        "validation_hard_pct": [
+          91.91666473944981,
+          91.86666488647461,
+          92.08333154519399
+        ],
+        "validation_hard_mean_pct": 91.95555372370613,
+        "validation_hard_std_pct": 0.11344767548310977,
+        "test_hard_pct": [
+          91.56999796628952,
+          91.97999769449234,
+          92.16999804973602
+        ],
+        "test_hard_mean_pct": 91.90666457017262,
+        "test_hard_std_pct": 0.30664855351985654,
+        "mean_training_wall_minutes": 15.085542224673555,
+        "maximum_peak_gpu_gib": 0.01682138442993164,
+        "mean_topology_construction_seconds": 0.8664331738060961,
+        "representative_seed0_synthetic_gpu": {
+          "milliseconds_per_batch128": 1.1395231628417968,
+          "examples_per_second": 112327.68597769222,
+          "peak_device_memory_gib": 0.004889488220214844,
+          "input_source": "torch.rand seed 2027; no dataset access"
+        },
+        "cost": {
+          "dense_gate_count": 8000,
+          "trainable_parameters": 128000,
+          "training_routing_parameters": 0,
+          "deployed_routing_bits": 173332,
+          "deployed_routing_bytes_packed": 21667,
+          "candidate_indices_tensor_bytes": 128000
+        },
+        "validation_vs_random": {
+          "per_seed_gain_pp": [
+            0.5000003178914341,
+            0.10000000397363351,
+            0.8833333849906921
+          ],
+          "paired_mean_gain_pp": 0.4944445689519199,
+          "paired_95ci_pp": [
+            -0.4785828380748832,
+            1.467471975978723
+          ],
+          "positive_pairs": 3
+        },
+        "test_vs_random": {
+          "per_seed_gain_pp": [
+            0.3799999952316284,
+            0.45999979972839355,
+            1.059999942779541
+          ],
+          "paired_mean_gain_pp": 0.6333332459131876,
+          "paired_95ci_pp": [
+            -0.2899286923740225,
+            1.5565951842003978
+          ],
+          "positive_pairs": 3
+        }
+      },
+      "u2": {
+        "validation_hard_pct": [
+          91.56666497389475,
+          91.78333153327306,
+          92.16666499773662
+        ],
+        "validation_hard_mean_pct": 91.83888716830147,
+        "validation_hard_std_pct": 0.30383355408861573,
+        "test_hard_pct": [
+          91.78999823331833,
+          91.95999777317047,
+          92.05999797582626
+        ],
+        "test_hard_mean_pct": 91.93666466077168,
+        "test_hard_std_pct": 0.13650381254473604,
+        "mean_training_wall_minutes": 14.62254622992154,
+        "maximum_peak_gpu_gib": 0.01682138442993164,
+        "mean_topology_construction_seconds": 0.09968077026618023,
+        "representative_seed0_synthetic_gpu": {
+          "milliseconds_per_batch128": 1.137074203491211,
+          "examples_per_second": 112569.61032709717,
+          "peak_device_memory_gib": 0.004889488220214844,
+          "input_source": "torch.rand seed 2027; no dataset access"
+        },
+        "cost": {
+          "dense_gate_count": 8000,
+          "trainable_parameters": 128000,
+          "training_routing_parameters": 0,
+          "deployed_routing_bits": 173332,
+          "deployed_routing_bytes_packed": 21667,
+          "candidate_indices_tensor_bytes": 128000
+        },
+        "validation_vs_random": {
+          "per_seed_gain_pp": [
+            0.15000055233636544,
+            0.016666650772080516,
+            0.9666668375333245
+          ],
+          "paired_mean_gain_pp": 0.3777780135472568,
+          "paired_95ci_pp": [
+            -0.8998925655377803,
+            1.655448592632294
+          ],
+          "positive_pairs": 3
+        },
+        "test_vs_random": {
+          "per_seed_gain_pp": [
+            0.600000262260437,
+            0.43999987840652466,
+            0.9499998688697815
+          ],
+          "paired_mean_gain_pp": 0.6633333365122477,
+          "paired_95ci_pp": [
+            0.015390852358891816,
+            1.3112758206656037
+          ],
+          "positive_pairs": 3
+        },
+        "validation_vs_v3": {
+          "per_seed_gain_pp": [
+            -0.3499997655550686,
+            -0.083333353201553,
+            0.08333345254263236
+          ],
+          "paired_mean_gain_pp": -0.11666655540466309,
+          "paired_95ci_pp": [
+            -0.6596523873149173,
+            0.4263192765055911
+          ],
+          "positive_pairs": 1
+        },
+        "test_vs_v3": {
+          "per_seed_gain_pp": [
+            0.2200002670288086,
+            -0.019999921321868896,
+            -0.11000007390975952
+          ],
+          "paired_mean_gain_pp": 0.03000009059906006,
+          "paired_95ci_pp": [
+            -0.3937624745841974,
+            0.4537626557823175
+          ],
+          "positive_pairs": 1
+        }
+      }
+    },
+    "fashion_16k": {
+      "random": {
+        "validation_hard_pct": [
+          86.4499976237615,
+          85.9499979019165,
+          86.18333160877228
+        ],
+        "validation_hard_mean_pct": 86.1944423781501,
+        "validation_hard_std_pct": 0.25018496629173137,
+        "test_hard_pct": [
+          85.10999798774719,
+          85.48999756574631,
+          84.98999762535095
+        ],
+        "test_hard_mean_pct": 85.19666439294815,
+        "test_hard_std_pct": 0.2610235323523192,
+        "mean_training_wall_minutes": 15.08869646908974,
+        "maximum_peak_gpu_gib": 0.03399372100830078,
+        "mean_topology_construction_seconds": 0.004799667280167341,
+        "representative_seed0_synthetic_gpu": {
+          "milliseconds_per_batch128": 1.1344902038574218,
+          "examples_per_second": 112826.0072804353,
+          "peak_device_memory_gib": 0.009406566619873047,
+          "input_source": "torch.rand seed 2027; no dataset access"
+        },
+        "cost": {
+          "dense_gate_count": 16000,
+          "trainable_parameters": 256000,
+          "training_routing_parameters": 0,
+          "deployed_routing_bits": 384000,
+          "deployed_routing_bytes_packed": 48000,
+          "candidate_indices_tensor_bytes": 256000
+        }
+      },
+      "v3": {
+        "validation_hard_pct": [
+          86.6666645805041,
+          86.94999754428864,
+          87.03333139419556
+        ],
+        "validation_hard_mean_pct": 86.8833311729961,
+        "validation_hard_std_pct": 0.19220936985913648,
+        "test_hard_pct": [
+          86.27999764680862,
+          85.88999801874161,
+          85.56999814510345
+        ],
+        "test_hard_mean_pct": 85.9133312702179,
+        "test_hard_std_pct": 0.35557439949149755,
+        "mean_training_wall_minutes": 14.95598572587672,
+        "maximum_peak_gpu_gib": 0.03399372100830078,
+        "mean_topology_construction_seconds": 3.358397973313307,
+        "representative_seed0_synthetic_gpu": {
+          "milliseconds_per_batch128": 1.135807647705078,
+          "examples_per_second": 112695.13835254282,
+          "peak_device_memory_gib": 0.009406566619873047,
+          "input_source": "torch.rand seed 2027; no dataset access"
+        },
+        "cost": {
+          "dense_gate_count": 16000,
+          "trainable_parameters": 256000,
+          "training_routing_parameters": 0,
+          "deployed_routing_bits": 384000,
+          "deployed_routing_bytes_packed": 48000,
+          "candidate_indices_tensor_bytes": 256000
+        },
+        "validation_vs_random": {
+          "per_seed_gain_pp": [
+            0.21666695674259984,
+            0.9999996423721313,
+            0.8499997854232788
+          ],
+          "paired_mean_gain_pp": 0.6888887948460033,
+          "paired_95ci_pp": [
+            -0.3439572574496311,
+            1.7217348471416378
+          ],
+          "positive_pairs": 3
+        },
+        "test_vs_random": {
+          "per_seed_gain_pp": [
+            1.1699996590614319,
+            0.4000004529953003,
+            0.5800005197525024
+          ],
+          "paired_mean_gain_pp": 0.7166668772697449,
+          "paired_95ci_pp": [
+            -0.28389792147349,
+            1.7172316760129798
+          ],
+          "positive_pairs": 3
+        }
+      },
+      "u2": {
+        "validation_hard_pct": [
+          86.48333102464676,
+          86.43333146969478,
+          86.89999808867772
+        ],
+        "validation_hard_mean_pct": 86.60555352767308,
+        "validation_hard_std_pct": 0.2562190244746821,
+        "test_hard_pct": [
+          85.33999794721603,
+          85.58999818563461,
+          86.21999770402908
+        ],
+        "test_hard_mean_pct": 85.71666461229324,
+        "test_hard_std_pct": 0.4534679489551672,
+        "mean_training_wall_minutes": 14.593853517884337,
+        "maximum_peak_gpu_gib": 0.03399372100830078,
+        "mean_topology_construction_seconds": 0.23135283853237829,
+        "representative_seed0_synthetic_gpu": {
+          "milliseconds_per_batch128": 1.13683837890625,
+          "examples_per_second": 112592.9616513726,
+          "peak_device_memory_gib": 0.009406566619873047,
+          "input_source": "torch.rand seed 2027; no dataset access"
+        },
+        "cost": {
+          "dense_gate_count": 16000,
+          "trainable_parameters": 256000,
+          "training_routing_parameters": 0,
+          "deployed_routing_bits": 384000,
+          "deployed_routing_bytes_packed": 48000,
+          "candidate_indices_tensor_bytes": 256000
+        },
+        "validation_vs_random": {
+          "per_seed_gain_pp": [
+            0.033333400885254605,
+            0.4833335677782742,
+            0.7166664799054416
+          ],
+          "paired_mean_gain_pp": 0.41111114952299016,
+          "paired_95ci_pp": [
+            -0.4517399957332234,
+            1.2739622947792038
+          ],
+          "positive_pairs": 3
+        },
+        "test_vs_random": {
+          "per_seed_gain_pp": [
+            0.22999995946884155,
+            0.10000061988830566,
+            1.230000078678131
+          ],
+          "paired_mean_gain_pp": 0.5200002193450928,
+          "paired_95ci_pp": [
+            -1.0159520058743516,
+            2.055952444564537
+          ],
+          "positive_pairs": 3
+        },
+        "validation_vs_v3": {
+          "per_seed_gain_pp": [
+            -0.18333355585734523,
+            -0.5166660745938572,
+            -0.13333330551783718
+          ],
+          "paired_mean_gain_pp": -0.2777776453230132,
+          "paired_95ci_pp": [
+            -0.7954433802007558,
+            0.2398880895547294
+          ],
+          "positive_pairs": 0
+        },
+        "test_vs_v3": {
+          "per_seed_gain_pp": [
+            -0.9399996995925903,
+            -0.29999983310699463,
+            0.6499995589256287
+          ],
+          "paired_mean_gain_pp": -0.1966666579246521,
+          "paired_95ci_pp": [
+            -2.1840276263451157,
+            1.7906943104958117
+          ],
+          "positive_pairs": 1
+        }
+      }
+    },
+    "dense_cifar10_s": {
+      "random": {
+        "validation_hard_pct": [
+          50.15999889373779,
+          49.03999888896942,
+          49.33999848365784
+        ],
+        "validation_hard_mean_pct": 49.51333208878835,
+        "validation_hard_std_pct": 0.5797701326137313,
+        "test_hard_pct": [
+          48.839998841285706,
+          49.28999882936478,
+          48.60999873280525
+        ],
+        "test_hard_mean_pct": 48.913332134485245,
+        "test_hard_std_pct": 0.34588055994643274,
+        "mean_training_wall_minutes": 12.191585163231421,
+        "maximum_peak_gpu_gib": 0.10611200332641602,
+        "mean_topology_construction_seconds": 0.04519331594929099,
+        "representative_seed0_synthetic_gpu": {
+          "milliseconds_per_batch128": 0.7695635223388672,
+          "examples_per_second": 166328.04997173045,
+          "peak_device_memory_gib": 0.0411686897277832,
+          "input_source": "torch.rand seed 2027; no dataset access"
+        },
+        "cost": {
+          "dense_gate_count": 48000,
+          "trainable_parameters": 768000,
+          "training_routing_parameters": 0,
+          "deployed_routing_bits": 1344000,
+          "deployed_routing_bytes_packed": 168000,
+          "candidate_indices_tensor_bytes": 768000
+        },
+        "cost_inherited_from_matched_architecture": true
+      },
+      "v3": {
+        "validation_hard_pct": [
+          52.8599989414215,
+          53.41999858617783,
+          53.05999886989593
+        ],
+        "validation_hard_mean_pct": 53.11333213249842,
+        "validation_hard_std_pct": 0.2837837701607937,
+        "test_hard_pct": [
+          52.39999872446061,
+          52.67999878525734,
+          52.089998632669456
+        ],
+        "test_hard_mean_pct": 52.389998714129135,
+        "test_hard_std_pct": 0.2951271677911128,
+        "mean_training_wall_minutes": 12.243496720179811,
+        "maximum_peak_gpu_gib": 0.10611200332641602,
+        "mean_topology_construction_seconds": 9.312633276451379,
+        "representative_seed0_synthetic_gpu": {
+          "milliseconds_per_batch128": 0.7654598236083985,
+          "examples_per_second": 167219.74955733735,
+          "peak_device_memory_gib": 0.0411686897277832,
+          "input_source": "torch.rand seed 2027; no dataset access"
+        },
+        "cost": {
+          "dense_gate_count": 48000,
+          "trainable_parameters": 768000,
+          "training_routing_parameters": 0,
+          "deployed_routing_bits": 1344000,
+          "deployed_routing_bytes_packed": 168000,
+          "candidate_indices_tensor_bytes": 768000
+        },
+        "cost_inherited_from_matched_architecture": true,
+        "validation_vs_random": {
+          "per_seed_gain_pp": [
+            2.7000000476837087,
+            4.379999697208412,
+            3.720000386238091
+          ],
+          "paired_mean_gain_pp": 3.6000000437100703,
+          "paired_95ci_pp": [
+            1.4974158949673346,
+            5.702584192452806
+          ],
+          "positive_pairs": 3
+        },
+        "test_vs_random": {
+          "per_seed_gain_pp": [
+            3.5599998831749033,
+            3.389999955892563,
+            3.479999899864204
+          ],
+          "paired_mean_gain_pp": 3.47666657964389,
+          "paired_95ci_pp": [
+            3.2653932289991685,
+            3.6879399302886116
+          ],
+          "positive_pairs": 3
+        }
+      },
+      "u2": {
+        "validation_hard_pct": [
+          52.91999930143356,
+          52.49999874830246,
+          53.079998552799225
+        ],
+        "validation_hard_mean_pct": 52.833332200845085,
+        "validation_hard_std_pct": 0.29955522537151946,
+        "test_hard_pct": [
+          52.0699987411499,
+          51.47999858856201,
+          52.739998877048485
+        ],
+        "test_hard_mean_pct": 52.096665402253464,
+        "test_hard_std_pct": 0.6304232822931816,
+        "mean_training_wall_minutes": 12.114587865361116,
+        "maximum_peak_gpu_gib": 0.10611200332641602,
+        "mean_topology_construction_seconds": 0.9164163840468973,
+        "representative_seed0_synthetic_gpu": {
+          "milliseconds_per_batch128": 0.7666429138183594,
+          "examples_per_second": 166961.69454235252,
+          "peak_device_memory_gib": 0.0411686897277832,
+          "input_source": "torch.rand seed 2027; no dataset access"
+        },
+        "cost": {
+          "dense_gate_count": 48000,
+          "trainable_parameters": 768000,
+          "training_routing_parameters": 0,
+          "deployed_routing_bits": 1344000,
+          "deployed_routing_bytes_packed": 168000,
+          "candidate_indices_tensor_bytes": 768000
+        },
+        "validation_vs_random": {
+          "per_seed_gain_pp": [
+            2.7600004076957703,
+            3.4599998593330383,
+            3.740000069141388
+          ],
+          "paired_mean_gain_pp": 3.320000112056732,
+          "paired_95ci_pp": [
+            2.0660646254933788,
+            4.573935598620086
+          ],
+          "positive_pairs": 3
+        },
+        "test_vs_random": {
+          "per_seed_gain_pp": [
+            3.2299998998641968,
+            2.189999759197235,
+            4.130000144243233
+          ],
+          "paired_mean_gain_pp": 3.1833332677682216,
+          "paired_95ci_pp": [
+            0.7716286632542064,
+            5.595037872282237
+          ],
+          "positive_pairs": 3
+        },
+        "validation_vs_v3": {
+          "per_seed_gain_pp": [
+            0.06000036001206155,
+            -0.9199998378753733,
+            0.0199996829032969
+          ],
+          "paired_mean_gain_pp": -0.2799999316533383,
+          "paired_95ci_pp": [
+            -1.657744728320118,
+            1.0977448650134414
+          ],
+          "positive_pairs": 2
+        },
+        "test_vs_v3": {
+          "per_seed_gain_pp": [
+            -0.32999998331070657,
+            -1.2000001966953278,
+            0.6500002443790294
+          ],
+          "paired_mean_gain_pp": -0.2933333118756683,
+          "paired_95ci_pp": [
+            -2.5925148114869003,
+            2.0058481877355634
+          ],
+          "positive_pairs": 1
+        }
+      }
+    },
+    "dense_cifar100_3x128k": {
+      "random": {
+        "validation_hard_pct": [
+          21.07999938726425,
+          21.19999933242798,
+          20.999999433755875
+        ],
+        "validation_hard_mean_pct": 21.093332717816036,
+        "validation_hard_std_pct": 0.1006644085310955,
+        "test_hard_pct": [
+          21.319999389350414,
+          20.79999938607216,
+          20.649999409914017
+        ],
+        "test_hard_mean_pct": 20.92333272844553,
+        "test_hard_std_pct": 0.3516153126883607,
+        "mean_training_wall_minutes": 5.349192610494922,
+        "maximum_peak_gpu_gib": 0.889528751373291,
+        "mean_topology_construction_seconds": 3.360192814395608,
+        "representative_seed0_synthetic_gpu": {
+          "milliseconds_per_batch128": 3.589488525390625,
+          "examples_per_second": 35659.6766070092,
+          "peak_device_memory_gib": 0.4081578254699707,
+          "input_source": "torch.rand seed 2027; no dataset access"
+        },
+        "cost": {
+          "dense_gate_count": 384000,
+          "trainable_parameters": 6144000,
+          "training_routing_parameters": 0,
+          "deployed_routing_bits": 12288000,
+          "deployed_routing_bytes_packed": 1536000,
+          "candidate_indices_tensor_bytes": 6144000
+        }
+      },
+      "v3": {
+        "validation_hard_pct": [
+          21.859999388456345,
+          21.87999936938286,
+          22.059999346733093
+        ],
+        "validation_hard_mean_pct": 21.933332701524098,
+        "validation_hard_std_pct": 0.11015139157378451,
+        "test_hard_pct": [
+          21.87999949604273,
+          21.059999339282513,
+          21.45999936759472
+        ],
+        "test_hard_mean_pct": 21.466666067639988,
+        "test_hard_std_pct": 0.4100407271708687,
+        "mean_training_wall_minutes": 5.336006574699099,
+        "maximum_peak_gpu_gib": 0.889528751373291,
+        "mean_topology_construction_seconds": 71.03474106936483,
+        "representative_seed0_synthetic_gpu": {
+          "milliseconds_per_batch128": 3.5273736572265624,
+          "examples_per_second": 36287.621453929394,
+          "peak_device_memory_gib": 0.4076085090637207,
+          "input_source": "torch.rand seed 2027; no dataset access"
+        },
+        "cost": {
+          "dense_gate_count": 384000,
+          "trainable_parameters": 6144000,
+          "training_routing_parameters": 0,
+          "deployed_routing_bits": 12288000,
+          "deployed_routing_bytes_packed": 1536000,
+          "candidate_indices_tensor_bytes": 6144000
+        },
+        "validation_vs_random": {
+          "per_seed_gain_pp": [
+            0.7800000011920929,
+            0.6800000369548798,
+            1.0599999129772186
+          ],
+          "paired_mean_gain_pp": 0.8399999837080637,
+          "paired_95ci_pp": [
+            0.35068176048416505,
+            1.3293182069319625
+          ],
+          "positive_pairs": 3
+        },
+        "test_vs_random": {
+          "per_seed_gain_pp": [
+            0.5600001066923141,
+            0.25999995321035385,
+            0.8099999576807022
+          ],
+          "paired_mean_gain_pp": 0.5433333391944567,
+          "paired_95ci_pp": [
+            -0.14074486257783203,
+            1.2274115409667454
+          ],
+          "positive_pairs": 3
+        }
+      }
+    }
+  }
+}

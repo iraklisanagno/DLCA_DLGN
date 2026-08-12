@@ -231,15 +231,18 @@ class ClgnCifar10(torch.nn.Sequential):
                 "semantic_channel_spatial_hybrid",
                 "ancestry_channel_hybrid",
                 "coverage_reuse_hybrid",
+                "semantic_multiscale_balanced",
             }
             and (
                 conv_method in {
                     "ancestry_channel_hybrid",
                     "coverage_reuse_hybrid",
+                    "semantic_multiscale_balanced",
                 }
                 or classifier_method in {
                     "semantic_balanced_hybrid",
                     "semantic_classifier_hybrid",
+                    "semantic_multiscale_balanced",
                 }
             )
         )

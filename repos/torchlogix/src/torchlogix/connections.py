@@ -14,6 +14,7 @@ from .topology import (
     generate_coverage_reuse_conv_topology,
     generate_conv_channel_topology,
     generate_dense_topology,
+    image_input_semantics,
     propagate_packed_ancestry,
 )
     
@@ -655,6 +656,54 @@ class FixedConvConnections(Connections):
                 channel_topology.temporary_bytes,
                 self.channel_pairs.numel() * self.channel_pairs.element_size(),
             )
+        elif self.strategy == "semantic_multiscale_balanced":
+            if self.channel_group_size != 2:
+                raise ValueError(
+                    "semantic_multiscale_balanced currently requires "
+                    "channel_group_size=2"
+                )
+            if self.lut_rank != 2:
+                raise NotImplementedError(
+                    "semantic_multiscale_balanced currently supports rank-2 "
+                    "LUTs only"
+                )
+            input_semantics = None
+            if self.layer_index == 0 and self.semantic_threshold_count:
+                threshold_count = int(self.semantic_threshold_count)
+                if self.channels % threshold_count != 0:
+                    raise ValueError(
+                        "input channels must be divisible by semantic thresholds"
+                    )
+                input_semantics = image_input_semantics(
+                    channels=self.channels // threshold_count,
+                    height=1,
+                    width=1,
+                    threshold_bits=threshold_count,
+                    layout="channel_interleaved",
+                )
+            channel_topology = generate_dense_topology(
+                in_dim=self.channels,
+                out_dim=self.num_kernels,
+                lut_rank=2,
+                strategy="semantic_multiscale_balanced",
+                topology_seed=(
+                    0 if self.topology_seed is None else self.topology_seed
+                ),
+                layer_index=self.layer_index,
+                input_ancestry=self.input_channel_ancestry,
+                input_semantics=input_semantics,
+            )
+            self.channel_pairs = torch.from_numpy(
+                channel_topology.indices
+            ).to(device=self.device, dtype=torch.int64)
+            kernels = self._get_random_receptive_field_tensor(
+                channel_pairs=self.channel_pairs
+            )
+            self._output_channel_ancestry = channel_topology.output_ancestry
+            self.generator_temporary_bytes = max(
+                channel_topology.temporary_bytes,
+                self.channel_pairs.numel() * self.channel_pairs.element_size(),
+            )
         elif self.strategy == "semantic_channel_spatial_hybrid":
             if self.channel_group_size != 2:
                 raise ValueError(
@@ -790,6 +839,7 @@ class FixedConvConnections(Connections):
             and self.strategy not in {
                 "semantic_channel_hybrid",
                 "semantic_degree_balanced",
+                "semantic_multiscale_balanced",
                 "semantic_channel_spatial_hybrid",
                 "ancestry_channel_hybrid",
                 "coverage_reuse_hybrid",

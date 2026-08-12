@@ -1,0 +1,58 @@
+{
+  "phase": "third_u2_dense_cifar10_ml",
+  "purpose": "Frozen U2 transfer to the existing Deep-DLGN CIFAR-10 M/L cells",
+  "cuda_required": true,
+  "heldout_test_used": false,
+  "selection_metric": "best hardened validation accuracy",
+  "test_policy": "evaluate predeclared best-validation and final checkpoints once after every full run in the phase completes",
+  "entries": [
+    {
+      "name": "third_u2_cifar10_m_seed0",
+      "family": "u2",
+      "coordinate": "m",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_u2_dense_cifar10_ml/third_u2_cifar10_m_seed0.json",
+      "output": "experiments/coverage_dlgn/results/third_u2_cifar10_m_seed0"
+    },
+    {
+      "name": "third_u2_cifar10_m_seed1",
+      "family": "u2",
+      "coordinate": "m",
+      "seed": 1,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_u2_dense_cifar10_ml/third_u2_cifar10_m_seed1.json",
+      "output": "experiments/coverage_dlgn/results/third_u2_cifar10_m_seed1"
+    },
+    {
+      "name": "third_u2_cifar10_m_seed2",
+      "family": "u2",
+      "coordinate": "m",
+      "seed": 2,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_u2_dense_cifar10_ml/third_u2_cifar10_m_seed2.json",
+      "output": "experiments/coverage_dlgn/results/third_u2_cifar10_m_seed2"
+    },
+    {
+      "name": "third_u2_cifar10_l_seed0",
+      "family": "u2",
+      "coordinate": "l",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_u2_dense_cifar10_ml/third_u2_cifar10_l_seed0.json",
+      "output": "experiments/coverage_dlgn/results/third_u2_cifar10_l_seed0"
+    },
+    {
+      "name": "third_u2_cifar10_l_seed1",
+      "family": "u2",
+      "coordinate": "l",
+      "seed": 1,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_u2_dense_cifar10_ml/third_u2_cifar10_l_seed1.json",
+      "output": "experiments/coverage_dlgn/results/third_u2_cifar10_l_seed1"
+    },
+    {
+      "name": "third_u2_cifar10_l_seed2",
+      "family": "u2",
+      "coordinate": "l",
+      "seed": 2,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_u2_dense_cifar10_ml/third_u2_cifar10_l_seed2.json",
+      "output": "experiments/coverage_dlgn/results/third_u2_cifar10_l_seed2"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "phase": "third_u2_published_smoke",
+  "wall_seconds": 70.00868985289708,
+  "skipped": [],
+  "finished": [
+    {
+      "name": "smoke_third_u2_cifar10_m_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 28.002622979925945,
+      "log": "experiments/coverage_dlgn/logs/third_u2_published_smoke/smoke_third_u2_cifar10_m_seed0.log"
+    },
+    {
+      "name": "smoke_third_lilogic_m_u2_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 8.000518454005942,
+      "log": "experiments/coverage_dlgn/logs/third_u2_published_smoke/smoke_third_lilogic_m_u2_seed0.log"
+    },
+    {
+      "name": "smoke_third_lilogic_l_top32_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 14.000856944127008,
+      "log": "experiments/coverage_dlgn/logs/third_u2_published_smoke/smoke_third_lilogic_l_top32_seed0.log"
+    },
+    {
+      "name": "smoke_third_bitlogic_s_u2_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 4.000624486012384,
+      "log": "experiments/coverage_dlgn/logs/third_u2_published_smoke/smoke_third_bitlogic_s_u2_seed0.log"
+    },
+    {
+      "name": "smoke_third_bitlogic_l_best_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 8.000454911962152,
+      "log": "experiments/coverage_dlgn/logs/third_u2_published_smoke/smoke_third_bitlogic_l_best_seed0.log"
+    },
+    {
+      "name": "smoke_third_u2_cifar10_l_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 70.00782910897397,
+      "log": "experiments/coverage_dlgn/logs/third_u2_published_smoke/smoke_third_u2_cifar10_l_seed0.log"
+    }
+  ],
+  "failed": []
+}

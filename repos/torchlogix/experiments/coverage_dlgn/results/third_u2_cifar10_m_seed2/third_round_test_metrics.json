@@ -1,0 +1,31 @@
+{
+  "checkpoints": [
+    {
+      "checkpoint": "best_checkpoint.pt",
+      "checkpoint_sha256": "59b7859aae4d13ff96a4314867f47a518d479423d810677668096ef282d518a1",
+      "test_examples": 10000,
+      "test_hard_accuracy": 0.5846999880671501,
+      "test_hard_loss": 1.177747814655304,
+      "test_relaxed_accuracy": 0.5851999869942666,
+      "test_relaxed_loss": 1.1776741325855256,
+      "validation_hard_accuracy": 0.5953999906778336,
+      "validation_step": 80000
+    },
+    {
+      "checkpoint": "final_checkpoint.pt",
+      "checkpoint_sha256": "9aa12897299063a8722032051954b8c8253601f5e67ab6516da2492e97aed73f",
+      "test_examples": 10000,
+      "test_hard_accuracy": 0.584099987745285,
+      "test_hard_loss": 1.1781884789466859,
+      "test_relaxed_accuracy": 0.5831999871134758,
+      "test_relaxed_loss": 1.1777776455879212,
+      "validation_hard_accuracy": 0.5925999844074249,
+      "validation_step": 108000
+    }
+  ],
+  "device": "cuda",
+  "heldout_checkpoint_queries": 2,
+  "protocol": "THIRD_ROUND_PROTOCOL.md",
+  "run_name": "third_u2_cifar10_m_seed2",
+  "validation_freeze": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/summary/third_round_validation_freeze.json"
+}

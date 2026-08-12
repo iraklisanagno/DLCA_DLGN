@@ -38,6 +38,8 @@ STRATEGY_ALIASES = {
     "semantic_balanced_hybrid": "semantic_balanced_hybrid",
     "semantic-degree-balanced": "semantic_degree_balanced",
     "semantic_degree_balanced": "semantic_degree_balanced",
+    "semantic-multiscale-balanced": "semantic_multiscale_balanced",
+    "semantic_multiscale_balanced": "semantic_multiscale_balanced",
     "semantic-classifier-hybrid": "semantic_classifier_hybrid",
     "semantic_classifier_hybrid": "semantic_classifier_hybrid",
     "class-conditional-coverage": "class_conditional_coverage",
@@ -411,6 +413,197 @@ def _butterfly_indices(
     return np.asarray(pairs, dtype=np.int64).T
 
 
+def _regular_butterfly_stage(
+    in_dim: int,
+    stage_index: int,
+    *,
+    topology_seed: int,
+    layer_index: int,
+    cycle_index: int,
+) -> np.ndarray:
+    """Return one deterministically ordered regular multiscale stage.
+
+    Every even width produces a perfect matching; odd widths produce a
+    near-perfect matching with one bye. Power-of-two widths retain the usual
+    XOR butterfly. Other widths use a cyclic affine order whose coprime step
+    approximates the requested power-of-two scale. Any prefix therefore also
+    uses each input at most once, which is essential when a layer ends in a
+    partial stage. The final affine permutation changes only pair ordering.
+    """
+    n_stages = max(1, math.ceil(math.log2(in_dim)))
+    stride = 1 << (int(stage_index) % n_stages)
+    pairs: list[tuple[int, int]] = []
+    if in_dim & (in_dim - 1) == 0:
+        for left in range(in_dim):
+            right = left ^ stride
+            if left < right:
+                pairs.append((left, right))
+    else:
+        # Starting from the requested scale, choose the nearest coprime cyclic
+        # step so the affine order visits every input exactly once. Pairing
+        # adjacent elements in that order creates a matching rather than a
+        # degree-two cyclic graph whose prefixes can repeat many inputs.
+        node_step = _coprime_step(in_dim, stride - 1)
+        node_key = (
+            int(topology_seed)
+            + 0x27D4EB2D * (int(layer_index) + 1)
+            + 0x165667B1 * (int(stage_index) + 1)
+            + 0xD3A2646C * (int(cycle_index) + 1)
+        )
+        if in_dim % 2:
+            # The unmatched final node (the bye) is order[-1] = offset-step.
+            # Assign consecutive byes across the complete stage schedule so
+            # repeated near-perfect matchings distribute them evenly.
+            bye = (
+                int(topology_seed)
+                + int(layer_index)
+                + int(cycle_index) * n_stages
+                + int(stage_index)
+            ) % in_dim
+            node_offset = (bye + node_step) % in_dim
+        else:
+            node_offset = node_key % in_dim
+        order = (
+            node_offset + node_step * np.arange(in_dim, dtype=np.int64)
+        ) % in_dim
+        for position in range(0, in_dim - 1, 2):
+            left = int(order[position])
+            right = int(order[position + 1])
+            pairs.append((min(left, right), max(left, right)))
+    if not pairs:
+        raise ValueError("multiscale stage needs at least two inputs")
+    permutation_key = (
+        int(topology_seed)
+        + 0x9E3779B1 * (int(layer_index) + 1)
+        + 0x85EBCA77 * (int(stage_index) + 1)
+        + 0xC2B2AE3D * (int(cycle_index) + 1)
+    )
+    step = _coprime_step(len(pairs), permutation_key)
+    offset = (permutation_key // len(pairs)) % len(pairs)
+    order = (offset + step * np.arange(len(pairs))) % len(pairs)
+    return np.asarray([pairs[index] for index in order.tolist()], dtype=np.int64)
+
+
+def _normalized_pair_novelty(
+    input_ancestry: np.ndarray,
+    pairs: np.ndarray,
+    *,
+    sample_limit: int = 2048,
+) -> float:
+    """Measure non-overlapping ancestry, normalized for layer saturation."""
+    if pairs.shape[0] > sample_limit:
+        sample = np.linspace(
+            0, pairs.shape[0] - 1, sample_limit, dtype=np.int64
+        )
+        pairs = pairs[sample]
+    left = input_ancestry[pairs[:, 0]]
+    right = input_ancestry[pairs[:, 1]]
+    left_size = _row_popcount(left).astype(np.float64)
+    right_size = _row_popcount(right).astype(np.float64)
+    overlap = _row_popcount(np.bitwise_and(left, right)).astype(np.float64)
+    available = np.minimum(left_size, right_size)
+    # Singleton or disjoint ancestry yields one; identical saturated ancestry
+    # yields zero. Empty ancestry is not expected, but remains well defined.
+    return float(np.mean(1.0 - overlap / np.maximum(1.0, available)))
+
+
+def _multiscale_saturation_balanced_indices(
+    input_ancestry: np.ndarray,
+    out_dim: int,
+    *,
+    layer_index: int,
+    topology_seed: int,
+) -> np.ndarray:
+    """Build balanced stages selected by normalized ancestry novelty.
+
+    Selection occurs between regular matching stages; no individual edge is
+    swapped. Degree spread is minimized first, normalized ancestry novelty is
+    maximized second, and the nominal local-to-global schedule breaks ties.
+    A final partial stage takes the least-used disjoint edges from one regular
+    matching, retaining the best feasible fan-out balance.
+    """
+    in_dim = int(input_ancestry.shape[0])
+    n_stages = max(1, math.ceil(math.log2(in_dim)))
+    chosen: list[np.ndarray] = []
+    fanout = np.zeros(in_dim, dtype=np.int64)
+    produced = 0
+    block_index = 0
+    used_in_cycle: set[int] = set()
+    while produced < out_dim:
+        cycle_index = block_index // n_stages
+        if block_index % n_stages == 0:
+            used_in_cycle.clear()
+        nominal = (int(layer_index) + block_index) % n_stages
+        candidates = [
+            _regular_butterfly_stage(
+                in_dim,
+                stage,
+                topology_seed=topology_seed,
+                layer_index=layer_index,
+                cycle_index=cycle_index,
+            )
+            for stage in range(n_stages)
+        ]
+        novelty = np.asarray([
+            _normalized_pair_novelty(input_ancestry, pairs)
+            for pairs in candidates
+        ])
+        available = [
+            stage
+            for stage in range(n_stages)
+            if stage not in used_in_cycle
+        ]
+        remaining = out_dim - produced
+        prefixes: list[np.ndarray] = []
+        degree_spreads = []
+        for stage_pairs in candidates:
+            take = min(remaining, stage_pairs.shape[0])
+            if take < stage_pairs.shape[0]:
+                left = stage_pairs[:, 0]
+                right = stage_pairs[:, 1]
+                total = fanout[left] + fanout[right]
+                maximum = np.maximum(fanout[left], fanout[right])
+                order = np.lexsort((right, left, maximum, total))
+                prefix = stage_pairs[order[:take]]
+            else:
+                prefix = stage_pairs
+            prefixes.append(prefix)
+            if in_dim % 2 == 0 and take == stage_pairs.shape[0]:
+                # A complete perfect matching increments every input once.
+                degree_spreads.append(int(fanout.max() - fanout.min()))
+            else:
+                prospective = fanout.copy()
+                np.add.at(prospective, prefix.reshape(-1), 1)
+                degree_spreads.append(
+                    int(prospective.max() - prospective.min())
+                )
+        minimum_spread = min(degree_spreads[stage] for stage in available)
+        balanced = [
+            stage for stage in available
+            if degree_spreads[stage] == minimum_spread
+        ]
+        best = max(float(novelty[stage]) for stage in balanced)
+        tied = [
+            stage for stage in balanced
+            if math.isclose(float(novelty[stage]), best, abs_tol=1e-12)
+        ]
+        selected = min(
+            tied,
+            key=lambda stage: (
+                (stage - nominal) % n_stages,
+                stage,
+            ),
+        )
+        used_in_cycle.add(selected)
+        stage_pairs = prefixes[selected]
+        take = stage_pairs.shape[0]
+        chosen.append(stage_pairs)
+        np.add.at(fanout, stage_pairs.reshape(-1), 1)
+        produced += take
+        block_index += 1
+    return np.ascontiguousarray(np.concatenate(chosen, axis=0).T)
+
+
 def _axis_strides(length: int) -> list[int]:
     """Return deterministic local-to-global cyclic butterfly strides."""
     if length <= 1:
@@ -449,7 +642,10 @@ def _semantic_butterfly_indices(
     stages: list[tuple[str, int]] = []
     x_strides = _axis_strides(semantics.width)
     y_strides = _axis_strides(semantics.height)
-    for level in range(max(len(x_strides), len(y_strides))):
+    # A convolutional channel abstraction has height=width=1 but still has
+    # meaningful channel and threshold axes. Keep one semantic level so that
+    # channel mixing remains available in that case.
+    for level in range(max(1, len(x_strides), len(y_strides))):
         if level < len(x_strides):
             stages.append(("x", x_strides[level]))
         if level < len(y_strides):
@@ -492,6 +688,8 @@ def _semantic_butterfly_indices(
             seen.add(key)
             stage_pairs.append(key)
 
+        if not stage_pairs:
+            continue
         permutation_key = (
             int(topology_seed)
             + 0x9E3779B1 * (layer_index + 1)
@@ -1652,6 +1850,7 @@ def generate_dense_topology(
         "coverage_hybrid",
         "semantic_balanced_hybrid",
         "semantic_degree_balanced",
+        "semantic_multiscale_balanced",
         "semantic_classifier_hybrid",
         "class_conditional_coverage",
         "coverage_reuse_hybrid",
@@ -1664,6 +1863,7 @@ def generate_dense_topology(
             if strategy in {
                 "semantic_balanced_hybrid",
                 "semantic_degree_balanced",
+                "semantic_multiscale_balanced",
                 "semantic_classifier_hybrid",
                 "class_conditional_coverage",
                 "coverage_reuse_hybrid",
@@ -1744,6 +1944,28 @@ def generate_dense_topology(
                 out_dim,
                 layer_index,
                 topology_seed,
+            )
+    elif strategy == "semantic_multiscale_balanced":
+        # Separate unified candidate U2. V3/V4/U1 remain frozen. Semantic
+        # source ordering handles image inputs; subsequent stages select a
+        # complete regular scale by normalized ancestry novelty, never swaps.
+        if input_semantics is not None:
+            if input_semantics.n_inputs != in_dim:
+                raise ValueError(
+                    "input semantics do not match the first-layer input dimension"
+                )
+            indices = _semantic_butterfly_indices(
+                input_semantics,
+                out_dim,
+                layer_index,
+                topology_seed,
+            )
+        else:
+            indices = _multiscale_saturation_balanced_indices(
+                input_ancestry,
+                out_dim,
+                layer_index=layer_index,
+                topology_seed=topology_seed,
             )
     elif strategy == "semantic_balanced_hybrid":
         if input_semantics is not None:

@@ -1,0 +1,12 @@
+{
+  "phase": "idle_fill_conv_s_unified_u1_seed0",
+  "cuda_required": true,
+  "skip_completed": true,
+  "entries": [
+    {
+      "name": "second_full_conv_cifar10_s_unified_u1_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/conv_s_full/second_full_conv_cifar10_s_unified_u1_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_full_conv_cifar10_s_unified_u1_seed0"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "phase": "second_round_compression_idle_fill",
+  "wall_seconds": 870.02839583694,
+  "skipped": [],
+  "finished": [
+    {
+      "name": "second_compression_mnist_4k_random_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 870.0279148721602,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression_idle_fill/second_compression_mnist_4k_random_seed0.log"
+    }
+  ],
+  "failed": []
+}

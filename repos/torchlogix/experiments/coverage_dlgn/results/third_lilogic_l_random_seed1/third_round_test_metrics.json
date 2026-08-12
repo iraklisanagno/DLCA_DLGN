@@ -1,0 +1,31 @@
+{
+  "checkpoints": [
+    {
+      "checkpoint": "best_checkpoint.pt",
+      "checkpoint_sha256": "07093bd3af25f80eef4c649d1eb6f5217234c51b55fcf1beb6a338fde8865548",
+      "test_examples": 10000,
+      "test_hard_accuracy": 0.5586,
+      "test_hard_loss": 1.2796631669998169,
+      "test_relaxed_accuracy": 0.5578,
+      "test_relaxed_loss": 1.2796456295013428,
+      "validation_hard_accuracy": 0.5609999997138977,
+      "validation_step": 26250
+    },
+    {
+      "checkpoint": "final_checkpoint.pt",
+      "checkpoint_sha256": "c8119dd1316b3ff33825d2b00f3f50e80a47d666408ffc5e36c415a222f13dfe",
+      "test_examples": 10000,
+      "test_hard_accuracy": 0.5571,
+      "test_hard_loss": 1.278423054122925,
+      "test_relaxed_accuracy": 0.5564,
+      "test_relaxed_loss": 1.2784521270751954,
+      "validation_hard_accuracy": 0.5581999997138977,
+      "validation_step": 35000
+    }
+  ],
+  "device": "cuda",
+  "heldout_checkpoint_queries": 2,
+  "protocol": "THIRD_ROUND_PROTOCOL.md",
+  "run_name": "third_lilogic_l_random_seed1",
+  "validation_freeze": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/summary/third_round_validation_freeze.json"
+}

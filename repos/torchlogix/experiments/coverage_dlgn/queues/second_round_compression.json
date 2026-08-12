@@ -1,0 +1,247 @@
+{
+  "phase": "second_round_compression",
+  "cuda_required": true,
+  "skip_completed": true,
+  "entries": [
+    {
+      "name": "second_compression_mnist_4k_random_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_mnist_4k_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_mnist_4k_random_seed0"
+    },
+    {
+      "name": "second_compression_mnist_4k_coverage_v3_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_mnist_4k_coverage_v3_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_mnist_4k_coverage_v3_seed0"
+    },
+    {
+      "name": "second_compression_mnist_4k_random_seed1",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_mnist_4k_random_seed1.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_mnist_4k_random_seed1"
+    },
+    {
+      "name": "second_compression_mnist_4k_coverage_v3_seed1",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_mnist_4k_coverage_v3_seed1.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_mnist_4k_coverage_v3_seed1"
+    },
+    {
+      "name": "second_compression_mnist_4k_random_seed2",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_mnist_4k_random_seed2.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_mnist_4k_random_seed2"
+    },
+    {
+      "name": "second_compression_mnist_4k_coverage_v3_seed2",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_mnist_4k_coverage_v3_seed2.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_mnist_4k_coverage_v3_seed2"
+    },
+    {
+      "name": "second_compression_mnist_8k_random_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_mnist_8k_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_mnist_8k_random_seed0"
+    },
+    {
+      "name": "second_compression_mnist_8k_coverage_v3_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_mnist_8k_coverage_v3_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_mnist_8k_coverage_v3_seed0"
+    },
+    {
+      "name": "second_compression_mnist_8k_random_seed1",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_mnist_8k_random_seed1.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_mnist_8k_random_seed1"
+    },
+    {
+      "name": "second_compression_mnist_8k_coverage_v3_seed1",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_mnist_8k_coverage_v3_seed1.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_mnist_8k_coverage_v3_seed1"
+    },
+    {
+      "name": "second_compression_mnist_8k_random_seed2",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_mnist_8k_random_seed2.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_mnist_8k_random_seed2"
+    },
+    {
+      "name": "second_compression_mnist_8k_coverage_v3_seed2",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_mnist_8k_coverage_v3_seed2.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_mnist_8k_coverage_v3_seed2"
+    },
+    {
+      "name": "second_compression_mnist_16k_random_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_mnist_16k_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_mnist_16k_random_seed0"
+    },
+    {
+      "name": "second_compression_mnist_16k_coverage_v3_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_mnist_16k_coverage_v3_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_mnist_16k_coverage_v3_seed0"
+    },
+    {
+      "name": "second_compression_mnist_16k_random_seed1",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_mnist_16k_random_seed1.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_mnist_16k_random_seed1"
+    },
+    {
+      "name": "second_compression_mnist_16k_coverage_v3_seed1",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_mnist_16k_coverage_v3_seed1.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_mnist_16k_coverage_v3_seed1"
+    },
+    {
+      "name": "second_compression_mnist_16k_random_seed2",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_mnist_16k_random_seed2.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_mnist_16k_random_seed2"
+    },
+    {
+      "name": "second_compression_mnist_16k_coverage_v3_seed2",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_mnist_16k_coverage_v3_seed2.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_mnist_16k_coverage_v3_seed2"
+    },
+    {
+      "name": "second_compression_mnist_32k_random_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_mnist_32k_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_mnist_32k_random_seed0"
+    },
+    {
+      "name": "second_compression_mnist_32k_coverage_v3_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_mnist_32k_coverage_v3_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_mnist_32k_coverage_v3_seed0"
+    },
+    {
+      "name": "second_compression_mnist_32k_random_seed1",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_mnist_32k_random_seed1.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_mnist_32k_random_seed1"
+    },
+    {
+      "name": "second_compression_mnist_32k_coverage_v3_seed1",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_mnist_32k_coverage_v3_seed1.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_mnist_32k_coverage_v3_seed1"
+    },
+    {
+      "name": "second_compression_mnist_32k_random_seed2",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_mnist_32k_random_seed2.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_mnist_32k_random_seed2"
+    },
+    {
+      "name": "second_compression_mnist_32k_coverage_v3_seed2",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_mnist_32k_coverage_v3_seed2.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_mnist_32k_coverage_v3_seed2"
+    },
+    {
+      "name": "second_compression_fashion_8k_random_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_fashion_8k_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_fashion_8k_random_seed0"
+    },
+    {
+      "name": "second_compression_fashion_8k_coverage_v3_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_fashion_8k_coverage_v3_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_fashion_8k_coverage_v3_seed0"
+    },
+    {
+      "name": "second_compression_fashion_8k_random_seed1",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_fashion_8k_random_seed1.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_fashion_8k_random_seed1"
+    },
+    {
+      "name": "second_compression_fashion_8k_coverage_v3_seed1",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_fashion_8k_coverage_v3_seed1.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_fashion_8k_coverage_v3_seed1"
+    },
+    {
+      "name": "second_compression_fashion_8k_random_seed2",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_fashion_8k_random_seed2.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_fashion_8k_random_seed2"
+    },
+    {
+      "name": "second_compression_fashion_8k_coverage_v3_seed2",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_fashion_8k_coverage_v3_seed2.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_fashion_8k_coverage_v3_seed2"
+    },
+    {
+      "name": "second_compression_fashion_16k_random_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_fashion_16k_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_fashion_16k_random_seed0"
+    },
+    {
+      "name": "second_compression_fashion_16k_coverage_v3_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_fashion_16k_coverage_v3_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_fashion_16k_coverage_v3_seed0"
+    },
+    {
+      "name": "second_compression_fashion_16k_random_seed1",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_fashion_16k_random_seed1.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_fashion_16k_random_seed1"
+    },
+    {
+      "name": "second_compression_fashion_16k_coverage_v3_seed1",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_fashion_16k_coverage_v3_seed1.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_fashion_16k_coverage_v3_seed1"
+    },
+    {
+      "name": "second_compression_fashion_16k_random_seed2",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_fashion_16k_random_seed2.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_fashion_16k_random_seed2"
+    },
+    {
+      "name": "second_compression_fashion_16k_coverage_v3_seed2",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_fashion_16k_coverage_v3_seed2.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_fashion_16k_coverage_v3_seed2"
+    },
+    {
+      "name": "second_compression_fashion_32k_random_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_fashion_32k_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_fashion_32k_random_seed0"
+    },
+    {
+      "name": "second_compression_fashion_32k_coverage_v3_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_fashion_32k_coverage_v3_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_fashion_32k_coverage_v3_seed0"
+    },
+    {
+      "name": "second_compression_fashion_32k_random_seed1",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_fashion_32k_random_seed1.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_fashion_32k_random_seed1"
+    },
+    {
+      "name": "second_compression_fashion_32k_coverage_v3_seed1",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_fashion_32k_coverage_v3_seed1.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_fashion_32k_coverage_v3_seed1"
+    },
+    {
+      "name": "second_compression_fashion_32k_random_seed2",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_fashion_32k_random_seed2.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_fashion_32k_random_seed2"
+    },
+    {
+      "name": "second_compression_fashion_32k_coverage_v3_seed2",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_fashion_32k_coverage_v3_seed2.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_fashion_32k_coverage_v3_seed2"
+    },
+    {
+      "name": "second_compression_fashion_64k_random_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_fashion_64k_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_fashion_64k_random_seed0"
+    },
+    {
+      "name": "second_compression_fashion_64k_coverage_v3_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_fashion_64k_coverage_v3_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_fashion_64k_coverage_v3_seed0"
+    },
+    {
+      "name": "second_compression_fashion_64k_random_seed1",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_fashion_64k_random_seed1.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_fashion_64k_random_seed1"
+    },
+    {
+      "name": "second_compression_fashion_64k_coverage_v3_seed1",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_fashion_64k_coverage_v3_seed1.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_fashion_64k_coverage_v3_seed1"
+    },
+    {
+      "name": "second_compression_fashion_64k_random_seed2",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_fashion_64k_random_seed2.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_fashion_64k_random_seed2"
+    },
+    {
+      "name": "second_compression_fashion_64k_coverage_v3_seed2",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_fashion_64k_coverage_v3_seed2.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_fashion_64k_coverage_v3_seed2"
+    }
+  ]
+}

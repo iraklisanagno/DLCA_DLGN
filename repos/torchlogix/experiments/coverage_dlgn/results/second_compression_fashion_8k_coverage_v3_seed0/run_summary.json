@@ -1,0 +1,103 @@
+{
+  "wall_seconds": 900.9597047099378,
+  "best_validation_hard_accuracy": 0.8364999781052271,
+  "final_metrics": {
+    "val_loss_discrete": 0.48246925274531044,
+    "val_acc_discrete": 0.8359999746084213,
+    "val_loss_relaxed": 0.4807044789195061,
+    "val_acc_relaxed": 0.8363333106040954,
+    "train_loss": 0.2653436462402344,
+    "connections_temperature": 0.001,
+    "parametrization_temperature": 1.0
+  },
+  "peak_gpu_memory_bytes": 18061824,
+  "topology": [
+    {
+      "strategy": "semantic_balanced_hybrid",
+      "topology_seed": 0,
+      "layer_index": 0,
+      "construction_seconds": 0.043758868938311934,
+      "generator_temporary_bytes": 404688,
+      "swap_fraction": 0.0,
+      "output_groups": 1,
+      "novelty_weight": 1.0,
+      "reuse_change_fraction": 0.25,
+      "reuse_weight": 1.0,
+      "class_balance_change_fraction": 0.25
+    },
+    {
+      "strategy": "semantic_balanced_hybrid",
+      "topology_seed": 0,
+      "layer_index": 1,
+      "construction_seconds": 0.4619504720903933,
+      "generator_temporary_bytes": 298816,
+      "swap_fraction": 0.5,
+      "output_groups": 1,
+      "novelty_weight": 1.0,
+      "reuse_change_fraction": 0.25,
+      "reuse_weight": 1.0,
+      "class_balance_change_fraction": 0.25
+    },
+    {
+      "strategy": "semantic_balanced_hybrid",
+      "topology_seed": 0,
+      "layer_index": 2,
+      "construction_seconds": 0.35725488187745214,
+      "generator_temporary_bytes": 298816,
+      "swap_fraction": 0.5,
+      "output_groups": 1,
+      "novelty_weight": 1.0,
+      "reuse_change_fraction": 0.25,
+      "reuse_weight": 1.0,
+      "class_balance_change_fraction": 0.25
+    },
+    {
+      "strategy": "semantic_balanced_hybrid",
+      "topology_seed": 0,
+      "layer_index": 3,
+      "construction_seconds": 0.2800269890576601,
+      "generator_temporary_bytes": 298816,
+      "swap_fraction": 0.5,
+      "output_groups": 1,
+      "novelty_weight": 1.0,
+      "reuse_change_fraction": 0.25,
+      "reuse_weight": 1.0,
+      "class_balance_change_fraction": 0.25
+    },
+    {
+      "strategy": "semantic_balanced_hybrid",
+      "topology_seed": 0,
+      "layer_index": 4,
+      "construction_seconds": 0.27938823704607785,
+      "generator_temporary_bytes": 298816,
+      "swap_fraction": 0.5,
+      "output_groups": 1,
+      "novelty_weight": 1.0,
+      "reuse_change_fraction": 0.25,
+      "reuse_weight": 1.0,
+      "class_balance_change_fraction": 0.25
+    },
+    {
+      "strategy": "semantic_balanced_hybrid",
+      "topology_seed": 0,
+      "layer_index": 5,
+      "construction_seconds": 0.2747703299392015,
+      "generator_temporary_bytes": 298336,
+      "swap_fraction": 0.5,
+      "output_groups": 10,
+      "novelty_weight": 1.0,
+      "reuse_change_fraction": 0.25,
+      "reuse_weight": 1.0,
+      "class_balance_change_fraction": 0.25
+    }
+  ],
+  "cost": {
+    "dense_gate_count": 8000,
+    "trainable_parameters": 128000,
+    "training_routing_parameters": 0,
+    "deployed_routing_bits": 178668,
+    "deployed_routing_bytes_packed": 22334,
+    "candidate_indices_tensor_bytes": 128000
+  },
+  "task_aware_rewire": null
+}

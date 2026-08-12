@@ -1,0 +1,50 @@
+{
+  "phase": "third_u2_dense_cifar10_ml",
+  "wall_seconds": 16330.454640269978,
+  "skipped": [],
+  "finished": [
+    {
+      "name": "third_u2_cifar10_m_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 2510.0600522879977,
+      "log": "experiments/coverage_dlgn/logs/third_u2_dense_cifar10_ml/third_u2_cifar10_m_seed0.log"
+    },
+    {
+      "name": "third_u2_cifar10_m_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 2525.060727150878,
+      "log": "experiments/coverage_dlgn/logs/third_u2_dense_cifar10_ml/third_u2_cifar10_m_seed1.log"
+    },
+    {
+      "name": "third_u2_cifar10_m_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 2505.0688847668935,
+      "log": "experiments/coverage_dlgn/logs/third_u2_dense_cifar10_ml/third_u2_cifar10_m_seed2.log"
+    },
+    {
+      "name": "third_u2_cifar10_l_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 6895.215646194993,
+      "log": "experiments/coverage_dlgn/logs/third_u2_dense_cifar10_ml/third_u2_cifar10_l_seed0.log"
+    },
+    {
+      "name": "third_u2_cifar10_l_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 6835.212139529875,
+      "log": "experiments/coverage_dlgn/logs/third_u2_dense_cifar10_ml/third_u2_cifar10_l_seed1.log"
+    },
+    {
+      "name": "third_u2_cifar10_l_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 6910.175656863023,
+      "log": "experiments/coverage_dlgn/logs/third_u2_dense_cifar10_ml/third_u2_cifar10_l_seed2.log"
+    }
+  ],
+  "failed": []
+}

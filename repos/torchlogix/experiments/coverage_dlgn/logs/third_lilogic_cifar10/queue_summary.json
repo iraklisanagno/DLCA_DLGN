@@ -1,0 +1,106 @@
+{
+  "phase": "third_lilogic_cifar10",
+  "wall_seconds": 27901.309330217075,
+  "skipped": [],
+  "finished": [
+    {
+      "name": "third_lilogic_m_random_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 885.0273294439539,
+      "log": "experiments/coverage_dlgn/logs/third_lilogic_cifar10/third_lilogic_m_random_seed1.log"
+    },
+    {
+      "name": "third_lilogic_m_random_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 890.0282919139136,
+      "log": "experiments/coverage_dlgn/logs/third_lilogic_cifar10/third_lilogic_m_random_seed0.log"
+    },
+    {
+      "name": "third_lilogic_m_random_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 885.0335920460057,
+      "log": "experiments/coverage_dlgn/logs/third_lilogic_cifar10/third_lilogic_m_random_seed2.log"
+    },
+    {
+      "name": "third_lilogic_m_u2_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 910.0340078729205,
+      "log": "experiments/coverage_dlgn/logs/third_lilogic_cifar10/third_lilogic_m_u2_seed0.log"
+    },
+    {
+      "name": "third_lilogic_m_u2_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 890.0267591481097,
+      "log": "experiments/coverage_dlgn/logs/third_lilogic_cifar10/third_lilogic_m_u2_seed1.log"
+    },
+    {
+      "name": "third_lilogic_m_u2_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 865.029403656954,
+      "log": "experiments/coverage_dlgn/logs/third_lilogic_cifar10/third_lilogic_m_u2_seed2.log"
+    },
+    {
+      "name": "third_lilogic_l_random_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 925.0177177779842,
+      "log": "experiments/coverage_dlgn/logs/third_lilogic_cifar10/third_lilogic_l_random_seed0.log"
+    },
+    {
+      "name": "third_lilogic_l_random_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 925.0210944369901,
+      "log": "experiments/coverage_dlgn/logs/third_lilogic_cifar10/third_lilogic_l_random_seed1.log"
+    },
+    {
+      "name": "third_lilogic_m_top32_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 2275.0503276861273,
+      "log": "experiments/coverage_dlgn/logs/third_lilogic_cifar10/third_lilogic_m_top32_seed0.log"
+    },
+    {
+      "name": "third_lilogic_l_random_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 935.0198047289159,
+      "log": "experiments/coverage_dlgn/logs/third_lilogic_cifar10/third_lilogic_l_random_seed2.log"
+    },
+    {
+      "name": "third_lilogic_l_u2_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 950.0303337629884,
+      "log": "experiments/coverage_dlgn/logs/third_lilogic_cifar10/third_lilogic_l_u2_seed0.log"
+    },
+    {
+      "name": "third_lilogic_l_u2_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 970.040630936157,
+      "log": "experiments/coverage_dlgn/logs/third_lilogic_cifar10/third_lilogic_l_u2_seed2.log"
+    },
+    {
+      "name": "third_lilogic_l_u2_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 1475.0683932560496,
+      "log": "experiments/coverage_dlgn/logs/third_lilogic_cifar10/third_lilogic_l_u2_seed1.log"
+    },
+    {
+      "name": "third_lilogic_l_top32_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 21046.092154385056,
+      "log": "experiments/coverage_dlgn/logs/third_lilogic_cifar10/third_lilogic_l_top32_seed0.log"
+    }
+  ],
+  "failed": []
+}

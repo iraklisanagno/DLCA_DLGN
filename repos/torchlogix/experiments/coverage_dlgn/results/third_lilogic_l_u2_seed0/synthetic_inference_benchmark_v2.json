@@ -1,0 +1,25 @@
+{
+  "batch_size": 128,
+  "benchmark_implementation_version": 2,
+  "checkpoint": "best_checkpoint.pt",
+  "checkpoint_sha256": "db0f71ba0f9f7cbf4fe0ef0d673006b86e9c8acd082ce0143591b6acd11b2078",
+  "cuda_device_name": "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition",
+  "device": "cuda:0",
+  "examples_per_second": 28430.417799920353,
+  "heldout_test_accessed": false,
+  "input_shape": [
+    3,
+    32,
+    32
+  ],
+  "input_source": "torch.rand seed 2027; no dataset access",
+  "input_transfer_excluded": true,
+  "microseconds_per_example": 35.17359495162964,
+  "milliseconds_per_batch": 4.502220153808594,
+  "mode": "hardened",
+  "peak_device_memory_bytes": 427049472,
+  "timed_batches": 100,
+  "total_milliseconds": 450.2220153808594,
+  "training_config_sha256": "973772f1899c4ac090ae33de42830dd5138c5cdb6b238ca76b9d6da69044a0dc",
+  "warmup_batches": 20
+}

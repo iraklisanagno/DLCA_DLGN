@@ -1,0 +1,36 @@
+{
+  "phase": "third_bitlogic_cifar10_m_rank2_idlefill",
+  "wall_seconds": 2090.0861420428846,
+  "skipped": [],
+  "finished": [
+    {
+      "name": "third_bitlogic_m_random_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 520.0195747120306,
+      "log": "experiments/coverage_dlgn/logs/third_bitlogic_cifar10_m_rank2_idlefill/third_bitlogic_m_random_seed0.log"
+    },
+    {
+      "name": "third_bitlogic_m_random_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 520.0206568180583,
+      "log": "experiments/coverage_dlgn/logs/third_bitlogic_cifar10_m_rank2_idlefill/third_bitlogic_m_random_seed1.log"
+    },
+    {
+      "name": "third_bitlogic_m_u2_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 530.0195900069084,
+      "log": "experiments/coverage_dlgn/logs/third_bitlogic_cifar10_m_rank2_idlefill/third_bitlogic_m_u2_seed0.log"
+    },
+    {
+      "name": "third_bitlogic_m_u2_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 520.0242905528285,
+      "log": "experiments/coverage_dlgn/logs/third_bitlogic_cifar10_m_rank2_idlefill/third_bitlogic_m_u2_seed1.log"
+    }
+  ],
+  "failed": []
+}

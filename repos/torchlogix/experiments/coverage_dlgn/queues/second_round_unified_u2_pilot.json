@@ -1,0 +1,82 @@
+{
+  "phase": "second_round_unified_u2_pilot",
+  "cuda_required": true,
+  "skip_completed": true,
+  "entries": [
+    {
+      "name": "second_u2_mnist_8k_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/unified_u2_pilot/second_u2_mnist_8k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_u2_mnist_8k_seed0"
+    },
+    {
+      "name": "second_u2_mnist_8k_seed1",
+      "config": "experiments/coverage_dlgn/configs/second_round/unified_u2_pilot/second_u2_mnist_8k_seed1.json",
+      "output": "experiments/coverage_dlgn/results/second_u2_mnist_8k_seed1"
+    },
+    {
+      "name": "second_u2_mnist_8k_seed2",
+      "config": "experiments/coverage_dlgn/configs/second_round/unified_u2_pilot/second_u2_mnist_8k_seed2.json",
+      "output": "experiments/coverage_dlgn/results/second_u2_mnist_8k_seed2"
+    },
+    {
+      "name": "second_u2_fashion_16k_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/unified_u2_pilot/second_u2_fashion_16k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_u2_fashion_16k_seed0"
+    },
+    {
+      "name": "second_u2_fashion_16k_seed1",
+      "config": "experiments/coverage_dlgn/configs/second_round/unified_u2_pilot/second_u2_fashion_16k_seed1.json",
+      "output": "experiments/coverage_dlgn/results/second_u2_fashion_16k_seed1"
+    },
+    {
+      "name": "second_u2_fashion_16k_seed2",
+      "config": "experiments/coverage_dlgn/configs/second_round/unified_u2_pilot/second_u2_fashion_16k_seed2.json",
+      "output": "experiments/coverage_dlgn/results/second_u2_fashion_16k_seed2"
+    },
+    {
+      "name": "second_u2_cifar10_s_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/unified_u2_pilot/second_u2_cifar10_s_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_u2_cifar10_s_seed0"
+    },
+    {
+      "name": "second_u2_cifar10_s_seed1",
+      "config": "experiments/coverage_dlgn/configs/second_round/unified_u2_pilot/second_u2_cifar10_s_seed1.json",
+      "output": "experiments/coverage_dlgn/results/second_u2_cifar10_s_seed1"
+    },
+    {
+      "name": "second_u2_cifar10_s_seed2",
+      "config": "experiments/coverage_dlgn/configs/second_round/unified_u2_pilot/second_u2_cifar10_s_seed2.json",
+      "output": "experiments/coverage_dlgn/results/second_u2_cifar10_s_seed2"
+    },
+    {
+      "name": "second_u2_cifar100_3x128k_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/unified_u2_pilot/second_u2_cifar100_3x128k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_u2_cifar100_3x128k_seed0"
+    },
+    {
+      "name": "second_u2_cifar100_3x128k_seed1",
+      "config": "experiments/coverage_dlgn/configs/second_round/unified_u2_pilot/second_u2_cifar100_3x128k_seed1.json",
+      "output": "experiments/coverage_dlgn/results/second_u2_cifar100_3x128k_seed1"
+    },
+    {
+      "name": "second_u2_cifar100_3x128k_seed2",
+      "config": "experiments/coverage_dlgn/configs/second_round/unified_u2_pilot/second_u2_cifar100_3x128k_seed2.json",
+      "output": "experiments/coverage_dlgn/results/second_u2_cifar100_3x128k_seed2"
+    },
+    {
+      "name": "second_u2_conv_cifar10_s_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/unified_u2_pilot/second_u2_conv_cifar10_s_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_u2_conv_cifar10_s_seed0"
+    },
+    {
+      "name": "second_u2_conv_cifar10_s_seed1",
+      "config": "experiments/coverage_dlgn/configs/second_round/unified_u2_pilot/second_u2_conv_cifar10_s_seed1.json",
+      "output": "experiments/coverage_dlgn/results/second_u2_conv_cifar10_s_seed1"
+    },
+    {
+      "name": "second_u2_conv_cifar10_s_seed2",
+      "config": "experiments/coverage_dlgn/configs/second_round/unified_u2_pilot/second_u2_conv_cifar10_s_seed2.json",
+      "output": "experiments/coverage_dlgn/results/second_u2_conv_cifar10_s_seed2"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "phase": "idle_fill_conv_s_legacy_v4_seed0",
+  "wall_seconds": 17850.33167120209,
+  "skipped": [],
+  "finished": [
+    {
+      "name": "second_full_conv_cifar10_s_legacy_v4_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 17850.32827374991,
+      "log": "experiments/coverage_dlgn/logs/idle_fill_conv_s_legacy_v4_seed0/second_full_conv_cifar10_s_legacy_v4_seed0.log"
+    }
+  ],
+  "failed": []
+}

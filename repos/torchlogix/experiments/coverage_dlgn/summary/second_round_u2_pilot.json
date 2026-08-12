@@ -1,0 +1,302 @@
+{
+  "method": "semantic_multiscale_balanced",
+  "method_frozen_before_summary": true,
+  "held_out_test_queried": false,
+  "cells": {
+    "mnist_8k": {
+      "selection_effort": "best hardened validation through 20K",
+      "u2_accuracy_pct": [
+        91.54999822378159,
+        91.64999842643738,
+        91.93333148956299
+      ],
+      "comparisons": {
+        "random": {
+          "baseline_mean_pct": 90.95555341906018,
+          "candidate_mean_pct": 91.71110937992732,
+          "per_seed_gain_pp": [
+            0.7833338777224128,
+            0.45000066359837376,
+            1.033333341280624
+          ],
+          "paired_mean_gain_pp": 0.7555559608671368,
+          "paired_95ci_pp": [
+            0.028556336592164278,
+            1.4825555851421095
+          ],
+          "positive_pairs": 3
+        },
+        "frozen_v3": {
+          "baseline_mean_pct": 91.66666504409578,
+          "candidate_mean_pct": 91.71110937992732,
+          "per_seed_gain_pp": [
+            -0.18333345651626587,
+            0.183333158493042,
+            0.13333330551783718
+          ],
+          "paired_mean_gain_pp": 0.044444335831537764,
+          "paired_95ci_pp": [
+            -0.4494996874622612,
+            0.5383883591253368
+          ],
+          "positive_pairs": 2
+        }
+      },
+      "resources": {
+        "mean_training_wall_minutes": 2.7221676890117426,
+        "maximum_peak_gpu_gib": 0.01682138442993164,
+        "mean_topology_construction_seconds": 0.10089311981573701,
+        "cost": {
+          "dense_gate_count": 8000,
+          "trainable_parameters": 128000,
+          "training_routing_parameters": 0,
+          "deployed_routing_bits": 173332,
+          "deployed_routing_bytes_packed": 21667,
+          "candidate_indices_tensor_bytes": 128000
+        }
+      }
+    },
+    "fashion_16k": {
+      "selection_effort": "best hardened validation through 20K",
+      "u2_accuracy_pct": [
+        86.11666450897853,
+        86.199997762839,
+        86.69999818007152
+      ],
+      "comparisons": {
+        "random": {
+          "baseline_mean_pct": 85.73888685968187,
+          "candidate_mean_pct": 86.33888681729636,
+          "per_seed_gain_pp": [
+            0.4000000158945767,
+            0.39999981721243216,
+            1.0000000397364346
+          ],
+          "paired_mean_gain_pp": 0.5999999576144811,
+          "paired_95ci_pp": [
+            -0.2605307650389329,
+            1.4605306802678952
+          ],
+          "positive_pairs": 3
+        },
+        "frozen_v3": {
+          "baseline_mean_pct": 86.42777578698264,
+          "candidate_mean_pct": 86.33888681729636,
+          "per_seed_gain_pp": [
+            -0.1500001549720622,
+            -0.1666671037673808,
+            0.05000034968058742
+          ],
+          "paired_mean_gain_pp": -0.0888889696862852,
+          "paired_95ci_pp": [
+            -0.38840149657329565,
+            0.2106235572007253
+          ],
+          "positive_pairs": 1
+        }
+      },
+      "resources": {
+        "mean_training_wall_minutes": 2.71058874730176,
+        "maximum_peak_gpu_gib": 0.03399372100830078,
+        "mean_topology_construction_seconds": 0.22503741163139543,
+        "cost": {
+          "dense_gate_count": 16000,
+          "trainable_parameters": 256000,
+          "training_routing_parameters": 0,
+          "deployed_routing_bits": 384000,
+          "deployed_routing_bytes_packed": 48000,
+          "candidate_indices_tensor_bytes": 256000
+        }
+      }
+    },
+    "dense_cifar10_s": {
+      "selection_effort": "best hardened validation at 20K",
+      "u2_accuracy_pct": [
+        51.99999874830246,
+        52.49999874830246,
+        52.49999850988388
+      ],
+      "comparisons": {
+        "random": {
+          "baseline_mean_pct": 49.039998610814415,
+          "candidate_mean_pct": 52.33333200216293,
+          "per_seed_gain_pp": [
+            2.640000343322754,
+            3.820000410079956,
+            3.419999420642853
+          ],
+          "paired_mean_gain_pp": 3.2933333913485208,
+          "paired_95ci_pp": [
+            1.8025749436185996,
+            4.784091839078442
+          ],
+          "positive_pairs": 3
+        },
+        "frozen_v3": {
+          "baseline_mean_pct": 52.19333197673162,
+          "candidate_mean_pct": 52.33333200216293,
+          "per_seed_gain_pp": [
+            0.25999999046325684,
+            -0.2799997329711914,
+            0.4399998188018799
+          ],
+          "paired_mean_gain_pp": 0.1400000254313151,
+          "paired_95ci_pp": [
+            -0.7908055211092482,
+            1.0708055719718783
+          ],
+          "positive_pairs": 2
+        }
+      },
+      "resources": {
+        "mean_training_wall_minutes": 2.2552457743725327,
+        "maximum_peak_gpu_gib": 0.10611200332641602,
+        "mean_topology_construction_seconds": 0.9171845940096924,
+        "cost": {
+          "dense_gate_count": 48000,
+          "trainable_parameters": 768000,
+          "training_routing_parameters": 0,
+          "deployed_routing_bits": 1344000,
+          "deployed_routing_bytes_packed": 168000,
+          "candidate_indices_tensor_bytes": 768000
+        }
+      }
+    },
+    "dense_cifar100_3x128k": {
+      "selection_effort": "best hardened validation at 20K",
+      "u2_accuracy_pct": [
+        21.09999942779541,
+        21.119999438524246,
+        21.359999403357506
+      ],
+      "comparisons": {
+        "random": {
+          "baseline_mean_pct": 21.093332717816036,
+          "candidate_mean_pct": 21.193332756559055,
+          "per_seed_gain_pp": [
+            0.020000040531158447,
+            -0.0799998939037323,
+            0.35999996960163116
+          ],
+          "paired_mean_gain_pp": 0.1000000387430191,
+          "paired_95ci_pp": [
+            -0.47296927150714285,
+            0.6729693489931811
+          ],
+          "positive_pairs": 2
+        },
+        "frozen_v3": {
+          "baseline_mean_pct": 21.933332701524098,
+          "candidate_mean_pct": 21.193332756559055,
+          "per_seed_gain_pp": [
+            -0.7599999606609344,
+            -0.7599999308586121,
+            -0.6999999433755875
+          ],
+          "paired_mean_gain_pp": -0.7399999449650446,
+          "paired_95ci_pp": [
+            -0.8260530029827192,
+            -0.65394688694737
+          ],
+          "positive_pairs": 0
+        }
+      },
+      "resources": {
+        "mean_training_wall_minutes": 5.338863982462014,
+        "maximum_peak_gpu_gib": 0.889528751373291,
+        "mean_topology_construction_seconds": 13.345967992053678,
+        "cost": {
+          "dense_gate_count": 384000,
+          "trainable_parameters": 6144000,
+          "training_routing_parameters": 0,
+          "deployed_routing_bits": 12288000,
+          "deployed_routing_bytes_packed": 1536000,
+          "candidate_indices_tensor_bytes": 6144000
+        }
+      }
+    },
+    "conv_cifar10_s": {
+      "selection_effort": "best hardened validation at 20K",
+      "u2_accuracy_pct": [
+        58.5,
+        59.540000000000006,
+        58.5
+      ],
+      "comparisons": {
+        "original_random": {
+          "baseline_mean_pct": 56.67333333333334,
+          "candidate_mean_pct": 58.84666666666667,
+          "per_seed_gain_pp": [
+            2.3999999999999915,
+            2.1400000000000077,
+            1.9799999999999969
+          ],
+          "paired_mean_gain_pp": 2.173333333333332,
+          "paired_95ci_pp": [
+            1.6467586361613566,
+            2.6999080305053074
+          ],
+          "positive_pairs": 3
+        },
+        "controlled_random": {
+          "baseline_mean_pct": 57.14,
+          "candidate_mean_pct": 58.84666666666667,
+          "per_seed_gain_pp": [
+            3.499999999999993,
+            1.5800000000000054,
+            0.03999999999999915
+          ],
+          "paired_mean_gain_pp": 1.7066666666666659,
+          "paired_95ci_pp": [
+            -2.599522346725392,
+            6.012855680058724
+          ],
+          "positive_pairs": 3
+        },
+        "frozen_v4": {
+          "baseline_mean_pct": 57.18666666666666,
+          "candidate_mean_pct": 58.84666666666667,
+          "per_seed_gain_pp": [
+            0.9000000000000057,
+            1.740000000000009,
+            2.3400000000000034
+          ],
+          "paired_mean_gain_pp": 1.6600000000000061,
+          "paired_95ci_pp": [
+            -0.136840532066969,
+            3.4568405320669813
+          ],
+          "positive_pairs": 3
+        },
+        "unified_u1": {
+          "baseline_mean_pct": 58.013333333333335,
+          "candidate_mean_pct": 58.84666666666667,
+          "per_seed_gain_pp": [
+            0.5799999999999983,
+            1.8800000000000097,
+            0.03999999999999915
+          ],
+          "paired_mean_gain_pp": 0.8333333333333357,
+          "paired_95ci_pp": [
+            -1.5161584588053265,
+            3.182825125471998
+          ],
+          "positive_pairs": 3
+        }
+      },
+      "resources": {
+        "mean_training_wall_minutes": 17.01839393818906,
+        "maximum_peak_gpu_gib": 1.8306818008422852,
+        "mean_topology_construction_seconds": 1.3795382525616635,
+        "cost": {
+          "dense_gate_count": 71680,
+          "trainable_parameters": 1336832,
+          "training_routing_parameters": 0,
+          "deployed_routing_bits": 1945600,
+          "deployed_routing_bytes_packed": 243200,
+          "candidate_indices_tensor_bytes": 1146880
+        }
+      }
+    }
+  }
+}

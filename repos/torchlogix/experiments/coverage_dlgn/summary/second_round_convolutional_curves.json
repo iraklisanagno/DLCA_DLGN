@@ -1,0 +1,51 @@
+{
+  "protocol": "matched seed-0, 350K, best hardened validation selection",
+  "heldout_test_accessed": false,
+  "summaries": {
+    "random": {
+      "best_hard_validation_pct": 58.68,
+      "final_hard_validation_pct": 58.5,
+      "hard_validation_curve_mean_pct": 57.233333333333334,
+      "relaxed_validation_curve_mean_pct": 61.07264367816092,
+      "first_step_at_hard_validation_pct": {
+        "58.0": 82000,
+        "59.0": null,
+        "59.5": null
+      }
+    },
+    "legacy_v4": {
+      "best_hard_validation_pct": 59.86,
+      "final_hard_validation_pct": 58.46,
+      "hard_validation_curve_mean_pct": 58.509827586206896,
+      "relaxed_validation_curve_mean_pct": 62.706896551724135,
+      "first_step_at_hard_validation_pct": {
+        "58.0": 26000,
+        "59.0": 60000,
+        "59.5": 212000
+      }
+    },
+    "unified_u1": {
+      "best_hard_validation_pct": 59.88,
+      "final_hard_validation_pct": 58.58,
+      "hard_validation_curve_mean_pct": 58.343620689655175,
+      "relaxed_validation_curve_mean_pct": 60.90241379310345,
+      "first_step_at_hard_validation_pct": {
+        "58.0": 28000,
+        "59.0": 102000,
+        "59.5": 252000
+      }
+    },
+    "unified_u2": {
+      "best_hard_validation_pct": 61.0,
+      "final_hard_validation_pct": 60.28,
+      "hard_validation_curve_mean_pct": 59.56172413793104,
+      "relaxed_validation_curve_mean_pct": 63.08488505747126,
+      "first_step_at_hard_validation_pct": {
+        "58.0": 14000,
+        "59.0": 34000,
+        "59.5": 34000
+      }
+    }
+  },
+  "curve_csv": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/summary/second_round_convolutional_curves.csv"
+}

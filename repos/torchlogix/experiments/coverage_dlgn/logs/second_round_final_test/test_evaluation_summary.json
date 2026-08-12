@@ -1,0 +1,181 @@
+{
+  "validation_freeze": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/summary/second_round_final_validation_freeze.json",
+  "cuda_gpus": [
+    1
+  ],
+  "pending_at_start": 27,
+  "reused_existing": [
+    "paper_cifar10_small_random_seed0",
+    "paper_cifar10_small_random_seed1",
+    "paper_cifar10_small_random_seed2",
+    "paper_cifar10_small_semantic_balanced_v3_seed0",
+    "paper_cifar10_small_semantic_balanced_v3_seed1",
+    "paper_cifar10_small_semantic_balanced_v3_seed2"
+  ],
+  "records": [
+    {
+      "name": "pilot_table4_cifar100_384k_depth3_coverage_v3_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_final_test/pilot_table4_cifar100_384k_depth3_coverage_v3_seed0.test.log"
+    },
+    {
+      "name": "pilot_table4_cifar100_384k_depth3_random_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_final_test/pilot_table4_cifar100_384k_depth3_random_seed0.test.log"
+    },
+    {
+      "name": "second_c100_3x128k_coverage_v3_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_final_test/second_c100_3x128k_coverage_v3_seed1.test.log"
+    },
+    {
+      "name": "second_c100_3x128k_coverage_v3_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_final_test/second_c100_3x128k_coverage_v3_seed2.test.log"
+    },
+    {
+      "name": "second_c100_3x128k_random_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_final_test/second_c100_3x128k_random_seed1.test.log"
+    },
+    {
+      "name": "second_c100_3x128k_random_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_final_test/second_c100_3x128k_random_seed2.test.log"
+    },
+    {
+      "name": "second_compression_fashion_16k_coverage_v3_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_final_test/second_compression_fashion_16k_coverage_v3_seed0.test.log"
+    },
+    {
+      "name": "second_compression_fashion_16k_coverage_v3_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_final_test/second_compression_fashion_16k_coverage_v3_seed1.test.log"
+    },
+    {
+      "name": "second_compression_fashion_16k_coverage_v3_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_final_test/second_compression_fashion_16k_coverage_v3_seed2.test.log"
+    },
+    {
+      "name": "second_compression_fashion_16k_random_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_final_test/second_compression_fashion_16k_random_seed0.test.log"
+    },
+    {
+      "name": "second_compression_fashion_16k_random_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_final_test/second_compression_fashion_16k_random_seed1.test.log"
+    },
+    {
+      "name": "second_compression_fashion_16k_random_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_final_test/second_compression_fashion_16k_random_seed2.test.log"
+    },
+    {
+      "name": "second_compression_mnist_8k_coverage_v3_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_final_test/second_compression_mnist_8k_coverage_v3_seed0.test.log"
+    },
+    {
+      "name": "second_compression_mnist_8k_coverage_v3_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_final_test/second_compression_mnist_8k_coverage_v3_seed1.test.log"
+    },
+    {
+      "name": "second_compression_mnist_8k_coverage_v3_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_final_test/second_compression_mnist_8k_coverage_v3_seed2.test.log"
+    },
+    {
+      "name": "second_compression_mnist_8k_random_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_final_test/second_compression_mnist_8k_random_seed0.test.log"
+    },
+    {
+      "name": "second_compression_mnist_8k_random_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_final_test/second_compression_mnist_8k_random_seed1.test.log"
+    },
+    {
+      "name": "second_compression_mnist_8k_random_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_final_test/second_compression_mnist_8k_random_seed2.test.log"
+    },
+    {
+      "name": "second_final_u2_cifar10_s_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_final_test/second_final_u2_cifar10_s_seed0.test.log"
+    },
+    {
+      "name": "second_final_u2_cifar10_s_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_final_test/second_final_u2_cifar10_s_seed1.test.log"
+    },
+    {
+      "name": "second_final_u2_cifar10_s_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_final_test/second_final_u2_cifar10_s_seed2.test.log"
+    },
+    {
+      "name": "second_final_u2_fashion_16k_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_final_test/second_final_u2_fashion_16k_seed0.test.log"
+    },
+    {
+      "name": "second_final_u2_fashion_16k_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_final_test/second_final_u2_fashion_16k_seed1.test.log"
+    },
+    {
+      "name": "second_final_u2_fashion_16k_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_final_test/second_final_u2_fashion_16k_seed2.test.log"
+    },
+    {
+      "name": "second_final_u2_mnist_8k_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_final_test/second_final_u2_mnist_8k_seed0.test.log"
+    },
+    {
+      "name": "second_final_u2_mnist_8k_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_final_test/second_final_u2_mnist_8k_seed1.test.log"
+    },
+    {
+      "name": "second_final_u2_mnist_8k_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_final_test/second_final_u2_mnist_8k_seed2.test.log"
+    }
+  ],
+  "failures": [],
+  "missing_after": []
+}

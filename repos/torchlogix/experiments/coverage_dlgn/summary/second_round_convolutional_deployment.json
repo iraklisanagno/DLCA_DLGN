@@ -1,0 +1,83 @@
+{
+  "status": "COMPLETE",
+  "protocol": "paper-faithful LogicTreeNet-S, 9 Boolean channels, 350K",
+  "input_policy": "deterministic synthetic Boolean tensors for circuit/CPU and seeded synthetic RGB tensors for hardened GPU inference",
+  "declared_cost_identical": true,
+  "declared_cost": {
+    "learned_gate_functions": 83552,
+    "classifier_gate_functions": 71680,
+    "spatial_gate_applications": 874496,
+    "trainable_gate_parameters": 1336832,
+    "trainable_routing_parameters": 0,
+    "routing_bits": 1945600,
+    "packed_routing_bytes": 243200
+  },
+  "rows": {
+    "random": {
+      "ir_logic_nodes_before_simplification": 570790,
+      "ir_logic_nodes_after_simplification": 252936,
+      "peak_export_rss_gib": 1.1140975952148438,
+      "compiled_cpu_batch128_ms": 3.229601331986487,
+      "compiled_cpu_examples_per_second": 39633.37478600457,
+      "synthetic_gpu_batch128_ms": 6.85190673828125,
+      "synthetic_gpu_examples_per_second": 18680.931438379128,
+      "synthetic_gpu_peak_memory_gib": 0.34614992141723633,
+      "synthetic_equivalence_passed": true,
+      "heldout_test_accessed": false,
+      "simplified_ir_delta_vs_random_pct": 0.0,
+      "latency_delta_vs_random_pct": 0.0,
+      "synthetic_gpu_latency_delta_vs_random_pct": 0.0
+    },
+    "legacy_v4": {
+      "ir_logic_nodes_before_simplification": 555696,
+      "ir_logic_nodes_after_simplification": 241262,
+      "peak_export_rss_gib": 1.1149444580078125,
+      "compiled_cpu_batch128_ms": 3.163471561856568,
+      "compiled_cpu_examples_per_second": 40461.877875987535,
+      "synthetic_gpu_batch128_ms": 6.855824584960938,
+      "synthetic_gpu_examples_per_second": 18670.25598653489,
+      "synthetic_gpu_peak_memory_gib": 0.3461751937866211,
+      "synthetic_equivalence_passed": true,
+      "heldout_test_accessed": false,
+      "simplified_ir_delta_vs_random_pct": -4.615396780213176,
+      "latency_delta_vs_random_pct": -2.047614034430789,
+      "synthetic_gpu_latency_delta_vs_random_pct": 0.05717892594478968
+    },
+    "unified_u1": {
+      "ir_logic_nodes_before_simplification": 599951,
+      "ir_logic_nodes_after_simplification": 251693,
+      "peak_export_rss_gib": 1.1235771179199219,
+      "compiled_cpu_batch128_ms": 3.135954844765365,
+      "compiled_cpu_examples_per_second": 40816.91425297837,
+      "synthetic_gpu_batch128_ms": 6.854692993164062,
+      "synthetic_gpu_examples_per_second": 18673.33812435506,
+      "synthetic_gpu_peak_memory_gib": 0.3461751937866211,
+      "synthetic_equivalence_passed": true,
+      "heldout_test_accessed": false,
+      "simplified_ir_delta_vs_random_pct": -0.4914286617958674,
+      "latency_delta_vs_random_pct": -2.899629941740245,
+      "synthetic_gpu_latency_delta_vs_random_pct": 0.04066393471535701
+    },
+    "unified_u2": {
+      "ir_logic_nodes_before_simplification": 602705,
+      "ir_logic_nodes_after_simplification": 262260,
+      "peak_export_rss_gib": 1.1377182006835938,
+      "compiled_cpu_batch128_ms": 3.184974077157676,
+      "compiled_cpu_examples_per_second": 40188.71014304434,
+      "synthetic_gpu_batch128_ms": 6.834926147460937,
+      "synthetic_gpu_examples_per_second": 18727.34207194761,
+      "synthetic_gpu_peak_memory_gib": 0.3461751937866211,
+      "synthetic_equivalence_passed": true,
+      "heldout_test_accessed": false,
+      "simplified_ir_delta_vs_random_pct": 3.6863079988613823,
+      "latency_delta_vs_random_pct": -1.3818193096099884,
+      "synthetic_gpu_latency_delta_vs_random_pct": -0.24782285382611846
+    }
+  },
+  "limitations": [
+    "Single checkpoint per method; latency is a deployment snapshot.",
+    "Generated C uses gcc -O0 and includes Boolean input packing.",
+    "Sub-percent GPU latency differences are treated as measurement noise.",
+    "Energy was not measured."
+  ]
+}

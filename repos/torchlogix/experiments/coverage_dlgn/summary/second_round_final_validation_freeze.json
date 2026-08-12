@@ -1,0 +1,359 @@
+{
+  "selection": "best hardened validation checkpoint",
+  "validation_frozen": true,
+  "held_out_test_access_added_by_this_script": false,
+  "groups": {
+    "mnist_8k_random": [
+      {
+        "name": "second_compression_mnist_8k_random_seed0",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_compression_mnist_8k_random_seed0",
+        "seed": 0,
+        "best_hard_validation_pct": 91.41666442155838,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_compression_mnist_8k_random_seed0/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": false,
+        "source_tree_sha256": "dd90f06573f2aa0707e3a9b118fdf7889103269d93427837f16284f1c646cbf6",
+        "training_implementation_sha256": "5ed307858a2a2801a8988c2f5ebe9f2263006212cfd0b5c0e2b2709d46a09df7"
+      },
+      {
+        "name": "second_compression_mnist_8k_random_seed1",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_compression_mnist_8k_random_seed1",
+        "seed": 1,
+        "best_hard_validation_pct": 91.76666488250098,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_compression_mnist_8k_random_seed1/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": false,
+        "source_tree_sha256": "dd90f06573f2aa0707e3a9b118fdf7889103269d93427837f16284f1c646cbf6",
+        "training_implementation_sha256": "5ed307858a2a2801a8988c2f5ebe9f2263006212cfd0b5c0e2b2709d46a09df7"
+      },
+      {
+        "name": "second_compression_mnist_8k_random_seed2",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_compression_mnist_8k_random_seed2",
+        "seed": 2,
+        "best_hard_validation_pct": 91.1999981602033,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_compression_mnist_8k_random_seed2/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": false,
+        "source_tree_sha256": "dd90f06573f2aa0707e3a9b118fdf7889103269d93427837f16284f1c646cbf6",
+        "training_implementation_sha256": "5ed307858a2a2801a8988c2f5ebe9f2263006212cfd0b5c0e2b2709d46a09df7"
+      }
+    ],
+    "mnist_8k_v3": [
+      {
+        "name": "second_compression_mnist_8k_coverage_v3_seed0",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_compression_mnist_8k_coverage_v3_seed0",
+        "seed": 0,
+        "best_hard_validation_pct": 91.91666473944981,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_compression_mnist_8k_coverage_v3_seed0/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": false,
+        "source_tree_sha256": "dd90f06573f2aa0707e3a9b118fdf7889103269d93427837f16284f1c646cbf6",
+        "training_implementation_sha256": "5ed307858a2a2801a8988c2f5ebe9f2263006212cfd0b5c0e2b2709d46a09df7"
+      },
+      {
+        "name": "second_compression_mnist_8k_coverage_v3_seed1",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_compression_mnist_8k_coverage_v3_seed1",
+        "seed": 1,
+        "best_hard_validation_pct": 91.86666488647461,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_compression_mnist_8k_coverage_v3_seed1/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": false,
+        "source_tree_sha256": "dd90f06573f2aa0707e3a9b118fdf7889103269d93427837f16284f1c646cbf6",
+        "training_implementation_sha256": "5ed307858a2a2801a8988c2f5ebe9f2263006212cfd0b5c0e2b2709d46a09df7"
+      },
+      {
+        "name": "second_compression_mnist_8k_coverage_v3_seed2",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_compression_mnist_8k_coverage_v3_seed2",
+        "seed": 2,
+        "best_hard_validation_pct": 92.08333154519399,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_compression_mnist_8k_coverage_v3_seed2/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": false,
+        "source_tree_sha256": "dd90f06573f2aa0707e3a9b118fdf7889103269d93427837f16284f1c646cbf6",
+        "training_implementation_sha256": "5ed307858a2a2801a8988c2f5ebe9f2263006212cfd0b5c0e2b2709d46a09df7"
+      }
+    ],
+    "mnist_8k_u2": [
+      {
+        "name": "second_final_u2_mnist_8k_seed0",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_final_u2_mnist_8k_seed0",
+        "seed": 0,
+        "best_hard_validation_pct": 91.56666497389475,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_final_u2_mnist_8k_seed0/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": false,
+        "source_tree_sha256": "f2e1b1c43d73e1f0ec8bab55236438647cad6b1ecac31f394446fb387b00e127",
+        "training_implementation_sha256": "5ed307858a2a2801a8988c2f5ebe9f2263006212cfd0b5c0e2b2709d46a09df7"
+      },
+      {
+        "name": "second_final_u2_mnist_8k_seed1",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_final_u2_mnist_8k_seed1",
+        "seed": 1,
+        "best_hard_validation_pct": 91.78333153327306,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_final_u2_mnist_8k_seed1/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": false,
+        "source_tree_sha256": "65e22615b44202794382f479a6aff7b94ef3cbd88b2990cc965a6aac606796ff",
+        "training_implementation_sha256": "5ed307858a2a2801a8988c2f5ebe9f2263006212cfd0b5c0e2b2709d46a09df7"
+      },
+      {
+        "name": "second_final_u2_mnist_8k_seed2",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_final_u2_mnist_8k_seed2",
+        "seed": 2,
+        "best_hard_validation_pct": 92.16666499773662,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_final_u2_mnist_8k_seed2/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": false,
+        "source_tree_sha256": "65e22615b44202794382f479a6aff7b94ef3cbd88b2990cc965a6aac606796ff",
+        "training_implementation_sha256": "5ed307858a2a2801a8988c2f5ebe9f2263006212cfd0b5c0e2b2709d46a09df7"
+      }
+    ],
+    "fashion_16k_random": [
+      {
+        "name": "second_compression_fashion_16k_random_seed0",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_compression_fashion_16k_random_seed0",
+        "seed": 0,
+        "best_hard_validation_pct": 86.4499976237615,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_compression_fashion_16k_random_seed0/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": false,
+        "source_tree_sha256": "dd90f06573f2aa0707e3a9b118fdf7889103269d93427837f16284f1c646cbf6",
+        "training_implementation_sha256": "5ed307858a2a2801a8988c2f5ebe9f2263006212cfd0b5c0e2b2709d46a09df7"
+      },
+      {
+        "name": "second_compression_fashion_16k_random_seed1",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_compression_fashion_16k_random_seed1",
+        "seed": 1,
+        "best_hard_validation_pct": 85.9499979019165,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_compression_fashion_16k_random_seed1/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": false,
+        "source_tree_sha256": "dd90f06573f2aa0707e3a9b118fdf7889103269d93427837f16284f1c646cbf6",
+        "training_implementation_sha256": "5ed307858a2a2801a8988c2f5ebe9f2263006212cfd0b5c0e2b2709d46a09df7"
+      },
+      {
+        "name": "second_compression_fashion_16k_random_seed2",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_compression_fashion_16k_random_seed2",
+        "seed": 2,
+        "best_hard_validation_pct": 86.18333160877228,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_compression_fashion_16k_random_seed2/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": false,
+        "source_tree_sha256": "dd90f06573f2aa0707e3a9b118fdf7889103269d93427837f16284f1c646cbf6",
+        "training_implementation_sha256": "5ed307858a2a2801a8988c2f5ebe9f2263006212cfd0b5c0e2b2709d46a09df7"
+      }
+    ],
+    "fashion_16k_v3": [
+      {
+        "name": "second_compression_fashion_16k_coverage_v3_seed0",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_compression_fashion_16k_coverage_v3_seed0",
+        "seed": 0,
+        "best_hard_validation_pct": 86.6666645805041,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_compression_fashion_16k_coverage_v3_seed0/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": false,
+        "source_tree_sha256": "dd90f06573f2aa0707e3a9b118fdf7889103269d93427837f16284f1c646cbf6",
+        "training_implementation_sha256": "5ed307858a2a2801a8988c2f5ebe9f2263006212cfd0b5c0e2b2709d46a09df7"
+      },
+      {
+        "name": "second_compression_fashion_16k_coverage_v3_seed1",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_compression_fashion_16k_coverage_v3_seed1",
+        "seed": 1,
+        "best_hard_validation_pct": 86.94999754428864,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_compression_fashion_16k_coverage_v3_seed1/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": false,
+        "source_tree_sha256": "dd90f06573f2aa0707e3a9b118fdf7889103269d93427837f16284f1c646cbf6",
+        "training_implementation_sha256": "5ed307858a2a2801a8988c2f5ebe9f2263006212cfd0b5c0e2b2709d46a09df7"
+      },
+      {
+        "name": "second_compression_fashion_16k_coverage_v3_seed2",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_compression_fashion_16k_coverage_v3_seed2",
+        "seed": 2,
+        "best_hard_validation_pct": 87.03333139419556,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_compression_fashion_16k_coverage_v3_seed2/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": false,
+        "source_tree_sha256": "dd90f06573f2aa0707e3a9b118fdf7889103269d93427837f16284f1c646cbf6",
+        "training_implementation_sha256": "5ed307858a2a2801a8988c2f5ebe9f2263006212cfd0b5c0e2b2709d46a09df7"
+      }
+    ],
+    "fashion_16k_u2": [
+      {
+        "name": "second_final_u2_fashion_16k_seed0",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_final_u2_fashion_16k_seed0",
+        "seed": 0,
+        "best_hard_validation_pct": 86.48333102464676,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_final_u2_fashion_16k_seed0/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": false,
+        "source_tree_sha256": "65e22615b44202794382f479a6aff7b94ef3cbd88b2990cc965a6aac606796ff",
+        "training_implementation_sha256": "5ed307858a2a2801a8988c2f5ebe9f2263006212cfd0b5c0e2b2709d46a09df7"
+      },
+      {
+        "name": "second_final_u2_fashion_16k_seed1",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_final_u2_fashion_16k_seed1",
+        "seed": 1,
+        "best_hard_validation_pct": 86.43333146969478,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_final_u2_fashion_16k_seed1/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": false,
+        "source_tree_sha256": "65e22615b44202794382f479a6aff7b94ef3cbd88b2990cc965a6aac606796ff",
+        "training_implementation_sha256": "5ed307858a2a2801a8988c2f5ebe9f2263006212cfd0b5c0e2b2709d46a09df7"
+      },
+      {
+        "name": "second_final_u2_fashion_16k_seed2",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_final_u2_fashion_16k_seed2",
+        "seed": 2,
+        "best_hard_validation_pct": 86.89999808867772,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_final_u2_fashion_16k_seed2/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": false,
+        "source_tree_sha256": "65e22615b44202794382f479a6aff7b94ef3cbd88b2990cc965a6aac606796ff",
+        "training_implementation_sha256": "5ed307858a2a2801a8988c2f5ebe9f2263006212cfd0b5c0e2b2709d46a09df7"
+      }
+    ],
+    "dense_cifar10_s_random": [
+      {
+        "name": "paper_cifar10_small_random_seed0",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/paper_cifar10_small_random_seed0",
+        "seed": 0,
+        "best_hard_validation_pct": 50.15999889373779,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/paper_cifar10_small_random_seed0/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": true,
+        "source_tree_sha256": "7d5c2030a49a9e9b8626e3630a9034825e284131fdf11be6649b5f7e70b87d9d",
+        "training_implementation_sha256": null
+      },
+      {
+        "name": "paper_cifar10_small_random_seed1",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/paper_cifar10_small_random_seed1",
+        "seed": 1,
+        "best_hard_validation_pct": 49.03999888896942,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/paper_cifar10_small_random_seed1/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": true,
+        "source_tree_sha256": "6883f4d695e558a63e639ceb9accf78962797a06c6ccf2c72b9bc757ea6ec103",
+        "training_implementation_sha256": null
+      },
+      {
+        "name": "paper_cifar10_small_random_seed2",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/paper_cifar10_small_random_seed2",
+        "seed": 2,
+        "best_hard_validation_pct": 49.33999848365784,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/paper_cifar10_small_random_seed2/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": true,
+        "source_tree_sha256": "39cb5464d9ccc3200119c6a22822456b043998cd6a6dd787b2809516f23af33a",
+        "training_implementation_sha256": null
+      }
+    ],
+    "dense_cifar10_s_v3": [
+      {
+        "name": "paper_cifar10_small_semantic_balanced_v3_seed0",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/paper_cifar10_small_semantic_balanced_v3_seed0",
+        "seed": 0,
+        "best_hard_validation_pct": 52.8599989414215,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/paper_cifar10_small_semantic_balanced_v3_seed0/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": true,
+        "source_tree_sha256": "3b7662c118fce05a79c1d990e92c6367f378bb5168f2d1c6db842c92d0cd5b59",
+        "training_implementation_sha256": null
+      },
+      {
+        "name": "paper_cifar10_small_semantic_balanced_v3_seed1",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/paper_cifar10_small_semantic_balanced_v3_seed1",
+        "seed": 1,
+        "best_hard_validation_pct": 53.41999858617783,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/paper_cifar10_small_semantic_balanced_v3_seed1/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": true,
+        "source_tree_sha256": "3b7662c118fce05a79c1d990e92c6367f378bb5168f2d1c6db842c92d0cd5b59",
+        "training_implementation_sha256": null
+      },
+      {
+        "name": "paper_cifar10_small_semantic_balanced_v3_seed2",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/paper_cifar10_small_semantic_balanced_v3_seed2",
+        "seed": 2,
+        "best_hard_validation_pct": 53.05999886989593,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/paper_cifar10_small_semantic_balanced_v3_seed2/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": true,
+        "source_tree_sha256": "3b7662c118fce05a79c1d990e92c6367f378bb5168f2d1c6db842c92d0cd5b59",
+        "training_implementation_sha256": null
+      }
+    ],
+    "dense_cifar10_s_u2": [
+      {
+        "name": "second_final_u2_cifar10_s_seed0",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_final_u2_cifar10_s_seed0",
+        "seed": 0,
+        "best_hard_validation_pct": 52.91999930143356,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_final_u2_cifar10_s_seed0/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": false,
+        "source_tree_sha256": "65e22615b44202794382f479a6aff7b94ef3cbd88b2990cc965a6aac606796ff",
+        "training_implementation_sha256": "5ed307858a2a2801a8988c2f5ebe9f2263006212cfd0b5c0e2b2709d46a09df7"
+      },
+      {
+        "name": "second_final_u2_cifar10_s_seed1",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_final_u2_cifar10_s_seed1",
+        "seed": 1,
+        "best_hard_validation_pct": 52.49999874830246,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_final_u2_cifar10_s_seed1/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": false,
+        "source_tree_sha256": "65e22615b44202794382f479a6aff7b94ef3cbd88b2990cc965a6aac606796ff",
+        "training_implementation_sha256": "5ed307858a2a2801a8988c2f5ebe9f2263006212cfd0b5c0e2b2709d46a09df7"
+      },
+      {
+        "name": "second_final_u2_cifar10_s_seed2",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_final_u2_cifar10_s_seed2",
+        "seed": 2,
+        "best_hard_validation_pct": 53.079998552799225,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_final_u2_cifar10_s_seed2/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": false,
+        "source_tree_sha256": "65e22615b44202794382f479a6aff7b94ef3cbd88b2990cc965a6aac606796ff",
+        "training_implementation_sha256": "5ed307858a2a2801a8988c2f5ebe9f2263006212cfd0b5c0e2b2709d46a09df7"
+      }
+    ],
+    "dense_cifar100_3x128k_random": [
+      {
+        "name": "pilot_table4_cifar100_384k_depth3_random_seed0",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/pilot_table4_cifar100_384k_depth3_random_seed0",
+        "seed": 0,
+        "best_hard_validation_pct": 21.07999938726425,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/pilot_table4_cifar100_384k_depth3_random_seed0/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": false,
+        "source_tree_sha256": "e43745a9bf4ce85efeea278d7a4291ee7a63b271c3b4049117f0f424623a8d19",
+        "training_implementation_sha256": "49742b6494915f810c3cc2d203e080e636b239c57fb5d6bec8fa8bc8994e9968"
+      },
+      {
+        "name": "second_c100_3x128k_random_seed1",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_c100_3x128k_random_seed1",
+        "seed": 1,
+        "best_hard_validation_pct": 21.19999933242798,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_c100_3x128k_random_seed1/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": false,
+        "source_tree_sha256": "5e141aec5af74b3be02a92aa14d833b53a1abb18960c27dad6da67a5b925ab15",
+        "training_implementation_sha256": "5ed307858a2a2801a8988c2f5ebe9f2263006212cfd0b5c0e2b2709d46a09df7"
+      },
+      {
+        "name": "second_c100_3x128k_random_seed2",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_c100_3x128k_random_seed2",
+        "seed": 2,
+        "best_hard_validation_pct": 20.999999433755875,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_c100_3x128k_random_seed2/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": false,
+        "source_tree_sha256": "5e141aec5af74b3be02a92aa14d833b53a1abb18960c27dad6da67a5b925ab15",
+        "training_implementation_sha256": "5ed307858a2a2801a8988c2f5ebe9f2263006212cfd0b5c0e2b2709d46a09df7"
+      }
+    ],
+    "dense_cifar100_3x128k_v3": [
+      {
+        "name": "pilot_table4_cifar100_384k_depth3_coverage_v3_seed0",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/pilot_table4_cifar100_384k_depth3_coverage_v3_seed0",
+        "seed": 0,
+        "best_hard_validation_pct": 21.859999388456345,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/pilot_table4_cifar100_384k_depth3_coverage_v3_seed0/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": false,
+        "source_tree_sha256": "e43745a9bf4ce85efeea278d7a4291ee7a63b271c3b4049117f0f424623a8d19",
+        "training_implementation_sha256": "49742b6494915f810c3cc2d203e080e636b239c57fb5d6bec8fa8bc8994e9968"
+      },
+      {
+        "name": "second_c100_3x128k_coverage_v3_seed1",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_c100_3x128k_coverage_v3_seed1",
+        "seed": 1,
+        "best_hard_validation_pct": 21.87999936938286,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_c100_3x128k_coverage_v3_seed1/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": false,
+        "source_tree_sha256": "5e141aec5af74b3be02a92aa14d833b53a1abb18960c27dad6da67a5b925ab15",
+        "training_implementation_sha256": "5ed307858a2a2801a8988c2f5ebe9f2263006212cfd0b5c0e2b2709d46a09df7"
+      },
+      {
+        "name": "second_c100_3x128k_coverage_v3_seed2",
+        "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_c100_3x128k_coverage_v3_seed2",
+        "seed": 2,
+        "best_hard_validation_pct": 22.059999346733093,
+        "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_c100_3x128k_coverage_v3_seed2/best_checkpoint.pt",
+        "test_metrics_existing_at_freeze": false,
+        "source_tree_sha256": "5e141aec5af74b3be02a92aa14d833b53a1abb18960c27dad6da67a5b925ab15",
+        "training_implementation_sha256": "5ed307858a2a2801a8988c2f5ebe9f2263006212cfd0b5c0e2b2709d46a09df7"
+      }
+    ]
+  }
+}

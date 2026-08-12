@@ -1,0 +1,15 @@
+{
+  "phase": "third_bitlogic_cifar10_l_best_seed0_idlefill",
+  "wall_seconds": 11415.54893028806,
+  "skipped": [],
+  "finished": [
+    {
+      "name": "third_bitlogic_l_best_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 11415.547599175014,
+      "log": "experiments/coverage_dlgn/logs/third_bitlogic_cifar10_l_best_seed0_idlefill/third_bitlogic_l_best_seed0.log"
+    }
+  ],
+  "failed": []
+}

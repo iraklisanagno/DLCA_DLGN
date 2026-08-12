@@ -1,0 +1,34 @@
+{
+  "validation_freeze": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/summary/second_round_convolutional_validation_freeze.json",
+  "cuda_gpu": 1,
+  "pending_at_start": 4,
+  "reused_existing": [],
+  "records": [
+    {
+      "name": "second_final_u2_conv_cifar10_s_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_convolutional_final_test/second_final_u2_conv_cifar10_s_seed0.test.log"
+    },
+    {
+      "name": "second_full_conv_cifar10_s_legacy_v4_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_convolutional_final_test/second_full_conv_cifar10_s_legacy_v4_seed0.test.log"
+    },
+    {
+      "name": "second_full_conv_cifar10_s_random_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_convolutional_final_test/second_full_conv_cifar10_s_random_seed0.test.log"
+    },
+    {
+      "name": "second_full_conv_cifar10_s_unified_u1_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "log": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/logs/second_round_convolutional_final_test/second_full_conv_cifar10_s_unified_u1_seed0.test.log"
+    }
+  ],
+  "failures": [],
+  "missing_after": []
+}

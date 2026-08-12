@@ -1,0 +1,12 @@
+{
+  "phase": "second_round_compression_idle_fill",
+  "cuda_required": true,
+  "skip_completed": true,
+  "entries": [
+    {
+      "name": "second_compression_mnist_4k_random_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/compression/second_compression_mnist_4k_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_compression_mnist_4k_random_seed0"
+    }
+  ]
+}

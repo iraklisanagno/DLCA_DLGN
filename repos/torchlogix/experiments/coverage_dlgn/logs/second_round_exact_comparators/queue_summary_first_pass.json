@@ -1,0 +1,135 @@
+{
+  "phase": "second_round_exact_comparators",
+  "wall_seconds": 41646.05230940087,
+  "skipped": [],
+  "finished": [
+    {
+      "name": "second_exact_mnist_mommen_6x8k_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 3115.087363308994,
+      "log": "experiments/coverage_dlgn/logs/second_round_exact_comparators/second_exact_mnist_mommen_6x8k_seed0.log"
+    },
+    {
+      "name": "second_exact_mnist_lilogic_6x8k_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 5575.148452533176,
+      "log": "experiments/coverage_dlgn/logs/second_round_exact_comparators/second_exact_mnist_lilogic_6x8k_seed0.log"
+    },
+    {
+      "name": "second_exact_mnist_mommen_6x8k_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 3125.065941643901,
+      "log": "experiments/coverage_dlgn/logs/second_round_exact_comparators/second_exact_mnist_mommen_6x8k_seed1.log"
+    },
+    {
+      "name": "second_exact_mnist_bitlogic_6x8k_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 6715.1485090781935,
+      "log": "experiments/coverage_dlgn/logs/second_round_exact_comparators/second_exact_mnist_bitlogic_6x8k_seed0.log"
+    },
+    {
+      "name": "second_exact_mnist_mommen_6x8k_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 3115.0733566209674,
+      "log": "experiments/coverage_dlgn/logs/second_round_exact_comparators/second_exact_mnist_mommen_6x8k_seed2.log"
+    },
+    {
+      "name": "second_exact_mnist_lilogic_6x8k_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 5580.1268789360765,
+      "log": "experiments/coverage_dlgn/logs/second_round_exact_comparators/second_exact_mnist_lilogic_6x8k_seed1.log"
+    },
+    {
+      "name": "second_exact_mnist_lilogic_6x8k_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 5495.169976707082,
+      "log": "experiments/coverage_dlgn/logs/second_round_exact_comparators/second_exact_mnist_lilogic_6x8k_seed2.log"
+    },
+    {
+      "name": "second_exact_fashion_mommen_6x8k_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 1750.0432785318699,
+      "log": "experiments/coverage_dlgn/logs/second_round_exact_comparators/second_exact_fashion_mommen_6x8k_seed0.log"
+    },
+    {
+      "name": "second_exact_mnist_bitlogic_6x8k_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 6800.202857634053,
+      "log": "experiments/coverage_dlgn/logs/second_round_exact_comparators/second_exact_mnist_bitlogic_6x8k_seed2.log"
+    },
+    {
+      "name": "second_exact_fashion_lilogic_6x8k_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 5505.119969806867,
+      "log": "experiments/coverage_dlgn/logs/second_round_exact_comparators/second_exact_fashion_lilogic_6x8k_seed0.log"
+    },
+    {
+      "name": "second_exact_fashion_mommen_6x8k_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 1750.044712892035,
+      "log": "experiments/coverage_dlgn/logs/second_round_exact_comparators/second_exact_fashion_mommen_6x8k_seed1.log"
+    },
+    {
+      "name": "second_exact_fashion_bitlogic_6x8k_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 6800.157440686831,
+      "log": "experiments/coverage_dlgn/logs/second_round_exact_comparators/second_exact_fashion_bitlogic_6x8k_seed0.log"
+    },
+    {
+      "name": "second_exact_fashion_lilogic_6x8k_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 5500.135253687855,
+      "log": "experiments/coverage_dlgn/logs/second_round_exact_comparators/second_exact_fashion_lilogic_6x8k_seed1.log"
+    },
+    {
+      "name": "second_exact_fashion_bitlogic_6x8k_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 6795.155087127117,
+      "log": "experiments/coverage_dlgn/logs/second_round_exact_comparators/second_exact_fashion_bitlogic_6x8k_seed1.log"
+    },
+    {
+      "name": "second_exact_fashion_mommen_6x8k_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 1750.0344640810508,
+      "log": "experiments/coverage_dlgn/logs/second_round_exact_comparators/second_exact_fashion_mommen_6x8k_seed2.log"
+    },
+    {
+      "name": "second_exact_fashion_lilogic_6x8k_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 5580.143154181074,
+      "log": "experiments/coverage_dlgn/logs/second_round_exact_comparators/second_exact_fashion_lilogic_6x8k_seed2.log"
+    },
+    {
+      "name": "second_exact_fashion_bitlogic_6x8k_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 6710.18631996098,
+      "log": "experiments/coverage_dlgn/logs/second_round_exact_comparators/second_exact_fashion_bitlogic_6x8k_seed2.log"
+    }
+  ],
+  "failed": [
+    {
+      "name": "second_exact_mnist_bitlogic_6x8k_seed1",
+      "gpu": 0,
+      "return_code": -2,
+      "elapsed_seconds": 240.0042680411134,
+      "log": "experiments/coverage_dlgn/logs/second_round_exact_comparators/second_exact_mnist_bitlogic_6x8k_seed1.log"
+    }
+  ]
+}

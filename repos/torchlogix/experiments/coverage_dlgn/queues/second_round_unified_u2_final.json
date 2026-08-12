@@ -1,0 +1,57 @@
+{
+  "phase": "second_round_unified_u2_final",
+  "cuda_required": true,
+  "skip_completed": true,
+  "entries": [
+    {
+      "name": "second_final_u2_mnist_8k_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/unified_u2_final/second_final_u2_mnist_8k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_final_u2_mnist_8k_seed0"
+    },
+    {
+      "name": "second_final_u2_mnist_8k_seed1",
+      "config": "experiments/coverage_dlgn/configs/second_round/unified_u2_final/second_final_u2_mnist_8k_seed1.json",
+      "output": "experiments/coverage_dlgn/results/second_final_u2_mnist_8k_seed1"
+    },
+    {
+      "name": "second_final_u2_mnist_8k_seed2",
+      "config": "experiments/coverage_dlgn/configs/second_round/unified_u2_final/second_final_u2_mnist_8k_seed2.json",
+      "output": "experiments/coverage_dlgn/results/second_final_u2_mnist_8k_seed2"
+    },
+    {
+      "name": "second_final_u2_fashion_16k_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/unified_u2_final/second_final_u2_fashion_16k_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_final_u2_fashion_16k_seed0"
+    },
+    {
+      "name": "second_final_u2_fashion_16k_seed1",
+      "config": "experiments/coverage_dlgn/configs/second_round/unified_u2_final/second_final_u2_fashion_16k_seed1.json",
+      "output": "experiments/coverage_dlgn/results/second_final_u2_fashion_16k_seed1"
+    },
+    {
+      "name": "second_final_u2_fashion_16k_seed2",
+      "config": "experiments/coverage_dlgn/configs/second_round/unified_u2_final/second_final_u2_fashion_16k_seed2.json",
+      "output": "experiments/coverage_dlgn/results/second_final_u2_fashion_16k_seed2"
+    },
+    {
+      "name": "second_final_u2_cifar10_s_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/unified_u2_final/second_final_u2_cifar10_s_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_final_u2_cifar10_s_seed0"
+    },
+    {
+      "name": "second_final_u2_cifar10_s_seed1",
+      "config": "experiments/coverage_dlgn/configs/second_round/unified_u2_final/second_final_u2_cifar10_s_seed1.json",
+      "output": "experiments/coverage_dlgn/results/second_final_u2_cifar10_s_seed1"
+    },
+    {
+      "name": "second_final_u2_cifar10_s_seed2",
+      "config": "experiments/coverage_dlgn/configs/second_round/unified_u2_final/second_final_u2_cifar10_s_seed2.json",
+      "output": "experiments/coverage_dlgn/results/second_final_u2_cifar10_s_seed2"
+    },
+    {
+      "name": "second_final_u2_conv_cifar10_s_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/unified_u2_final/second_final_u2_conv_cifar10_s_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_final_u2_conv_cifar10_s_seed0"
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "architecture": "ClgnCifar10PaperSmall",
+  "boolean_input_channels": 9,
+  "c_source_generation_seconds": 0.12279908102937043,
+  "checkpoint": "best_checkpoint.pt",
+  "checkpoint_sha256": "50bbd0f31842dc8547c6484b14e2270a4acaca82b93320e627cd385f99608b88",
+  "circuit_after_simplification": {
+    "logic_gates": 251693,
+    "outputs": 10,
+    "sum_reductions": 10
+  },
+  "circuit_before_simplification": {
+    "input_bits": 9216,
+    "logic_gates": 599951,
+    "outputs": 10,
+    "sum_reductions": 10
+  },
+  "classifier_connections_init_method": "random",
+  "compile": {
+    "completed": true,
+    "opt_level": 0,
+    "seconds": 71.70712926797569,
+    "shared_object_bytes": 6569200
+  },
+  "compile_peak_rss_bytes": 1206431744,
+  "compile_peak_rss_delta_bytes": 0,
+  "compiled_cpu_benchmark": {
+    "batch_size": 128,
+    "examples_per_second": 40816.91425297837,
+    "includes_boolean_input_packing": true,
+    "latency_milliseconds_per_batch_mean": 3.135954844765365,
+    "latency_milliseconds_per_batch_std": 0.011671022907269207,
+    "microseconds_per_example_mean": 24.499647224729415,
+    "pack_bits": 64,
+    "single_process_single_generated_c_entrypoint": true,
+    "timed_batches": 10,
+    "warmup_batches": 3
+  },
+  "connections_init_method": "semantic_degree_balanced",
+  "conv_connections_init_method": "semantic_degree_balanced",
+  "cpu": "x86_64",
+  "equivalence": {
+    "compiled_c_vs_python_circuit": true,
+    "hardened_class_vs_python_circuit": true,
+    "pytorch_export_scores_vs_python_circuit": true,
+    "pytorch_export_vs_simplified_circuit": true,
+    "synthetic_examples": 1
+  },
+  "final_peak_rss_bytes": 1206431744,
+  "generated_c_source_bytes": 11368849,
+  "heldout_test_accessed": false,
+  "input_source": "deterministic synthetic Boolean tensors only",
+  "model_load_seconds": 0.45795457111671567,
+  "parameterization": "raw",
+  "python_circuit_one_example_seconds": 0.10594585398212075,
+  "run_label": "paper_s_u1_full",
+  "run_name": "second_full_conv_cifar10_s_unified_u1_seed0",
+  "simplification_seconds": 8.084411068120971,
+  "status": "COMPLETE",
+  "thresholds_per_rgb_channel": 3,
+  "torch_threads": 24,
+  "trace_peak_rss_bytes": 1206431744,
+  "trace_peak_rss_delta_bytes": 454217728,
+  "trace_seconds": 47.83309244690463,
+  "training_config_sha256": "3cd7ba30a9ef70d496dac59843787860b373cd96be0c0e1579ad796e4ffba377"
+}

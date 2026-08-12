@@ -69,6 +69,7 @@ class Dlgn(torch.nn.Sequential):
                 "coverage_hybrid",
                 "semantic_balanced_hybrid",
                 "semantic_degree_balanced",
+                "semantic_multiscale_balanced",
             }
             or (
                 llkw.get("connections", "fixed") == "fixed"
@@ -83,6 +84,7 @@ class Dlgn(torch.nn.Sequential):
             and strategy in {
                 "semantic_balanced_hybrid",
                 "semantic_degree_balanced",
+                "semantic_multiscale_balanced",
             }
             and semantics is not None
             else packed_identity(in_dim) if track_ancestry else None
@@ -101,6 +103,7 @@ class Dlgn(torch.nn.Sequential):
                 strategy in {
                     "semantic_balanced_hybrid",
                     "semantic_degree_balanced",
+                    "semantic_multiscale_balanced",
                 }
                 and semantics is not None
                 and i == 0
@@ -243,6 +246,62 @@ class DlgnFashionMnistBitLogic48k(Dlgn):
         )
 
 
+class DlgnFashionMnistBitLogic48kDepth6(Dlgn):
+    """Architecture-matched six-by-8K BitLogic Fashion-MNIST control."""
+
+    n_input_bits = 4
+    n_learnable_layers = 6
+
+    def __init__(self, **llkw):
+        tau = llkw.get("tau", 10.0)
+        super().__init__(
+            in_dim=28 * 28 * self.n_input_bits,
+            n_layers=6,
+            neurons_per_layer=8_000,
+            class_count=10,
+            tau=tau,
+            input_shape=(1, 28, 28),
+            input_layout="pixel_interleaved",
+            **llkw,
+        )
+
+
+class _DlgnFashionMnistSixLayerBudget(Dlgn):
+    n_input_bits = 3
+    widths = None
+
+    def __init__(self, **llkw):
+        if self.widths is None:
+            raise ValueError("Fashion-MNIST budget widths must be set")
+        tau = llkw.get("tau", 10.0)
+        super().__init__(
+            in_dim=28 * 28 * self.n_input_bits,
+            n_layers=6,
+            neurons_per_layer=list(self.widths),
+            class_count=10,
+            tau=tau,
+            input_shape=(1, 28, 28),
+            input_layout="pixel_interleaved",
+            **llkw,
+        )
+
+
+class DlgnFashionMnistBudget8k(_DlgnFashionMnistSixLayerBudget):
+    widths = (1_334, 1_334, 1_334, 1_334, 1_334, 1_330)
+
+
+class DlgnFashionMnistBudget16k(_DlgnFashionMnistSixLayerBudget):
+    widths = (2_666, 2_666, 2_666, 2_666, 2_666, 2_670)
+
+
+class DlgnFashionMnistBudget32k(_DlgnFashionMnistSixLayerBudget):
+    widths = (5_334, 5_334, 5_334, 5_334, 5_334, 5_330)
+
+
+class DlgnFashionMnistBudget64k(_DlgnFashionMnistSixLayerBudget):
+    widths = (10_666, 10_666, 10_666, 10_666, 10_666, 10_670)
+
+
 class DlgnFashionMnistSmall(DlgnFashionMnist):
     def __init__(self, **llkw):
         tau = llkw.get("tau", 1./0.1)
@@ -381,6 +440,62 @@ class DlgnMnistBitLogic48k(Dlgn):
             input_layout="pixel_interleaved",
             **llkw,
         )
+
+
+class DlgnMnistBitLogic48kDepth6(Dlgn):
+    """Architecture-matched six-by-8K BitLogic MNIST control."""
+
+    n_input_bits = 4
+    n_learnable_layers = 6
+
+    def __init__(self, **llkw):
+        tau = llkw.get("tau", 10.0)
+        super().__init__(
+            in_dim=28 * 28 * self.n_input_bits,
+            n_layers=6,
+            neurons_per_layer=8_000,
+            class_count=10,
+            tau=tau,
+            input_shape=(1, 28, 28),
+            input_layout="pixel_interleaved",
+            **llkw,
+        )
+
+
+class _DlgnMnistSixLayerBudget(Dlgn):
+    n_input_bits = 1
+    widths = None
+
+    def __init__(self, **llkw):
+        if self.widths is None:
+            raise ValueError("MNIST budget widths must be set")
+        tau = llkw.get("tau", 10.0)
+        super().__init__(
+            in_dim=28 * 28,
+            n_layers=6,
+            neurons_per_layer=list(self.widths),
+            class_count=10,
+            tau=tau,
+            input_shape=(1, 28, 28),
+            input_layout="pixel_interleaved",
+            **llkw,
+        )
+
+
+class DlgnMnistBudget4k(_DlgnMnistSixLayerBudget):
+    widths = (668, 668, 668, 668, 668, 660)
+
+
+class DlgnMnistBudget8k(_DlgnMnistSixLayerBudget):
+    widths = (1_334, 1_334, 1_334, 1_334, 1_334, 1_330)
+
+
+class DlgnMnistBudget16k(_DlgnMnistSixLayerBudget):
+    widths = (2_666, 2_666, 2_666, 2_666, 2_666, 2_670)
+
+
+class DlgnMnistBudget32k(_DlgnMnistSixLayerBudget):
+    widths = (5_334, 5_334, 5_334, 5_334, 5_334, 5_330)
 
 
 class DlgnMnistSmall(DlgnMnist):
@@ -737,6 +852,122 @@ class DlgnCifar10Large4(DlgnCifar10):
         )
 
 
+class DlgnCifar10LilogicM(DlgnCifar10):
+    """LILogicNet CIFAR-10 64K coordinate: one rank-2 layer.
+
+    Fojcik et al. use seven fixed linear thresholds per RGB channel and a
+    GroupSum temperature of 90.  The fixed-random and frozen-U2 arms use this
+    class directly; the local Top-32 comparator uses the learnable subclass.
+    """
+
+    n_input_bits = 7
+
+    def __init__(self, **llkw):
+        tau = llkw.get("tau", 90.0)
+        super().__init__(
+            n_layers=1,
+            neurons_per_layer=64_000,
+            tau=tau,
+            **llkw,
+        )
+
+
+class DlgnCifar10LilogicMTop32(DlgnCifar10LilogicM):
+    """One-layer 64K LILogicNet Top-32 reproduction coordinate."""
+
+    n_learnable_layers = 1
+
+
+class DlgnCifar10LilogicL(DlgnCifar10):
+    """LILogicNet-L CIFAR-10 coordinate: two rank-2 128K layers."""
+
+    n_input_bits = 7
+
+    def __init__(self, **llkw):
+        tau = llkw.get("tau", 100.0)
+        super().__init__(
+            n_layers=2,
+            neurons_per_layer=128_000,
+            tau=tau,
+            **llkw,
+        )
+
+
+class DlgnCifar10LilogicLTop32(DlgnCifar10LilogicL):
+    """Exact two-layer 256K LILogicNet-L Top-32 coordinate."""
+
+    n_learnable_layers = 2
+
+
+class _DlgnCifar10BitLogicRank2(DlgnCifar10):
+    """Rank-2 fixed-routing coordinate of BitLogic's CIFAR-10 protocol."""
+
+    n_input_bits = 3
+    width = None
+
+    def __init__(self, **llkw):
+        if self.width is None:
+            raise ValueError("BitLogic CIFAR-10 width must be set")
+        tau = llkw.get("tau", 1.0)
+        connections_kwargs = dict(llkw.get("connections_kwargs", {}))
+        # At w=4K, 8K rank-2 input slots cannot cover all 9,216 encoded
+        # inputs.  BitLogic explicitly permits this compact coordinate.
+        connections_kwargs.setdefault("allow_partial_input_coverage", True)
+        llkw["connections_kwargs"] = connections_kwargs
+        super().__init__(
+            n_layers=2,
+            neurons_per_layer=self.width,
+            tau=tau,
+            **llkw,
+        )
+
+
+class DlgnCifar10BitLogicRank2S(_DlgnCifar10BitLogicRank2):
+    width = 4_000
+
+
+class DlgnCifar10BitLogicRank2M(_DlgnCifar10BitLogicRank2):
+    width = 16_000
+
+
+class DlgnCifar10BitLogicRank2L(_DlgnCifar10BitLogicRank2):
+    width = 64_000
+
+
+class _DlgnCifar10BitLogicBest(DlgnCifar10):
+    """Rank-4 learnable-16 BitLogic best-of-space CIFAR-10 coordinate."""
+
+    n_input_bits = 4
+    n_learnable_layers = 2
+    width = None
+
+    def __init__(self, **llkw):
+        if self.width is None:
+            raise ValueError("BitLogic CIFAR-10 width must be set")
+        tau = llkw.get("tau", 1.0)
+        connections_kwargs = dict(llkw.get("connections_kwargs", {}))
+        connections_kwargs.setdefault("allow_partial_input_coverage", True)
+        llkw["connections_kwargs"] = connections_kwargs
+        super().__init__(
+            n_layers=2,
+            neurons_per_layer=self.width,
+            tau=tau,
+            **llkw,
+        )
+
+
+class DlgnCifar10BitLogicBestS(_DlgnCifar10BitLogicBest):
+    width = 4_000
+
+
+class DlgnCifar10BitLogicBestM(_DlgnCifar10BitLogicBest):
+    width = 16_000
+
+
+class DlgnCifar10BitLogicBestL(_DlgnCifar10BitLogicBest):
+    width = 64_000
+
+
 class DlgnCifar100BitLogic(Dlgn):
     """Rank-2 coordinate of BitLogic's two-layer CIFAR-100 common protocol."""
 
@@ -817,6 +1048,46 @@ class DlgnCifar100Budget384kDepth3(Dlgn):
             in_dim=3 * 32 * 32 * self.n_input_bits,
             n_layers=3,
             neurons_per_layer=128_000,
+            class_count=100,
+            tau=tau,
+            input_shape=(3, 32, 32),
+            input_layout="channel_interleaved",
+            **llkw,
+        )
+
+
+class DlgnCifar100Budget384kClassScaled(Dlgn):
+    """384K shallow CIFAR-100 model with twice-width class-output layer."""
+
+    n_input_bits = 3
+    n_learnable_layers = 0
+
+    def __init__(self, **llkw):
+        tau = llkw.get("tau", 10.0)
+        super().__init__(
+            in_dim=3 * 32 * 32 * self.n_input_bits,
+            n_layers=3,
+            neurons_per_layer=[96_000, 96_000, 192_000],
+            class_count=100,
+            tau=tau,
+            input_shape=(3, 32, 32),
+            input_layout="channel_interleaved",
+            **llkw,
+        )
+
+
+class DlgnCifar100Budget384kClassHeavy(Dlgn):
+    """384K shallow CIFAR-100 model with four-times-width output layer."""
+
+    n_input_bits = 3
+    n_learnable_layers = 0
+
+    def __init__(self, **llkw):
+        tau = llkw.get("tau", 10.0)
+        super().__init__(
+            in_dim=3 * 32 * 32 * self.n_input_bits,
+            n_layers=3,
+            neurons_per_layer=[64_000, 64_000, 256_000],
             class_count=100,
             tau=tau,
             input_shape=(3, 32, 32),

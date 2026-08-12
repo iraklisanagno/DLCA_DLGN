@@ -1,0 +1,1384 @@
+{
+  "protocol": "THIRD_ROUND_PROTOCOL.md",
+  "selection": "predeclared best hardened-validation and final checkpoints",
+  "validation_frozen": true,
+  "held_out_test_access_added_by_this_script": false,
+  "run_count": 38,
+  "checkpoint_count": 76,
+  "groups": {
+    "third_u2_dense_cifar10_ml": [
+      {
+        "phase": "third_u2_dense_cifar10_ml",
+        "name": "third_u2_cifar10_m_seed0",
+        "family": "u2",
+        "coordinate": "m",
+        "seed": 0,
+        "run_dir": "experiments/coverage_dlgn/results/third_u2_cifar10_m_seed0",
+        "architecture": "DlgnCifar10Medium",
+        "best_hard_validation_pct": 59.31999880075455,
+        "final_hard_validation_pct": 58.579998672008514,
+        "source_tree_sha256": "4392779bbc635a072c096ee05b8f9424f87af2b4e442ebf91e5076872d015ff4",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "a976f6f7dcd92cd3ed0425924e08a3e41eed38be033106aa0bd69f8f3dd3812f",
+            "bytes": 2391
+          },
+          "environment.json": {
+            "sha256": "707dda87011de8d0d0dfedfc6aa2f143d0eed78eed61a02adffea824e8a3439a",
+            "bytes": 17655
+          },
+          "run_summary.json": {
+            "sha256": "1ca1ec7d3bf7fc0b23dd01c136017a8ecb193ff59c7c456989af0c9ffc19db94",
+            "bytes": 2357
+          },
+          "best_checkpoint.pt": {
+            "sha256": "8756bec711fa74a76dc7e804701dfb7d17522ea82dc061c66c36d839767461d5",
+            "bytes": 40967937
+          },
+          "final_checkpoint.pt": {
+            "sha256": "803c8564ba64c25f2613a6b2e7cfaa27891392101346bce431d238c0b250e45a",
+            "bytes": 40967952
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_u2_dense_cifar10_ml",
+        "name": "third_u2_cifar10_m_seed1",
+        "family": "u2",
+        "coordinate": "m",
+        "seed": 1,
+        "run_dir": "experiments/coverage_dlgn/results/third_u2_cifar10_m_seed1",
+        "architecture": "DlgnCifar10Medium",
+        "best_hard_validation_pct": 59.779998779296875,
+        "final_hard_validation_pct": 59.21999841928483,
+        "source_tree_sha256": "4392779bbc635a072c096ee05b8f9424f87af2b4e442ebf91e5076872d015ff4",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "08bfe973e13c654d157cad4ce78970ae262df69a49a0717ef9e63e6f12eed3c1",
+            "bytes": 2391
+          },
+          "environment.json": {
+            "sha256": "e0b487fe9162f5257c6c07bbe084d71fb0183ae4ac7bdd8235876c86e21af113",
+            "bytes": 17719
+          },
+          "run_summary.json": {
+            "sha256": "4122e9a296bdc8f2e2d4046abf7f3e92fda4903b183dd88430e0ff9ede5daad7",
+            "bytes": 2355
+          },
+          "best_checkpoint.pt": {
+            "sha256": "0e21344291fadca98bbb6e538e9104ba4425bfc2d66e4c7575ee643b7735ac8f",
+            "bytes": 40967937
+          },
+          "final_checkpoint.pt": {
+            "sha256": "5eef7a95d946b621f2b75126acad0ece9a11d513017cb856db50f09706622d71",
+            "bytes": 40967952
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_u2_dense_cifar10_ml",
+        "name": "third_u2_cifar10_m_seed2",
+        "family": "u2",
+        "coordinate": "m",
+        "seed": 2,
+        "run_dir": "experiments/coverage_dlgn/results/third_u2_cifar10_m_seed2",
+        "architecture": "DlgnCifar10Medium",
+        "best_hard_validation_pct": 59.539999067783356,
+        "final_hard_validation_pct": 59.25999844074249,
+        "source_tree_sha256": "4392779bbc635a072c096ee05b8f9424f87af2b4e442ebf91e5076872d015ff4",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "fbd85e2e9827c15c02ccec67548aad64d3a486a7d4edc6a7eaaba060552e4bf5",
+            "bytes": 2391
+          },
+          "environment.json": {
+            "sha256": "6c10eda517b982f542d9c40863590a6f2284a385b3d7571d4cd125c7ccbfc5e5",
+            "bytes": 17783
+          },
+          "run_summary.json": {
+            "sha256": "91cbb8d68e651049f7a0141b7c17fe1f0f0a6a0960693fd6ff37d50b415a16ea",
+            "bytes": 2358
+          },
+          "best_checkpoint.pt": {
+            "sha256": "59b7859aae4d13ff96a4314867f47a518d479423d810677668096ef282d518a1",
+            "bytes": 40967937
+          },
+          "final_checkpoint.pt": {
+            "sha256": "9aa12897299063a8722032051954b8c8253601f5e67ab6516da2492e97aed73f",
+            "bytes": 40967952
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_u2_dense_cifar10_ml",
+        "name": "third_u2_cifar10_l_seed0",
+        "family": "u2",
+        "coordinate": "l",
+        "seed": 0,
+        "run_dir": "experiments/coverage_dlgn/results/third_u2_cifar10_l_seed0",
+        "architecture": "DlgnCifar10Large",
+        "best_hard_validation_pct": 61.559998214244835,
+        "final_hard_validation_pct": 61.33999878168106,
+        "source_tree_sha256": "4392779bbc635a072c096ee05b8f9424f87af2b4e442ebf91e5076872d015ff4",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "2ddf3895af88a1e867489278468d73f87bb4539f39212e16d0e1cf18639f8aeb",
+            "bytes": 2390
+          },
+          "environment.json": {
+            "sha256": "2df546c9d45f8ed0f6916690b8ccfadebd72fd7cd22ea4120f9b3ccf7f7b481e",
+            "bytes": 17847
+          },
+          "run_summary.json": {
+            "sha256": "267dd49e9539bae02963ff90b0ff3bed96cc974da5102314cf3ec4788a4a377f",
+            "bytes": 2762
+          },
+          "best_checkpoint.pt": {
+            "sha256": "e457dd90376a919263a8d811747d0a2e176d220918b1fb4877e3acad9e8fca35",
+            "bytes": 102408778
+          },
+          "final_checkpoint.pt": {
+            "sha256": "9aafc071e288d8b01c18d8c3fb1648648e520c6c3b23a6938deea8904e298ee0",
+            "bytes": 102408795
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_u2_dense_cifar10_ml",
+        "name": "third_u2_cifar10_l_seed1",
+        "family": "u2",
+        "coordinate": "l",
+        "seed": 1,
+        "run_dir": "experiments/coverage_dlgn/results/third_u2_cifar10_l_seed1",
+        "architecture": "DlgnCifar10Large",
+        "best_hard_validation_pct": 61.65999841690063,
+        "final_hard_validation_pct": 60.95999884605408,
+        "source_tree_sha256": "4392779bbc635a072c096ee05b8f9424f87af2b4e442ebf91e5076872d015ff4",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "ff5f92159be25f40ad88d35fb930bf012ec721fa9fffe6f7728f0010fe04b659",
+            "bytes": 2390
+          },
+          "environment.json": {
+            "sha256": "dcc6877b3e8d51f19f2c375bdfd1598881fb981e0d5a4db43470f4be1b535bfd",
+            "bytes": 17911
+          },
+          "run_summary.json": {
+            "sha256": "522ab395bb20a3a5a17ec51d3ba818a87bfb99d175fff89a297316dc75752191",
+            "bytes": 2763
+          },
+          "best_checkpoint.pt": {
+            "sha256": "f8d4dab70abc0c3a6d5a2462eb046fb56ba71dded8c246e33cf27f8e82a974dc",
+            "bytes": 102408778
+          },
+          "final_checkpoint.pt": {
+            "sha256": "d7a0c69c061254f407ae8b63d1073b5f250e2637e0f2feb60d952d4cc0c1a724",
+            "bytes": 102408795
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_u2_dense_cifar10_ml",
+        "name": "third_u2_cifar10_l_seed2",
+        "family": "u2",
+        "coordinate": "l",
+        "seed": 2,
+        "run_dir": "experiments/coverage_dlgn/results/third_u2_cifar10_l_seed2",
+        "architecture": "DlgnCifar10Large",
+        "best_hard_validation_pct": 60.99999910593033,
+        "final_hard_validation_pct": 60.83999878168106,
+        "source_tree_sha256": "4392779bbc635a072c096ee05b8f9424f87af2b4e442ebf91e5076872d015ff4",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "2f5a2af1d623d531290b07756248e69e5cf4b25ac84df6d0c775d37e01f33282",
+            "bytes": 2390
+          },
+          "environment.json": {
+            "sha256": "ed4cecc3a511f758019f87686b923e045e2d6372545ee1284454cd9efe679387",
+            "bytes": 17975
+          },
+          "run_summary.json": {
+            "sha256": "2acc55e651c04ffbc52f31cbe8b4aa2a01164f5b30d2d14b9037f04cc9b979f7",
+            "bytes": 2761
+          },
+          "best_checkpoint.pt": {
+            "sha256": "be25a8925588bc4e6952d42199452cd69d66d4e85c7acba2a6b1d395b887c27d",
+            "bytes": 102408778
+          },
+          "final_checkpoint.pt": {
+            "sha256": "291b73377ff20f64afdc009cf682888f687466fe3efabae4a854af70440cb55c",
+            "bytes": 102408795
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      }
+    ],
+    "third_lilogic_cifar10": [
+      {
+        "phase": "third_lilogic_cifar10",
+        "name": "third_lilogic_m_random_seed0",
+        "family": "random",
+        "coordinate": "m",
+        "seed": 0,
+        "run_dir": "experiments/coverage_dlgn/results/third_lilogic_m_random_seed0",
+        "architecture": "DlgnCifar10LilogicM",
+        "best_hard_validation_pct": 49.06000004291534,
+        "final_hard_validation_pct": 48.939999980926515,
+        "source_tree_sha256": "c975bda9204b691c4030529364712c81e5f99461e3c819f9f8714f0df1d34647",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "a30b1f005a14952f26cd62b9a99cd37d2a76f1e3063aea73257a3a11bc684ff6",
+            "bytes": 2377
+          },
+          "environment.json": {
+            "sha256": "3c702d0fbe1427d9b798099cc24dbc825a6da5b4203d0de97a92b301fecaae12",
+            "bytes": 18653
+          },
+          "run_summary.json": {
+            "sha256": "c51b7208d461bcbee31ec0f8f4642f7ca12bc30da6723670545287109b556822",
+            "bytes": 1130
+          },
+          "best_checkpoint.pt": {
+            "sha256": "c75c7a6437abb15e792ca0287feb35e098fa726561e079f9a758698ee912d1ff",
+            "bytes": 5125609
+          },
+          "final_checkpoint.pt": {
+            "sha256": "1dc4cb906ad2c61a432cd9d495b604c9deae3d67937f0656c0f568677a719ae5",
+            "bytes": 5125618
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_lilogic_cifar10",
+        "name": "third_lilogic_m_random_seed1",
+        "family": "random",
+        "coordinate": "m",
+        "seed": 1,
+        "run_dir": "experiments/coverage_dlgn/results/third_lilogic_m_random_seed1",
+        "architecture": "DlgnCifar10LilogicM",
+        "best_hard_validation_pct": 50.04000007629394,
+        "final_hard_validation_pct": 49.939999952316285,
+        "source_tree_sha256": "c975bda9204b691c4030529364712c81e5f99461e3c819f9f8714f0df1d34647",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "a69c245f118271ba783e184573c8cecd4b59c2e7e4322ac121d54b84add03aaf",
+            "bytes": 2377
+          },
+          "environment.json": {
+            "sha256": "7313dca87ce4fc01dff5b72bee9004f2786504e1221e1cc4b425f756b30eb95b",
+            "bytes": 18721
+          },
+          "run_summary.json": {
+            "sha256": "ec52dbffe5e50231aa388844428a588e07a83d72164f4aafdedf280d1932c2ed",
+            "bytes": 1130
+          },
+          "best_checkpoint.pt": {
+            "sha256": "58589693f3bdd8d8b2af543b714a0d694aba8e2e069b3cf31d0b015bc8835757",
+            "bytes": 5125609
+          },
+          "final_checkpoint.pt": {
+            "sha256": "c955d6d9c735af61057c44da08e647bc3761a51d0e0ff013b30e95625a39ab49",
+            "bytes": 5125618
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_lilogic_cifar10",
+        "name": "third_lilogic_m_random_seed2",
+        "family": "random",
+        "coordinate": "m",
+        "seed": 2,
+        "run_dir": "experiments/coverage_dlgn/results/third_lilogic_m_random_seed2",
+        "architecture": "DlgnCifar10LilogicM",
+        "best_hard_validation_pct": 50.01999995231628,
+        "final_hard_validation_pct": 49.68000007629394,
+        "source_tree_sha256": "c975bda9204b691c4030529364712c81e5f99461e3c819f9f8714f0df1d34647",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "a0e0e81c699ebcd7ddb2bdf14f23cbaddfddbfb4ae0c8682906f3fc3fb1a6e01",
+            "bytes": 2377
+          },
+          "environment.json": {
+            "sha256": "d180770d16a2e5e8de1941faa3a81d59f01bdef36ff110ea88ecd25152b3f5ed",
+            "bytes": 18789
+          },
+          "run_summary.json": {
+            "sha256": "4074fb7a765f0facc1bcf928c841f276af961072b38ccaf81e27af3897c8edab",
+            "bytes": 1132
+          },
+          "best_checkpoint.pt": {
+            "sha256": "3958194257d97dafcf81e3edcd314f412e2e252005c0004a5d4bf8e29ad74f95",
+            "bytes": 5125609
+          },
+          "final_checkpoint.pt": {
+            "sha256": "9201ecd03597eba29e3df486a7290c5a326134aba2828415f3b09e8a904dd4d0",
+            "bytes": 5125618
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_lilogic_cifar10",
+        "name": "third_lilogic_m_u2_seed0",
+        "family": "u2",
+        "coordinate": "m",
+        "seed": 0,
+        "run_dir": "experiments/coverage_dlgn/results/third_lilogic_m_u2_seed0",
+        "architecture": "DlgnCifar10LilogicM",
+        "best_hard_validation_pct": 53.17999995231628,
+        "final_hard_validation_pct": 53.17999995231628,
+        "source_tree_sha256": "c975bda9204b691c4030529364712c81e5f99461e3c819f9f8714f0df1d34647",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "07076861a8b9a6811d0b93147c723efde3e1cf2d0ab38a292dddbc10db9e1c7b",
+            "bytes": 2391
+          },
+          "environment.json": {
+            "sha256": "73c667c6cbb3745c09d010b2a337c670846ead41a76d555696e7dd26d079b64d",
+            "bytes": 18853
+          },
+          "run_summary.json": {
+            "sha256": "d10b1bec16713a73e7a810688c8511fe7408e12a5752b74d13817bc39d2ee6f2",
+            "bytes": 1148
+          },
+          "best_checkpoint.pt": {
+            "sha256": "4475c5edb0a6dc5f1544473656196e39c60518f3ef924cb24d0566abd74b7ce7",
+            "bytes": 5125673
+          },
+          "final_checkpoint.pt": {
+            "sha256": "558e66472c55814b1ade5e9d75eca816960fa13aa27e7625cc8640a0ffb0ef21",
+            "bytes": 5125682
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_lilogic_cifar10",
+        "name": "third_lilogic_m_u2_seed1",
+        "family": "u2",
+        "coordinate": "m",
+        "seed": 1,
+        "run_dir": "experiments/coverage_dlgn/results/third_lilogic_m_u2_seed1",
+        "architecture": "DlgnCifar10LilogicM",
+        "best_hard_validation_pct": 53.1399999332428,
+        "final_hard_validation_pct": 53.1399999332428,
+        "source_tree_sha256": "c975bda9204b691c4030529364712c81e5f99461e3c819f9f8714f0df1d34647",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "5cb74b50f88ca829e6aad9404b7a6db7266a62f76c6a0e123031b1407aa72128",
+            "bytes": 2391
+          },
+          "environment.json": {
+            "sha256": "1baf7f27fa86d253a5037cbd4eb87cb323142f4dc422f59a5da5f129f4b2c99b",
+            "bytes": 18917
+          },
+          "run_summary.json": {
+            "sha256": "6d44f0cd29c5d145b04c1103b955bdce4d5c27d34726ccd08cf38430610ebe54",
+            "bytes": 1145
+          },
+          "best_checkpoint.pt": {
+            "sha256": "de0f2af4a3e7d19adb20fb409bbf556b3f18c6edfc0549119217aef282101fb2",
+            "bytes": 5125673
+          },
+          "final_checkpoint.pt": {
+            "sha256": "7361fac4211559bc1bf8f9c23fc352eb8c8ab280fc8b552bd1092ca81ca316a4",
+            "bytes": 5125682
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_lilogic_cifar10",
+        "name": "third_lilogic_m_u2_seed2",
+        "family": "u2",
+        "coordinate": "m",
+        "seed": 2,
+        "run_dir": "experiments/coverage_dlgn/results/third_lilogic_m_u2_seed2",
+        "architecture": "DlgnCifar10LilogicM",
+        "best_hard_validation_pct": 52.460000076293944,
+        "final_hard_validation_pct": 52.30000007629394,
+        "source_tree_sha256": "c975bda9204b691c4030529364712c81e5f99461e3c819f9f8714f0df1d34647",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "0f35d9b7a365d694836a182bcd01ff40c8c830de0529d327440230c10b5538e0",
+            "bytes": 2391
+          },
+          "environment.json": {
+            "sha256": "5df5313b5a168bb909b73da4a269bbb3a8c32c6b7674b62211de11fea631201f",
+            "bytes": 18981
+          },
+          "run_summary.json": {
+            "sha256": "50cb8946d22350c6672b3f451a12cb2785f31e24439b97ad5bd2149276cc6f15",
+            "bytes": 1148
+          },
+          "best_checkpoint.pt": {
+            "sha256": "6a4a0106dfe55bdc64463c4c6c5d59606295723705bb7d6d375a9bb797db8d17",
+            "bytes": 5125673
+          },
+          "final_checkpoint.pt": {
+            "sha256": "47b3071172d0709708a9a7670385caabc761e37046bccdc735cb7d817006e38a",
+            "bytes": 5125682
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_lilogic_cifar10",
+        "name": "third_lilogic_m_top32_seed0",
+        "family": "top32",
+        "coordinate": "m",
+        "seed": 0,
+        "run_dir": "experiments/coverage_dlgn/results/third_lilogic_m_top32_seed0",
+        "architecture": "DlgnCifar10LilogicMTop32",
+        "best_hard_validation_pct": 58.04000002861023,
+        "final_hard_validation_pct": 58.04000002861023,
+        "source_tree_sha256": "c975bda9204b691c4030529364712c81e5f99461e3c819f9f8714f0df1d34647",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "a92d9beda4746890e19276083c68dfb9b533cd7094f8087a2724f14d7d9a22b7",
+            "bytes": 2380
+          },
+          "environment.json": {
+            "sha256": "4edb7afd196c1be050a4f13a8fab83167062f973838d430c38f4507c89e8abb6",
+            "bytes": 19048
+          },
+          "run_summary.json": {
+            "sha256": "c5b6d2b9454862ae02428c0e07108ae4c5f96fd9b7e65b908a190ee444740349",
+            "bytes": 1126
+          },
+          "best_checkpoint.pt": {
+            "sha256": "84a36deac6f60306507cb77c5bf275c5eeb298e7a5f6186e2f86be37161148c8",
+            "bytes": 53253933
+          },
+          "final_checkpoint.pt": {
+            "sha256": "d6e07e104aa4ab2af27f2a5d41a624094e8588de8c78da498585d9e8066ef1c5",
+            "bytes": 53253943
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_lilogic_cifar10",
+        "name": "third_lilogic_l_random_seed0",
+        "family": "random",
+        "coordinate": "l",
+        "seed": 0,
+        "run_dir": "experiments/coverage_dlgn/results/third_lilogic_l_random_seed0",
+        "architecture": "DlgnCifar10LilogicL",
+        "best_hard_validation_pct": 55.12000000953674,
+        "final_hard_validation_pct": 55.12000000953674,
+        "source_tree_sha256": "c975bda9204b691c4030529364712c81e5f99461e3c819f9f8714f0df1d34647",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "3283306ae5f42e6426a869ac872db1358a79e4db48ab10a5726c32413d3c90de",
+            "bytes": 2378
+          },
+          "environment.json": {
+            "sha256": "96c0931d1bf13381971d6a90fd478096d16af460f94cfe4c54920c0f341e382a",
+            "bytes": 19116
+          },
+          "run_summary.json": {
+            "sha256": "5db9928f49f276b5d0dbcfcf24e0e36cd593d9e0b86d6d658c9d1a334853e468",
+            "bytes": 1512
+          },
+          "best_checkpoint.pt": {
+            "sha256": "5654ecd46029be4a9c563ebd36ca4857556548d13f3d640c9defe43d23a4e726",
+            "bytes": 20486385
+          },
+          "final_checkpoint.pt": {
+            "sha256": "c4131c5df095045ed8162d5bdc8f0a7b1979b4b83c7b5f53d8b8196c235c78ad",
+            "bytes": 20486396
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_lilogic_cifar10",
+        "name": "third_lilogic_l_random_seed1",
+        "family": "random",
+        "coordinate": "l",
+        "seed": 1,
+        "run_dir": "experiments/coverage_dlgn/results/third_lilogic_l_random_seed1",
+        "architecture": "DlgnCifar10LilogicL",
+        "best_hard_validation_pct": 56.09999997138977,
+        "final_hard_validation_pct": 55.81999997138977,
+        "source_tree_sha256": "c975bda9204b691c4030529364712c81e5f99461e3c819f9f8714f0df1d34647",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "250665095e61960bc16b71be63d4c4eca8c9f72cc656cfe00a7da6e79a965995",
+            "bytes": 2378
+          },
+          "environment.json": {
+            "sha256": "6f7ab0616d4ce2c5a2393a395ea0ad254bcc2eef007aae629ff3cd183ef5d068",
+            "bytes": 19184
+          },
+          "run_summary.json": {
+            "sha256": "e56b9fa19f3623158d629b27e7dd44e67fd9573e2991ee80638f3310a36cb75b",
+            "bytes": 1511
+          },
+          "best_checkpoint.pt": {
+            "sha256": "07093bd3af25f80eef4c649d1eb6f5217234c51b55fcf1beb6a338fde8865548",
+            "bytes": 20486385
+          },
+          "final_checkpoint.pt": {
+            "sha256": "c8119dd1316b3ff33825d2b00f3f50e80a47d666408ffc5e36c415a222f13dfe",
+            "bytes": 20486396
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_lilogic_cifar10",
+        "name": "third_lilogic_l_random_seed2",
+        "family": "random",
+        "coordinate": "l",
+        "seed": 2,
+        "run_dir": "experiments/coverage_dlgn/results/third_lilogic_l_random_seed2",
+        "architecture": "DlgnCifar10LilogicL",
+        "best_hard_validation_pct": 55.86000000953675,
+        "final_hard_validation_pct": 55.64000004768371,
+        "source_tree_sha256": "c975bda9204b691c4030529364712c81e5f99461e3c819f9f8714f0df1d34647",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "37a36e6005271a040413624ec747a6c763de22214b1f286e044b0f44224d45fa",
+            "bytes": 2378
+          },
+          "environment.json": {
+            "sha256": "6314c0548e9ce65999d4c3a29f5e341c8b8e76de5c39a1692da29827e40b272b",
+            "bytes": 19252
+          },
+          "run_summary.json": {
+            "sha256": "6312e74e7041a87d47d234252dcbeac4934d3cd71d0742fed49515f7160c91c4",
+            "bytes": 1512
+          },
+          "best_checkpoint.pt": {
+            "sha256": "54c72f623effb360bed576b415d0626ef9f5365c18c0213ec249130fab4f8724",
+            "bytes": 20486385
+          },
+          "final_checkpoint.pt": {
+            "sha256": "c1d8f8db95dfd1682ea297e2e20e0163e4e6e722a5475a1e489c5899cac2492d",
+            "bytes": 20486396
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_lilogic_cifar10",
+        "name": "third_lilogic_l_u2_seed0",
+        "family": "u2",
+        "coordinate": "l",
+        "seed": 0,
+        "run_dir": "experiments/coverage_dlgn/results/third_lilogic_l_u2_seed0",
+        "architecture": "DlgnCifar10LilogicL",
+        "best_hard_validation_pct": 60.82000001907348,
+        "final_hard_validation_pct": 60.82000001907348,
+        "source_tree_sha256": "c975bda9204b691c4030529364712c81e5f99461e3c819f9f8714f0df1d34647",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "973772f1899c4ac090ae33de42830dd5138c5cdb6b238ca76b9d6da69044a0dc",
+            "bytes": 2392
+          },
+          "environment.json": {
+            "sha256": "be6a5d187d8cf1890858d3b0310bc765527985bd340c1de4c09fc61f7bf9cb18",
+            "bytes": 19316
+          },
+          "run_summary.json": {
+            "sha256": "39eb41ee576a1f44f9a7624d73cc1391126deb84e844fb6754067eaec0584658",
+            "bytes": 1551
+          },
+          "best_checkpoint.pt": {
+            "sha256": "db0f71ba0f9f7cbf4fe0ef0d673006b86e9c8acd082ce0143591b6acd11b2078",
+            "bytes": 20486449
+          },
+          "final_checkpoint.pt": {
+            "sha256": "6d8163bc471b84b0f2c0711dd763dca8715c12e0d190b34ad4d73bc61739c2d2",
+            "bytes": 20486460
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_lilogic_cifar10",
+        "name": "third_lilogic_l_u2_seed1",
+        "family": "u2",
+        "coordinate": "l",
+        "seed": 1,
+        "run_dir": "experiments/coverage_dlgn/results/third_lilogic_l_u2_seed1",
+        "architecture": "DlgnCifar10LilogicL",
+        "best_hard_validation_pct": 61.299999961853025,
+        "final_hard_validation_pct": 60.96,
+        "source_tree_sha256": "c975bda9204b691c4030529364712c81e5f99461e3c819f9f8714f0df1d34647",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "02712fff150c2d0600c1922bbad130a08b00f4ea36d0bc0dfc58b024050af382",
+            "bytes": 2392
+          },
+          "environment.json": {
+            "sha256": "f79b17f87b934344ce8b79ce2ae20d48678b2b4fe1f2fb81eb7383c7fca90890",
+            "bytes": 19380
+          },
+          "run_summary.json": {
+            "sha256": "2d1c8f86274b119d25fb9a2a0b92ff471971d7dbff8ba1f0a0955492088d2245",
+            "bytes": 1527
+          },
+          "best_checkpoint.pt": {
+            "sha256": "a3f100dfd86fc96834cb87b8517c5112401041b052f649ca26f49b791cb29630",
+            "bytes": 20486449
+          },
+          "final_checkpoint.pt": {
+            "sha256": "4e6672a78cb5acf744aa05bf2a7b001d1919b45b1e5e1c297ca97abc949678cc",
+            "bytes": 20486460
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_lilogic_cifar10",
+        "name": "third_lilogic_l_u2_seed2",
+        "family": "u2",
+        "coordinate": "l",
+        "seed": 2,
+        "run_dir": "experiments/coverage_dlgn/results/third_lilogic_l_u2_seed2",
+        "architecture": "DlgnCifar10LilogicL",
+        "best_hard_validation_pct": 60.72,
+        "final_hard_validation_pct": 60.660000000000004,
+        "source_tree_sha256": "c975bda9204b691c4030529364712c81e5f99461e3c819f9f8714f0df1d34647",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "c8d590a14360a9cf5602901aabe42d307af68a1eead05ae33accaf7fb9e0e52c",
+            "bytes": 2392
+          },
+          "environment.json": {
+            "sha256": "3e045436b1002493c60e16825c9ec9d08f87617d95cc0904d231ca01195cb21b",
+            "bytes": 19444
+          },
+          "run_summary.json": {
+            "sha256": "50d657a4afa97bb9466ee30bce33ab89d0d8e89e1710b3a459b12a5addb4fb10",
+            "bytes": 1528
+          },
+          "best_checkpoint.pt": {
+            "sha256": "94c488a4ef38e17be557e5e0fdef82afab1c698a0cccc67777742f5bdd787241",
+            "bytes": 20486449
+          },
+          "final_checkpoint.pt": {
+            "sha256": "45d7acba52054b3c2010b2c1a2d59f6de3d11342428ee5038c886df87ae67cd8",
+            "bytes": 20486460
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_lilogic_cifar10",
+        "name": "third_lilogic_l_top32_seed0",
+        "family": "top32",
+        "coordinate": "l",
+        "seed": 0,
+        "run_dir": "experiments/coverage_dlgn/results/third_lilogic_l_top32_seed0",
+        "architecture": "DlgnCifar10LilogicLTop32",
+        "best_hard_validation_pct": 62.060000057220456,
+        "final_hard_validation_pct": 62.060000057220456,
+        "source_tree_sha256": "77e50d76bf6ac247aaf596a58bada9d1d8d8560c2ee0977131b0043a92ba7721",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "35e7fde2186e457010e05f1a892f933f51c6aab4423d64d55bb4cea889875c14",
+            "bytes": 2381
+          },
+          "environment.json": {
+            "sha256": "582d59ee5e3de57438eccc32aabb081fc16b173d1dd8d6053821b0430386b8f6",
+            "bytes": 19593
+          },
+          "run_summary.json": {
+            "sha256": "9517a2c0e214307e4e23ec40585a45bbe6636356fd30922ee482f4905891d49d",
+            "bytes": 1501
+          },
+          "best_checkpoint.pt": {
+            "sha256": "f30aff2bac074362aec3846a44c85b9abd95150deed86d5d3e2b39557ae52de5",
+            "bytes": 212998969
+          },
+          "final_checkpoint.pt": {
+            "sha256": "5b4af0d6b84e6fdec48abb2912cd05731ad807f89f3606cc52420c5e75a32e34",
+            "bytes": 212998982
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      }
+    ],
+    "third_bitlogic_cifar10": [
+      {
+        "phase": "third_bitlogic_cifar10",
+        "name": "third_bitlogic_s_random_seed0",
+        "family": "random",
+        "coordinate": "s",
+        "seed": 0,
+        "run_dir": "experiments/coverage_dlgn/results/third_bitlogic_s_random_seed0",
+        "architecture": "DlgnCifar10BitLogicRank2S",
+        "best_hard_validation_pct": 25.66,
+        "final_hard_validation_pct": 23.9,
+        "source_tree_sha256": "ab92fbe874aa1f9ad07fffc4c171cb279da2b7f8d035edd736863c247ee70ea4",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "1ab49b5b5ab14924bed771b5c23d7d1afe6f3bf7ba788b5fd6a0be0e3a4a01fa",
+            "bytes": 2386
+          },
+          "environment.json": {
+            "sha256": "c3a4759e2813dabfe8a81d0d9c7b0b69207f3cb6fa81f760bf74bd3e8892a7fc",
+            "bytes": 18120
+          },
+          "run_summary.json": {
+            "sha256": "0d17dbbf8faecb27c04377b0da97dd346c3ee3beaa74a236d76178663d6a8538",
+            "bytes": 1469
+          },
+          "best_checkpoint.pt": {
+            "sha256": "db13f71c570de2e9c5e1370f67e15bd457f8d49bf904648fadab00faf0bed0ac",
+            "bytes": 646385
+          },
+          "final_checkpoint.pt": {
+            "sha256": "e550d4d5431f1719e3b6ca3510303b646aac71e050331851d0fbe82a87a2baa1",
+            "bytes": 646396
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_bitlogic_cifar10",
+        "name": "third_bitlogic_s_random_seed1",
+        "family": "random",
+        "coordinate": "s",
+        "seed": 1,
+        "run_dir": "experiments/coverage_dlgn/results/third_bitlogic_s_random_seed1",
+        "architecture": "DlgnCifar10BitLogicRank2S",
+        "best_hard_validation_pct": 25.900000000000002,
+        "final_hard_validation_pct": 23.34,
+        "source_tree_sha256": "ab92fbe874aa1f9ad07fffc4c171cb279da2b7f8d035edd736863c247ee70ea4",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "359af7ae3ce5b237061f335c91327be4cf55eca717a736443aa6c75c85d8539a",
+            "bytes": 2386
+          },
+          "environment.json": {
+            "sha256": "a9fa6c4217d2a887247a32cc500c92a75d4c9e838b3f3ad60c90e039a87caa2a",
+            "bytes": 18189
+          },
+          "run_summary.json": {
+            "sha256": "54129b1bbd6f31e32c5caeeaaef92e3a7e25cefe405ae7951868ec400e3a0955",
+            "bytes": 1469
+          },
+          "best_checkpoint.pt": {
+            "sha256": "fb25dcb99ebf7bc7141b1003b542d24478267a184a3f2ba581f712ba8399da91",
+            "bytes": 646385
+          },
+          "final_checkpoint.pt": {
+            "sha256": "83292217475786b4390f37284f2e80277698cc14a14068cbafc17e649f2c197a",
+            "bytes": 646396
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_bitlogic_cifar10",
+        "name": "third_bitlogic_s_u2_seed0",
+        "family": "u2",
+        "coordinate": "s",
+        "seed": 0,
+        "run_dir": "experiments/coverage_dlgn/results/third_bitlogic_s_u2_seed0",
+        "architecture": "DlgnCifar10BitLogicRank2S",
+        "best_hard_validation_pct": 27.02,
+        "final_hard_validation_pct": 27.02,
+        "source_tree_sha256": "ab92fbe874aa1f9ad07fffc4c171cb279da2b7f8d035edd736863c247ee70ea4",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "c85170c55e1bb7df968e1314a53698f87579b134c33225d984db447689f3be8e",
+            "bytes": 2400
+          },
+          "environment.json": {
+            "sha256": "e6814a746b0bddd652cac793d37a1944395c1e8b3a2f3303e8e233ee27893a35",
+            "bytes": 18254
+          },
+          "run_summary.json": {
+            "sha256": "e688f407ac9f6b353889825b68b5855829f68f2d0acc633fe18d974d7306a529",
+            "bytes": 1507
+          },
+          "best_checkpoint.pt": {
+            "sha256": "f13ad204b456efd26c157496b633af6401864fd84b130e946a59756d479c3466",
+            "bytes": 646385
+          },
+          "final_checkpoint.pt": {
+            "sha256": "90927ebed62ec67fa460375c840c935cf2ad41af250808173c6119b971c4d07f",
+            "bytes": 646396
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_bitlogic_cifar10",
+        "name": "third_bitlogic_s_u2_seed1",
+        "family": "u2",
+        "coordinate": "s",
+        "seed": 1,
+        "run_dir": "experiments/coverage_dlgn/results/third_bitlogic_s_u2_seed1",
+        "architecture": "DlgnCifar10BitLogicRank2S",
+        "best_hard_validation_pct": 29.14,
+        "final_hard_validation_pct": 25.06,
+        "source_tree_sha256": "ab92fbe874aa1f9ad07fffc4c171cb279da2b7f8d035edd736863c247ee70ea4",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "a5684813444a92106f090032c0b57772d60a0a6697e73b13cf9e1a5ae2edbfbb",
+            "bytes": 2400
+          },
+          "environment.json": {
+            "sha256": "be77ece6cc83819f78b439cd7cedb668e009a8f0b1abf947d0a5f4c37205eeb3",
+            "bytes": 18319
+          },
+          "run_summary.json": {
+            "sha256": "1d1958a8440a432502a55bc67032728c5f9077d646b3bd081739f725550d85ad",
+            "bytes": 1507
+          },
+          "best_checkpoint.pt": {
+            "sha256": "a529b0a986f55f3fa51a8b5a3acff808bb7254a13779159b50e7c4e7aa267dd1",
+            "bytes": 646385
+          },
+          "final_checkpoint.pt": {
+            "sha256": "ebebfed34f848c8d9e239d80b9ccb5dc60e12152608ed28b97fd370d95b43879",
+            "bytes": 646396
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_bitlogic_cifar10",
+        "name": "third_bitlogic_s_best_seed0",
+        "family": "best",
+        "coordinate": "s",
+        "seed": 0,
+        "run_dir": "experiments/coverage_dlgn/results/third_bitlogic_s_best_seed0",
+        "architecture": "DlgnCifar10BitLogicBestS",
+        "best_hard_validation_pct": 26.76,
+        "final_hard_validation_pct": 21.52,
+        "source_tree_sha256": "ab92fbe874aa1f9ad07fffc4c171cb279da2b7f8d035edd736863c247ee70ea4",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "a834dfa7eee3d410fae43d663e4f7298de2db9774b31bf2902787306112dd213",
+            "bytes": 2386
+          },
+          "environment.json": {
+            "sha256": "2214499c07f4a6b26ff6243627c07c73214e8478c6f4d43f28f671119c11f6c9",
+            "bytes": 18386
+          },
+          "run_summary.json": {
+            "sha256": "796aefc9deee033d84d4a263b9ae1d75ef5519543e64635f5e78dc27f80829d6",
+            "bytes": 1444
+          },
+          "best_checkpoint.pt": {
+            "sha256": "f2a2212dc575b28d54d2d8125b1a6cae8e6c8dbab47cb943342f8fa5cc5ad5c9",
+            "bytes": 6662969
+          },
+          "final_checkpoint.pt": {
+            "sha256": "554a9454a16a67502860f6d7b14f1fba330890b8b2d5a262a79e89c4cbfe08a9",
+            "bytes": 6662982
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_bitlogic_cifar10",
+        "name": "third_bitlogic_s_best_seed1",
+        "family": "best",
+        "coordinate": "s",
+        "seed": 1,
+        "run_dir": "experiments/coverage_dlgn/results/third_bitlogic_s_best_seed1",
+        "architecture": "DlgnCifar10BitLogicBestS",
+        "best_hard_validation_pct": 27.92,
+        "final_hard_validation_pct": 20.560000000000002,
+        "source_tree_sha256": "ab92fbe874aa1f9ad07fffc4c171cb279da2b7f8d035edd736863c247ee70ea4",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "16d1d89c4280ceddaa7163b18b3338d170835b021b2e808d7b86518c5913921d",
+            "bytes": 2386
+          },
+          "environment.json": {
+            "sha256": "b8e4ab22d7f866c5ff4b077782a9ead1d6a19034a977cddf8031c363ddaebf2a",
+            "bytes": 18453
+          },
+          "run_summary.json": {
+            "sha256": "3a0d2aee28921d75af72e432f49046c5ca830babe0280a024fdcfa5dd0bb482c",
+            "bytes": 1440
+          },
+          "best_checkpoint.pt": {
+            "sha256": "0dec94f011125372222b94fc3f785ffafae7335c2b3c1f1c630627c48958f806",
+            "bytes": 6662969
+          },
+          "final_checkpoint.pt": {
+            "sha256": "78b28256e76b2b2661ce33f9dfb29ac51839a45d6e04a5834f67c3c2ef59246a",
+            "bytes": 6662982
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_bitlogic_cifar10",
+        "name": "third_bitlogic_m_random_seed0",
+        "family": "random",
+        "coordinate": "m",
+        "seed": 0,
+        "run_dir": "experiments/coverage_dlgn/results/third_bitlogic_m_random_seed0",
+        "architecture": "DlgnCifar10BitLogicRank2M",
+        "best_hard_validation_pct": 24.060000000000002,
+        "final_hard_validation_pct": 20.76,
+        "source_tree_sha256": "77e50d76bf6ac247aaf596a58bada9d1d8d8560c2ee0977131b0043a92ba7721",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "c9e896fc4c9aeb2329c68eb815c96e9157309a63e479243f02df9de873ed87a1",
+            "bytes": 2386
+          },
+          "environment.json": {
+            "sha256": "9366269b00918a26ee5952b9fb851c1e605ac1c5c16c45df06caf1f99a07bc53",
+            "bytes": 19662
+          },
+          "run_summary.json": {
+            "sha256": "78bfecb0bfd607acaa69859ea050fb2e31b1ee79f36159c0a1d0ca6d522a1136",
+            "bytes": 1470
+          },
+          "best_checkpoint.pt": {
+            "sha256": "bd1b5634157ae464c196542c93b5dff9f34a51923afea7920fbcda6d60b38f23",
+            "bytes": 2566385
+          },
+          "final_checkpoint.pt": {
+            "sha256": "00fc9e774cfadbcc11b1acbd52e7be1e2289660ee49d9965960a918216a11fbe",
+            "bytes": 2566396
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_bitlogic_cifar10",
+        "name": "third_bitlogic_m_random_seed1",
+        "family": "random",
+        "coordinate": "m",
+        "seed": 1,
+        "run_dir": "experiments/coverage_dlgn/results/third_bitlogic_m_random_seed1",
+        "architecture": "DlgnCifar10BitLogicRank2M",
+        "best_hard_validation_pct": 25.679999999999996,
+        "final_hard_validation_pct": 22.6,
+        "source_tree_sha256": "c95d10e7e4696ce40d78008da7eea9db78979fbbf14e205a4ef549c955e34810",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "552ee5f93d4c82cb21b9976384c52645faa41173e3b96c118b0083f40d039518",
+            "bytes": 2386
+          },
+          "environment.json": {
+            "sha256": "b71e179d03deae21f69f106468f9e46ef382811f00407aeedaf2a7b823ccd28e",
+            "bytes": 19818
+          },
+          "run_summary.json": {
+            "sha256": "9110727cca1f9f353d6097b56ad9574e6b887d345691cea5f9a6946705d73479",
+            "bytes": 1469
+          },
+          "best_checkpoint.pt": {
+            "sha256": "91e1bc1cc2b270362c2b674acfac8586a48c003aa9e36d0ba1ca312a6529a6af",
+            "bytes": 2566385
+          },
+          "final_checkpoint.pt": {
+            "sha256": "70ea00aef75c5e11f67edc89f87b9ea84c3eab6281b7784b3917b988f8d796c1",
+            "bytes": 2566396
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_bitlogic_cifar10",
+        "name": "third_bitlogic_m_u2_seed0",
+        "family": "u2",
+        "coordinate": "m",
+        "seed": 0,
+        "run_dir": "experiments/coverage_dlgn/results/third_bitlogic_m_u2_seed0",
+        "architecture": "DlgnCifar10BitLogicRank2M",
+        "best_hard_validation_pct": 25.740000000000002,
+        "final_hard_validation_pct": 23.24,
+        "source_tree_sha256": "c95d10e7e4696ce40d78008da7eea9db78979fbbf14e205a4ef549c955e34810",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "ac51353d46c08476f2b6b0fb3471628dbf42406410cad30d5c3252228e098b3c",
+            "bytes": 2400
+          },
+          "environment.json": {
+            "sha256": "4362cb9733d0efc577e95ea66d106b0cd2a5a59419ddf17e363b3a35db11836c",
+            "bytes": 19883
+          },
+          "run_summary.json": {
+            "sha256": "7110721a194c683ac81304a64d67df52fc10b49a3f0c1bca6d8ea18f298dd082",
+            "bytes": 1511
+          },
+          "best_checkpoint.pt": {
+            "sha256": "1abe551ec865d6b3d6350e0ce8657007ee32f73d51014d2330b1a1ad421f8b1a",
+            "bytes": 2566385
+          },
+          "final_checkpoint.pt": {
+            "sha256": "f04a8ba5a0a96791a7c650475c3499b99ef820f624971c6d9d278c8d60111e39",
+            "bytes": 2566460
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_bitlogic_cifar10",
+        "name": "third_bitlogic_m_u2_seed1",
+        "family": "u2",
+        "coordinate": "m",
+        "seed": 1,
+        "run_dir": "experiments/coverage_dlgn/results/third_bitlogic_m_u2_seed1",
+        "architecture": "DlgnCifar10BitLogicRank2M",
+        "best_hard_validation_pct": 25.259999999999998,
+        "final_hard_validation_pct": 25.16,
+        "source_tree_sha256": "c95d10e7e4696ce40d78008da7eea9db78979fbbf14e205a4ef549c955e34810",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "9f206aec51cb1b384572a7616672a1e1669eaa34bae1f4405db6cfd9b6521332",
+            "bytes": 2400
+          },
+          "environment.json": {
+            "sha256": "8cb5d7f739184e0e03f1ea06f27dabf26135827b754a5a6fdb775e9ddd73b897",
+            "bytes": 19948
+          },
+          "run_summary.json": {
+            "sha256": "8c4b81b4c266a5ac81a0e97c6608a39117472eb7eab6efe18ad8e31a2f5c957e",
+            "bytes": 1508
+          },
+          "best_checkpoint.pt": {
+            "sha256": "6201f2d48413e5ee6d54c0291047c9851a04eeb66e32ce96716eab2bc803c247",
+            "bytes": 2566385
+          },
+          "final_checkpoint.pt": {
+            "sha256": "d6afcc60a1de25610ee834b1f97800b9440d72eb2a4ed7ed173168ad52a92ced",
+            "bytes": 2566460
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_bitlogic_cifar10",
+        "name": "third_bitlogic_m_best_seed0",
+        "family": "best",
+        "coordinate": "m",
+        "seed": 0,
+        "run_dir": "experiments/coverage_dlgn/results/third_bitlogic_m_best_seed0",
+        "architecture": "DlgnCifar10BitLogicBestM",
+        "best_hard_validation_pct": 16.14,
+        "final_hard_validation_pct": 14.34,
+        "source_tree_sha256": "6eb42f5d6fdf82114ca0bf943fbe5b46338508b59a93421cfe2d277c0fe293b0",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "e72c6a7b458a0793094395c773a532754e68fbf0e259a9426b355bf6399c2cd8",
+            "bytes": 2386
+          },
+          "environment.json": {
+            "sha256": "c9f59050e71c378745221eeb619f8f389ed76afb4b089e08fd972d7dae044032",
+            "bytes": 20091
+          },
+          "run_summary.json": {
+            "sha256": "77fe9562c0ef926b824ad3f14faec6484f14c55eda506afcd3134b62d6729e6e",
+            "bytes": 1455
+          },
+          "best_checkpoint.pt": {
+            "sha256": "38211c44bbd87dbae67aab62a0d8611411517144945bc0130bcd4a09cfd3925f",
+            "bytes": 26630969
+          },
+          "final_checkpoint.pt": {
+            "sha256": "aac1b93f1c32f52b4dc9aad5bd9fb11dd768dfe90685a8ff8fff0bdc0fe84af5",
+            "bytes": 26630982
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_bitlogic_cifar10",
+        "name": "third_bitlogic_m_best_seed1",
+        "family": "best",
+        "coordinate": "m",
+        "seed": 1,
+        "run_dir": "experiments/coverage_dlgn/results/third_bitlogic_m_best_seed1",
+        "architecture": "DlgnCifar10BitLogicBestM",
+        "best_hard_validation_pct": 16.08,
+        "final_hard_validation_pct": 13.38,
+        "source_tree_sha256": "6eb42f5d6fdf82114ca0bf943fbe5b46338508b59a93421cfe2d277c0fe293b0",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "9694120954f22e8b84f11486d549961a8761fd72a314b66f95cfadd4ce1892cd",
+            "bytes": 2386
+          },
+          "environment.json": {
+            "sha256": "9f3a8f4f0fc936ae31e33390ce7e5fd4a207f2521c31e73773cf4b54bd4e8a97",
+            "bytes": 20158
+          },
+          "run_summary.json": {
+            "sha256": "c5c34d9fbfacfc5b83362ea1413fcfdcbf41de33d907167919a64789d4986e69",
+            "bytes": 1453
+          },
+          "best_checkpoint.pt": {
+            "sha256": "a8882127d33fc17b09db23e8fe251f62752d70792d2981bbb027ca14edc34038",
+            "bytes": 26630969
+          },
+          "final_checkpoint.pt": {
+            "sha256": "82cb4f477112767d48aad3f4472e9cb101d47bcbcbf3e95fbe905d604090b98a",
+            "bytes": 26630982
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_bitlogic_cifar10",
+        "name": "third_bitlogic_l_random_seed0",
+        "family": "random",
+        "coordinate": "l",
+        "seed": 0,
+        "run_dir": "experiments/coverage_dlgn/results/third_bitlogic_l_random_seed0",
+        "architecture": "DlgnCifar10BitLogicRank2L",
+        "best_hard_validation_pct": 24.86,
+        "final_hard_validation_pct": 22.54,
+        "source_tree_sha256": "6eb42f5d6fdf82114ca0bf943fbe5b46338508b59a93421cfe2d277c0fe293b0",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "8ecb7be880acfb5a8fae19c4497ce8caf225fd2e8a416149095fb10793368e22",
+            "bytes": 2386
+          },
+          "environment.json": {
+            "sha256": "167804b5d0ad32fd044a53f6faef120b4d3747825ab7787ab338e59d56f54192",
+            "bytes": 20227
+          },
+          "run_summary.json": {
+            "sha256": "ab2aab8585700b9b414d9289294959b4455e077e190a915442c810b032080aef",
+            "bytes": 1474
+          },
+          "best_checkpoint.pt": {
+            "sha256": "bff4eec4735d38a5177512399fa82c8ccf74bec904e159d565572c8d961b1150",
+            "bytes": 10246385
+          },
+          "final_checkpoint.pt": {
+            "sha256": "14933c9aabdf8017ab007a12841f266487428c177c5866b9ef02f8fd256570e7",
+            "bytes": 10246396
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_bitlogic_cifar10",
+        "name": "third_bitlogic_l_random_seed1",
+        "family": "random",
+        "coordinate": "l",
+        "seed": 1,
+        "run_dir": "experiments/coverage_dlgn/results/third_bitlogic_l_random_seed1",
+        "architecture": "DlgnCifar10BitLogicRank2L",
+        "best_hard_validation_pct": 25.080000000000002,
+        "final_hard_validation_pct": 21.14,
+        "source_tree_sha256": "6eb42f5d6fdf82114ca0bf943fbe5b46338508b59a93421cfe2d277c0fe293b0",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "048fd28f31eaec6bdb1f74c2815c25070507b05021f1f819cb5aeae90e341fd5",
+            "bytes": 2386
+          },
+          "environment.json": {
+            "sha256": "02eefd4a53f8dac8e9fdb696940140c5f135064c7e4a5172ec32bf2574f832c1",
+            "bytes": 20296
+          },
+          "run_summary.json": {
+            "sha256": "4516753676dc2d33cc3d5d01494f7d36e92366b007fb3c6d63146a760e8e7788",
+            "bytes": 1474
+          },
+          "best_checkpoint.pt": {
+            "sha256": "5a263a16bec523715e3788afbeaf2fe01c749268eef157777c39225c79551fc0",
+            "bytes": 10246385
+          },
+          "final_checkpoint.pt": {
+            "sha256": "176fcce6e08393a024134905a0dfd5d6277e346f1a3958a2f12305a71fc15c05",
+            "bytes": 10246396
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_bitlogic_cifar10",
+        "name": "third_bitlogic_l_u2_seed0",
+        "family": "u2",
+        "coordinate": "l",
+        "seed": 0,
+        "run_dir": "experiments/coverage_dlgn/results/third_bitlogic_l_u2_seed0",
+        "architecture": "DlgnCifar10BitLogicRank2L",
+        "best_hard_validation_pct": 27.339999999999996,
+        "final_hard_validation_pct": 24.14,
+        "source_tree_sha256": "6eb42f5d6fdf82114ca0bf943fbe5b46338508b59a93421cfe2d277c0fe293b0",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "91a4e46646c23aa86835123a6fca6db8b397b4cc04bbad8348ccf486a6ad4270",
+            "bytes": 2400
+          },
+          "environment.json": {
+            "sha256": "a3599d34fddb97f5bf8fe1026eaf0110985b61a61414fe8268783f520a191d25",
+            "bytes": 20361
+          },
+          "run_summary.json": {
+            "sha256": "ec806245ce12a8fbc58207265f2c3f66d55dd1954b3ad79a9a06e5052567954d",
+            "bytes": 1516
+          },
+          "best_checkpoint.pt": {
+            "sha256": "c9d69ede66876ab4c1bb2077c34e6f11ffd26fbe3f694231bffb4fababf4ebe1",
+            "bytes": 10246449
+          },
+          "final_checkpoint.pt": {
+            "sha256": "ac001853d07a0c7c8840d1608a61ff1b8b31af8f9035fcbb68bd289665fa9ba4",
+            "bytes": 10246460
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_bitlogic_cifar10",
+        "name": "third_bitlogic_l_u2_seed1",
+        "family": "u2",
+        "coordinate": "l",
+        "seed": 1,
+        "run_dir": "experiments/coverage_dlgn/results/third_bitlogic_l_u2_seed1",
+        "architecture": "DlgnCifar10BitLogicRank2L",
+        "best_hard_validation_pct": 24.38,
+        "final_hard_validation_pct": 21.98,
+        "source_tree_sha256": "6eb42f5d6fdf82114ca0bf943fbe5b46338508b59a93421cfe2d277c0fe293b0",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "b2854d75392cba8159b48d6e8dca3db56d2a0b12912fe5e89c251adff4800fed",
+            "bytes": 2400
+          },
+          "environment.json": {
+            "sha256": "7bfdec60b93e6922d22a84f072d877a8fcc69cceb55c388b8da6d292c1e97f7b",
+            "bytes": 20426
+          },
+          "run_summary.json": {
+            "sha256": "92903550869535b702080d5d3b3f11fc40fb72cd83c9cb4a199538bcb5ba17de",
+            "bytes": 1514
+          },
+          "best_checkpoint.pt": {
+            "sha256": "e8c083a9ba75c8815169f1a3103d577adad970f83f877eff5b00f7e7e95f4ea8",
+            "bytes": 10246449
+          },
+          "final_checkpoint.pt": {
+            "sha256": "9846bfeecec0201421d4c315777bb81dd52e25fb5459d1a3da574c5cf2d149c3",
+            "bytes": 10246460
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_bitlogic_cifar10",
+        "name": "third_bitlogic_l_best_seed0",
+        "family": "best",
+        "coordinate": "l",
+        "seed": 0,
+        "run_dir": "experiments/coverage_dlgn/results/third_bitlogic_l_best_seed0",
+        "architecture": "DlgnCifar10BitLogicBestL",
+        "best_hard_validation_pct": 13.120000000000001,
+        "final_hard_validation_pct": 10.34,
+        "source_tree_sha256": "22290ef45c0913d87a3379e85fcdf36fda9f54393b2f785a883b472733ec72b2",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "3ec55ad144f2641705731c983085d49e9840d8ae6176aea702a872345ab8413d",
+            "bytes": 2386
+          },
+          "environment.json": {
+            "sha256": "d23db08f75c36534a70e6bb3b52db07905bb72dbcb2b54f76bd77f555b1c65eb",
+            "bytes": 20661
+          },
+          "run_summary.json": {
+            "sha256": "3a4f560243916f510062b5666cf429d8df965034f6cb3dd9537dedd3dc6384d3",
+            "bytes": 1462
+          },
+          "best_checkpoint.pt": {
+            "sha256": "80bbc509b48a7c4ab6fc83d9c560aaa45e530f42ffbabbed739bc6afae8dda47",
+            "bytes": 106502969
+          },
+          "final_checkpoint.pt": {
+            "sha256": "5a71cb6c7bde7e729853f701b23f5a8390e6f86547fd4062330ab8abc8e6114d",
+            "bytes": 106502982
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      },
+      {
+        "phase": "third_bitlogic_cifar10",
+        "name": "third_bitlogic_l_best_seed1",
+        "family": "best",
+        "coordinate": "l",
+        "seed": 1,
+        "run_dir": "experiments/coverage_dlgn/results/third_bitlogic_l_best_seed1",
+        "architecture": "DlgnCifar10BitLogicBestL",
+        "best_hard_validation_pct": 12.7,
+        "final_hard_validation_pct": 10.18,
+        "source_tree_sha256": "3b178646d5d6fef049193865d328b3a40655c3961b8a445a362bb648a58e1caa",
+        "training_implementation_sha256": "a4122d761ff8a12c43c56c6fa5691f013c0fb2647c984602652086a7fb23ed1d",
+        "artifacts": {
+          "training_config.json": {
+            "sha256": "8f106945c6401c70454e3d3d960c9bdaa68c9ecea2311abfdc8bcbcbc3d4c73d",
+            "bytes": 2386
+          },
+          "environment.json": {
+            "sha256": "154774054fb2048bdd12a4de664096f8166091f32162cd76b1c3f70ab3679226",
+            "bytes": 20867
+          },
+          "run_summary.json": {
+            "sha256": "5585565fda77d0df8a5674fbae6b7836e44060880337f114b1d5176925d41767",
+            "bytes": 1459
+          },
+          "best_checkpoint.pt": {
+            "sha256": "0b7be7a4f5f2403ddedb35cbdb0b63ea6deee05cd06027bcc0e8b7abfb65b04b",
+            "bytes": 106502969
+          },
+          "final_checkpoint.pt": {
+            "sha256": "a1c0395228a4fd8b3f34e6628c72d30d17e4da1ef4db2703c94f68825de1cd21",
+            "bytes": 106502982
+          }
+        },
+        "test_metrics_existing_at_freeze": false
+      }
+    ]
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "phase": "second_round_c100_strength",
+  "cuda_required": true,
+  "skip_completed": true,
+  "entries": [
+    {
+      "name": "second_c100_baseline_screen_tau1_lr0.01_augnone_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/c100_strength/second_c100_baseline_screen_tau1_lr0.01_augnone_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_c100_baseline_screen_tau1_lr0.01_augnone_seed0"
+    },
+    {
+      "name": "second_c100_baseline_screen_tau5_lr0.01_augnone_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/c100_strength/second_c100_baseline_screen_tau5_lr0.01_augnone_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_c100_baseline_screen_tau5_lr0.01_augnone_seed0"
+    },
+    {
+      "name": "second_c100_baseline_screen_tau20_lr0.01_augnone_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/c100_strength/second_c100_baseline_screen_tau20_lr0.01_augnone_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_c100_baseline_screen_tau20_lr0.01_augnone_seed0"
+    },
+    {
+      "name": "second_c100_baseline_screen_tau10_lr0.02_augnone_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/c100_strength/second_c100_baseline_screen_tau10_lr0.02_augnone_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_c100_baseline_screen_tau10_lr0.02_augnone_seed0"
+    },
+    {
+      "name": "second_c100_baseline_screen_tau10_lr0.01_augstandard_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/c100_strength/second_c100_baseline_screen_tau10_lr0.01_augstandard_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_c100_baseline_screen_tau10_lr0.01_augstandard_seed0"
+    },
+    {
+      "name": "second_c100_baseline_screen_tau10_lr0.02_augstandard_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/c100_strength/second_c100_baseline_screen_tau10_lr0.02_augstandard_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_c100_baseline_screen_tau10_lr0.02_augstandard_seed0"
+    },
+    {
+      "name": "second_c100_3x128k_random_seed1",
+      "config": "experiments/coverage_dlgn/configs/second_round/c100_strength/second_c100_3x128k_random_seed1.json",
+      "output": "experiments/coverage_dlgn/results/second_c100_3x128k_random_seed1"
+    },
+    {
+      "name": "second_c100_3x128k_coverage_v3_seed1",
+      "config": "experiments/coverage_dlgn/configs/second_round/c100_strength/second_c100_3x128k_coverage_v3_seed1.json",
+      "output": "experiments/coverage_dlgn/results/second_c100_3x128k_coverage_v3_seed1"
+    },
+    {
+      "name": "second_c100_3x128k_random_seed2",
+      "config": "experiments/coverage_dlgn/configs/second_round/c100_strength/second_c100_3x128k_random_seed2.json",
+      "output": "experiments/coverage_dlgn/results/second_c100_3x128k_random_seed2"
+    },
+    {
+      "name": "second_c100_3x128k_coverage_v3_seed2",
+      "config": "experiments/coverage_dlgn/configs/second_round/c100_strength/second_c100_3x128k_coverage_v3_seed2.json",
+      "output": "experiments/coverage_dlgn/results/second_c100_3x128k_coverage_v3_seed2"
+    },
+    {
+      "name": "second_c100_class_scaled_96_96_192k_random_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/c100_strength/second_c100_class_scaled_96_96_192k_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_c100_class_scaled_96_96_192k_random_seed0"
+    },
+    {
+      "name": "second_c100_class_scaled_96_96_192k_coverage_v3_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/c100_strength/second_c100_class_scaled_96_96_192k_coverage_v3_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_c100_class_scaled_96_96_192k_coverage_v3_seed0"
+    },
+    {
+      "name": "second_c100_class_scaled_64_64_256k_random_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/c100_strength/second_c100_class_scaled_64_64_256k_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_c100_class_scaled_64_64_256k_random_seed0"
+    },
+    {
+      "name": "second_c100_class_scaled_64_64_256k_coverage_v3_seed0",
+      "config": "experiments/coverage_dlgn/configs/second_round/c100_strength/second_c100_class_scaled_64_64_256k_coverage_v3_seed0.json",
+      "output": "experiments/coverage_dlgn/results/second_c100_class_scaled_64_64_256k_coverage_v3_seed0"
+    }
+  ]
+}

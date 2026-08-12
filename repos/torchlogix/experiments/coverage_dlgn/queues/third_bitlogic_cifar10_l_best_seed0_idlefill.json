@@ -1,0 +1,19 @@
+{
+  "phase": "third_bitlogic_cifar10_l_best_seed0_idlefill",
+  "purpose": "Scheduling-only L-best seed-0 subset of the frozen BitLogic Table 6 queue for an idle GPU",
+  "cuda_required": true,
+  "heldout_test_used": false,
+  "selection_metric": "best hardened validation accuracy",
+  "test_policy": "evaluate predeclared best-validation and final checkpoints once after every full run in the parent phase completes",
+  "parent_queue": "experiments/coverage_dlgn/queues/third_bitlogic_cifar10.json",
+  "entries": [
+    {
+      "name": "third_bitlogic_l_best_seed0",
+      "family": "best",
+      "coordinate": "l",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_bitlogic_cifar10/third_bitlogic_l_best_seed0.json",
+      "output": "experiments/coverage_dlgn/results/third_bitlogic_l_best_seed0"
+    }
+  ]
+}

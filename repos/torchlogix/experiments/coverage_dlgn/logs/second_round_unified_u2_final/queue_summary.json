@@ -1,0 +1,78 @@
+{
+  "phase": "second_round_unified_u2_final",
+  "wall_seconds": 25315.688572390005,
+  "skipped": [],
+  "finished": [
+    {
+      "name": "second_final_u2_mnist_8k_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 880.0313347799238,
+      "log": "experiments/coverage_dlgn/logs/second_round_unified_u2_final/second_final_u2_mnist_8k_seed0.log"
+    },
+    {
+      "name": "second_final_u2_mnist_8k_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 875.0201904310379,
+      "log": "experiments/coverage_dlgn/logs/second_round_unified_u2_final/second_final_u2_mnist_8k_seed1.log"
+    },
+    {
+      "name": "second_final_u2_mnist_8k_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 890.0233492939733,
+      "log": "experiments/coverage_dlgn/logs/second_round_unified_u2_final/second_final_u2_mnist_8k_seed2.log"
+    },
+    {
+      "name": "second_final_u2_fashion_16k_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 880.0291530198883,
+      "log": "experiments/coverage_dlgn/logs/second_round_unified_u2_final/second_final_u2_fashion_16k_seed0.log"
+    },
+    {
+      "name": "second_final_u2_fashion_16k_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 885.0252224740107,
+      "log": "experiments/coverage_dlgn/logs/second_round_unified_u2_final/second_final_u2_fashion_16k_seed1.log"
+    },
+    {
+      "name": "second_final_u2_fashion_16k_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 875.0207564120647,
+      "log": "experiments/coverage_dlgn/logs/second_round_unified_u2_final/second_final_u2_fashion_16k_seed2.log"
+    },
+    {
+      "name": "second_final_u2_cifar10_s_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 735.0209570820443,
+      "log": "experiments/coverage_dlgn/logs/second_round_unified_u2_final/second_final_u2_cifar10_s_seed0.log"
+    },
+    {
+      "name": "second_final_u2_cifar10_s_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 735.0208789240569,
+      "log": "experiments/coverage_dlgn/logs/second_round_unified_u2_final/second_final_u2_cifar10_s_seed1.log"
+    },
+    {
+      "name": "second_final_u2_cifar10_s_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 730.0151880281046,
+      "log": "experiments/coverage_dlgn/logs/second_round_unified_u2_final/second_final_u2_cifar10_s_seed2.log"
+    },
+    {
+      "name": "second_final_u2_conv_cifar10_s_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 17830.47428403003,
+      "log": "experiments/coverage_dlgn/logs/second_round_unified_u2_final/second_final_u2_conv_cifar10_s_seed0.log"
+    }
+  ],
+  "failed": []
+}

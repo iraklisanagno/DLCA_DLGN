@@ -55,6 +55,10 @@ def _brute_force_stack(n_inputs, layers):
         ("coverage-hybrid", "coverage_hybrid"),
         ("semantic-balanced-hybrid", "semantic_balanced_hybrid"),
         ("semantic-degree-balanced", "semantic_degree_balanced"),
+        (
+            "semantic-multiscale-balanced",
+            "semantic_multiscale_balanced",
+        ),
         ("semantic-classifier-hybrid", "semantic_classifier_hybrid"),
         ("class-conditional-coverage", "class_conditional_coverage"),
         ("semantic-channel-hybrid", "semantic_channel_hybrid"),
@@ -104,6 +108,7 @@ def test_butterfly_expected_small_examples():
         "coverage_hybrid",
         "semantic_balanced_hybrid",
         "semantic_degree_balanced",
+        "semantic_multiscale_balanced",
     ],
 )
 def test_generators_are_deterministic_and_in_bounds(strategy):
@@ -388,6 +393,82 @@ def test_semantic_degree_balanced_is_the_frozen_no_swap_base():
     # the declared base degree sequence; power-of-two paper convolution widths
     # are exactly uniform.
     assert int(candidate_degree.max() - candidate_degree.min()) <= 2
+
+
+def test_semantic_multiscale_balanced_is_deterministic_and_degree_balanced():
+    # Four ancestry groups make the regular stages differ in normalized
+    # novelty. The method may choose a scale, but may never swap individual
+    # edges or disturb the fan-out of complete stages.
+    ancestry = packed_identity(4)[np.arange(64) % 4]
+    kwargs = {
+        "in_dim": 64,
+        "out_dim": 128,
+        "strategy": "semantic_multiscale_balanced",
+        "input_ancestry": ancestry,
+        "topology_seed": 19,
+        "layer_index": 2,
+    }
+    first = generate_dense_topology(**kwargs)
+    repeated = generate_dense_topology(**kwargs)
+    assert np.array_equal(first.indices, repeated.indices)
+    assert not first.greedy_mask.any()
+    assert np.all(first.indices[0] != first.indices[1])
+    degree = np.bincount(first.indices.reshape(-1), minlength=64)
+    assert np.unique(degree).tolist() == [4]
+
+
+@pytest.mark.parametrize(
+    ("out_dim", "expected_degrees"),
+    [
+        (30, [1]),
+        (35, [1, 2]),
+        (123, [4, 5]),
+    ],
+)
+def test_semantic_multiscale_non_power_width_has_balanced_stage_prefixes(
+    out_dim, expected_degrees
+):
+    result = generate_dense_topology(
+        in_dim=60,
+        out_dim=out_dim,
+        strategy="semantic_multiscale_balanced",
+        input_ancestry=packed_identity(60),
+        topology_seed=7,
+        layer_index=1,
+    )
+    degree = np.bincount(result.indices.reshape(-1), minlength=60)
+    assert np.unique(degree).tolist() == expected_degrees
+    assert int(degree.max() - degree.min()) <= 1
+
+
+def test_semantic_multiscale_rotates_odd_width_byes():
+    result = generate_dense_topology(
+        in_dim=9,
+        out_dim=32,
+        strategy="semantic_multiscale_balanced",
+        input_ancestry=packed_identity(9),
+        topology_seed=2,
+        layer_index=0,
+    )
+    degree = np.bincount(result.indices.reshape(-1), minlength=9)
+    assert np.unique(degree).tolist() == [7, 8]
+    assert int(degree.max() - degree.min()) == 1
+
+
+def test_semantic_multiscale_first_layer_keeps_semantic_source_ordering():
+    semantics = image_input_semantics(
+        3, 4, 4, 3, layout="channel_interleaved"
+    )
+    result = generate_dense_topology(
+        semantics.n_inputs,
+        192,
+        strategy="semantic_multiscale_balanced",
+        input_semantics=semantics,
+        topology_seed=7,
+    )
+    left_sources = semantics.source_ids[result.indices[0]]
+    right_sources = semantics.source_ids[result.indices[1]]
+    assert np.all(left_sources != right_sources)
 
 
 def test_coverage_reuse_refinement_is_bounded_degree_preserving_and_adaptive():

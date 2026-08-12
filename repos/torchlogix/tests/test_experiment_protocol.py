@@ -10,7 +10,41 @@ from experiments.coverage_dlgn.prepare_table1_final import (
     final_eval_freq,
     final_seeds_for,
 )
+from experiments.coverage_dlgn.prepare_second_round import (
+    exact_comparators,
+    u2_post_balance_smoke,
+)
+from experiments.coverage_dlgn.prepare_u2_published_protocols import (
+    bitlogic_entries,
+    current_u2_entries,
+    lilogic_entries,
+    smoke_entries as u2_published_smoke_entries,
+)
+from experiments.coverage_dlgn.run_gpu_queue import (
+    require_cuda_configs,
+    require_cuda_devices,
+)
+from experiments.coverage_dlgn.summarize_second_round import (
+    aggregate as aggregate_second_round,
+    collect_queue as collect_second_round_queue,
+    group_name as second_round_group_name,
+    output_status as second_round_output_status,
+)
+from experiments.coverage_dlgn.summarize_third_round import (
+    collect_run as collect_third_round_run,
+    current_dense_cross_comparisons,
+    mean_sd_ci as third_round_mean_sd_ci,
+)
 from experiments.coverage_dlgn.evaluate_table1_final import round_robin
+from experiments.coverage_dlgn.evaluate_third_round_run import (
+    find_frozen_row,
+)
+from experiments.coverage_dlgn.freeze_third_round_validation import (
+    sha256 as third_round_sha256,
+)
+from experiments.coverage_dlgn.finalize_third_round import (
+    all_run_dirs as third_round_run_dirs,
+)
 from experiments.coverage_dlgn.summarize_table1_final import mean_ci_95
 from experiments.coverage_dlgn.summarize_table2_compression_screen import (
     select_coverage_candidates,
@@ -48,8 +82,18 @@ from torchlogix.models import (
     DlgnCifar10Budget48kDepth12,
     DlgnCifar10Budget512kDepth8,
     DlgnCifar10Budget512kDepth12,
+    DlgnCifar10BitLogicBestL,
+    DlgnCifar10BitLogicBestM,
+    DlgnCifar10BitLogicBestS,
+    DlgnCifar10BitLogicRank2L,
+    DlgnCifar10BitLogicRank2M,
+    DlgnCifar10BitLogicRank2S,
     DlgnCifar10Large,
     DlgnCifar10LargeLearnable,
+    DlgnCifar10LilogicL,
+    DlgnCifar10LilogicLTop32,
+    DlgnCifar10LilogicM,
+    DlgnCifar10LilogicMTop32,
     DlgnCifar10Small,
     DlgnCifar100BitLogicL,
     DlgnCifar100BitLogicM,
@@ -62,7 +106,17 @@ from torchlogix.models import (
     DlgnFashionMnistPaperSmall,
     DlgnFashionMnistPaperSmallLearnable,
     DlgnFashionMnistBitLogic48k,
+    DlgnFashionMnistBitLogic48kDepth6,
+    DlgnFashionMnistBudget8k,
+    DlgnFashionMnistBudget16k,
+    DlgnFashionMnistBudget32k,
+    DlgnFashionMnistBudget64k,
     DlgnMnistBitLogic48k,
+    DlgnMnistBitLogic48kDepth6,
+    DlgnMnistBudget4k,
+    DlgnMnistBudget8k,
+    DlgnMnistBudget16k,
+    DlgnMnistBudget32k,
     DlgnFashionMnistSmall,
     DlgnMnistPaperSmall,
     DlgnMnistPaperSmallLearnable,
@@ -113,6 +167,258 @@ def test_table1_test_queue_assigns_every_run_once():
     ]
 
 
+def test_third_round_freeze_hashes_artifact_contents(tmp_path):
+    artifact = tmp_path / "artifact.pt"
+    artifact.write_bytes(b"coverage-dlgn")
+    assert third_round_sha256(artifact) == (
+        "da62ef68f98335120459e39f05ecc63d113e4738b3eef31513f226e78aed6693"
+    )
+
+
+def test_third_round_evaluator_requires_exactly_one_frozen_row(tmp_path):
+    run_dir = tmp_path / "run"
+    freeze = {"groups": {"phase": [{"run_dir": str(run_dir)}]}}
+    assert find_frozen_row(freeze, run_dir)["run_dir"] == str(run_dir)
+    with pytest.raises(RuntimeError, match="found 0"):
+        find_frozen_row(freeze, tmp_path / "missing")
+    freeze["groups"]["duplicate"] = [{"run_dir": str(run_dir)}]
+    with pytest.raises(RuntimeError, match="found 2"):
+        find_frozen_row(freeze, run_dir)
+
+
+def test_third_round_summary_uses_student_t_for_three_seeds():
+    result = third_round_mean_sd_ci([1.0, 2.0, 3.0])
+    assert result["n"] == 3
+    assert result["mean"] == pytest.approx(2.0)
+    assert result["sample_sd"] == pytest.approx(1.0)
+    assert result["ci95_low"] == pytest.approx(-0.4843382)
+    assert result["ci95_high"] == pytest.approx(4.4843382)
+
+
+def test_third_round_summary_collects_accuracy_cost_and_hash_provenance(
+    tmp_path,
+):
+    run_dir = tmp_path / "third_u2"
+    run_dir.mkdir()
+    (run_dir / "training_config.json").write_text(json.dumps({"lut_rank": 2}))
+    (run_dir / "run_summary.json").write_text(json.dumps({
+        "wall_seconds": 120.0,
+        "peak_gpu_memory_bytes": 2**30,
+        "topology": [{"construction_seconds": 0.25}],
+        "cost": {
+            "dense_gate_count": 8_000,
+            "trainable_parameters": 128_000,
+            "training_routing_parameters": 0,
+            "deployed_routing_bits": 256_000,
+        },
+    }))
+    checkpoints = [
+        {
+            "checkpoint": "best_checkpoint.pt",
+            "checkpoint_sha256": "best-hash",
+            "test_hard_accuracy": 0.75,
+            "test_relaxed_accuracy": 0.76,
+        },
+        {
+            "checkpoint": "final_checkpoint.pt",
+            "checkpoint_sha256": "final-hash",
+            "test_hard_accuracy": 0.74,
+            "test_relaxed_accuracy": 0.745,
+        },
+    ]
+    (run_dir / "third_round_test_metrics.json").write_text(json.dumps({
+        "heldout_checkpoint_queries": 2,
+        "checkpoints": checkpoints,
+    }))
+    (run_dir / "synthetic_inference_benchmark_v2.json").write_text(json.dumps({
+        "checkpoint_sha256": "best-hash",
+        "milliseconds_per_batch": 1.5,
+        "examples_per_second": 85_333.3,
+        "peak_device_memory_bytes": 2**28,
+    }))
+    row = {
+        "phase": "third",
+        "coordinate": "s",
+        "family": "u2",
+        "name": "third_u2",
+        "seed": 0,
+        "run_dir": str(run_dir),
+        "architecture": "Example",
+        "best_hard_validation_pct": 76.0,
+        "final_hard_validation_pct": 75.0,
+        "artifacts": {
+            "best_checkpoint.pt": {"sha256": "best-hash"},
+            "final_checkpoint.pt": {"sha256": "final-hash"},
+        },
+    }
+
+    result = collect_third_round_run(row)
+
+    assert result["best_test_hard_pct"] == pytest.approx(75.0)
+    assert result["final_test_hard_pct"] == pytest.approx(74.0)
+    assert result["truth_table_bits"] == 32_000
+    assert result["training_wall_minutes"] == pytest.approx(2.0)
+    assert result["training_peak_gpu_gib"] == pytest.approx(1.0)
+    assert result["benchmark_checkpoint_sha256_matches_freeze"]
+    assert result["test_checkpoint_sha256_matches_freeze"]
+
+
+def test_third_round_finalizer_covers_each_full_run_exactly_once():
+    run_dirs = third_round_run_dirs()
+    assert len(run_dirs) == 38
+    assert len(set(run_dirs)) == 38
+
+
+def test_third_round_dense_cross_comparison_uses_paired_seeds():
+    rows = current_dense_cross_comparisons()
+    assert [row["coordinate"] for row in rows] == ["m", "l"]
+    assert all(row["paired_seeds"] == [0, 1, 2] for row in rows)
+    assert rows[0]["u2_minus_random_pp"]["mean"] == pytest.approx(
+        4.5566668
+    )
+    assert rows[0]["u2_minus_v3_pp"]["positive_seed_count"] == 2
+    assert rows[1]["u2_minus_random_pp"]["mean"] == pytest.approx(
+        4.5933335
+    )
+    assert rows[1]["u2_minus_v3_pp"]["positive_seed_count"] == 0
+
+
+def test_gpu_queue_refuses_missing_cuda(monkeypatch):
+    monkeypatch.setattr(torch.cuda, "is_available", lambda: False)
+    with pytest.raises(RuntimeError, match="CUDA is required"):
+        require_cuda_devices([0, 1])
+
+
+def test_gpu_queue_probes_every_requested_cuda_device(monkeypatch):
+    probed = []
+    synchronized = []
+    monkeypatch.setattr(torch.cuda, "is_available", lambda: True)
+    monkeypatch.setattr(torch.cuda, "device_count", lambda: 2)
+    monkeypatch.setattr(
+        torch,
+        "empty",
+        lambda *args, **kwargs: probed.append(kwargs["device"]) or object(),
+    )
+    monkeypatch.setattr(
+        torch.cuda, "synchronize", lambda gpu: synchronized.append(gpu)
+    )
+
+    require_cuda_devices([0, 1])
+
+    assert probed == ["cuda:0", "cuda:1"]
+    assert synchronized == [0, 1]
+
+
+def test_gpu_queue_refuses_out_of_range_cuda_device(monkeypatch):
+    monkeypatch.setattr(torch.cuda, "is_available", lambda: True)
+    monkeypatch.setattr(torch.cuda, "device_count", lambda: 1)
+    with pytest.raises(RuntimeError, match="outside visible range"):
+        require_cuda_devices([0, 1])
+
+
+def test_gpu_queue_refuses_non_cuda_config(tmp_path):
+    cuda_config = tmp_path / "cuda.json"
+    cpu_config = tmp_path / "cpu.json"
+    cuda_config.write_text(json.dumps({"device": "cuda"}))
+    cpu_config.write_text(json.dumps({"device": "cpu"}))
+
+    require_cuda_configs([{"name": "valid", "config": str(cuda_config)}])
+    with pytest.raises(RuntimeError, match="invalid"):
+        require_cuda_configs([
+            {"name": "valid", "config": str(cuda_config)},
+            {"name": "invalid", "config": str(cpu_config)},
+        ])
+
+
+def test_second_round_status_distinguishes_pending_incomplete_and_complete(
+    tmp_path,
+):
+    pending = tmp_path / "pending"
+    incomplete = tmp_path / "incomplete"
+    complete = tmp_path / "complete"
+    incomplete.mkdir()
+    (incomplete / "metrics.csv").write_text("step\n")
+    complete.mkdir()
+    for name in [
+        "training_config.json",
+        "environment.json",
+        "metrics.csv",
+        "run_summary.json",
+    ]:
+        (complete / name).write_text("{}")
+
+    assert second_round_output_status(pending) == "pending"
+    assert second_round_output_status(incomplete) == "incomplete"
+    assert second_round_output_status(complete) == "complete"
+    assert second_round_group_name("candidate_seed17") == "candidate"
+
+
+def test_second_round_summary_collects_cost_and_aggregates_seeds(tmp_path):
+    entries = []
+    for seed, accuracy in enumerate([0.7, 0.8]):
+        config = tmp_path / f"config{seed}.json"
+        config.write_text(json.dumps({
+            "dataset": "mnist",
+            "architecture": "Example",
+            "seed": seed,
+            "num_iterations": 100,
+            "connections_init_method": "random",
+        }))
+        output = tmp_path / f"candidate_seed{seed}"
+        output.mkdir()
+        (output / "training_config.json").write_text("{}")
+        (output / "environment.json").write_text("{}")
+        (output / "metrics.csv").write_text("step\n")
+        (output / "run_summary.json").write_text(json.dumps({
+            "best_validation_hard_accuracy": accuracy,
+            "final_metrics": {"val_acc_discrete": accuracy - 0.01},
+            "wall_seconds": 120,
+            "peak_gpu_memory_bytes": 2**30,
+            "cost": {
+                "dense_gate_count": 8_000,
+                "trainable_parameters": 128_000,
+                "training_routing_parameters": 0,
+                "deployed_routing_bits": 160_000,
+            },
+            "topology": [{"construction_seconds": 0.25}],
+        }))
+        entries.append({
+            "name": f"candidate_seed{seed}",
+            "config": str(config),
+            "output": str(output),
+        })
+    queue = tmp_path / "queue.json"
+    queue.write_text(json.dumps({
+        "phase": "test_phase",
+        "entries": entries,
+    }))
+
+    rows = collect_second_round_queue(queue)
+    groups = aggregate_second_round(rows)
+
+    assert [row["status"] for row in rows] == ["complete", "complete"]
+    assert rows[0]["best_hard_validation_pct"] == pytest.approx(70.0)
+    assert rows[0]["dense_gate_count"] == 8_000
+    assert rows[0]["topology_construction_seconds"] == pytest.approx(0.25)
+    assert groups[0]["complete"] == 2
+    assert groups[0]["best_hard_validation_mean_pct"] == pytest.approx(75.0)
+
+
+def test_u2_post_balance_smokes_are_cuda_only_and_separate_from_pilots():
+    entries = u2_post_balance_smoke()
+    assert len(entries) == 2
+    assert {config["device"] for _, config in entries} == {"cuda"}
+    assert {config["num_iterations"] for _, config in entries} == {100}
+    assert {config["eval_freq"] for _, config in entries} == {100}
+    assert all("smoke_second_u2_" in name for name, _ in entries)
+    assert all("post_balance" in name for name, _ in entries)
+    assert all(
+        config["connections_init_method"]
+        == "semantic_multiscale_balanced"
+        for _, config in entries
+    )
+
+
 def _paper_model_kwargs(thresholds):
     return {
         "thresholds": thresholds,
@@ -125,6 +431,169 @@ def _paper_model_kwargs(thresholds):
         "device": "cpu",
         "lut_rank": 2,
     }
+
+
+def test_u2_published_protocol_matrix_is_frozen_and_cuda_only():
+    current = current_u2_entries()
+    lilogic = lilogic_entries()
+    bitlogic = bitlogic_entries()
+    smokes = u2_published_smoke_entries()
+
+    assert len(current) == 6
+    assert len(lilogic) == 14
+    assert len(bitlogic) == 18
+    assert len(smokes) == 6
+    assert all(
+        row["config_payload"]["device"] == "cuda"
+        for row in current + lilogic + bitlogic + smokes
+    )
+    assert {
+        row["family"] for row in current
+    } == {"u2"}
+    assert {
+        row["family"] for row in lilogic
+    } == {"random", "u2", "top32"}
+    assert {
+        row["family"] for row in bitlogic
+    } == {"random", "u2", "best"}
+
+
+def test_current_cifar10_ml_u2_configs_change_only_the_topology_family():
+    for row in current_u2_entries():
+        config = row["config_payload"]
+        assert config["connections_init_method"] == (
+            "semantic_multiscale_balanced"
+        )
+        assert config["num_iterations"] == 108_000
+        assert config["batch_size"] == 100
+        assert config["augmentation"] == "none"
+        assert config["lut_rank"] == 2
+        assert config["parametrization"] == "raw"
+        assert config["seed"] == config["topology_seed"]
+
+
+@pytest.mark.parametrize(
+    ("model_cls", "thresholds", "depth", "width", "tau"),
+    [
+        (
+            DlgnCifar10LilogicM,
+            torch.linspace(0.125, 0.875, 7),
+            1,
+            64_000,
+            90.0,
+        ),
+        (
+            DlgnCifar10LilogicL,
+            torch.linspace(0.125, 0.875, 7),
+            2,
+            128_000,
+            100.0,
+        ),
+    ],
+)
+def test_lilogic_fixed_architectures_match_published_coordinates(
+    model_cls, thresholds, depth, width, tau
+):
+    model = model_cls(**_paper_model_kwargs(thresholds))
+    layers = [module for module in model if isinstance(module, LogicDense)]
+    assert len(layers) == depth
+    assert [layer.out_dim for layer in layers] == [width] * depth
+    assert all(layer.lut_rank == 2 for layer in layers)
+    assert layers[0].in_dim == 3 * 32 * 32 * 7
+    assert model[-1].tau == tau
+
+
+@pytest.mark.parametrize(
+    ("model_cls", "thresholds", "depth", "width", "parameters"),
+    [
+        (
+            DlgnCifar10LilogicMTop32,
+            torch.linspace(0.125, 0.875, 7),
+            1,
+            64_000,
+            5_120_000,
+        ),
+        (
+            DlgnCifar10LilogicLTop32,
+            torch.linspace(0.125, 0.875, 7),
+            2,
+            128_000,
+            20_480_000,
+        ),
+    ],
+)
+def test_lilogic_top32_architectures_have_exact_training_parameters(
+    model_cls, thresholds, depth, width, parameters
+):
+    kwargs = _paper_model_kwargs(thresholds)
+    kwargs["connections_kwargs"].update({
+        "num_candidates": 32,
+        "forward_mode": "soft_mix",
+        "weights_init": "normal",
+    })
+    model = model_cls(**kwargs)
+    layers = [module for module in model if isinstance(module, LogicDense)]
+    assert len(layers) == depth
+    assert [layer.out_dim for layer in layers] == [width] * depth
+    assert all(
+        isinstance(layer.connections, LearnableDenseConnections)
+        for layer in layers
+    )
+    assert model_cost_summary(model)["trainable_parameters"] == parameters
+
+
+@pytest.mark.parametrize(
+    ("rank2_cls", "best_cls", "width"),
+    [
+        (DlgnCifar10BitLogicRank2S, DlgnCifar10BitLogicBestS, 4_000),
+        (DlgnCifar10BitLogicRank2M, DlgnCifar10BitLogicBestM, 16_000),
+        (DlgnCifar10BitLogicRank2L, DlgnCifar10BitLogicBestL, 64_000),
+    ],
+)
+def test_bitlogic_cifar10_ladder_preserves_width_and_rank_costs(
+    rank2_cls, best_cls, width
+):
+    rank2 = rank2_cls(**_paper_model_kwargs(torch.tensor([0.25, 0.5, 0.75])))
+    rank2_layers = [
+        module for module in rank2 if isinstance(module, LogicDense)
+    ]
+    assert [layer.out_dim for layer in rank2_layers] == [width, width]
+    assert all(layer.lut_rank == 2 for layer in rank2_layers)
+    assert model_cost_summary(rank2)["trainable_parameters"] == 32 * width
+
+    kwargs = _paper_model_kwargs(torch.tensor([0.2, 0.4, 0.6, 0.8]))
+    kwargs["lut_rank"] = 4
+    kwargs["parametrization"] = "light"
+    kwargs["connections_kwargs"].update({
+        "num_candidates": 16,
+        "forward_mode": "soft_mix",
+        "weights_init": "normal",
+    })
+    best = best_cls(**kwargs)
+    best_layers = [
+        module for module in best if isinstance(module, LogicDense)
+    ]
+    assert [layer.out_dim for layer in best_layers] == [width, width]
+    assert all(layer.lut_rank == 4 for layer in best_layers)
+    assert model_cost_summary(best)["trainable_parameters"] == 160 * width
+
+
+def test_published_protocol_training_effort_matches_papers():
+    for row in lilogic_entries():
+        config = row["config_payload"]
+        assert config["num_iterations"] == 35_000
+        assert config["eval_freq"] == 4_375
+        assert config["batch_size"] == 256
+        assert config["augmentation"] == "bitlogic"
+        assert config["learning_rate"] == 0.075
+    for row in bitlogic_entries():
+        config = row["config_payload"]
+        assert config["num_iterations"] == 35_100
+        assert config["eval_freq"] == 3_510
+        assert config["batch_size"] == 128
+        assert config["augmentation"] == "bitlogic"
+        assert config["learning_rate"] == 0.01
+        assert config["weight_decay"] == 0.0
 
 
 def test_topology_report_strategy_uses_component_override():
@@ -240,6 +709,71 @@ def test_table1_bitlogic_coordinate_has_48k_rank4_gates(
         isinstance(layer.connections, LearnableDenseConnections)
         for layer in layers
     )
+
+
+@pytest.mark.parametrize(
+    ("model_cls", "thresholds"),
+    [
+        (DlgnMnistBitLogic48kDepth6, torch.tensor([0.2, 0.4, 0.6, 0.8])),
+        (
+            DlgnFashionMnistBitLogic48kDepth6,
+            torch.tensor([0.2, 0.4, 0.6, 0.8]),
+        ),
+    ],
+)
+def test_architecture_matched_bitlogic_has_six_by_8k_gates(
+    model_cls, thresholds
+):
+    kwargs = _paper_model_kwargs(thresholds)
+    kwargs["lut_rank"] = 4
+    kwargs["parametrization"] = "light"
+    kwargs["connections_kwargs"].update({
+        "num_candidates": 16,
+        "forward_mode": "soft_mix",
+        "weights_init": "normal",
+    })
+    model = model_cls(**kwargs)
+    layers = [module for module in model if isinstance(module, LogicDense)]
+    assert len(layers) == 6
+    assert [layer.out_dim for layer in layers] == [8_000] * 6
+    assert sum(layer.out_dim for layer in layers) == 48_000
+    assert all(layer.lut_rank == 4 for layer in layers)
+
+
+def test_architecture_matched_bitlogic_keeps_reproduced_calibration_effort():
+    bitlogic_configs = [
+        config
+        for name, config in exact_comparators()
+        if "_bitlogic_" in name
+    ]
+    assert len(bitlogic_configs) == 6
+    assert all(
+        config["binarization_num_batches"] == 100
+        for config in bitlogic_configs
+    )
+
+
+@pytest.mark.parametrize(
+    ("model_cls", "thresholds", "budget"),
+    [
+        (DlgnMnistBudget4k, torch.tensor([0.5]), 4_000),
+        (DlgnMnistBudget8k, torch.tensor([0.5]), 8_000),
+        (DlgnMnistBudget16k, torch.tensor([0.5]), 16_000),
+        (DlgnMnistBudget32k, torch.tensor([0.5]), 32_000),
+        (DlgnFashionMnistBudget8k, torch.tensor([0.25, 0.5, 0.75]), 8_000),
+        (DlgnFashionMnistBudget16k, torch.tensor([0.25, 0.5, 0.75]), 16_000),
+        (DlgnFashionMnistBudget32k, torch.tensor([0.25, 0.5, 0.75]), 32_000),
+        (DlgnFashionMnistBudget64k, torch.tensor([0.25, 0.5, 0.75]), 64_000),
+    ],
+)
+def test_mnist_compression_ladder_has_exact_six_layer_budgets(
+    model_cls, thresholds, budget
+):
+    model = model_cls(**_paper_model_kwargs(thresholds))
+    layers = [module for module in model if isinstance(module, LogicDense)]
+    assert len(layers) == 6
+    assert sum(layer.out_dim for layer in layers) == budget
+    assert layers[-1].out_dim % 10 == 0
 
 
 def test_log_linear_temperature_schedule_has_locked_endpoints():

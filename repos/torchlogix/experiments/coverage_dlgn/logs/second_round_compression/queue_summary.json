@@ -1,0 +1,339 @@
+{
+  "phase": "second_round_compression",
+  "wall_seconds": 21805.889057403198,
+  "skipped": [
+    "second_compression_mnist_4k_random_seed0"
+  ],
+  "finished": [
+    {
+      "name": "second_compression_mnist_4k_coverage_v3_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 900.0341116657946,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_mnist_4k_coverage_v3_seed0.log"
+    },
+    {
+      "name": "second_compression_mnist_4k_random_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 900.0340558290482,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_mnist_4k_random_seed1.log"
+    },
+    {
+      "name": "second_compression_mnist_4k_coverage_v3_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 905.0452800150961,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_mnist_4k_coverage_v3_seed1.log"
+    },
+    {
+      "name": "second_compression_mnist_4k_random_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 905.0448024289217,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_mnist_4k_random_seed2.log"
+    },
+    {
+      "name": "second_compression_mnist_4k_coverage_v3_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 895.0315058901906,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_mnist_4k_coverage_v3_seed2.log"
+    },
+    {
+      "name": "second_compression_mnist_8k_random_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 905.0314487509895,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_mnist_8k_random_seed0.log"
+    },
+    {
+      "name": "second_compression_mnist_8k_coverage_v3_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 910.0308707240038,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_mnist_8k_coverage_v3_seed0.log"
+    },
+    {
+      "name": "second_compression_mnist_8k_random_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 910.0328671189491,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_mnist_8k_random_seed1.log"
+    },
+    {
+      "name": "second_compression_mnist_8k_coverage_v3_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 905.030258707935,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_mnist_8k_coverage_v3_seed1.log"
+    },
+    {
+      "name": "second_compression_mnist_8k_random_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 910.0333165600896,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_mnist_8k_random_seed2.log"
+    },
+    {
+      "name": "second_compression_mnist_8k_coverage_v3_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 915.0381816299632,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_mnist_8k_coverage_v3_seed2.log"
+    },
+    {
+      "name": "second_compression_mnist_16k_random_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 905.03800761397,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_mnist_16k_random_seed0.log"
+    },
+    {
+      "name": "second_compression_mnist_16k_coverage_v3_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 915.0437429950107,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_mnist_16k_coverage_v3_seed0.log"
+    },
+    {
+      "name": "second_compression_mnist_16k_random_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 910.0416588250082,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_mnist_16k_random_seed1.log"
+    },
+    {
+      "name": "second_compression_mnist_16k_coverage_v3_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 905.0532460028771,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_mnist_16k_coverage_v3_seed1.log"
+    },
+    {
+      "name": "second_compression_mnist_16k_random_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 910.0529293711297,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_mnist_16k_random_seed2.log"
+    },
+    {
+      "name": "second_compression_mnist_16k_coverage_v3_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 905.0309786750004,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_mnist_16k_coverage_v3_seed2.log"
+    },
+    {
+      "name": "second_compression_mnist_32k_random_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 910.0310603831895,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_mnist_32k_random_seed0.log"
+    },
+    {
+      "name": "second_compression_mnist_32k_coverage_v3_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 905.0355543941259,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_mnist_32k_coverage_v3_seed0.log"
+    },
+    {
+      "name": "second_compression_mnist_32k_random_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 905.0356278161053,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_mnist_32k_random_seed1.log"
+    },
+    {
+      "name": "second_compression_mnist_32k_coverage_v3_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 905.0314363481011,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_mnist_32k_coverage_v3_seed1.log"
+    },
+    {
+      "name": "second_compression_mnist_32k_random_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 910.031443559099,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_mnist_32k_random_seed2.log"
+    },
+    {
+      "name": "second_compression_mnist_32k_coverage_v3_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 910.0231903940439,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_mnist_32k_coverage_v3_seed2.log"
+    },
+    {
+      "name": "second_compression_fashion_8k_random_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 910.0231575828511,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_fashion_8k_random_seed0.log"
+    },
+    {
+      "name": "second_compression_fashion_8k_coverage_v3_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 905.023605667986,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_fashion_8k_coverage_v3_seed0.log"
+    },
+    {
+      "name": "second_compression_fashion_8k_random_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 910.0205604401417,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_fashion_8k_random_seed1.log"
+    },
+    {
+      "name": "second_compression_fashion_8k_coverage_v3_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 915.03466970101,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_fashion_8k_coverage_v3_seed1.log"
+    },
+    {
+      "name": "second_compression_fashion_8k_random_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 910.0379658951424,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_fashion_8k_random_seed2.log"
+    },
+    {
+      "name": "second_compression_fashion_8k_coverage_v3_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 915.0463187161367,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_fashion_8k_coverage_v3_seed2.log"
+    },
+    {
+      "name": "second_compression_fashion_16k_random_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 905.0461012120359,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_fashion_16k_random_seed0.log"
+    },
+    {
+      "name": "second_compression_fashion_16k_coverage_v3_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 905.0352445850149,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_fashion_16k_coverage_v3_seed0.log"
+    },
+    {
+      "name": "second_compression_fashion_16k_random_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 915.0359266959131,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_fashion_16k_random_seed1.log"
+    },
+    {
+      "name": "second_compression_fashion_16k_coverage_v3_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 910.0436680058483,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_fashion_16k_coverage_v3_seed1.log"
+    },
+    {
+      "name": "second_compression_fashion_16k_random_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 910.0432839631103,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_fashion_16k_random_seed2.log"
+    },
+    {
+      "name": "second_compression_fashion_16k_coverage_v3_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 905.0352201499045,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_fashion_16k_coverage_v3_seed2.log"
+    },
+    {
+      "name": "second_compression_fashion_32k_random_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 910.035345308017,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_fashion_32k_random_seed0.log"
+    },
+    {
+      "name": "second_compression_fashion_32k_coverage_v3_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 915.048131841002,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_fashion_32k_coverage_v3_seed0.log"
+    },
+    {
+      "name": "second_compression_fashion_32k_random_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 910.0479483529925,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_fashion_32k_random_seed1.log"
+    },
+    {
+      "name": "second_compression_fashion_32k_coverage_v3_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 920.0290141210426,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_fashion_32k_coverage_v3_seed1.log"
+    },
+    {
+      "name": "second_compression_fashion_32k_random_seed2",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 910.0289529759903,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_fashion_32k_random_seed2.log"
+    },
+    {
+      "name": "second_compression_fashion_32k_coverage_v3_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 915.0416399091482,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_fashion_32k_coverage_v3_seed2.log"
+    },
+    {
+      "name": "second_compression_fashion_64k_random_seed0",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 910.0381907720584,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_fashion_64k_random_seed0.log"
+    },
+    {
+      "name": "second_compression_fashion_64k_random_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 910.032619898906,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_fashion_64k_random_seed1.log"
+    },
+    {
+      "name": "second_compression_fashion_64k_coverage_v3_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 920.0363331220578,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_fashion_64k_coverage_v3_seed0.log"
+    },
+    {
+      "name": "second_compression_fashion_64k_coverage_v3_seed1",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 920.0208395540249,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_fashion_64k_coverage_v3_seed1.log"
+    },
+    {
+      "name": "second_compression_fashion_64k_random_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 910.0204309730325,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_fashion_64k_random_seed2.log"
+    },
+    {
+      "name": "second_compression_fashion_64k_coverage_v3_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 895.0370955020189,
+      "log": "experiments/coverage_dlgn/logs/second_round_compression/second_compression_fashion_64k_coverage_v3_seed2.log"
+    }
+  ],
+  "failed": []
+}

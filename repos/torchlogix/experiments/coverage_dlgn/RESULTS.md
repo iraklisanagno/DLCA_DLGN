@@ -1102,7 +1102,318 @@ Machine-readable sources:
 - `summary/convolutional_deployment.json` and CSV;
 - `summary/deployment/*.json` and `compile_attempt_history.json`.
 
-## Not completed; required before a DATE claim
+## August 9, 2026 DATE second-round status
+
+Architecture-matched six-by-8K learned-connectivity controls use 48K gates,
+the fixed data split (`data_split_seed=2027`), and 200 effective epochs. The
+table reports best hardened validation, not held-out test accuracy.
+
+| Dataset | Method | Best hard validation | Runs | Mean time | Peak GPU | Status |
+|---|---|---:|---:|---:|---:|---|
+| MNIST | Fixed random | 97.157 +/- 0.043% | 5 | 15.03 min | 0.099 GiB | Reused exact control |
+|  | Mommen | 95.683 +/- 0.404% | 3 | 51.90 min | 0.809 GiB | Complete exact-depth adaptation |
+|  | LILogicNet | 95.717 +/- 0.351% | 3 | 92.44 min | 3.706 GiB | Complete exact-depth adaptation |
+|  | BitLogic rank-4 | 11.417 +/- 0.000% | 3 | 112.75 min | 3.527 GiB | Reproduced-negative depth transfer |
+|  | CoverageDLGN V3 | **97.403 +/- 0.114%** | 5 | **15.02 min** | **0.099 GiB** | Reused frozen method |
+| Fashion-MNIST | Fixed random | 87.477 +/- 0.183% | 5 | 14.97 min | 0.099 GiB | Reused exact control |
+|  | Mommen | 87.400 +/- 0.928% | 3 | 29.09 min | 0.453 GiB | Complete exact-depth adaptation |
+|  | LILogicNet | 84.267 +/- 1.636% | 3 | 92.05 min | 3.706 GiB | Complete exact-depth adaptation |
+|  | BitLogic rank-4 | 10.867 +/- 0.000% | 3 | 112.74 min | 3.527 GiB | Reproduced-negative depth transfer |
+|  | CoverageDLGN V3 | **87.873 +/- 0.271%** | 5 | **15.02 min** | **0.099 GiB** | Reused frozen method |
+
+V3's three common MNIST seeds gain +1.706 pp over Mommen (95% CI
+[+0.666, +2.745]) and +1.672 pp over LILogicNet ([+0.952, +2.392]). On Fashion,
+the common-seed paired effects are +0.483 pp ([-1.597, +2.563]) and +3.617 pp
+([-0.016, +7.249]); those intervals do not support a conclusive superiority
+claim. V3 uses no training-only routing parameters. BitLogic's two-layer
+reproduction remains valid; the chance-level six-layer result is specifically
+a negative depth-transfer result.
+
+At the identical 48K deployed gate budget, V3 uses 3x/2x fewer training
+parameters than matched Mommen on MNIST/Fashion, trains 3.46x/1.94x faster,
+and peaks at 8.17x/4.58x less GPU memory. Against matched LILogicNet it uses 5x
+fewer training parameters, trains 6.15x/6.13x faster, and peaks at 37.43x less
+GPU memory. These ratios describe training resources, not inference speed.
+
+The initial U2 convolutional smoke exposed a pre-pilot structural defect:
+truncated non-power-of-two cyclic stages left 12,288 and 5,112 classifier
+inputs unused. U2 alone was corrected to use deterministic matching stages,
+degree-first selection, normalized-ancestry scale selection, and rotating odd-
+width byes. Fresh dense and convolutional CUDA smokes completed. The corrected
+40,960 -> 20,480 and 20,480 -> 10,240 classifier reductions both have
+`fanout_cv=0.0` and zero unused inputs; all convolutional channel topologies
+also have zero unused inputs. Frozen V3, V4, and U1 regression tests pass.
+
+The complete three-seed compression ladder finished on CUDA without rerunning
+the reused 48K cohorts. Values below are best hardened validation; held-out
+test remains locked.
+
+| Dataset | Total gates | Random | CoverageDLGN V3 | Paired gain | 95% CI | Wins |
+|---|---:|---:|---:|---:|---:|---:|
+| MNIST | 4K | 85.539 +/- 0.495% | 86.067 +/- 0.159% | +0.528 pp | [-1.087, +2.142] | 2/3 |
+| MNIST | 8K | 91.461 +/- 0.286% | 91.956 +/- 0.113% | +0.494 pp | [-0.479, +1.467] | 3/3 |
+| MNIST | 16K | 95.100 +/- 0.161% | 95.478 +/- 0.444% | +0.378 pp | [-0.925, +1.681] | 3/3 |
+| MNIST | 32K | 96.694 +/- 0.135% | 97.011 +/- 0.129% | +0.317 pp | [-0.334, +0.967] | 3/3 |
+| Fashion-MNIST | 8K | 83.433 +/- 0.148% | 83.644 +/- 0.158% | +0.211 pp | [+0.085, +0.338] | 3/3 |
+| Fashion-MNIST | 16K | 86.194 +/- 0.250% | 86.883 +/- 0.192% | +0.689 pp | [-0.344, +1.722] | 3/3 |
+| Fashion-MNIST | 32K | 87.461 +/- 0.234% | 87.778 +/- 0.327% | +0.317 pp | [-1.071, +1.704] | 2/3 |
+| Fashion-MNIST | 64K | 87.333 +/- 0.557% | 88.100 +/- 0.200% | +0.767 pp | [-0.524, +2.057] | 3/3 |
+
+V3 has a positive mean effect in all eight new cells and wins 22/24 paired
+runs. Fashion-MNIST 8K is the only individually significant n=3 cell; the
+other intervals remain inconclusive. The reused 48K validation gains are also
+positive (+0.247 pp MNIST and +0.396 pp Fashion, n=5). Mean training time and
+peak GPU allocation are matched within measurement noise at each budget;
+there are no training-only routing parameters. Machine-readable status and
+provenance are in `summary/second_round_status.{json,csv}`.
+
+### Strengthened dense CIFAR-100 result
+
+A baseline-only, seed-0 training-recipe screen was run for 5K updates on the
+same 3 x 128K architecture. It is screening evidence and is not mixed with the
+matched topology cohort:
+
+| Temperature | Learning rate | Augmentation | Best hard validation |
+|---:|---:|---|---:|
+| 1 | 0.01 | None | 11.020% |
+| 5 | 0.01 | None | 17.180% |
+| **20** | **0.01** | **None** | **22.700%** |
+| 10 | 0.02 | None | 19.940% |
+| 10 | 0.01 | Standard | 18.280% |
+| 10 | 0.02 | Standard | 18.180% |
+
+The screen identifies temperature 20 as the strongest short-run baseline
+recipe. To preserve an exact comparison with the already-completed seed 0,
+the missing seeds of the original temperature-10, learning-rate-0.01,
+no-augmentation 20K random/V3 pair were then completed without changing that
+recipe:
+
+| Method | Best hard validation (n=3) | Paired gain | 95% CI | Wins | Train time | Peak GPU | Topology time |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Fixed random | 21.093 +/- 0.101% | -- | -- | -- | 5.35 min | 0.890 GiB | 3.36 s |
+| Frozen V3 | **21.933 +/- 0.110%** | **+0.840 pp** | **[+0.351, +1.329]** | **3/3** | 5.34 min | 0.890 GiB | 71.03 s |
+
+This is a statistically positive validation result at identical 384K gate,
+6.144M LUT-parameter, optimizer-update, memory, and deployed-routing budgets.
+V3 changes only the offline fixed topology and adds no training-only routing
+parameters. After validation was frozen, the checkpoints were evaluated once
+on held-out test: random reached 20.923 +/- 0.352% and V3 reached
+**21.467 +/- 0.410%**. The paired test gain is +0.543 pp with 3/3 wins; its
+n=3 95% CI [-0.141, +1.227] remains inconclusive.
+
+Two seed-0, same-384K allocation ablations moved capacity toward the
+100-class output layer. The 96K/96K/192K split reached 19.960% random and
+20.620% V3 (+0.660 pp); the more extreme 64K/64K/256K split reached 20.380%
+random and 20.240% V3 (-0.140 pp). Both are below the balanced 3 x 128K
+architecture. Thus the positive result is not explained by adding gates or by
+silently enlarging the class head.
+
+### Frozen unified U2 pilot
+
+The corrected `semantic_multiscale_balanced` U2 rule was frozen before its
+three-seed pilots. It applies the same deterministic degree-balanced,
+semantic-order, multiscale matching rule to dense layers and convolutional
+channel routing. It has no learned routing, swaps, or deployment overhead.
+All 15 CUDA runs completed without failures; held-out test remained locked.
+
+| Coordinate | Random | U2 | Gain | 95% CI | Wins | Comparison with frozen predecessor |
+|---|---:|---:|---:|---:|---:|---|
+| MNIST, 8K, 20K | 90.956% | **91.711%** | **+0.756 pp** | **[+0.029, +1.483]** | 3/3 | +0.044 pp vs V3; tied |
+| Fashion-MNIST, 16K, 20K | 85.739% | **86.339%** | +0.600 pp | [-0.261, +1.461] | 3/3 | -0.089 pp vs V3; tied |
+| Dense CIFAR-10 S, 20K | 49.040% | **52.333%** | **+3.293 pp** | **[+1.803, +4.784]** | 3/3 | +0.140 pp vs V3; tied |
+| Dense CIFAR-100, 3 x 128K, 20K | 21.093% | 21.193% | +0.100 pp | [-0.473, +0.673] | 2/3 | **-0.740 pp vs V3, 0/3; reject** |
+| Conv. CIFAR-10 S, 20K | 56.673% | **58.847%** | **+2.173 pp** | **[+1.647, +2.700]** | 3/3 | +1.660 pp vs V4 and +0.833 pp vs U1; 3/3 each |
+
+The convolutional row uses the original primary random cohort. Against the
+separate explicit controlled-random cohort, U2 gains +1.707 pp with 3/3 wins;
+the n=3 interval is wide and crosses zero. U2 also wins all three pairs versus
+V4 (+1.660 pp, CI [-0.137, +3.457]) and U1 (+0.833 pp, CI
+[-1.516, +3.183]). These comparisons and both random provenances are retained
+rather than selecting whichever random cohort gives the larger gain.
+
+U2's mean offline construction time is 0.101 seconds on MNIST-8K, 0.225
+seconds on Fashion-16K, 0.917 seconds on dense CIFAR-10 S, 13.346 seconds on
+CIFAR-100 3 x 128K, and 1.380 seconds on convolutional S. Gate count, LUT
+parameters, training-only routing parameters (zero), deployed routing bits,
+training time, and peak GPU allocation match the corresponding fixed-routing
+budget. The positive MNIST, Fashion, dense CIFAR-10, and convolutional
+coordinates promoted to the unchanged full-effort rule. CIFAR-100 U2 did not;
+the statistically positive frozen V3 result remains the retained method there.
+
+Machine-readable source: `summary/second_round_u2_pilot.json`.
+
+### Promoted dense full-effort and one-time held-out test
+
+The promoted dense U2 coordinates were trained for the unchanged 108K
+schedule with three seeds. Validation selections were frozen before any new
+test query; 27 previously unevaluated checkpoints were then evaluated once.
+The six pre-existing CIFAR-10 random/V3 test records were reused, not rerun.
+
+| Coordinate | Method | Best hard validation | Hard test | Test gain vs random | 95% CI | Wins |
+|---|---|---:|---:|---:|---:|---:|
+| MNIST, 8K | Random | 91.461 +/- 0.286% | 91.273 +/- 0.217% | -- | -- | -- |
+|  | Frozen V3 | 91.956 +/- 0.113% | 91.907 +/- 0.307% | +0.633 pp | [-0.290, +1.557] | 3/3 |
+|  | Unified U2 | 91.839 +/- 0.304% | **91.937 +/- 0.137%** | **+0.663 pp** | **[+0.015, +1.311]** | **3/3** |
+| Fashion-MNIST, 16K | Random | 86.194 +/- 0.250% | 85.197 +/- 0.261% | -- | -- | -- |
+|  | Frozen V3 | **86.883 +/- 0.192%** | **85.913 +/- 0.356%** | +0.717 pp | [-0.284, +1.717] | 3/3 |
+|  | Unified U2 | 86.606 +/- 0.256% | 85.717 +/- 0.453% | +0.520 pp | [-1.016, +2.056] | 3/3 |
+| Dense CIFAR-10 S | Random | 49.513 +/- 0.580% | 48.913 +/- 0.346% | -- | -- | -- |
+|  | Frozen V3 | **53.113 +/- 0.284%** | **52.390 +/- 0.295%** | **+3.477 pp** | **[+3.265, +3.688]** | **3/3** |
+|  | Unified U2 | 52.833 +/- 0.300% | 52.097 +/- 0.630% | +3.183 pp | [+0.772, +5.595] | 3/3 |
+
+U2 is therefore a generic positive fixed-topology rule versus random in all
+three promoted dense coordinates, but it does not supersede frozen V3 on
+Fashion-MNIST or dense CIFAR-10. On MNIST test it ties V3 (+0.030 pp, CI
+[-0.394, +0.454]). It reduces mean offline construction relative to V3 from
+0.866 to 0.100 seconds on MNIST, 3.358 to 0.231 seconds on Fashion, and 9.313
+to 0.916 seconds on dense CIFAR-10 S while preserving the exact circuit and
+training budgets. Machine-readable sources are
+`summary/second_round_final_validation_freeze.json` and
+`summary/second_round_final_dense.json`.
+
+The generic source-tree hash differs for a few sequential U2 runs because
+documentation and orchestration files were updated while the queue was
+active. The separately recorded training-implementation SHA-256 is identical
+for every frozen dense checkpoint; no model, topology, optimizer, or data
+code changed between those runs.
+
+Representative seed-0 hardened GPU inference used deterministic synthetic
+inputs, batch 128, 20 warmups, and 100 timed batches on GPU 1. It never loaded
+a dataset:
+
+| Coordinate | Random | V3 | U2 | Peak device memory | Interpretation |
+|---|---:|---:|---:|---:|---|
+| MNIST, 8K | 1.138 ms | 1.140 ms | 1.137 ms | 0.0049 GiB | Matched |
+| Fashion, 16K | 1.134 ms | 1.136 ms | 1.137 ms | 0.0094 GiB | Matched |
+| Dense CIFAR-10 S | 0.770 ms | 0.765 ms | 0.767 ms | 0.0412 GiB | Matched |
+| Dense CIFAR-100, 3 x 128K | 3.589 ms | 3.527 ms | -- | 0.4082 / 0.4076 GiB | Matched; U2 rejected |
+
+Sub-percent differences, and the single 1.7% CIFAR-100 difference, are
+single-pass measurement variation rather than speed claims. The defensible
+trade-off is unchanged hardened runtime and memory at identical circuit cost.
+
+### Full-schedule LogicTreeNet-S validation and held-out test
+
+The exact nine-input-channel LogicTreeNet-S fixed-random, frozen legacy-V4,
+unified-U1, and frozen unified-U2 seed-0 runs completed all 350K updates. All
+four best hardened-validation selections were recorded in
+`summary/second_round_convolutional_validation_freeze.json`; the manifest
+confirms that none had a test record at freeze time. The four checkpoints
+were then evaluated once on the held-out 10,000-example test set.
+
+| Method | Best / final hard V | Hard / relaxed T | Gain vs random T | Training time | Peak GPU | Topology time |
+|---|---:|---:|---:|---:|---:|---:|
+| Fixed random | 58.680 / 58.500% | 57.370 / 60.410% | -- | 4.975 h | 1.831 GiB | 0.217 s |
+| Frozen legacy V4 | 59.860 / 58.460% | 58.930 / 62.450% | +1.560 pp | 4.957 h | 1.831 GiB | 0.449 s |
+| Unified U1 | 59.880 / 58.580% | 58.800 / 61.300% | +1.430 pp | 4.980 h | 1.831 GiB | 0.206 s |
+| **Unified U2** | **61.000 / 60.280%** | **60.630 / 63.580%** | **+3.260 pp** | **4.951 h** | **1.831 GiB** | **1.372 s** |
+
+U2 also gains +1.700 test pp over legacy V4 and +1.830 pp over U1. Its
+2.320 validation-point gain and +3.260 test-point gain therefore survive the
+full matched schedule. Its 60.630% hard test result is 0.250 pp above the
+paper-reported 60.38% LogicTreeNet-S result, but the local full-schedule
+cohort has only one seed; the method-level multi-seed evidence remains the
+three-seed 20K pilot (+2.173 pp versus primary random, 3/3 wins).
+
+Learning-curve aggregation over all 350K updates gives U2 a 59.562% mean hard
+validation accuracy versus 57.233% random, 58.510% V4, and 58.344% U1. U2
+first reaches 58.0% at 14K updates, 59.0% at 34K, and 59.5% at 34K. Random
+first reaches 58.0% at 82K and never reaches 59.0%; V4 reaches 59.5% at 212K
+and U1 at 252K. These are matched learning-efficiency measurements, not a
+shortened-training claim.
+
+The 83,552 count is the total number of learned LUT functions. The
+`dense_gate_count=71,680` field in `run_summary.json` counts classifier gates
+only; 874,496 is the distinct spatial gate-application count. These three
+definitions must not be interchanged.
+
+All four methods have exactly 1,336,832 trainable LUT parameters, zero
+trainable routing parameters, 1,945,600 deployed routing bits, and the same
+83,552 learned LUT functions / 874,496 spatial gate applications. Corrected
+synthetic CUDA inference at batch 128 is 6.852/6.856/6.855/6.835 ms for
+random/V4/U1/U2, with 0.3462 GiB peak device allocation in every case; these
+sub-percent differences are treated as matched runtime, not a speed claim.
+
+Compiled `gcc -O0` circuit measurements at batch 128 are 3.230, 3.163,
+3.136, and 3.185 ms for random/V4/U1/U2. U2's simplified circuit has 262,260
+IR nodes versus 252,936 random (+3.686%), while peak export RSS is 1.138 GiB
+versus 1.114 GiB. Thus the central trade-off is +3.260 pp hard-test accuracy
+at exact declared gate/routing/training cost and matched measured runtime,
+with 1.155 seconds of additional offline topology construction and a 3.686%
+larger post-simplification IR. Functional equivalence passed for every
+exported circuit. Energy was not measured.
+
+Machine-readable sources:
+
+- `summary/second_round_convolutional_final.json`;
+- `summary/second_round_convolutional_curves.json` and CSV;
+- `summary/second_round_convolutional_deployment.json`;
+- `logs/second_round_convolutional_final_test/test_evaluation_summary.json`.
+
+## Third round: U2 on dense M/L and published connectivity protocols
+
+All 38 predeclared CUDA trainings completed. Before held-out access,
+`summary/third_round_validation_freeze.json` hashed each run configuration,
+environment, summary, and both best-validation and final checkpoints (76
+checkpoint hashes). Both checkpoints were evaluated once per run on the
+10,000-example CIFAR-10 test set using two GPUs. The evaluation summary records
+38/38 successes, zero failures, and zero missing results.
+
+### Existing dense M/L transfer
+
+| Scale | U2 hard test | Paired gain vs random | Paired U2 vs V3 | Time | Peak GPU | Gates / parameters |
+|---|---:|---:|---:|---:|---:|---:|
+| M, 4 x 128K | **58.653 +/- 0.168% (n=3)** | **+4.557 pp**, CI [+3.781, +5.332], 3/3 | +0.297 pp, CI [-0.580, +1.174], 2/3 | 41.39 min | 1.123 GiB | 512K / 8.192M |
+| L, 5 x 256K | **60.463 +/- 0.348% (n=3)** | **+4.593 pp**, CI [+3.721, +5.466], 3/3 | -0.610 pp, CI [-0.983, -0.237], 0/3 | 113.53 min | 2.717 GiB | 1.28M / 20.480M |
+
+U2 therefore transfers strongly versus fixed random at both scales without a
+method change. It is statistically tied with frozen V3 on M and trails V3 on
+L. V3 remains the best dense specialization; U2 remains the unified method
+shared with convolutional networks.
+
+### LILogicNet protocol
+
+| Coordinate | Fixed random T | U2 T | Paired gain | Top-32 local / reported | U2 / Top-32 training parameters | U2 / Top-32 peak GPU |
+|---|---:|---:|---:|---:|---:|---:|
+| M, 1 x 64K | 49.010 +/- 0.426% | **52.543 +/- 0.296%** | **+3.533 pp**, CI [+1.797, +5.270], 3/3 | 57.840% / 57.28 +/- 0.30% | 1.024M / 5.120M | 0.474 / 8.100 GiB |
+| L, 2 x 128K | 55.333 +/- 0.469% | **60.193 +/- 0.286%** | **+4.860 pp**, CI [+3.083, +6.637], 3/3 | 62.030% / 60.98 +/- 0.19% | 4.096M / 20.480M | 1.557 / 24.861 GiB |
+
+All random/U2 cells use three paired seeds; Top-32 follows the frozen one-seed
+expensive-comparator policy. U2 has the same gates, parameters, memory, and
+training effort as fixed random. It uses 5x fewer trainable parameters than
+Top-32, 16--17x less peak allocated training memory, and 4.9--8.1x lower local
+hardened inference latency. Top-32 is 5.297 pp more accurate on M and 1.837 pp
+on L. This is a clear accuracy--resource Pareto result rather than absolute
+accuracy dominance.
+
+The local fixed controls are close to the paper (49.010 versus reported 49.17
+on M; 55.333 versus 54.76 on L), and the one-seed Top-32 results are also close
+or higher than reported. These agreements support the protocol mapping.
+
+### BitLogic two-layer protocol
+
+| Scale | Rank-2 random T | U2 T | Paired gain | Rank-4 local T | Rank-4 reported |
+|---|---:|---:|---:|---:|---:|
+| S, 8K | 26.175 +/- 0.445% | **28.435 +/- 1.648%** | +2.260 pp, 2/2; CI inconclusive | 27.500 +/- 0.113% | 38.93 +/- 0.19% |
+| M, 32K | 25.945 +/- 0.870% | 26.040 +/- 0.014% | +0.095 pp, 1/2; inconclusive | 16.625 +/- 0.078% | 49.22 +/- 0.26% |
+| L, 128K | 25.160 +/- 0.156% | 25.930 +/- 2.871% | +0.770 pp, 1/2; inconclusive | 13.160 +/- 0.240% | 58.06 +/- 0.14% |
+
+The S U2 result is directionally positive on both seeds, while M/L are
+inconclusive. The rank-4 local arms are not faithful reproductions: relaxed
+models learn signal but hardening collapses. At M, for example, final relaxed
+test accuracy averages 57.60% while final hard accuracy is 14.70%. The local
+rank-4 values are retained as `[REPRODUCED-NEGATIVE]` protocol-transfer data,
+and the paper values remain separately labeled `[REPORTED]`.
+
+Machine-readable sources are `summary/third_round_results.json`,
+`summary/third_round_runs.csv`, and `summary/third_round_groups.csv`. Every
+synthetic benchmark and held-out checkpoint hash matches the validation
+freeze. Focused topology/protocol verification passes with 145 tests; the six
+new third-round-specific provenance/aggregation tests also pass. The complete
+TorchLogix suite passes with 3,412 passed, 3,038 skipped, and one pre-existing
+warning in 257.62 seconds.
+
+## Remaining limitations before submission
 
 - A protocol-identical numerical reproduction of the published CIFAR-10
   baseline. The architecture is exact, but the current frozen-validation
@@ -1117,33 +1428,44 @@ Machine-readable sources:
 - Overlap-off and distance/locality ablations at pilot scale. The balanced
   fan-out component has now been isolated on CIFAR-10 M.
 - WARP/Light repetition.
-- Mommen partial-learnable, LILogic Top-K, BitLogic, and RigL comparisons under
-  identical splits, budgets, and training effort.
-- Multi-seed long-training convolutional confirmation. The one-seed 200K
-  nine-channel M comparison is positive by +0.39 pp on held-out test but is
-  1.05 pp below the paper's reported test accuracy and has no confidence
-  interval.
+- RigL remains unimplemented. Six-layer 48K Mommen, LILogic, and BitLogic
+  controls are complete on MNIST/Fashion under the common split and epoch
+  budget. BitLogic's chance-level outcome is a reproduced-negative six-layer
+  transfer result, not a failure to finish the runs.
+- Multi-seed long-training convolutional confirmation. The full 350K S cohort
+  is positive by +3.260 pp on held-out test and exceeds the paper-reported S
+  test value by 0.250 pp, but has one full seed per method. Its supporting
+  20K method-level pilot has three seeds. The one-seed 200K nine-channel M
+  comparison is positive by +0.39 pp on held-out test but is 1.05 pp below
+  the paper's reported test accuracy and has no confidence interval.
 - Optimized compiled CPU latency for M and direct energy measurements. Circuit
   equivalence and an `-O0` compiled CPU measurement are complete for S; M has
   trace, simplification, equivalence, and framework-level PyTorch GPU timing.
-- A true accuracy/cost Pareto improvement. The present methods have identical
-  gates, operations, and deployed routing storage.
+- Direct energy and optimized hardware-synthesis measurements. The present
+  methods have identical declared gates, operations, and deployed routing
+  storage; U2 improves accuracy at matched measured CUDA/CPU runtime but has
+  a 3.686% larger simplified IR in the full S checkpoint snapshot.
 
 The superseded fraction-0.25 v2 hybrid failed the formal kill criterion.
-Semantic-balanced v3 clears the continuation criterion, remains positive at
-four and eight layers across both budgets, and transfers positively to the
-channel-only v4 pilot. The completed M ablation attributes most of the dense
-gain to balanced fan-out; ancestry-only and task-aware refinements did not
-improve the frozen method. The responsible next steps are the remaining
-schedules in the budget/depth matrix, deployment Pareto measurements,
-long-training convolutional reproduction, and protocol-identical named
-baselines. These results justify continuing the project; they do not alone
-constitute a complete DATE claim.
+Frozen V3 remains the strongest dense specialization, while U2 is the
+separate generic rule shared by dense and convolutional architectures. U2's
+full S result clears the requested +3 pp test-gain target without changing
+gate count, routing storage, training effort, memory, or measured runtime.
+The responsible next additions are two more full S random/U2 seeds,
+protocol-identical published-baseline reproduction, and hardware energy/
+synthesis evidence. `SECOND_ROUND_CONCLUSIONS.md` gives the complete claim,
+trade-off, scope, and nine-step disposition.
 
 ## Final verification
 
 Final verification after regenerating the summary artifacts:
 
+- the August 10 evidence-consistency audit reports `pass` for all legacy and
+  second-round checks, including 110/110 completion, frozen-before-test
+  provenance, exact declared cost, U2 accuracy, learning curve, and deployment
+  equivalence;
+- the second-round focused topology/protocol suite passes with **129 passed**
+  in 86.07 seconds;
 - the reproducibility audit reports `pass` for expected-run completeness,
   54-point learning curves, paired protocol equality, held-out metrics,
   inference benchmarks, environment consistency, and the documented v3 source

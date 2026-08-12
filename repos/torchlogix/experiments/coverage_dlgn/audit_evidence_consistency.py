@@ -10,6 +10,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 SUMMARY = ROOT / "summary"
 TABLES = ROOT / "PAPER_COMPARISON_TABLES.md"
+RESULTS = ROOT / "RESULTS.md"
+CONCLUSIONS = ROOT / "SECOND_ROUND_CONCLUSIONS.md"
 OUTPUT = SUMMARY / "evidence_consistency_audit.json"
 
 
@@ -28,6 +30,21 @@ def main() -> int:
     conv = load("convolutional_evidence_snapshot.json")
     deployment = load("convolutional_deployment.json")
     medium = load("cifar10_paper_medium_200k_paired.json")
+    second_status = load("second_round_status.json")
+    second_freeze = load("second_round_convolutional_validation_freeze.json")
+    second_final = load("second_round_convolutional_final.json")
+    second_curves = load("second_round_convolutional_curves.json")
+    second_deployment = load("second_round_convolutional_deployment.json")
+    second_test_log = json.loads(
+        (
+            ROOT
+            / "logs"
+            / "second_round_convolutional_final_test"
+            / "test_evaluation_summary.json"
+        ).read_text()
+    )
+    results = RESULTS.read_text()
+    conclusions = CONCLUSIONS.read_text()
 
     fashion = {row["family"]: row for row in fashion_final["methods"]}
     checks = {
@@ -99,6 +116,72 @@ def main() -> int:
             for group in deployment["groups"].values()
             for row in group["runs"]
         ),
+        "second_round_110_of_110_complete": (
+            len(second_status["runs"]) == 110
+            and all(row["status"] == "complete" for row in second_status["runs"])
+        ),
+        "second_round_test_absent_at_freeze": all(
+            not row["test_metrics_existing_at_freeze"]
+            for row in second_freeze["runs"].values()
+        ),
+        "second_round_test_evaluated_once_without_failure": (
+            second_test_log["pending_at_start"] == 4
+            and second_test_log["reused_existing"] == []
+            and second_test_log["failures"] == []
+            and second_test_log["missing_after"] == []
+            and len(second_test_log["records"]) == 4
+            and all(row["return_code"] == 0 for row in second_test_log["records"])
+        ),
+        "u2_full_validation_is_61_000": close(
+            second_final["rows"]["unified_u2"]["best_hard_validation_pct"],
+            61.0,
+        ),
+        "u2_full_test_is_60_630": close(
+            second_final["rows"]["unified_u2"]["test_hard_pct"],
+            60.63,
+        ),
+        "u2_full_test_gain_is_3_260": close(
+            second_final["rows"]["unified_u2"]["test_gain_vs_random_pp"],
+            3.26,
+        ),
+        "full_convolutional_declared_cost_is_identical": (
+            len(
+                {
+                    json.dumps(row["cost"], sort_keys=True)
+                    for row in second_final["rows"].values()
+                }
+            )
+            == 1
+        ),
+        "u2_reaches_59_5_at_34k": (
+            second_curves["summaries"]["unified_u2"][
+                "first_step_at_hard_validation_pct"
+            ]["59.5"]
+            == 34000
+        ),
+        "second_round_deployment_complete": (
+            second_deployment["status"] == "COMPLETE"
+            and second_deployment["declared_cost_identical"]
+            and all(
+                row["synthetic_equivalence_passed"]
+                and not row["heldout_test_accessed"]
+                for row in second_deployment["rows"].values()
+            )
+        ),
+        "u2_simplified_ir_delta_is_3_686_pct": close(
+            second_deployment["rows"]["unified_u2"][
+                "simplified_ir_delta_vs_random_pct"
+            ],
+            3.6863079988613823,
+        ),
+        "final_docs_contain_frozen_u2_result": all(
+            "60.630%" in document and "+3.260 pp" in document
+            for document in (tables, results, conclusions)
+        ),
+        "final_docs_have_no_u2_running_marker": all(
+            "U2 running" not in document and "[RUNNING]" not in document
+            for document in (tables, results, conclusions)
+        ),
     }
     failed = sorted(name for name, passed in checks.items() if not passed)
     payload = {
@@ -111,7 +194,15 @@ def main() -> int:
             "summary/convolutional_evidence_snapshot.json",
             "summary/convolutional_deployment.json",
             "summary/cifar10_paper_medium_200k_paired.json",
+            "summary/second_round_status.json",
+            "summary/second_round_convolutional_validation_freeze.json",
+            "summary/second_round_convolutional_final.json",
+            "summary/second_round_convolutional_curves.json",
+            "summary/second_round_convolutional_deployment.json",
+            "logs/second_round_convolutional_final_test/test_evaluation_summary.json",
             "PAPER_COMPARISON_TABLES.md",
+            "RESULTS.md",
+            "SECOND_ROUND_CONCLUSIONS.md",
         ],
     }
     OUTPUT.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")

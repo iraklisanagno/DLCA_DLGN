@@ -1,0 +1,154 @@
+{
+  "phase": "third_bitlogic_cifar10",
+  "purpose": "Direct rank-2 U2 and rank-4 Pareto comparison on BitLogic Table 6",
+  "cuda_required": true,
+  "heldout_test_used": false,
+  "selection_metric": "best hardened validation accuracy",
+  "test_policy": "evaluate predeclared best-validation and final checkpoints once after every full run in the phase completes",
+  "entries": [
+    {
+      "name": "third_bitlogic_s_random_seed0",
+      "family": "random",
+      "coordinate": "s",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_bitlogic_cifar10/third_bitlogic_s_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/third_bitlogic_s_random_seed0"
+    },
+    {
+      "name": "third_bitlogic_s_random_seed1",
+      "family": "random",
+      "coordinate": "s",
+      "seed": 1,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_bitlogic_cifar10/third_bitlogic_s_random_seed1.json",
+      "output": "experiments/coverage_dlgn/results/third_bitlogic_s_random_seed1"
+    },
+    {
+      "name": "third_bitlogic_s_u2_seed0",
+      "family": "u2",
+      "coordinate": "s",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_bitlogic_cifar10/third_bitlogic_s_u2_seed0.json",
+      "output": "experiments/coverage_dlgn/results/third_bitlogic_s_u2_seed0"
+    },
+    {
+      "name": "third_bitlogic_s_u2_seed1",
+      "family": "u2",
+      "coordinate": "s",
+      "seed": 1,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_bitlogic_cifar10/third_bitlogic_s_u2_seed1.json",
+      "output": "experiments/coverage_dlgn/results/third_bitlogic_s_u2_seed1"
+    },
+    {
+      "name": "third_bitlogic_s_best_seed0",
+      "family": "best",
+      "coordinate": "s",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_bitlogic_cifar10/third_bitlogic_s_best_seed0.json",
+      "output": "experiments/coverage_dlgn/results/third_bitlogic_s_best_seed0"
+    },
+    {
+      "name": "third_bitlogic_s_best_seed1",
+      "family": "best",
+      "coordinate": "s",
+      "seed": 1,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_bitlogic_cifar10/third_bitlogic_s_best_seed1.json",
+      "output": "experiments/coverage_dlgn/results/third_bitlogic_s_best_seed1"
+    },
+    {
+      "name": "third_bitlogic_m_random_seed0",
+      "family": "random",
+      "coordinate": "m",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_bitlogic_cifar10/third_bitlogic_m_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/third_bitlogic_m_random_seed0"
+    },
+    {
+      "name": "third_bitlogic_m_random_seed1",
+      "family": "random",
+      "coordinate": "m",
+      "seed": 1,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_bitlogic_cifar10/third_bitlogic_m_random_seed1.json",
+      "output": "experiments/coverage_dlgn/results/third_bitlogic_m_random_seed1"
+    },
+    {
+      "name": "third_bitlogic_m_u2_seed0",
+      "family": "u2",
+      "coordinate": "m",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_bitlogic_cifar10/third_bitlogic_m_u2_seed0.json",
+      "output": "experiments/coverage_dlgn/results/third_bitlogic_m_u2_seed0"
+    },
+    {
+      "name": "third_bitlogic_m_u2_seed1",
+      "family": "u2",
+      "coordinate": "m",
+      "seed": 1,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_bitlogic_cifar10/third_bitlogic_m_u2_seed1.json",
+      "output": "experiments/coverage_dlgn/results/third_bitlogic_m_u2_seed1"
+    },
+    {
+      "name": "third_bitlogic_m_best_seed0",
+      "family": "best",
+      "coordinate": "m",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_bitlogic_cifar10/third_bitlogic_m_best_seed0.json",
+      "output": "experiments/coverage_dlgn/results/third_bitlogic_m_best_seed0"
+    },
+    {
+      "name": "third_bitlogic_m_best_seed1",
+      "family": "best",
+      "coordinate": "m",
+      "seed": 1,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_bitlogic_cifar10/third_bitlogic_m_best_seed1.json",
+      "output": "experiments/coverage_dlgn/results/third_bitlogic_m_best_seed1"
+    },
+    {
+      "name": "third_bitlogic_l_random_seed0",
+      "family": "random",
+      "coordinate": "l",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_bitlogic_cifar10/third_bitlogic_l_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/third_bitlogic_l_random_seed0"
+    },
+    {
+      "name": "third_bitlogic_l_random_seed1",
+      "family": "random",
+      "coordinate": "l",
+      "seed": 1,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_bitlogic_cifar10/third_bitlogic_l_random_seed1.json",
+      "output": "experiments/coverage_dlgn/results/third_bitlogic_l_random_seed1"
+    },
+    {
+      "name": "third_bitlogic_l_u2_seed0",
+      "family": "u2",
+      "coordinate": "l",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_bitlogic_cifar10/third_bitlogic_l_u2_seed0.json",
+      "output": "experiments/coverage_dlgn/results/third_bitlogic_l_u2_seed0"
+    },
+    {
+      "name": "third_bitlogic_l_u2_seed1",
+      "family": "u2",
+      "coordinate": "l",
+      "seed": 1,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_bitlogic_cifar10/third_bitlogic_l_u2_seed1.json",
+      "output": "experiments/coverage_dlgn/results/third_bitlogic_l_u2_seed1"
+    },
+    {
+      "name": "third_bitlogic_l_best_seed0",
+      "family": "best",
+      "coordinate": "l",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_bitlogic_cifar10/third_bitlogic_l_best_seed0.json",
+      "output": "experiments/coverage_dlgn/results/third_bitlogic_l_best_seed0"
+    },
+    {
+      "name": "third_bitlogic_l_best_seed1",
+      "family": "best",
+      "coordinate": "l",
+      "seed": 1,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_bitlogic_cifar10/third_bitlogic_l_best_seed1.json",
+      "output": "experiments/coverage_dlgn/results/third_bitlogic_l_best_seed1"
+    }
+  ]
+}

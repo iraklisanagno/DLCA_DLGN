@@ -1,0 +1,50 @@
+{
+  "phase": "third_bitlogic_cifar10_s_idlefill",
+  "wall_seconds": 3270.083068491891,
+  "skipped": [],
+  "finished": [
+    {
+      "name": "third_bitlogic_s_random_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 515.0168411389459,
+      "log": "experiments/coverage_dlgn/logs/third_bitlogic_cifar10_s_idlefill/third_bitlogic_s_random_seed0.log"
+    },
+    {
+      "name": "third_bitlogic_s_random_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 520.0135057268199,
+      "log": "experiments/coverage_dlgn/logs/third_bitlogic_cifar10_s_idlefill/third_bitlogic_s_random_seed1.log"
+    },
+    {
+      "name": "third_bitlogic_s_u2_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 520.011281574145,
+      "log": "experiments/coverage_dlgn/logs/third_bitlogic_cifar10_s_idlefill/third_bitlogic_s_u2_seed0.log"
+    },
+    {
+      "name": "third_bitlogic_s_u2_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 510.0131834410131,
+      "log": "experiments/coverage_dlgn/logs/third_bitlogic_cifar10_s_idlefill/third_bitlogic_s_u2_seed1.log"
+    },
+    {
+      "name": "third_bitlogic_s_best_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 600.0129027960356,
+      "log": "experiments/coverage_dlgn/logs/third_bitlogic_cifar10_s_idlefill/third_bitlogic_s_best_seed0.log"
+    },
+    {
+      "name": "third_bitlogic_s_best_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 605.0126376659609,
+      "log": "experiments/coverage_dlgn/logs/third_bitlogic_cifar10_s_idlefill/third_bitlogic_s_best_seed1.log"
+    }
+  ],
+  "failed": []
+}

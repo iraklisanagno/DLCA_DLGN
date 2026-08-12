@@ -1,0 +1,58 @@
+{
+  "phase": "third_u2_published_smoke",
+  "purpose": "CUDA-only construction, memory, and ten-step training probes",
+  "cuda_required": true,
+  "heldout_test_used": false,
+  "selection_metric": "best hardened validation accuracy",
+  "test_policy": "evaluate predeclared best-validation and final checkpoints once after every full run in the phase completes",
+  "entries": [
+    {
+      "name": "smoke_third_u2_cifar10_m_seed0",
+      "family": "u2",
+      "coordinate": "m",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_u2_published_smoke/smoke_third_u2_cifar10_m_seed0.json",
+      "output": "experiments/coverage_dlgn/results/smoke_third_u2_cifar10_m_seed0"
+    },
+    {
+      "name": "smoke_third_u2_cifar10_l_seed0",
+      "family": "u2",
+      "coordinate": "l",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_u2_published_smoke/smoke_third_u2_cifar10_l_seed0.json",
+      "output": "experiments/coverage_dlgn/results/smoke_third_u2_cifar10_l_seed0"
+    },
+    {
+      "name": "smoke_third_lilogic_m_u2_seed0",
+      "family": "u2",
+      "coordinate": "m",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_u2_published_smoke/smoke_third_lilogic_m_u2_seed0.json",
+      "output": "experiments/coverage_dlgn/results/smoke_third_lilogic_m_u2_seed0"
+    },
+    {
+      "name": "smoke_third_lilogic_l_top32_seed0",
+      "family": "top32",
+      "coordinate": "l",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_u2_published_smoke/smoke_third_lilogic_l_top32_seed0.json",
+      "output": "experiments/coverage_dlgn/results/smoke_third_lilogic_l_top32_seed0"
+    },
+    {
+      "name": "smoke_third_bitlogic_s_u2_seed0",
+      "family": "u2",
+      "coordinate": "s",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_u2_published_smoke/smoke_third_bitlogic_s_u2_seed0.json",
+      "output": "experiments/coverage_dlgn/results/smoke_third_bitlogic_s_u2_seed0"
+    },
+    {
+      "name": "smoke_third_bitlogic_l_best_seed0",
+      "family": "best",
+      "coordinate": "l",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_u2_published_smoke/smoke_third_bitlogic_l_best_seed0.json",
+      "output": "experiments/coverage_dlgn/results/smoke_third_bitlogic_l_best_seed0"
+    }
+  ]
+}

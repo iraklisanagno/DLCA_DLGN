@@ -1,0 +1,122 @@
+{
+  "phase": "third_lilogic_cifar10",
+  "purpose": "Direct fixed-random/U2/Top-32 comparison on LILogicNet M/L protocols",
+  "cuda_required": true,
+  "heldout_test_used": false,
+  "selection_metric": "best hardened validation accuracy",
+  "test_policy": "evaluate predeclared best-validation and final checkpoints once after every full run in the phase completes",
+  "entries": [
+    {
+      "name": "third_lilogic_m_random_seed0",
+      "family": "random",
+      "coordinate": "m",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_lilogic_cifar10/third_lilogic_m_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/third_lilogic_m_random_seed0"
+    },
+    {
+      "name": "third_lilogic_m_random_seed1",
+      "family": "random",
+      "coordinate": "m",
+      "seed": 1,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_lilogic_cifar10/third_lilogic_m_random_seed1.json",
+      "output": "experiments/coverage_dlgn/results/third_lilogic_m_random_seed1"
+    },
+    {
+      "name": "third_lilogic_m_random_seed2",
+      "family": "random",
+      "coordinate": "m",
+      "seed": 2,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_lilogic_cifar10/third_lilogic_m_random_seed2.json",
+      "output": "experiments/coverage_dlgn/results/third_lilogic_m_random_seed2"
+    },
+    {
+      "name": "third_lilogic_m_u2_seed0",
+      "family": "u2",
+      "coordinate": "m",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_lilogic_cifar10/third_lilogic_m_u2_seed0.json",
+      "output": "experiments/coverage_dlgn/results/third_lilogic_m_u2_seed0"
+    },
+    {
+      "name": "third_lilogic_m_u2_seed1",
+      "family": "u2",
+      "coordinate": "m",
+      "seed": 1,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_lilogic_cifar10/third_lilogic_m_u2_seed1.json",
+      "output": "experiments/coverage_dlgn/results/third_lilogic_m_u2_seed1"
+    },
+    {
+      "name": "third_lilogic_m_u2_seed2",
+      "family": "u2",
+      "coordinate": "m",
+      "seed": 2,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_lilogic_cifar10/third_lilogic_m_u2_seed2.json",
+      "output": "experiments/coverage_dlgn/results/third_lilogic_m_u2_seed2"
+    },
+    {
+      "name": "third_lilogic_m_top32_seed0",
+      "family": "top32",
+      "coordinate": "m",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_lilogic_cifar10/third_lilogic_m_top32_seed0.json",
+      "output": "experiments/coverage_dlgn/results/third_lilogic_m_top32_seed0"
+    },
+    {
+      "name": "third_lilogic_l_random_seed0",
+      "family": "random",
+      "coordinate": "l",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_lilogic_cifar10/third_lilogic_l_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/third_lilogic_l_random_seed0"
+    },
+    {
+      "name": "third_lilogic_l_random_seed1",
+      "family": "random",
+      "coordinate": "l",
+      "seed": 1,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_lilogic_cifar10/third_lilogic_l_random_seed1.json",
+      "output": "experiments/coverage_dlgn/results/third_lilogic_l_random_seed1"
+    },
+    {
+      "name": "third_lilogic_l_random_seed2",
+      "family": "random",
+      "coordinate": "l",
+      "seed": 2,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_lilogic_cifar10/third_lilogic_l_random_seed2.json",
+      "output": "experiments/coverage_dlgn/results/third_lilogic_l_random_seed2"
+    },
+    {
+      "name": "third_lilogic_l_u2_seed0",
+      "family": "u2",
+      "coordinate": "l",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_lilogic_cifar10/third_lilogic_l_u2_seed0.json",
+      "output": "experiments/coverage_dlgn/results/third_lilogic_l_u2_seed0"
+    },
+    {
+      "name": "third_lilogic_l_u2_seed1",
+      "family": "u2",
+      "coordinate": "l",
+      "seed": 1,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_lilogic_cifar10/third_lilogic_l_u2_seed1.json",
+      "output": "experiments/coverage_dlgn/results/third_lilogic_l_u2_seed1"
+    },
+    {
+      "name": "third_lilogic_l_u2_seed2",
+      "family": "u2",
+      "coordinate": "l",
+      "seed": 2,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_lilogic_cifar10/third_lilogic_l_u2_seed2.json",
+      "output": "experiments/coverage_dlgn/results/third_lilogic_l_u2_seed2"
+    },
+    {
+      "name": "third_lilogic_l_top32_seed0",
+      "family": "top32",
+      "coordinate": "l",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_lilogic_cifar10/third_lilogic_l_top32_seed0.json",
+      "output": "experiments/coverage_dlgn/results/third_lilogic_l_top32_seed0"
+    }
+  ]
+}

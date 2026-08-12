@@ -1,0 +1,51 @@
+{
+  "architecture": "DlgnConvCifar10PaperSmall",
+  "boolean_input_channels": 9,
+  "training_updates": 350000,
+  "selection": "best hardened validation checkpoint",
+  "validation_frozen": true,
+  "held_out_test_access_added_by_this_script": false,
+  "single_seed_resource_cohort": true,
+  "runs": {
+    "random": {
+      "name": "second_full_conv_cifar10_s_random_seed0",
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_full_conv_cifar10_s_random_seed0",
+      "seed": 0,
+      "best_hard_validation_pct": 58.68,
+      "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_full_conv_cifar10_s_random_seed0/best_checkpoint.pt",
+      "test_metrics_existing_at_freeze": false,
+      "source_tree_sha256": "9234f0bc3cef8d063e4f3bb7097aca2d71577da74841251a0c3d327f12fa83e9",
+      "training_implementation_sha256": "5ed307858a2a2801a8988c2f5ebe9f2263006212cfd0b5c0e2b2709d46a09df7"
+    },
+    "legacy_v4": {
+      "name": "second_full_conv_cifar10_s_legacy_v4_seed0",
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_full_conv_cifar10_s_legacy_v4_seed0",
+      "seed": 0,
+      "best_hard_validation_pct": 59.86,
+      "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_full_conv_cifar10_s_legacy_v4_seed0/best_checkpoint.pt",
+      "test_metrics_existing_at_freeze": false,
+      "source_tree_sha256": "b8a308557c939a5ed29f014e91b96b56d84a9f061e1d89ce09ab2a26000d7cc4",
+      "training_implementation_sha256": "5ed307858a2a2801a8988c2f5ebe9f2263006212cfd0b5c0e2b2709d46a09df7"
+    },
+    "unified_u1": {
+      "name": "second_full_conv_cifar10_s_unified_u1_seed0",
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_full_conv_cifar10_s_unified_u1_seed0",
+      "seed": 0,
+      "best_hard_validation_pct": 59.88,
+      "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_full_conv_cifar10_s_unified_u1_seed0/best_checkpoint.pt",
+      "test_metrics_existing_at_freeze": false,
+      "source_tree_sha256": "003059377ab7bd81757cdf1cccdc11b9b27dcee3a20e2999d250c948cda95c6b",
+      "training_implementation_sha256": "5ed307858a2a2801a8988c2f5ebe9f2263006212cfd0b5c0e2b2709d46a09df7"
+    },
+    "unified_u2": {
+      "name": "second_final_u2_conv_cifar10_s_seed0",
+      "run_dir": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_final_u2_conv_cifar10_s_seed0",
+      "seed": 0,
+      "best_hard_validation_pct": 61.0,
+      "best_checkpoint": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/results/second_final_u2_conv_cifar10_s_seed0/best_checkpoint.pt",
+      "test_metrics_existing_at_freeze": false,
+      "source_tree_sha256": "65e22615b44202794382f479a6aff7b94ef3cbd88b2990cc965a6aac606796ff",
+      "training_implementation_sha256": "5ed307858a2a2801a8988c2f5ebe9f2263006212cfd0b5c0e2b2709d46a09df7"
+    }
+  }
+}

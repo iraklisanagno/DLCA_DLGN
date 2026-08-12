@@ -1,0 +1,17 @@
+{
+  "phase": "second_round_u2_post_balance_smoke",
+  "cuda_required": true,
+  "skip_completed": true,
+  "entries": [
+    {
+      "name": "smoke_second_u2_mnist_8k_seed0_post_balance",
+      "config": "experiments/coverage_dlgn/configs/second_round/u2_post_balance_smoke/smoke_second_u2_mnist_8k_seed0_post_balance.json",
+      "output": "experiments/coverage_dlgn/results/smoke_second_u2_mnist_8k_seed0_post_balance"
+    },
+    {
+      "name": "smoke_second_u2_conv_cifar10_s_seed0_post_balance",
+      "config": "experiments/coverage_dlgn/configs/second_round/u2_post_balance_smoke/smoke_second_u2_conv_cifar10_s_seed0_post_balance.json",
+      "output": "experiments/coverage_dlgn/results/smoke_second_u2_conv_cifar10_s_seed0_post_balance"
+    }
+  ]
+}

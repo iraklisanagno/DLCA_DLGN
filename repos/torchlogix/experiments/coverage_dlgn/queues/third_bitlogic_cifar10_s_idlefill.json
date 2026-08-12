@@ -1,0 +1,59 @@
+{
+  "phase": "third_bitlogic_cifar10_s_idlefill",
+  "purpose": "Scheduling-only subset of the frozen BitLogic Table 6 queue for an idle GPU",
+  "cuda_required": true,
+  "heldout_test_used": false,
+  "selection_metric": "best hardened validation accuracy",
+  "test_policy": "evaluate predeclared best-validation and final checkpoints once after every full run in the parent phase completes",
+  "parent_queue": "experiments/coverage_dlgn/queues/third_bitlogic_cifar10.json",
+  "entries": [
+    {
+      "name": "third_bitlogic_s_random_seed0",
+      "family": "random",
+      "coordinate": "s",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_bitlogic_cifar10/third_bitlogic_s_random_seed0.json",
+      "output": "experiments/coverage_dlgn/results/third_bitlogic_s_random_seed0"
+    },
+    {
+      "name": "third_bitlogic_s_random_seed1",
+      "family": "random",
+      "coordinate": "s",
+      "seed": 1,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_bitlogic_cifar10/third_bitlogic_s_random_seed1.json",
+      "output": "experiments/coverage_dlgn/results/third_bitlogic_s_random_seed1"
+    },
+    {
+      "name": "third_bitlogic_s_u2_seed0",
+      "family": "u2",
+      "coordinate": "s",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_bitlogic_cifar10/third_bitlogic_s_u2_seed0.json",
+      "output": "experiments/coverage_dlgn/results/third_bitlogic_s_u2_seed0"
+    },
+    {
+      "name": "third_bitlogic_s_u2_seed1",
+      "family": "u2",
+      "coordinate": "s",
+      "seed": 1,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_bitlogic_cifar10/third_bitlogic_s_u2_seed1.json",
+      "output": "experiments/coverage_dlgn/results/third_bitlogic_s_u2_seed1"
+    },
+    {
+      "name": "third_bitlogic_s_best_seed0",
+      "family": "best",
+      "coordinate": "s",
+      "seed": 0,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_bitlogic_cifar10/third_bitlogic_s_best_seed0.json",
+      "output": "experiments/coverage_dlgn/results/third_bitlogic_s_best_seed0"
+    },
+    {
+      "name": "third_bitlogic_s_best_seed1",
+      "family": "best",
+      "coordinate": "s",
+      "seed": 1,
+      "config": "experiments/coverage_dlgn/configs/u2_published_protocols/third_bitlogic_cifar10/third_bitlogic_s_best_seed1.json",
+      "output": "experiments/coverage_dlgn/results/third_bitlogic_s_best_seed1"
+    }
+  ]
+}

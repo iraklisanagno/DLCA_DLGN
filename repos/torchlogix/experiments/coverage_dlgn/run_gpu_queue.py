@@ -11,6 +11,8 @@ import sys
 import time
 from pathlib import Path
 
+import torch
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
@@ -35,10 +37,43 @@ def is_complete(output: Path) -> bool:
     )
 
 
+def require_cuda_devices(gpus: list[int]) -> None:
+    """Fail before launching work unless every requested CUDA device is usable."""
+    if not torch.cuda.is_available():
+        raise RuntimeError("CUDA is required, but PyTorch cannot see a CUDA device")
+    device_count = torch.cuda.device_count()
+    invalid = [gpu for gpu in gpus if gpu < 0 or gpu >= device_count]
+    if invalid:
+        raise RuntimeError(
+            f"requested CUDA devices {invalid} outside visible range 0..{device_count - 1}"
+        )
+    for gpu in gpus:
+        probe = torch.empty(1, device=f"cuda:{gpu}")
+        torch.cuda.synchronize(gpu)
+        del probe
+
+
+def require_cuda_configs(entries: list[dict]) -> None:
+    """Reject a CUDA queue containing a CPU or implicit-device config."""
+    invalid = []
+    for entry in entries:
+        with Path(entry["config"]).open() as handle:
+            config = json.load(handle)
+        if config.get("device") != "cuda":
+            invalid.append(entry["name"])
+    if invalid:
+        raise RuntimeError(
+            "CUDA-required queue contains non-CUDA configs: " + ", ".join(invalid)
+        )
+
+
 def main() -> int:
     args = parse_args()
     with args.queue.open() as handle:
         queue_payload = json.load(handle)
+    if queue_payload.get("cuda_required", False):
+        require_cuda_devices(args.gpus)
+        require_cuda_configs(queue_payload["entries"])
     pending = []
     skipped = []
     for entry in queue_payload["entries"]:

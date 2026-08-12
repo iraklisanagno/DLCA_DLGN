@@ -1,0 +1,103 @@
+{
+  "validation_freeze": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/experiments/coverage_dlgn/summary/second_round_convolutional_validation_freeze.json",
+  "held_out_test_evaluated_once": true,
+  "single_seed_resource_cohort": true,
+  "rows": {
+    "random": {
+      "best_hard_validation_pct": 58.68,
+      "final_hard_validation_pct": 58.5,
+      "test_hard_pct": 57.37,
+      "test_relaxed_pct": 60.41,
+      "training_wall_hours": 4.975109609826145,
+      "peak_gpu_gib": 1.8306565284729004,
+      "topology_construction_seconds": 0.21695491205900908,
+      "cost": {
+        "dense_gate_count": 71680,
+        "trainable_parameters": 1336832,
+        "training_routing_parameters": 0,
+        "deployed_routing_bits": 1945600,
+        "deployed_routing_bytes_packed": 243200,
+        "candidate_indices_tensor_bytes": 1146880
+      },
+      "cost_interpretation": {
+        "dense_gate_count": "classifier gates only",
+        "total_learned_gate_functions": 83552,
+        "spatial_gate_applications": 874496
+      },
+      "validation_gain_vs_random_pp": 0.0,
+      "test_gain_vs_random_pp": 0.0
+    },
+    "legacy_v4": {
+      "best_hard_validation_pct": 59.86,
+      "final_hard_validation_pct": 58.46,
+      "test_hard_pct": 58.93000000000001,
+      "test_relaxed_pct": 62.45,
+      "training_wall_hours": 4.9570949978491345,
+      "peak_gpu_gib": 1.8306818008422852,
+      "topology_construction_seconds": 0.4492695031221956,
+      "cost": {
+        "dense_gate_count": 71680,
+        "trainable_parameters": 1336832,
+        "training_routing_parameters": 0,
+        "deployed_routing_bits": 1945600,
+        "deployed_routing_bytes_packed": 243200,
+        "candidate_indices_tensor_bytes": 1146880
+      },
+      "cost_interpretation": {
+        "dense_gate_count": "classifier gates only",
+        "total_learned_gate_functions": 83552,
+        "spatial_gate_applications": 874496
+      },
+      "validation_gain_vs_random_pp": 1.1799999999999997,
+      "test_gain_vs_random_pp": 1.5600000000000094
+    },
+    "unified_u1": {
+      "best_hard_validation_pct": 59.88,
+      "final_hard_validation_pct": 58.58,
+      "test_hard_pct": 58.8,
+      "test_relaxed_pct": 61.3,
+      "training_wall_hours": 4.979866714561358,
+      "peak_gpu_gib": 1.8306818008422852,
+      "topology_construction_seconds": 0.20643055601976812,
+      "cost": {
+        "dense_gate_count": 71680,
+        "trainable_parameters": 1336832,
+        "training_routing_parameters": 0,
+        "deployed_routing_bits": 1945600,
+        "deployed_routing_bytes_packed": 243200,
+        "candidate_indices_tensor_bytes": 1146880
+      },
+      "cost_interpretation": {
+        "dense_gate_count": "classifier gates only",
+        "total_learned_gate_functions": 83552,
+        "spatial_gate_applications": 874496
+      },
+      "validation_gain_vs_random_pp": 1.2000000000000028,
+      "test_gain_vs_random_pp": 1.4299999999999997
+    },
+    "unified_u2": {
+      "best_hard_validation_pct": 61.0,
+      "final_hard_validation_pct": 60.28,
+      "test_hard_pct": 60.629999999999995,
+      "test_relaxed_pct": 63.580000000000005,
+      "training_wall_hours": 4.95067577633858,
+      "peak_gpu_gib": 1.8306818008422852,
+      "topology_construction_seconds": 1.3720879163593054,
+      "cost": {
+        "dense_gate_count": 71680,
+        "trainable_parameters": 1336832,
+        "training_routing_parameters": 0,
+        "deployed_routing_bits": 1945600,
+        "deployed_routing_bytes_packed": 243200,
+        "candidate_indices_tensor_bytes": 1146880
+      },
+      "cost_interpretation": {
+        "dense_gate_count": "classifier gates only",
+        "total_learned_gate_functions": 83552,
+        "spatial_gate_applications": 874496
+      },
+      "validation_gain_vs_random_pp": 2.3200000000000003,
+      "test_gain_vs_random_pp": 3.259999999999998
+    }
+  }
+}

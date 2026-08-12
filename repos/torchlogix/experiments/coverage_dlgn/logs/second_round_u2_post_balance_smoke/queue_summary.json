@@ -1,0 +1,22 @@
+{
+  "phase": "second_round_u2_post_balance_smoke",
+  "wall_seconds": 20.00156596605666,
+  "skipped": [],
+  "finished": [
+    {
+      "name": "smoke_second_u2_mnist_8k_seed0_post_balance",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 5.000162303913385,
+      "log": "experiments/coverage_dlgn/logs/second_round_u2_post_balance_smoke/smoke_second_u2_mnist_8k_seed0_post_balance.log"
+    },
+    {
+      "name": "smoke_second_u2_conv_cifar10_s_seed0_post_balance",
+      "gpu": 1,
+      "return_code": 0,
+      "elapsed_seconds": 15.00045575783588,
+      "log": "experiments/coverage_dlgn/logs/second_round_u2_post_balance_smoke/smoke_second_u2_conv_cifar10_s_seed0_post_balance.log"
+    }
+  ],
+  "failed": []
+}

@@ -1,0 +1,106 @@
+{
+  "phase": "second_round_c100_strength",
+  "wall_seconds": 3705.114205581136,
+  "skipped": [],
+  "finished": [
+    {
+      "name": "second_c100_baseline_screen_tau1_lr0.01_augnone_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 95.00238321488723,
+      "log": "experiments/coverage_dlgn/logs/second_round_c100_strength/second_c100_baseline_screen_tau1_lr0.01_augnone_seed0.log"
+    },
+    {
+      "name": "second_c100_baseline_screen_tau5_lr0.01_augnone_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 100.00242531695403,
+      "log": "experiments/coverage_dlgn/logs/second_round_c100_strength/second_c100_baseline_screen_tau5_lr0.01_augnone_seed0.log"
+    },
+    {
+      "name": "second_c100_baseline_screen_tau20_lr0.01_augnone_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 100.0018651119899,
+      "log": "experiments/coverage_dlgn/logs/second_round_c100_strength/second_c100_baseline_screen_tau20_lr0.01_augnone_seed0.log"
+    },
+    {
+      "name": "second_c100_baseline_screen_tau10_lr0.02_augnone_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 100.00292278407142,
+      "log": "experiments/coverage_dlgn/logs/second_round_c100_strength/second_c100_baseline_screen_tau10_lr0.02_augnone_seed0.log"
+    },
+    {
+      "name": "second_c100_baseline_screen_tau10_lr0.01_augstandard_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 100.00238090008497,
+      "log": "experiments/coverage_dlgn/logs/second_round_c100_strength/second_c100_baseline_screen_tau10_lr0.01_augstandard_seed0.log"
+    },
+    {
+      "name": "second_c100_baseline_screen_tau10_lr0.02_augstandard_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 100.00421749590896,
+      "log": "experiments/coverage_dlgn/logs/second_round_c100_strength/second_c100_baseline_screen_tau10_lr0.02_augstandard_seed0.log"
+    },
+    {
+      "name": "second_c100_3x128k_random_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 335.0094273670111,
+      "log": "experiments/coverage_dlgn/logs/second_round_c100_strength/second_c100_3x128k_random_seed1.log"
+    },
+    {
+      "name": "second_c100_3x128k_coverage_v3_seed1",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 415.01691903406754,
+      "log": "experiments/coverage_dlgn/logs/second_round_c100_strength/second_c100_3x128k_coverage_v3_seed1.log"
+    },
+    {
+      "name": "second_c100_3x128k_random_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 340.0095414509997,
+      "log": "experiments/coverage_dlgn/logs/second_round_c100_strength/second_c100_3x128k_random_seed2.log"
+    },
+    {
+      "name": "second_c100_3x128k_coverage_v3_seed2",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 415.0127599851694,
+      "log": "experiments/coverage_dlgn/logs/second_round_c100_strength/second_c100_3x128k_coverage_v3_seed2.log"
+    },
+    {
+      "name": "second_c100_class_scaled_96_96_192k_random_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 345.0137349930592,
+      "log": "experiments/coverage_dlgn/logs/second_round_c100_strength/second_c100_class_scaled_96_96_192k_random_seed0.log"
+    },
+    {
+      "name": "second_c100_class_scaled_96_96_192k_coverage_v3_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 425.0078515771311,
+      "log": "experiments/coverage_dlgn/logs/second_round_c100_strength/second_c100_class_scaled_96_96_192k_coverage_v3_seed0.log"
+    },
+    {
+      "name": "second_c100_class_scaled_64_64_256k_random_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 375.0094271211419,
+      "log": "experiments/coverage_dlgn/logs/second_round_c100_strength/second_c100_class_scaled_64_64_256k_random_seed0.log"
+    },
+    {
+      "name": "second_c100_class_scaled_64_64_256k_coverage_v3_seed0",
+      "gpu": 0,
+      "return_code": 0,
+      "elapsed_seconds": 460.0112099549733,
+      "log": "experiments/coverage_dlgn/logs/second_round_c100_strength/second_c100_class_scaled_64_64_256k_coverage_v3_seed0.log"
+    }
+  ],
+  "failed": []
+}

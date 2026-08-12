@@ -1164,3 +1164,274 @@ This log records operational failures and protocol decisions made after commit
 - The final evidence-consistency audit passed all 16 checks. Focused
   convolutional, circuit, and experiment-protocol verification completed with
   **1,933 passed and 1,660 skipped in 228.11 seconds**.
+# August 9, 2026: DATE second-round preflight
+
+- Both RTX PRO 6000 Blackwell GPUs were visible to `nvidia-smi` and PyTorch
+  2.9.0+cu130 in `repos/torchlogix/venv`; CUDA 13.0 reported two devices.
+- The focused topology and protocol suite passed (117 tests).
+- The 100-step dense U2 CUDA smoke test completed on GPU 0 and retained its
+  complete artifacts in `results/smoke_second_u2_mnist_8k_seed0`.
+- The first convolutional U2 smoke attempt stopped before training. Its 1x1
+  semantic channel abstraction had channel structure but no spatial stage,
+  and `_semantic_butterfly_indices` rejected the empty stage list. The failed
+  directory is retained as `results/smoke_second_u2_conv_cifar10_s_seed0`.
+  The scheduler was corrected to keep a channel level for singleton spatial
+  dimensions and to ignore empty semantic axes; the retry uses a new output
+  name rather than overwriting the failed attempt.
+
+## August 9, 2026: architecture-matched BitLogic calibration correction
+
+- The first MNIST 6 x 8K BitLogic run completed normally on CUDA but reached
+  only 11.417% best hardened validation (9.733% final). A protocol audit found
+  that the generated config used one distributive-threshold calibration batch,
+  whereas the prior successful 48K BitLogic reproduction used 100 batches.
+- Mommen and LILogic exact-comparator configs matched their prior reproduced
+  recipes; the mismatch was isolated to MNIST BitLogic. Fashion-MNIST already
+  used 100 calibration batches.
+- The completed seed-0 artifacts were preserved under
+  `results/failed/second_round_mnist_bitlogic_calibration1/` and classified as
+  invalid-protocol evidence, not an accuracy result. The seed-1 attempt was
+  interrupted after 240 seconds with a targeted `SIGINT`; its partial artifacts
+  were preserved beside seed 0. The valid concurrent LILogic process was not
+  interrupted, and the queue immediately launched Mommen seed 2 on CUDA.
+- The generator and all three canonical MNIST BitLogic configs now explicitly
+  use 100 calibration batches. A regression test locks this invariant. Corrected
+  seeds 0 and 1 will be scheduled separately; seed 2 will use the corrected
+  config when reached by the live queue. No failed directory is overwritten.
+
+## August 9, 2026: U2 pre-pilot fan-out invariant correction
+
+- A structural audit of the successful convolutional U2 smoke artifact found
+  that a non-power-of-two cyclic stage was safe only when consumed in full.
+  The first classifier reduction consumed half of a degree-two cyclic graph,
+  leaving 12,288 of 40,960 inputs unused (`fanout_cv=0.775`). This violated
+  U2's declared degree-balance rule, so the smoke is retained as pre-fix
+  diagnostic evidence and is not an accuracy result.
+- Only the separate, not-yet-promoted U2 strategy was corrected. Non-power-of-
+  two regular stages now use deterministic perfect matchings at even widths
+  (near-perfect matchings at odd widths), with coprime cyclic steps preserving
+  the local-to-global scale schedule. Every partial-stage prefix uses an input
+  at most once; degree spread is minimized before ancestry novelty, and odd-
+  width byes rotate deterministically. Frozen V3, V4, and U1 code paths were
+  not changed.
+- The full topology suite passed 54 tests. An exhaustive audit over even widths
+  4--64 and six partial/full stage sizes found maximum fan-out spread one and
+  no violations; the nine-input/32-output odd-width channel case also reached
+  the optimum spread of one. A fresh convolutional CUDA smoke will be required
+  before U2 pilots launch.
+- The regenerated post-balance dense/convolutional CUDA smoke queue is separate
+  from the 20K pilot queue and rejects CPU configs. The full experiment-
+  protocol suite passed 75 tests after adding this invariant and the live
+  provenance ledger.
+- Both post-balance smokes completed on GPU 1. The dense run used 1.536 seconds
+  of training wall time and the convolutional run used 6.147 seconds (100
+  updates each). All dense layers and all convolutional channel topologies had
+  zero unused inputs. Most importantly, the convolutional classifier reductions
+  now have `fanout_cv=0.0` and zero unused inputs at 40,960 -> 20,480 and
+  20,480 -> 10,240, replacing the pre-fix values of 0.775/12,288 unused and
+  0.707/5,112 unused. U2 is therefore structurally eligible for the 20K pilots.
+
+## August 9, 2026: exact 6 x 8K comparator phase complete
+
+- All 18 architecture-matched comparator runs completed on CUDA: three seeds
+  each for Mommen, LILogicNet, and BitLogic on MNIST and Fashion-MNIST. The
+  corrected queue rerun skipped 16 existing valid results and trained only the
+  two missing MNIST BitLogic seeds; no completed run was repeated.
+- Corrected MNIST BitLogic rank-4 reached 11.417 +/- 0.000% best hardened
+  validation across all three seeds (112.75 minutes mean training wall time,
+  3.527 GiB peak allocation). Together with Fashion-MNIST's
+  10.867 +/- 0.000%, this is recorded as a reproduced-negative transfer of the
+  two-layer method to the matched six-layer topology, not as missing data.
+- The superseded one-calibration-batch seed and interrupted partial run remain
+  isolated under `results/failed/second_round_mnist_bitlogic_calibration1/`;
+  neither contributes to the reported aggregate.
+
+## August 10, 2026: dense compression ladder complete
+
+- All 48 planned MNIST/Fashion-MNIST compression runs completed on CUDA. The
+  main queue reported 47 pending and skipped the previously completed MNIST
+  4K random seed 0, so no finished run was repeated.
+- Frozen V3 has a positive mean paired effect in every new budget cell and
+  wins 22 of 24 paired runs. MNIST gains are +0.528, +0.494, +0.378, and
+  +0.317 pp at 4K, 8K, 16K, and 32K total gates. Fashion-MNIST gains are
+  +0.211, +0.689, +0.317, and +0.767 pp at 8K, 16K, 32K, and 64K.
+- Fashion-MNIST 8K is individually significant at n=3 (95% CI
+  [+0.085, +0.338]); all other new cell-wise intervals cross zero and are
+  retained as directional compression evidence. The reused five-seed 48K
+  validation references are positive on both datasets.
+- Gate count, LUT parameter count, mean training wall time, and peak PyTorch
+  allocation are matched between random and V3 at every budget. The method's
+  only added cost remains offline deterministic topology construction.
+
+## August 10, 2026: full LogicTreeNet-S random/V4 arms complete
+
+- The exact nine-channel LogicTreeNet-S fixed-random and frozen legacy-V4
+  seed-0 arms completed all 350K updates on separate CUDA GPUs. The held-out
+  test set was not queried; selection uses best hardened validation only.
+- Fixed random reached 58.680% best hard validation (58.500% final) in
+  4.975 hours with 1.831 GiB peak allocation. Frozen V4 reached 59.860% best
+  hard validation (58.460% final) in 4.957 hours with 1.831 GiB peak
+  allocation, a +1.180 pp selected gain.
+- Both arms have 83,552 learned LUT functions (including 71,680 classifier
+  functions), 1.337M training parameters, zero training-only routing
+  parameters, and identical deployed routing cost. V4's
+  offline construction took 0.449 seconds versus 0.217 seconds for random.
+- The full U1 arm started on the freed GPU and remains pending. It must finish
+  before the three-arm full-schedule conclusion or any held-out test query.
+
+## August 10, 2026: strengthened dense CIFAR-100 phase complete
+
+- All 14 planned CUDA jobs completed without failures: six baseline-only 5K
+  recipe screens, four missing members of the 3 x 128K random/V3 cohort, and
+  two seed-0 same-384K allocation pairs. Previously completed seed-0 cohort
+  runs were reused and not repeated.
+- The short baseline screen selected temperature 20, learning rate 0.01, and
+  no augmentation at 22.700% hardened validation. Screen results are kept
+  separate from matched topology evidence.
+- The original-recipe 3 x 128K cohort is now complete: random reached
+  21.093 +/- 0.101% and frozen V3 reached 21.933 +/- 0.110% best hardened
+  validation. The paired +0.840 pp gain has a 95% CI of
+  [+0.351, +1.329] and all three seeds favor V3. Gate count (384K), LUT
+  parameters (6.144M), training effort, memory, and deployed routing cost are
+  matched. Mean training time is 5.35/5.34 minutes; mean offline topology
+  construction is 3.36/71.03 seconds for random/V3.
+- Moving the same gate budget toward the class head did not improve absolute
+  accuracy. The 96K/96K/192K split produced 19.960% random and 20.620% V3;
+  64K/64K/256K produced 20.380% random and 20.240% V3. These are retained as
+  allocation ablations. No held-out test was queried.
+- With GPU visibility reconfirmed, the freed GPU was assigned to the separate
+  three-seed U2 pilot queue. The full U1 convolutional run continues on the
+  other GPU.
+
+## August 10, 2026: frozen U2 pilot complete and promoted
+
+- All 15 U2 pilots completed on CUDA with no queue failures. The topology rule
+  was frozen before these results and was not tuned between datasets.
+- U2 versus random reached +0.756 pp on MNIST-8K (95% CI
+  [+0.029, +1.483]), +0.600 pp on Fashion-16K, +3.293 pp on dense CIFAR-10 S
+  (CI [+1.803, +4.784]), +0.100 pp on dense CIFAR-100 3 x 128K, and
+  +2.173 pp on convolutional CIFAR-10 S (CI [+1.647, +2.700]). It won 3/3
+  pairs in every coordinate except CIFAR-100 (2/3).
+- On convolutional S, U2 reached 58.847 +/- 0.600% hardened validation and
+  won 3/3 against frozen V4 (+1.660 pp) and U1 (+0.833 pp). Against the
+  separate explicit controlled-random cohort it gained +1.707 pp with 3/3
+  wins, although the n=3 interval crosses zero. Both random cohorts remain
+  explicitly labeled.
+- U2 was 0.740 pp below frozen V3 on CIFAR-100 with all three pairs negative;
+  that coordinate did not promote. The statistically positive V3 3 x 128K
+  result remains protected and unchanged.
+- MNIST-8K, Fashion-16K, dense CIFAR-10 S, and convolutional CIFAR-10 S
+  promoted to an unchanged U2 full-effort queue. Dense coordinates use three
+  108K seeds. The expensive convolutional coordinate uses one 350K seed to
+  match the already completed full-schedule random/V4/U1 resource cohort; its
+  multi-seed evidence is the completed 20K pilot. The calibrated fallback was
+  not authorized because convolutional U2 succeeded.
+
+## August 10, 2026: dense final tests and full U1 complete
+
+- The full 350K paper-faithful LogicTreeNet-S U1 arm completed on CUDA at
+  59.880% best hardened validation, 58.580% final hardened validation,
+  4.980 hours, and 1.831 GiB peak allocation. It gains +1.200 pp over the
+  full matched random control and narrowly exceeds legacy V4 by +0.020 pp.
+- The 33 dense validation selections were frozen before test access. Twenty-
+  seven missing test records were evaluated once on CUDA; six existing dense
+  CIFAR-10 random/V3 records were reused. No failures occurred.
+- U2 held-out test gains versus random are +0.663 pp on MNIST-8K (95% CI
+  [+0.015, +1.311]), +0.520 pp on Fashion-16K, and +3.183 pp on dense
+  CIFAR-10 S; every paired seed is positive. Frozen V3 remains the stronger
+  selected method on Fashion and dense CIFAR-10, while U2 ties V3 on MNIST.
+- The strengthened CIFAR-100 3 x 128K V3 cohort reached 21.467 +/- 0.410%
+  held-out test versus 20.923 +/- 0.352% random, a +0.543 pp paired gain with
+  3/3 wins and an inconclusive n=3 CI [-0.141, +1.227].
+- Machine-readable provenance is in
+  `summary/second_round_final_validation_freeze.json` and
+  `summary/second_round_final_dense.json`. At this log milestone the final
+  convolutional U2 run was still training and convolutional test was locked;
+  the later completion entry below supersedes that transient status.
+- Some full-tree hashes differ because result documentation and queue scripts
+  changed during sequential execution. The dedicated training-implementation
+  hash is identical across all frozen dense runs, confirming that model,
+  topology, optimizer, and data code did not change.
+- The first attempt to apply the new synthetic GPU inference benchmark to
+  dense checkpoints stopped before writing a result: timing events were
+  created on the default CUDA device while the model ran on GPU 1. The helper
+  was corrected to create and synchronize events inside the explicit device
+  context. This benchmark-only failure did not alter any model or training.
+- The three earlier convolutional synthetic benchmark files were generated
+  before the explicit-device correction. Although they completed, they are
+  conservatively retained as version-1 history and excluded. Corrected
+  evidence is written separately as `synthetic_inference_benchmark_v2.json`.
+
+## August 10, 2026: second round complete, full U2 frozen test and trade-offs
+
+- The unchanged paper-faithful nine-channel LogicTreeNet-S U2 seed-0 run
+  completed all 350K CUDA updates in 4.951 hours. The complete second-round
+  ledger is 110/110 runs with no pending job and no completed run repeated.
+- U2 reached 61.000% best hardened validation at step 294K and 60.280% at the
+  final 350K step. This is +2.320 pp over the full matched random best and
+  +1.140/+1.120 pp over full V4/U1.
+- The validation manifest was written before test access and records
+  `test_metrics_existing_at_freeze=false` for random, V4, U1, and U2. Each
+  best-validation checkpoint was then evaluated exactly once on GPU 1.
+  Hard test was 57.370/58.930/58.800/60.630% for random/V4/U1/U2; U2 gains
+  +3.260 pp over random, +1.700 over V4, and +1.830 over U1. Its 60.630% is
+  0.250 pp above the paper-reported 60.38% S test result. The full cohort is
+  one seed; the three-seed 20K pilot remains the replication evidence.
+- U2's mean hardened validation over the full learning curve is 59.562%
+  versus 57.233% random. U2 reaches 59.5% at 34K updates; V4 first reaches it
+  at 212K, U1 at 252K, and random never reaches it.
+- All four methods retain exactly 83,552 learned LUT functions, 874,496
+  spatial gate applications, 1,336,832 trainable LUT parameters, zero
+  trainable routing parameters, and 1,945,600 deployed routing bits. Training
+  time and peak GPU allocation are matched; U2 adds only 1.155 seconds of
+  offline construction relative to random.
+- Corrected synthetic hardened GPU inference is 6.852/6.856/6.855/6.835 ms
+  per batch 128 for random/V4/U1/U2 with 0.3462 GiB peak allocation throughout.
+  Sub-percent deltas are not speed claims. Compiled `gcc -O0` CPU circuit
+  latency is 3.230/3.163/3.136/3.185 ms. U2's simplified IR is 262,260 nodes,
+  +3.686% over random; functional equivalence passed. Energy was not measured.
+- Machine-readable final artifacts are
+  `summary/second_round_convolutional_validation_freeze.json`,
+  `summary/second_round_convolutional_final.json`,
+  `summary/second_round_convolutional_curves.{json,csv}`, and
+  `summary/second_round_convolutional_deployment.json`.
+- The calibrated fallback was not run: the frozen protocol permitted it only
+  if both CIFAR-100 and convolutional U2 failed, whereas convolutional U2
+  passed its promotion gate decisively.
+
+## August 12, 2026: U2 published-protocol round completed
+
+- Implemented the frozen third-round matrix without modifying U2, V3, or V4:
+  six current dense M/L U2 runs, 14 LILogic M/L runs, and 18 BitLogic S/M/L
+  runs. All 38 full trainings used CUDA through `venv` and completed. The six
+  construction smokes are separate and are not accuracy results.
+- Existing dense U2 hard-test accuracy is 58.653 +/- 0.168% on M and 60.463
+  +/- 0.348% on L (three seeds). Paired gains over random are +4.557 and
+  +4.593 pp, 3/3 wins in both cells. U2 is tied with V3 on M and trails V3 by
+  0.610 pp on L, so V3 remains the best dense specialization.
+- On the LILogic protocol, U2 reaches 52.543 +/- 0.296% on M and 60.193 +/-
+  0.286% on L, gaining +3.533 and +4.860 pp over fixed random with 3/3 paired
+  wins. One-seed Top-32 reaches 57.840% and 62.030%, close to or above the
+  reported 57.28 +/- 0.30% and 60.98 +/- 0.19% coordinates.
+- U2 uses the same fixed-random cost and 5x fewer training parameters than
+  Top-32. Peak allocated memory is 0.474 versus 8.100 GiB on M and 1.557
+  versus 24.861 GiB on L; local hardened latency is 0.934 versus 7.552 ms and
+  4.303 versus 20.893 ms per batch 128. This is an accuracy--resource Pareto
+  result because Top-32 remains more accurate.
+- On the BitLogic common ladder, paired U2 gains are +2.260 pp at S (2/2),
+  +0.095 pp at M (1/2), and +0.770 pp at L (1/2). Only S is defensibly
+  positive; all n=2 intervals are underpowered.
+- Local rank-4 BitLogic transfers reached only 27.500%, 16.625%, and 13.160%
+  hard test at S/M/L, far below reported 38.93%, 49.22%, and 58.06%. The
+  relaxed models learn signal (M final relaxed test 57.60% versus 14.70%
+  hard), isolating a hardening/protocol mismatch. These are labeled
+  `[REPRODUCED-NEGATIVE]`, never as faithful paper reproductions.
+- Before test access, `summary/third_round_validation_freeze.json` hashed 38
+  run artifact sets and 76 checkpoints. Both predeclared checkpoints were
+  evaluated once per run on GPUs 0/1: 38/38 succeeded, zero failed, zero were
+  missing. Synthetic benchmarks and test checkpoint hashes match the freeze.
+- Added restart-safe finalization, immutable freeze, dual-checkpoint CUDA
+  evaluation, aggregation, CSV exports, and provenance tests. The focused
+  topology/protocol suite passes 145 tests; six third-round-specific tests
+  pass after final aggregation. The complete suite passes with 3,412 passed,
+  3,038 skipped, and one pre-existing warning in 257.62 seconds.
