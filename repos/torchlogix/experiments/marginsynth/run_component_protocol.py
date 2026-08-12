@@ -42,6 +42,10 @@ def write_json(path: Path, payload) -> None:
     path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
 
 
+def load_json(path: Path) -> dict:
+    return json.loads(path.read_text())
+
+
 def completed(path: Path) -> bool:
     if not path.exists():
         return False
@@ -346,26 +350,49 @@ def main() -> None:
             )
             method_dir = selected_dir
             checkpoint_name = "selected_checkpoint.pt"
-        execute_stage(
-            f"{component}_export",
-            [
-                sys.executable,
-                str(script_dir / "export_tied_method.py"),
-                str(source_run),
-                str(method_dir),
-                "--checkpoint",
-                checkpoint_name,
-                "--verification-split",
-                protocol.get("verification_split", "calibration"),
-                "--examples",
-                str(protocol.get("verification_examples", 6000)),
-                *resume_args(cli.resume),
-            ],
-            method_dir / "export_summary.json",
-            log_dir,
-            execution,
-            cli.resume,
+        source_export_cache = protocol.get("source_export_cache")
+        selection_path = method_dir / "selection.json"
+        selected_source = (
+            selection_path.exists()
+            and load_json(selection_path).get("selected_stage") == "source"
         )
+        if selected_source and source_export_cache is not None:
+            execute_stage(
+                f"{component}_export_reuse",
+                [
+                    sys.executable,
+                    str(script_dir / "reuse_source_export.py"),
+                    str(source_run),
+                    str(method_dir),
+                    "--reference-export",
+                    str(resolved_repository_path(source_export_cache)),
+                ],
+                method_dir / "export_summary.json",
+                log_dir,
+                execution,
+                cli.resume,
+            )
+        else:
+            execute_stage(
+                f"{component}_export",
+                [
+                    sys.executable,
+                    str(script_dir / "export_tied_method.py"),
+                    str(source_run),
+                    str(method_dir),
+                    "--checkpoint",
+                    checkpoint_name,
+                    "--verification-split",
+                    protocol.get("verification_split", "calibration"),
+                    "--examples",
+                    str(protocol.get("verification_examples", 6000)),
+                    *resume_args(cli.resume),
+                ],
+                method_dir / "export_summary.json",
+                log_dir,
+                execution,
+                cli.resume,
+            )
 
     if "silicon_control" in selected_components:
         output = f"{output_root_relative}/silicon_control"

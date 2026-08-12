@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 import pytest
 import torch
 
@@ -158,3 +161,17 @@ def test_nonnegative_hardware_fit_recovers_synthetic_coefficients():
     y = x @ torch.tensor([2.0, 3.0], dtype=torch.float64).numpy()
     fitted = fit_coefficients(x, y, ridge=0.0)
     assert fitted.tolist() == pytest.approx([2.0, 3.0])
+
+
+def test_main_baseline_is_held_out_from_hardware_coefficient_fit():
+    config = json.loads(
+        (
+            Path(__file__).resolve().parents[1]
+            / "experiments/marginsynth/configs/hardware_ranking_calibration_cifar_seed0.json"
+        ).read_text()
+    )
+    unit = next(
+        sample for sample in config["samples"] if sample["name"] == "unit_tying_10pct"
+    )
+    assert unit["fit_sample"] is False
+    assert config["data_policy"]["unit_tying_used_for_fit"] is False

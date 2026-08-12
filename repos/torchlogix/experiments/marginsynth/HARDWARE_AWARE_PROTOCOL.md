@@ -23,11 +23,14 @@ Each learned LUT replacement receives four static features:
 - `log(1 + fixed-topology path multiplicity to class reductions)`.
 
 The coefficients are fitted with deterministic nonnegative ridge regression
-to earlier seed-0 development checkpoints synthesized by the identical
-Yosys/ABC flow. Calibration loads no image data and cannot access validation
-or test predictions. Both in-sample and leave-one-method-out correlations are
-recorded. Constant propagation is additive across reconvergent paths and is
-therefore explicitly treated as an estimator, not an exact node count.
+to earlier seed-0 MarginSynth/control development checkpoints synthesized by
+the identical Yosys/ABC flow. Unit Tying is excluded from coefficient fitting
+and used only as a held-out proxy-validation point, so the proposed method is
+not tuned to its main baseline. Calibration loads no image data and cannot
+access validation or test predictions. In-sample, leave-one-fit-method-out,
+and held-out correlations/errors are recorded. Constant propagation is
+additive across reconvergent paths and is therefore explicitly treated as an
+estimator, not an exact node count.
 
 ### 2. Focused action prior
 
@@ -59,6 +62,12 @@ feasible candidates, selection maximizes the frozen estimated hardware gain;
 ties favor more retained edits and then the later pass. Validation and test
 are never consulted. Consequently, a failing second pass deterministically
 falls back to a feasible first pass or, if necessary, the source checkpoint.
+
+When the source is selected, its previously passed exact export and synthesis
+record are reused only after byte-identical checkpoint, calibration-split,
+tool-flow, and test-sealing checks. This avoids recompiling and resynthesizing
+an unchanged 512K-gate source while retaining the original artifact hashes and
+an explicit reuse-provenance record.
 
 ## Seed-0 selection and transfer
 

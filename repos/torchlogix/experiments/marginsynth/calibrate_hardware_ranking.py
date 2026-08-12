@@ -158,6 +158,7 @@ def main() -> None:
         records.append(
             {
                 "name": sample["name"],
+                "fit_sample": bool(sample.get("fit_sample", True)),
                 "checkpoint": str(checkpoint),
                 "checkpoint_sha256": sha256_file(checkpoint),
                 "export_summary": str(export_summary),
@@ -176,19 +177,24 @@ def main() -> None:
     for record in records:
         record["abc_node_reduction"] = baseline_nodes - record["abc_and_nodes"]
 
-    x = np.asarray(
+    x_all = np.asarray(
         [
             [record["features"][name] for name in HARDWARE_FEATURE_NAMES]
             for record in records
         ],
         dtype=np.float64,
     )
-    y = np.asarray(
+    y_all = np.asarray(
         [record["abc_node_reduction"] for record in records], dtype=np.float64
     )
+    fit_mask = np.asarray([record["fit_sample"] for record in records], dtype=bool)
+    if int(fit_mask.sum()) < 3:
+        raise ValueError("hardware calibration requires at least three fit samples")
+    x = x_all[fit_mask]
+    y = y_all[fit_mask]
     ridge = float(config.get("ridge", 1e-3))
     parameters = fit_coefficients(x, y, ridge)
-    predictions = x @ parameters
+    predictions = x_all @ parameters
     for record, prediction in zip(records, predictions):
         record["predicted_abc_node_reduction"] = float(prediction)
         record["prediction_error"] = float(
@@ -196,8 +202,8 @@ def main() -> None:
         )
 
     loo_predictions = []
-    for held_out in range(len(records)):
-        keep = np.arange(len(records)) != held_out
+    for held_out in range(len(y)):
+        keep = np.arange(len(y)) != held_out
         loo_parameters = fit_coefficients(x[keep], y[keep], ridge)
         loo_predictions.append(float(x[held_out] @ loo_parameters))
     loo_predictions_array = np.asarray(loo_predictions)
@@ -214,9 +220,12 @@ def main() -> None:
         "baseline_abc_and_nodes": baseline_nodes,
         "ridge": ridge,
         "samples": records,
-        "in_sample": correlation_record(y, predictions),
+        "in_sample": correlation_record(y, predictions[fit_mask]),
         "leave_one_out": correlation_record(y, loo_predictions_array),
         "leave_one_out_predictions": loo_predictions,
+        "held_out": correlation_record(
+            y_all[~fit_mask], predictions[~fit_mask]
+        ) if bool((~fit_mask).any()) else None,
         "feature_policy": {
             "operation_gain": "source AIG units minus candidate AIG units",
             "constant_propagation_gain": "static downstream AIG savings after exact Boolean cofactors",
@@ -226,6 +235,13 @@ def main() -> None:
         },
         "data_policy": {
             "uses_prior_seed0_development_synthesis": True,
+            "unit_tying_used_for_fit": any(
+                record["fit_sample"] and "unit_tying" in record["name"]
+                for record in records
+            ),
+            "unit_tying_role": (
+                "held-out estimator validation only; never used to fit coefficients"
+            ),
             "dataset_loaded": False,
             "validation_loaded": False,
             "test_loaded": False,
@@ -249,6 +265,7 @@ def main() -> None:
         "coefficients": coefficients,
         "in_sample": metadata["in_sample"],
         "leave_one_out": metadata["leave_one_out"],
+        "held_out": metadata["held_out"],
         "records": records,
         "data_policy": metadata["data_policy"],
         "software": {

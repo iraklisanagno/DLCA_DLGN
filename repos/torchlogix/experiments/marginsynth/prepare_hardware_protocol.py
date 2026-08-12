@@ -47,22 +47,34 @@ def main() -> None:
     parser.add_argument("source_run", type=Path)
     parser.add_argument("--profile", choices=["ablation", "transfer"], required=True)
     parser.add_argument("--hardware-model", required=True, type=Path)
+    parser.add_argument("--source-export-cache", required=True, type=Path)
     parser.add_argument("--freeze", type=Path)
     parser.add_argument("--output", required=True, type=Path)
     cli = parser.parse_args()
     source_run = cli.source_run.resolve()
     hardware_model = cli.hardware_model.resolve()
+    source_export_cache = cli.source_export_cache.resolve()
     if cli.output.exists():
         raise RuntimeError(f"refusing to overwrite protocol: {cli.output}")
     required = [
         source_run / "training_config.json",
         source_run / "best_checkpoint.pt",
         hardware_model,
+        source_export_cache,
     ]
     missing = [str(path) for path in required if not path.exists()]
     if missing:
         raise FileNotFoundError(", ".join(missing))
     training = json.loads((source_run / "training_config.json").read_text())
+    cached_export = json.loads(source_export_cache.read_text())
+    if cached_export.get("checkpoint_sha256") != sha256_file(
+        source_run / "best_checkpoint.pt"
+    ):
+        raise ValueError("source export cache checkpoint differs from source")
+    if cached_export.get("verification_split") != "calibration":
+        raise ValueError("source export cache must use calibration verification")
+    if cached_export.get("test_used") is not False:
+        raise ValueError("source export cache did not keep test data sealed")
     if training["dataset"] != "cifar-10":
         raise ValueError("hardware-ranking protocol requires CIFAR-10")
     if training["connections"] != "fixed" or training["connections_init_method"] != "random":
@@ -97,7 +109,7 @@ def main() -> None:
         if cli.freeze is not None:
             raise ValueError("--freeze is only valid for transfer")
         components = copy.deepcopy(ABLATION_OVERLAYS)
-        output_root = "marginsynth_hardware_ablation/structural_rank_v1"
+        output_root = "marginsynth_hardware_ablation/structural_rank_v2"
     else:
         if cli.freeze is None:
             raise ValueError("transfer requires --freeze")
@@ -111,18 +123,20 @@ def main() -> None:
         if freeze_payload["hardware_ranking_model_sha256"] != sha256_file(hardware_model):
             raise ValueError("hardware-ranking model differs from frozen model")
         components = {selected: copy.deepcopy(ABLATION_OVERLAYS[selected])}
-        output_root = "marginsynth_hardware_transfer/structural_rank_v1"
+        output_root = "marginsynth_hardware_transfer/structural_rank_v2"
 
     seed = int(training["seed"])
     protocol = {
         "format_version": 1,
-        "protocol_name": f"marginsynth_hardware_{cli.profile}_{architecture}_seed{seed}_v1",
+        "protocol_name": f"marginsynth_hardware_{cli.profile}_{architecture}_seed{seed}_v2",
         "profile": cli.profile,
         "source_run": relative(source_run),
         "source_checkpoint": "best_checkpoint.pt",
         "output_root": output_root,
         "verification_split": "calibration",
         "verification_examples": 4992,
+        "source_export_cache": relative(source_export_cache),
+        "source_export_cache_sha256": sha256_file(source_export_cache),
         "snapshot_selection": True,
         "two_pass_components": components,
         "first_resynthesis": first,

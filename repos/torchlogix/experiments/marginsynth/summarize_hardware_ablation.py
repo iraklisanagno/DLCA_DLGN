@@ -31,12 +31,16 @@ def load(path: Path) -> dict:
 def extended_hardware(method_dir: Path) -> dict:
     export_path = method_dir / "export_summary.json"
     export = load(export_path)
-    synthesis = load(method_dir / "export_run" / "synthesis_verification.json")
+    synthesis_path = export.get("reused_synthesis_verification")
+    if synthesis_path is None:
+        synthesis_path = method_dir / "export_run" / "synthesis_verification.json"
+    else:
+        synthesis_path = Path(synthesis_path)
+    synthesis = load(synthesis_path)
     area = export.get("sky130_operation_area_proxy_um2")
     if area is None:
-        circuit = Circuit.from_json_file(
-            str(method_dir / "export_run" / "exact_simplified_circuit.json")
-        )
+        circuit_path = Path(export["export_dir"]) / "exact_simplified_circuit.json"
+        circuit = Circuit.from_json_file(str(circuit_path))
         area = circuit_features(circuit)["sky130_operation_area_proxy_um2"]
     return {
         "live_gates": int(export["live_gates"]),
