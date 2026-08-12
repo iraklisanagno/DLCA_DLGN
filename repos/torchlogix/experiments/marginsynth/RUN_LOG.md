@@ -1044,3 +1044,181 @@ comparison JSON and CSV hashes are
 `15d7341861dbbb59c578ea4139dea8830bbd9f1505b31efb382a2aea7033f459`
 and `8ec15cc8d14cf0c79105a591efe71c35e17d16c9f9873b2b7df004cdca0b8151`.
 Validation and test were not loaded by component selection.
+
+## 2026-08-12: dense CIFAR-10 scaling and frozen transfer
+
+This entry answers whether a much denser CIFAR-10 DLGN exposes useful
+MarginSynth headroom after the Fashion-MNIST pilot. It does, but the outcome is
+a fidelity/hardware trade-off rather than a complete win over Unit Tying.
+MarginSynth preserves the source decisions substantially better, while 10%
+Unit Tying remains smaller and about 17 times faster. The frozen MarginSynth
+second pass also fails the worst-class guard on seed 2. These qualifications
+are part of the result and were not filtered after inspection.
+
+### Frozen data, model, and training protocol
+
+The primary model is `DlgnCifar10Medium`: four rank-2 logic layers of 128,000
+gates each, or 512,000 trained gates in total. The first and last layers remain
+fixed during MarginSynth, leaving 256,000 eligible gates. Connectivity is the
+repository's fixed standard-random topology, independently generated with
+topology/training seeds 0, 1, and 2. Coverage connectivity is not used.
+
+All sources use raw LUT parameters, no data augmentation, batch size 100,
+learning rate 0.01, 108,000 GPU iterations, and validation every 2,000
+iterations. Split seed 2027 gives 40,000 training, 5,000 validation, 5,000
+calibration, and 10,000 official-test examples. Source checkpoint selection
+uses validation only; post-training resynthesis uses calibration only. The
+test set stayed sealed throughout this study. The identical split artifact in
+all three runs has SHA-256
+`35c2858e05b27e9d6ff6545bedb23fee84e3bcf4215c485190fa5cba4314bf1c`.
+Its train/validation/calibration/test index hashes are, respectively,
+`f3eac954878110839561746cd18b55abafe36e33b5b19a2d01fb4c7cbf76a213`,
+`96eec96edd6886d0ea983446d0125e76caef15044fddfb0672e101f88c0dcee5`,
+`56f3aab0c3081505753c8a1b3c9d1d74128275e942ca59302ffe999f359f9b16`,
+and `9e1c19b3fdc185411bd1a987deb6a9fda2531116aac060a84c4d878854d1c099`.
+
+| Seed | Best hard validation accuracy | Training time | Peak GPU allocation | Source checkpoint SHA-256 |
+|---:|---:|---:|---:|---|
+| 0 | 54.64% | 4,444.77 s | 1,206,192,640 B | `74a1f154ab075f083286b44b9ab201a85668173c8e5a9b8fe52e36cfe783b39e` |
+| 1 | 55.16% | 4,429.25 s | 1,206,192,640 B | `54381f37a8ceaab5dd47083be9f760d254be5cbb19444a411551ea29fac59b59` |
+| 2 | 53.98% | 4,250.22 s | 1,206,192,640 B | `8d6f0541636663c10bf8ccf979227eb84618a3366dc09133fedf16b60bf0bdc7` |
+
+Training and MarginSynth optimization ran on GPU, using PyTorch 2.9.0+cu130,
+CUDA 13.0, and an NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition.
+Exact Boolean simulation, circuit export, compiled-C verification, Yosys, and
+ABC are CPU/compiler stages by design. Yosys 0.9 and Berkeley ABC 1.01 were
+used. The machine was shared and other GPU jobs were visible during part of
+the transfer runs, so wall-time comparisons should be repeated on a dedicated
+machine before publication.
+
+### Small-model go/no-go smoke
+
+The first scaling gate used `DlgnCifar10Small`, four layers of 12,000 gates
+(48,000 total), seed 0, and the same split/training policy. The source reached
+49.34% hard validation accuracy in 996.36 seconds. Exact simplification had
+36,200 live gates, 131,461 ABC AND nodes, and 80 levels. Current MarginSynth
+was guard-feasible, reached 49.36% validation accuracy with 1.80%
+disagreement, and produced 35,025 live gates, 130,191 nodes, and 79 levels.
+Its 1,009 retained actions were 130 constants and 879 routing/inversion
+functions; no alternative binary gate survived repair.
+
+The liveness arm produced the identical checkpoint and circuit because the
+safe topological mask removed zero eligible gates. It took 33.56 seconds
+versus 30.74 seconds for current MarginSynth, so the 48K smoke provided no
+liveness acceleration claim. It did confirm an end-to-end feasible CIFAR-10
+path and authorized the 512K run.
+
+### Seed-0 component comparison on the 512K model
+
+The predeclared Fashion-selected current trial-28 configuration was compared
+with exact simplification, 10% Unit Tying, safe liveness, class-aware activity
+ordering, and the Silicon-Aware-style post-training control. All hardware
+counts below follow identical exact simplification, compiled-C verification,
+Yosys, and ABC commands.
+
+| Method | Guard feasible | Validation accuracy | Disagreement | Live gates | ABC nodes | Levels | Method time |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Exact simplification | yes | 54.64% | 0.00% | 389,970 | 1,484,154 | 105 | 0.00 s |
+| 10% Unit Tying | not a constrained method | 54.16% | 5.60% | 353,549 | 1,419,811 | 106 | 10.86 s |
+| Current MarginSynth | yes | 54.40% | 2.28% | 380,330 | 1,472,970 | 105 | 210.41 s |
+| Safe liveness | yes | 54.40% | 2.28% | 380,330 | 1,472,970 | 105 | 186.30 s |
+| Class-aware activity | yes | 54.60% | 2.14% | 369,523 | 1,460,978 | 106 | 230.00 s |
+| Silicon-Aware control | no | 47.78% | 35.20% | 370,634 | 1,443,196 | 105 | 117.51 s |
+
+The liveness arm appears 11.46% faster than current MarginSynth in this single
+run, crossing the mechanical transfer threshold. However, it removed no
+eligible gates and produced identical normalized behavior and hardware cost.
+It was slower on Fashion-MNIST and on the 48K CIFAR smoke. The timing delta is
+therefore treated as noise, not as a causal liveness speedup. The class-aware
+variant is seed 0's strongest feasible size/fidelity point, but it was not
+transferred because the protocol had already selected current trial 28 from
+Fashion-MNIST. The Silicon-Aware control again overfits calibration and is not
+feasible.
+
+### Frozen current-versus-Unit-Tying transfer
+
+Seeds 1 and 2 reuse the exact trial-28 hyperparameters; there is no new search
+or per-seed tuning. The table reports validation only after the calibration
+procedure was frozen.
+
+| Seed | Method | Source loss | Disagreement | Live reduction | ABC reduction | ABC nodes | Method time | Guard feasible |
+|---:|---|---:|---:|---:|---:|---:|---:|---:|
+| 0 | 10% Unit Tying | 0.48 pp | 5.60% | 9.339% | 4.335% | 1,419,811 | 10.86 s | n/a |
+| 0 | MarginSynth | 0.24 pp | 2.28% | 2.472% | 0.754% | 1,472,970 | 210.41 s | yes |
+| 1 | 10% Unit Tying | 0.44 pp | 5.68% | 9.596% | 4.443% | 1,422,831 | 10.88 s | n/a |
+| 1 | MarginSynth | 0.48 pp | 2.76% | 5.290% | 1.647% | 1,464,460 | 192.28 s | yes |
+| 2 | 10% Unit Tying | 0.78 pp | 5.88% | 9.590% | 4.430% | 1,425,407 | 13.52 s | n/a |
+| 2 | MarginSynth | 0.24 pp | 1.24% | 3.055% | 0.928% | 1,477,627 | 194.53 s | **no** |
+
+MarginSynth's seed-2 second pass is calibration-feasible and has no global
+guard accuracy loss, but its worst-class guard loss is 1.961 percentage
+points, above the frozen 1.5-point limit. The first-pass snapshot on that seed
+was guard-feasible after 7,809 retained actions, with a 0.200-point global
+accuracy gain, 0.400% disagreement, and no worst-class accuracy loss. It was
+not synthesized or substituted after seeing the failure because the frozen
+protocol declared the second-pass output as the result. A future protocol may
+predeclare fallback to the most aggressive guard-feasible snapshot.
+
+Across three seeds, exact circuits average 391,623 live gates, 1,488,203 ABC
+nodes, and 107 levels. Unit Tying averages 0.567 percentage points of source
+accuracy loss, 5.720% disagreement, 9.508% live-gate reduction, and 4.403% ABC
+reduction. Current MarginSynth averages 0.320 points of source loss, 2.093%
+disagreement, 3.606% live-gate reduction, and 1.110% ABC reduction. Its mean
+method time is 199.07 seconds versus 11.75 seconds for Unit Tying.
+
+Paired by seed, MarginSynth improves validation accuracy by 0.247 percentage
+points on average and reduces disagreement by 3.627 points relative to Unit
+Tying. The price is 49,003 more ABC nodes on average, 3.293 points less ABC
+reduction, 5.903 points less live-gate reduction, and a 17.15-times larger
+method runtime. Thus dense CIFAR-10 is more informative than Fashion-MNIST and
+supports MarginSynth's fidelity motivation, but the current method is not yet
+better overall. It needs a predeclared feasible-snapshot fallback and more
+hardware-aware candidate ranking before the paper can claim a Pareto advantage.
+
+Across all three selected MarginSynth results, retained actions are exclusively
+constants and routing/inversion; the accepted alternative-binary count is
+zero. This independently reinforces the Fashion action-space ablation and
+motivates restricting or strongly regularizing the binary action family.
+
+### Reproduction and artifact audit
+
+From `repos/torchlogix`, the source, frozen component/transfer, and aggregation
+entry points are:
+
+```bash
+CUDA_VISIBLE_DEVICES=0 DATASET_PATH=/tmp/torchlogix-datasets \
+venv/bin/python experiments/marginsynth/train_dense_sources.py \
+  --protocol experiments/marginsynth/configs/dense_cifar_standard_random_sources.json \
+  --sources small_seed0 medium_seed0 medium_seed1 medium_seed2 --resume
+
+CUDA_VISIBLE_DEVICES=0 DATASET_PATH=/tmp/torchlogix-datasets \
+venv/bin/python experiments/marginsynth/run_component_protocol.py \
+  --protocol <source-run>/marginsynth_comparison_protocol.json --resume
+
+CUDA_VISIBLE_DEVICES=0 DATASET_PATH=/tmp/torchlogix-datasets \
+venv/bin/python experiments/marginsynth/run_component_protocol.py \
+  --protocol <source-run>/marginsynth_transfer_protocol.json --resume
+
+PYTHONPATH=. venv/bin/python experiments/marginsynth/summarize_dense_transfer.py \
+  --comparison experiments/marginsynth/results/dense_cifar_sources/medium_standard_random_seed0/marginsynth_comparison/trial28_transfer_v1/dense_comparison.json \
+  --comparison experiments/marginsynth/results/dense_cifar_sources/medium_standard_random_seed1/marginsynth_transfer/trial28_transfer_v1/dense_comparison.json \
+  --comparison experiments/marginsynth/results/dense_cifar_sources/medium_standard_random_seed2/marginsynth_transfer/trial28_transfer_v1/dense_comparison.json \
+  --output-dir experiments/marginsynth/results/dense_cifar_sources/transfer_summary/trial28_transfer_v1
+```
+
+The seed-0/1/2 comparison-input hashes are
+`7c33b29073e4ca68eb7c3490e26864e2de4a1bddc5cac8a953f35833d7126feb`,
+`4eb7a40ffedbd8a4c614b8e7f36b0945924468c0e8401cc0e6b10cd777072d1d`,
+and `f67136236012841a664e5cb4f432c771cc663a96e7213c281a33eece22236758`.
+The aggregate JSON and CSV hashes are
+`79ff3b98518c56d2e66a5f1a67d7b4dee30a6f41af7480872b163ee0d75efccd`
+and `f46bedee70f390cdc443a13d72f7e60db4f69529fc238c81437195a23613fbbd`.
+Every exact, Unit-Tying, and MarginSynth output passed model/circuit export,
+compiled-C calibration equivalence, Yosys, and ABC. All execution-stage
+records report completion. No test metrics were read or generated.
+
+Final verification used Python compilation, the focused dense-transfer tests,
+`git diff --check`, explicit completion/test-sealing assertions over all three
+comparison artifacts, and `PYTHONPATH=. venv/bin/pytest -q`. The focused tests
+reported 2 passed. The complete repository suite reported 3,376 passed, 3,038
+skipped, and one pre-existing tensor-copy warning in 120.45 seconds.
