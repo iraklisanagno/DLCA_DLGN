@@ -327,6 +327,25 @@ def main() -> None:
             cli.resume,
         )
         method_dir = source_run / second_output
+        checkpoint_name = "distilled_checkpoint.pt"
+        if bool(protocol.get("snapshot_selection", False)):
+            component_dir = source_run / component_root
+            selected_dir = component_dir / "selected_snapshot"
+            execute_stage(
+                f"{component}_snapshot_selection",
+                [
+                    sys.executable,
+                    str(script_dir / "select_feasible_snapshot.py"),
+                    str(source_run),
+                    str(component_dir),
+                ],
+                selected_dir / "summary.json",
+                log_dir,
+                execution,
+                cli.resume,
+            )
+            method_dir = selected_dir
+            checkpoint_name = "selected_checkpoint.pt"
         execute_stage(
             f"{component}_export",
             [
@@ -335,7 +354,7 @@ def main() -> None:
                 str(source_run),
                 str(method_dir),
                 "--checkpoint",
-                "distilled_checkpoint.pt",
+                checkpoint_name,
                 "--verification-split",
                 protocol.get("verification_split", "calibration"),
                 "--examples",

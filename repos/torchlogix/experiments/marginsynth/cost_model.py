@@ -31,6 +31,28 @@ DEFAULT_OPERATION_COST = {
     GateOp.XNOR: 3.0,
 }
 
+# Operation-area values (um^2) for the rank-2 SkyWater implementations used by
+# Silicon-Aware Neural Networks.  This is an operation-weighted proxy over the
+# exactly simplified circuit, not a placement-and-routing area measurement.
+SKY130_OPERATION_AREA = {
+    GateOp.CONST_FALSE: 5.713,
+    GateOp.CONST_TRUE: 5.713,
+    GateOp.WIRE: 7.618,
+    GateOp.NOT: 5.713,
+    GateOp.NOT_A: 5.713,
+    GateOp.NOT_B: 5.713,
+    GateOp.AND: 9.522,
+    GateOp.OR: 9.522,
+    GateOp.NAND: 7.618,
+    GateOp.NOR: 7.618,
+    GateOp.AND_NOT_A: 13.331,
+    GateOp.AND_NOT_B: 13.331,
+    GateOp.OR_NOT_A: 13.331,
+    GateOp.OR_NOT_B: 13.331,
+    GateOp.XOR: 15.235,
+    GateOp.XNOR: 15.235,
+}
+
 FEATURE_NAMES = (
     "operation_aig_units",
     "sum_inputs",
@@ -75,6 +97,9 @@ def circuit_features(circuit: Circuit) -> dict[str, float]:
         "connections": float(connections),
         "logic_depth": float(max(live_depths, default=0)),
         "gate_histogram": dict(sorted(histogram.items())),
+        "sky130_operation_area_proxy_um2": float(
+            sum(SKY130_OPERATION_AREA.get(gate.op, 0.0) for gate in circuit.gates)
+        ),
     }
 
 

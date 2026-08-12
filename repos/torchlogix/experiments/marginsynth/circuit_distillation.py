@@ -48,6 +48,13 @@ from experiments.marginsynth.liveness_activity import (
     collect_activity_risks,
     liveness_summary,
 )
+from experiments.marginsynth.hardware_ranking import (
+    BINARY_LUT_IDS,
+    StructuralFeatureIndex,
+    StructuralHardwareModel,
+    aggregate_hardware_records,
+    is_alternative_binary,
+)
 from experiments.marginsynth.unit_tying import (
     evaluate_encoded,
     forward_encoded,
@@ -134,12 +141,40 @@ def expected_hardware_cost(
     eligible_layers: list[int],
     costs: torch.Tensor,
     temperature: float,
+    action_penalties: dict[int, torch.Tensor] | None = None,
 ) -> torch.Tensor:
     values = []
     for layer_index in eligible_layers:
         probabilities = torch.softmax(layers[layer_index].weight / temperature, dim=1)
-        values.append(probabilities @ costs)
+        expected = probabilities @ costs
+        if action_penalties is not None:
+            expected = expected + (
+                probabilities * action_penalties[layer_index]
+            ).sum(dim=1)
+        values.append(expected)
     return torch.cat(values).mean()
+
+
+def alternative_binary_action_penalties(
+    original_ids: dict[int, torch.Tensor],
+    eligible_layers: list[int],
+    penalty: float,
+    device: torch.device,
+) -> dict[int, torch.Tensor] | None:
+    """Penalize alternative binary LUTs without penalizing the source LUT."""
+    if penalty < 0.0:
+        raise ValueError("alternative_binary_penalty must be nonnegative")
+    if penalty == 0.0:
+        return None
+    binary = torch.tensor(sorted(BINARY_LUT_IDS), device=device)
+    result = {}
+    for layer_index in eligible_layers:
+        ids = original_ids[layer_index].to(device)
+        values = torch.zeros((len(ids), 16), dtype=torch.float32, device=device)
+        values[:, binary] = float(penalty)
+        values.scatter_(1, ids[:, None], 0.0)
+        result[layer_index] = values
+    return result
 
 
 def decision_margin_losses(
@@ -246,6 +281,10 @@ def changed_lut_records(
     cost_kind: str,
     activity_risks: dict[int, torch.Tensor] | None = None,
     activity_ranking: str = "none",
+    structural_index: StructuralFeatureIndex | None = None,
+    hardware_model: StructuralHardwareModel | None = None,
+    hardware_rank_weight: float = 0.75,
+    activity_rank_weight: float = 0.25,
 ) -> list[dict]:
     costs = cost_vector(cost_kind)
     records = []
@@ -259,8 +298,7 @@ def changed_lut_records(
             new_id = int(new_ids[unit])
             confidence = float(weights[unit, new_id] - weights[unit, old_id])
             benefit = float(costs[old_id] - costs[new_id])
-            records.append(
-                {
+            record = {
                     "layer": int(layer_index),
                     "unit": int(unit),
                     "original_lut": old_id,
@@ -273,7 +311,21 @@ def changed_lut_records(
                         else float(activity_risks[layer_index][unit, new_id])
                     ),
                 }
-            )
+            if structural_index is not None:
+                features = structural_index.features(
+                    layer_index, unit, old_id, new_id
+                )
+                alternative_binary = is_alternative_binary(old_id, new_id)
+                record["hardware_features"] = features
+                record["alternative_binary"] = alternative_binary
+                record["estimated_hardware_gain"] = (
+                    None
+                    if hardware_model is None
+                    else hardware_model.estimate(
+                        features, alternative_binary=alternative_binary
+                    )
+                )
+            records.append(record)
     # Prefixes keep the transformations most likely to save synthesis cost and
     # most strongly preferred by joint optimization. This order is replayable.
     if activity_ranking == "none":
@@ -297,8 +349,73 @@ def changed_lut_records(
                 item["unit"],
             )
         )
+    elif activity_ranking == "hardware":
+        if structural_index is None or hardware_model is None:
+            raise ValueError("hardware ranking requires a structural cost model")
+        records.sort(
+            key=lambda item: (
+                -item["estimated_hardware_gain"],
+                -item["preference_margin"],
+                item["layer"],
+                item["unit"],
+            )
+        )
+    elif activity_ranking == "class-fold-hardware":
+        if activity_risks is None:
+            raise ValueError("class-fold-hardware ranking requires activity risks")
+        if structural_index is None or hardware_model is None:
+            raise ValueError(
+                "class-fold-hardware ranking requires a structural cost model"
+            )
+        if hardware_rank_weight < 0.0 or activity_rank_weight < 0.0:
+            raise ValueError("combined ranking weights must be nonnegative")
+        if hardware_rank_weight + activity_rank_weight <= 0.0:
+            raise ValueError("at least one combined ranking weight must be positive")
+
+        def rank_fraction(key, *, reverse: bool) -> dict[tuple[int, int], float]:
+            ordered = sorted(
+                records,
+                key=lambda item: (
+                    -key(item) if reverse else key(item),
+                    item["layer"],
+                    item["unit"],
+                ),
+            )
+            denominator = max(len(ordered) - 1, 1)
+            return {
+                (item["layer"], item["unit"]): rank / denominator
+                for rank, item in enumerate(ordered)
+            }
+
+        hardware_ranks = rank_fraction(
+            lambda item: item["estimated_hardware_gain"], reverse=True
+        )
+        activity_ranks = rank_fraction(
+            lambda item: item["activity_risk"], reverse=False
+        )
+        for item in records:
+            identity = (item["layer"], item["unit"])
+            item["hardware_rank_fraction"] = hardware_ranks[identity]
+            item["activity_rank_fraction"] = activity_ranks[identity]
+            item["combined_rank_score"] = (
+                hardware_rank_weight * hardware_ranks[identity]
+                + activity_rank_weight * activity_ranks[identity]
+            )
+        records.sort(
+            key=lambda item: (
+                item["combined_rank_score"],
+                -item["estimated_hardware_gain"],
+                item["activity_risk"],
+                -item["preference_margin"],
+                item["layer"],
+                item["unit"],
+            )
+        )
     else:
-        raise ValueError("activity_ranking must be 'none' or 'class-fold'")
+        raise ValueError(
+            "activity_ranking must be 'none', 'class-fold', 'hardware', "
+            "or 'class-fold-hardware'"
+        )
     return records
 
 
@@ -552,7 +669,7 @@ def main() -> None:
     activity_ranking = config.get("activity_ranking", "none")
     activity_risks = None
     activity_analysis = None
-    if activity_ranking == "class-fold":
+    if activity_ranking in {"class-fold", "class-fold-hardware"}:
         activity_started = time.perf_counter()
         activity_risks, activity_analysis = collect_activity_risks(
             student,
@@ -573,8 +690,23 @@ def main() -> None:
         # resynthesis after the collector's model.eval() call.
         for layer_index in eligible_layers:
             layers[layer_index].train(True)
-    elif activity_ranking != "none":
-        raise ValueError("activity_ranking must be 'none' or 'class-fold'")
+    elif activity_ranking not in {"none", "hardware"}:
+        raise ValueError(
+            "activity_ranking must be 'none', 'class-fold', 'hardware', "
+            "or 'class-fold-hardware'"
+        )
+    hardware_model_path = config.get("hardware_ranking_model")
+    structural_index = None
+    hardware_model = None
+    if hardware_model_path is not None:
+        hardware_model_path = Path(hardware_model_path)
+        if not hardware_model_path.is_absolute():
+            hardware_model_path = REPOSITORY_ROOT / hardware_model_path
+        hardware_model_path = hardware_model_path.resolve()
+        hardware_model = StructuralHardwareModel.from_json(hardware_model_path)
+        structural_index = StructuralFeatureIndex(layers, all_source_ids)
+    elif activity_ranking in {"hardware", "class-fold-hardware"}:
+        raise ValueError("hardware ranking requires hardware_ranking_model")
     (output_dir / "liveness_analysis.json").write_text(
         json.dumps(graph_liveness, indent=2, sort_keys=True) + "\n"
     )
@@ -586,6 +718,15 @@ def main() -> None:
     cost_weights = config.get("loss_weights", {})
     cost_kind = config["cost_kind"]
     costs = cost_vector(cost_kind, device)
+    alternative_binary_penalty = float(
+        config.get("alternative_binary_penalty", 0.0)
+    )
+    action_penalties = alternative_binary_action_penalties(
+        original_ids,
+        eligible_layers,
+        alternative_binary_penalty,
+        device,
+    )
     train_started = time.perf_counter()
     epoch_order = optimization_indices[
         torch.randperm(len(optimization_indices), generator=generator)
@@ -643,7 +784,11 @@ def main() -> None:
             raise ValueError("objective must be 'margin', 'mse', or 'cross-entropy'")
         label_loss = F.cross_entropy(student_scores, labels)
         hardware_cost = expected_hardware_cost(
-            layers, eligible_layers, costs, max(temperature, 1e-4)
+            layers,
+            eligible_layers,
+            costs,
+            max(temperature, 1e-4),
+            action_penalties,
         )
         ramp = min(1.0, step / max(1, int(config.get("cost_warmup_steps", 1))))
         total_loss = (
@@ -713,6 +858,10 @@ def main() -> None:
         cost_kind,
         activity_risks=activity_risks,
         activity_ranking=activity_ranking,
+        structural_index=structural_index,
+        hardware_model=hardware_model,
+        hardware_rank_weight=float(config.get("hardware_rank_weight", 0.75)),
+        activity_rank_weight=float(config.get("activity_rank_weight", 0.25)),
     )
     (output_dir / "learned_changes.json").write_text(
         json.dumps(changes, indent=2, sort_keys=True) + "\n"
@@ -790,6 +939,11 @@ def main() -> None:
                 ),
             )[0]
     final_repair_metrics, _ = exact_prefix_metrics(retained)
+    retained_hardware_estimate = (
+        None
+        if structural_index is None
+        else aggregate_hardware_records(changes[:retained])
+    )
     materialize_change_prefix(
         repair_model,
         original_ids,
@@ -947,11 +1101,21 @@ def main() -> None:
         "cost_kind": cost_kind,
         "liveness_mask": liveness_mode,
         "activity_ranking": activity_ranking,
+        "hardware_ranking_model": (
+            None if hardware_model_path is None else str(hardware_model_path)
+        ),
+        "hardware_ranking_model_sha256": (
+            None
+            if hardware_model_path is None
+            else sha256_file(hardware_model_path)
+        ),
+        "alternative_binary_penalty": alternative_binary_penalty,
         "optimizable_logic_gates": optimizable_gate_count,
         "liveness": graph_liveness,
         "activity_analysis": activity_analysis,
         "learned_changes": len(changes),
         "retained_changes": retained,
+        "retained_hardware_estimate": retained_hardware_estimate,
         "locked_source_changes": locked_source_changes,
         "repair_applied": retained != len(changes),
         "repair_holdout_feasible": bool(final_repair_metrics["within_budgets"]),

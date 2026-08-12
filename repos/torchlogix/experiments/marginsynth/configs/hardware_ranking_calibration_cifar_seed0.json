@@ -1,0 +1,43 @@
+{
+  "format_version": 1,
+  "protocol_name": "marginsynth_structural_hardware_calibration_cifar_seed0_v1",
+  "source_run": "experiments/marginsynth/results/dense_cifar_sources/medium_standard_random_seed0",
+  "source_checkpoint": "experiments/marginsynth/results/dense_cifar_sources/medium_standard_random_seed0/best_checkpoint.pt",
+  "eligible_logic_layers": [1, 2],
+  "baseline_sample": "exact_simplification",
+  "ridge": 0.001,
+  "alternative_binary_penalty": 2.0,
+  "samples": [
+    {
+      "name": "exact_simplification",
+      "checkpoint": "experiments/marginsynth/results/dense_cifar_sources/medium_standard_random_seed0/best_checkpoint.pt",
+      "export_summary": "experiments/marginsynth/results/dense_cifar_sources/medium_standard_random_seed0/marginsynth_comparison/trial28_transfer_v1/exact_baseline/export_summary.json"
+    },
+    {
+      "name": "unit_tying_10pct",
+      "checkpoint": "experiments/marginsynth/results/dense_cifar_sources/medium_standard_random_seed0/marginsynth_comparison/trial28_transfer_v1/unit_tying/ratio_10/tied_checkpoint.pt",
+      "export_summary": "experiments/marginsynth/results/dense_cifar_sources/medium_standard_random_seed0/marginsynth_comparison/trial28_transfer_v1/unit_tying/ratio_10/export_summary.json"
+    },
+    {
+      "name": "current_marginsynth",
+      "checkpoint": "experiments/marginsynth/results/dense_cifar_sources/medium_standard_random_seed0/marginsynth_comparison/trial28_transfer_v1/current/second_resynthesis/distilled_checkpoint.pt",
+      "export_summary": "experiments/marginsynth/results/dense_cifar_sources/medium_standard_random_seed0/marginsynth_comparison/trial28_transfer_v1/current/second_resynthesis/export_summary.json"
+    },
+    {
+      "name": "class_activity_marginsynth",
+      "checkpoint": "experiments/marginsynth/results/dense_cifar_sources/medium_standard_random_seed0/marginsynth_comparison/trial28_transfer_v1/class_activity/second_resynthesis/distilled_checkpoint.pt",
+      "export_summary": "experiments/marginsynth/results/dense_cifar_sources/medium_standard_random_seed0/marginsynth_comparison/trial28_transfer_v1/class_activity/second_resynthesis/export_summary.json"
+    },
+    {
+      "name": "silicon_aware_control",
+      "checkpoint": "experiments/marginsynth/results/dense_cifar_sources/medium_standard_random_seed0/marginsynth_comparison/trial28_transfer_v1/silicon_control/distilled_checkpoint.pt",
+      "export_summary": "experiments/marginsynth/results/dense_cifar_sources/medium_standard_random_seed0/marginsynth_comparison/trial28_transfer_v1/silicon_control/export_summary.json"
+    }
+  ],
+  "data_policy": {
+    "purpose": "fit a seed-0 development-only structural ranking model before the new ablation",
+    "validation_used": false,
+    "test_used": false,
+    "transfer_seeds_used": false
+  }
+}

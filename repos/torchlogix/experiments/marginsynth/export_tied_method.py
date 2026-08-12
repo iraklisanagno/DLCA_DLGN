@@ -17,6 +17,8 @@ if str(REPOSITORY_ROOT) not in sys.path:
     sys.path.insert(0, str(REPOSITORY_ROOT))
 
 from experiments.marginsynth.verify_checkpoint import sha256_file
+from experiments.marginsynth.cost_model import circuit_features
+from torchlogix import Circuit
 
 
 def run(command: list[str], log_path: Path) -> None:
@@ -142,6 +144,10 @@ def main() -> None:
             retry_log_path(export_dir, "trace", cli.resume),
         )
     synthesis = json.loads((export_dir / "synthesis_verification.json").read_text())
+    exact_circuit_path = export_dir / "exact_simplified_circuit.json"
+    exact_features = circuit_features(
+        Circuit.from_json_file(str(exact_circuit_path))
+    )
     payload = {
         "format_version": 1,
         "status": "completed",
@@ -151,11 +157,21 @@ def main() -> None:
         "checkpoint": cli.checkpoint,
         "export_dir": str(export_dir),
         "exact_circuit_sha256": sha256_file(
-            export_dir / "exact_simplified_circuit.json"
+            exact_circuit_path
         ),
         "live_gates": synthesis["hardware_circuit"]["logic_gates"],
+        "yosys_generic_cells": synthesis["yosys"]["cells"].get("total"),
+        "yosys_cell_histogram": synthesis["yosys"]["cells"],
         "abc_and_nodes": synthesis["abc"]["stats"]["and_nodes"],
         "abc_levels": synthesis["abc"]["stats"]["levels"],
+        "sky130_operation_area_proxy_um2": exact_features[
+            "sky130_operation_area_proxy_um2"
+        ],
+        "mapped_area": None,
+        "mapped_area_unavailable_reason": (
+            "No common characterized liberty library is installed; the "
+            "operation-weighted SkyWater proxy and generic-cell count are reported."
+        ),
         "residual_trace_prepared": cli.prepare_residual_trace,
         "verification_split": cli.verification_split,
         "validation_used": cli.verification_split == "validation",
