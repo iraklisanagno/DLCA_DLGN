@@ -42,7 +42,8 @@ shape parity but are not used by U2 or random routing.
 1. Run the ten-update CUDA smoke configuration first and require CUDA device
    metadata, finite loss, validation output, topology diagnostics, and
    checkpoints.
-2. Start the full run only on GPU 0 and refuse to overwrite an existing output.
+2. Start the full run only on a visible CUDA GPU and refuse to overwrite an
+   existing output.
 3. Keep the complete learning curve, topology diagnostics, thresholds,
    environment, configuration, wall time, and peak CUDA memory.
 4. Select the checkpoint with maximum hardened validation accuracy after the
@@ -65,3 +66,10 @@ configuration, best-checkpoint, and final-checkpoint artifacts were created.
 Peak allocated CUDA memory was 15,692,077,568 bytes. The smoke output is
 `results/smoke_conv_cifar10_paper_medium_u2_seed0`; model/checkpoint binaries
 remain excluded from Git.
+
+Immediately before the full launch, physical GPU 0 acquired two unrelated
+`/opt/conda/bin/python3` workloads and sustained approximately 48% utilization,
+while physical GPU 1 remained idle. Because both devices are the same RTX PRO
+6000 Blackwell model, the full job is assigned to physical GPU 1 to avoid
+resource contention. This allocation does not change any training or method
+field in the frozen JSON configuration.
