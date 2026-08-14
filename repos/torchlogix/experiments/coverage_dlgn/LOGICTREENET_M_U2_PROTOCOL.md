@@ -1,6 +1,7 @@
 # LogicTreeNet-M U2 protocol
 
-Status: CUDA smoke passed; full training and held-out test not yet run.
+Status: 200K training complete and validation selection SHA-256 frozen; held-out
+test not yet run.
 
 ## Purpose
 
@@ -73,3 +74,17 @@ while physical GPU 1 remained idle. Because both devices are the same RTX PRO
 6000 Blackwell model, the full job is assigned to physical GPU 1 to avoid
 resource contention. This allocation does not change any training or method
 field in the frozen JSON configuration.
+
+## Full-training outcome and validation freeze
+
+The GPU-1 run completed all 200,000 updates in 128,468.16 seconds. Peak PyTorch
+CUDA allocation was 15,692,077,568 bytes. The maximum hardened validation
+accuracy was 72.38% at step 136,000; final hardened and relaxed validation were
+71.64% and 73.36%, respectively. Across the 100 matched evaluations, U2 beat
+fixed-random 97 times with a mean hardened gain of 1.7876 percentage points,
+and beat Legacy V4 87 times with a mean gain of 0.7328 points.
+
+Before any held-out test access, `freeze_logic_tree_m_u2_200k.py` verified the
+complete validation history and froze `best_checkpoint.pt` at step 136,000 in
+`summary/cifar10_paper_medium_u2_200k_freeze.json`. Its SHA-256 is
+`f2bf39448cd8810ffaa349d2a96c078eef2b3c1fd3b6f8c8e144645ce3d2f69b`.
