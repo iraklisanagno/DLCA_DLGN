@@ -1037,6 +1037,45 @@ Machine-readable sources:
 - `summary/cifar10_paper_medium_200k_curve.csv`;
 - `protocols/cifar10_paper_medium_200k_paired.json`.
 
+### August 14 unified U2 extension at LogicTreeNet-M scale
+
+Unified U2 was subsequently trained for the same 200K updates on the exact
+nine-channel `ClgnCifar10PaperMedium` architecture, seed, split, optimizer,
+augmentation, and gate parameterization. The generic, convolutional, and
+classifier fixed-routing initializers are all `semantic_multiscale_balanced`;
+no V3 or Legacy V4 implementation was modified.
+
+| Statistic | Unified U2 | Legacy V4 | Fixed random | U2 vs V4 | U2 vs random |
+|---|---:|---:|---:|---:|---:|
+| Best hardened validation | **72.38% at 136K** | 71.26% at 194K | 70.68% at 164K | **+1.12 pp** | **+1.70 pp** |
+| Final 200K hardened validation | **71.64%** | 70.28% | 70.10% | **+1.36 pp** | **+1.54 pp** |
+| Hardened held-out test | **71.65%** | 69.96% | 69.57% | **+1.69 pp** | **+2.08 pp** |
+| Relaxed held-out test | **72.95%** | 72.18% | 71.28% | **+0.77 pp** | **+1.67 pp** |
+
+U2 led random in 97 of 100 hardened validation evaluations and Legacy V4 in
+87 of 100. Its mean curve gains were +1.7876 and +0.7328 pp, respectively.
+The best-validation checkpoint was SHA-256 frozen before any test access and
+then evaluated exactly once on all 10,000 held-out examples. Its 71.65% hard
+test accuracy is numerically +0.64 pp above the reported LogicTreeNet-M 71.01%,
+but the paper value remains an external reference rather than a matched local
+control.
+
+U2 preserves the exact gate, parameter, and deployed-routing budgets: 668,416
+learned LUT units including convolutional kernels, 10,694,656 trainable gate
+parameters, zero trainable routing parameters, and 2,375,680 packed routing
+bytes. Offline topology construction took 18.908 seconds. Training took 35.686
+hours and recorded 14.614 GiB peak PyTorch CUDA allocation. The longer wall
+time than the earlier random/V4 jobs was measured under different concurrent
+machine load and is not attributed to fixed routing; the offline construction
+time is the controlled method-specific overhead.
+
+Machine-readable sources:
+
+- `summary/cifar10_paper_medium_u2_200k_freeze.json`;
+- `results/full_conv_cifar10_paper_medium_u2_seed0_200k/test_metrics.json`;
+- `logs/cifar10_paper_medium_u2_200k/test/test_evaluation_summary.json`;
+- `LOGICTREENET_M_U2_PROTOCOL.md`.
+
 ## August 4 convolutional evidence and deployment snapshot
 
 The completed convolutional artifacts were frozen by SHA-256 and consolidated

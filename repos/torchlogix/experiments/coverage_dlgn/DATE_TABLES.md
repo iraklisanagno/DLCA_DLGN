@@ -198,6 +198,7 @@ Both local architectures use nine Boolean input channels: three thermometer thre
 | M | Scalability CDLGN-M | ≈3.08M reported | — | — | 65.23 | — | Reported only |
 | M | Conv. TTNet-L | 189M reported | — | — | 70.75† | — | Much larger architecture |
 | M | CoverageDLGN V4 | Same declared M budget | **71.26 (1)** | **69.96 (1)** | — | ≈25.49 h / N/R | +0.58 V pp; +0.39 T pp |
+| M | **Unified U2** | **Same exact M budget** | **72.38 (1)** | **71.65 (1)** | — | **35.686 h / 14.614 GiB** | **+1.70 V / +2.08 T pp vs random; +1.12 V / +1.69 T pp vs V4; +0.64 T pp above reported M** |
 | LogicTreeNet-L | Fixed routing | ≈28.9M paper ops | — | — | 84.99 T | — | Requires 5-bit input and teacher |
 | L | CoverageDLGN | Same declared L budget | — | — | — | — | Pending faithful baseline |
 
@@ -215,8 +216,13 @@ Both local architectures use nine Boolean input channels: three thermometer thre
 | S, full 350K | U2 | 1.372 s |
 | LogicTreeNet-M | Fixed random | 2.478 s |
 | M | V4 | 6.182 s |
+| M | U2 | 18.908 s |
 
-The M V4 topology adds 3.704 seconds relative to its random control. Its peak training allocation was not finalized because the run ended through controlled interruption.
+The M V4 topology adds 3.704 seconds relative to its random control, while U2
+adds 16.430 seconds. V4 peak training allocation was not finalized because the
+run ended through controlled interruption. U2 recorded 14.614 GiB. Its longer
+wall-clock training occurred under different concurrent machine load, so only
+the offline construction time is treated as method-specific overhead.
 
 ## Table VI. WARP-style CIFAR-10 Medium compatibility
 

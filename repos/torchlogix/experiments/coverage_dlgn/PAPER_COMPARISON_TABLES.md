@@ -362,6 +362,7 @@ interchangeable.
 |  |  | same declared M budget | Light/IWP-LogicTreeNet | [PENDING] | [N/A] | Exact adaptation not run |
 |  |  | same declared M budget | WARP-LogicTreeNet | [PENDING] | [N/A] | Exact adaptation not run |
 |  |  | same declared M budget | **CoverageDLGN-Channel (frozen V4)** | **[TRIED-ONE-SEED] 71.26% best hard validation; 69.96% hard test** | [N/A] | +0.58 validation pp and +0.39 test pp; V4 led 97/100 validation evaluations |
+|  |  | same exact M budget | **Unified multiscale U2** | **[OUR-ONE-SEED] 72.38% best hard validation; 71.65% hard test** | [N/A] | **+1.70 V / +2.08 T pp vs random; +1.12 V / +1.69 T pp vs V4; +0.64 T pp above reported M** |
 | LogicTreeNet-L | 5-bit paper input | paper ~28.9M | Original fixed routing | [PENDING] | **[REPORTED] 84.99% test** | Exact replication requires 5-bit input and teacher |
 |  |  | 189M reported | Conv. TTNet-L | [N/A] | [REPORTED] 70.75% | Different architecture |
 |  |  | M architecture | Scalability-boundaries CDLGN-M | [N/A] | [REPORTED] 65.23% | Not LogicTreeNet-L |
@@ -383,13 +384,17 @@ are shown separately to keep validation and test metrics readable:
 |  | Unified U2 | 4.951 h | 1.831 GiB | 1.372 s |
 | LogicTreeNet-M, 200K | Fixed random | 25.47 h | 14.615 GiB | 2.478 s |
 |  | Frozen V4 | approximately 25.49 h | N/R | 6.182 s |
+|  | Unified U2 | 35.686 h | 14.614 GiB | 18.908 s |
 
 The S resource values summarize the newly instrumented seeds 3 and 4; the
 older seeds predate complete resource fields. The V4 M wall time is the
 artifact span and is approximate. Its training-memory peak was not finalized
 because the run ended by controlled `SIGINT`; the matched fixed-random run
 recorded 14.615 GiB. V4's measured one-time M topology overhead relative to
-random is 3.704 seconds.
+random is 3.704 seconds. U2's measured offline topology overhead relative to
+random is 16.430 seconds. Its wall-clock training was collected under different
+concurrent machine load and is reported as measured, not attributed to the
+fixed topology rule.
 
 ### WARP-style CIFAR-10 Medium compatibility study
 

@@ -1,7 +1,7 @@
 # LogicTreeNet-M U2 protocol
 
-Status: 200K training complete and validation selection SHA-256 frozen; held-out
-test not yet run.
+Status: complete; 200K training, validation freeze, and one-time held-out test
+evaluation finished.
 
 ## Purpose
 
@@ -88,3 +88,18 @@ Before any held-out test access, `freeze_logic_tree_m_u2_200k.py` verified the
 complete validation history and froze `best_checkpoint.pt` at step 136,000 in
 `summary/cifar10_paper_medium_u2_200k_freeze.json`. Its SHA-256 is
 `f2bf39448cd8810ffaa349d2a96c078eef2b3c1fd3b6f8c8e144645ce3d2f69b`.
+
+## One-time held-out test outcome
+
+After the freeze manifest was committed, the selected checkpoint was evaluated
+once on all 10,000 CIFAR-10 test examples. Hardened test accuracy was 71.65%
+and relaxed test accuracy was 72.95%. Hardened U2 gains are +2.08 percentage
+points over matched fixed-random (69.57%) and +1.69 points over Legacy V4
+(69.96%). U2 is also numerically 0.64 points above the paper's reported 71.01%
+LogicTreeNet-M test result, although that external number does not share the
+local 45K/5K model-selection protocol and is not a paired comparison.
+
+The guarded evaluation records exactly one checkpoint query in
+`logs/cifar10_paper_medium_u2_200k/test/test_evaluation_summary.json`. The
+generated `test_metrics.json` has SHA-256
+`8c23c9a30ee658b0642425f6ae07bf36a7b3dd79f77cd9d33332965d87029325`.
