@@ -1452,6 +1452,68 @@ new third-round-specific provenance/aggregation tests also pass. The complete
 TorchLogix suite passes with 3,412 passed, 3,038 skipped, and one pre-existing
 warning in 257.62 seconds.
 
+## September 6 U2 technical disposition
+
+The final LogicTreeNet-M result and the third-round published-protocol study
+complete the currently available U2 evidence. They do not change frozen V3,
+V4, or U1. The paper-facing method remains one fixed rule:
+`semantic_multiscale_balanced`, with semantic first-layer ordering followed by
+degree-first selection of complete deterministic multiscale matching stages.
+No individual ancestry swap, learned routing parameter, extra gate, or new
+inference operator is part of U2.
+
+The repository supports three LUT parameterization names (`raw`, `warp`, and
+`light`) and four forward-sampling modes (`soft`, `hard`, `gumbel_soft`, and
+`gumbel_hard`). This makes a controlled parameterization-independence study
+possible, but it has not yet been performed for U2. In particular, the July 31
+WARP-style convolutional experiment uses the WARP paper's six-channel
+architecture/binarization protocol with **raw** LUT parameterization. It is
+evidence for Legacy V4 in that protocol, not evidence for U2 combined with
+TorchLogix `parametrization="warp"`.
+
+The intended value of a U2-plus-Light/WARP/Gumbel experiment is therefore not
+to rename those methods or claim their training improvements. It is to test
+whether the connectivity gain survives when the gate parameterization or
+sampling optimizer changes, and whether their parameter/memory/convergence
+benefits stack with U2's zero-learned-routing topology. Exact Mind-the-Gap
+semantics are most closely represented by raw rank-2 gates with hard Gumbel
+sampling; the complete published pipeline has not been reproduced in
+TorchLogix. The current Light implementation is mechanically available for
+dense and convolutional layers, but its optimized paper implementation and
+training recipe must not be assumed from a naive parameter substitution.
+
+U2 currently supports rank two only. A rank-four gate consumes four
+predecessors and has 16 truth-table entries, compared with two predecessors and
+four entries for rank two. It can therefore represent substantially richer
+local functions, but it doubles routing inputs and generally increases ASIC
+logic/training cost. An FPGA LUT6 may still map one rank-four node to one
+physical LUT, so the correct trade-off is target-dependent. BitLogic's
+published best-of-space protocol combines rank-four Light gates with
+learnable-16 routing. At 128K nodes, those routing logits alone total
+`128K x 4 x 16 = 8.192M`. A rank-four U2 would replace that routing search with
+four deterministic fixed predecessor indices per node, but it has not yet
+been implemented or evaluated.
+
+Parameterization compatibility and fan-in are conceptually orthogonal axes,
+but their empirical interaction must be checked without running an exhaustive
+Cartesian product. The agreed bounded next matrix, which still requires a
+formal protocol freeze before training, is:
+
+1. At rank two, compare matched random and unchanged U2 under raw (existing)
+   and WARP (pending) on dense CIFAR-10 M and LogicTreeNet-S.
+2. Under one faithful Light/BitLogic recipe, compare rank-two random/U2,
+   rank-four fixed random/U2, and rank-four learned-16 at the published
+   two-layer 16K- and 64K-per-layer CIFAR-10 coordinates.
+3. Keep convolutional rank four optional until the dense rank-four method and
+   physical cost model are validated. Gumbel is a separate optional
+   confirmation, not another full cross-product.
+
+The rank-four extension must be separately named during development and must
+preserve every frozen rank-two U2 index bit-for-bit. Its required invariants
+are four distinct inputs per node, deterministic construction, minimum
+feasible fan-out spread, semantic first-layer diversity, multiscale ancestry
+propagation, zero learned routing, and explicit export/cost limitations.
+
 ## Remaining limitations before submission
 
 - A protocol-identical numerical reproduction of the published CIFAR-10
@@ -1466,7 +1528,12 @@ warning in 257.62 seconds.
   three-seed pilot; they were not exhaustively optimized.
 - Overlap-off and distance/locality ablations at pilot scale. The balanced
   fan-out component has now been isolated on CIFAR-10 M.
-- WARP/Light repetition.
+- U2 has not been repeated under TorchLogix WARP, a faithful Light recipe, or
+  an exact Mind-the-Gap/Gumbel protocol. The existing WARP-style convolutional
+  comparison uses raw LUT parameterization and does not close this gap.
+- U2 remains rank-2 only. The direct rank-4 fixed-random/U2/BitLogic
+  learned-routing comparison is not implemented, and current raw/export paths
+  contain rank-2 restrictions.
 - RigL remains unimplemented. Six-layer 48K Mommen, LILogic, and BitLogic
   controls are complete on MNIST/Fashion under the common split and epoch
   budget. BitLogic's chance-level outcome is a reproduced-negative six-layer
@@ -1474,9 +1541,11 @@ warning in 257.62 seconds.
 - Multi-seed long-training convolutional confirmation. The full 350K S cohort
   is positive by +3.260 pp on held-out test and exceeds the paper-reported S
   test value by 0.250 pp, but has one full seed per method. Its supporting
-  20K method-level pilot has three seeds. The one-seed 200K nine-channel M
-  comparison is positive by +0.39 pp on held-out test but is 1.05 pp below
-  the paper's reported test accuracy and has no confidence interval.
+  20K method-level pilot has three seeds. The one-seed 200K nine-channel U2 M
+  comparison is positive by +2.08 pp over matched random and reaches 71.65%
+  hard test, numerically 0.64 pp above the paper's reported 71.01%; it still
+  has no confidence interval and is not a statistical state-of-the-art claim.
+  The preserved Legacy V4 M result is the older +0.39 pp comparison.
 - Optimized compiled CPU latency for M and direct energy measurements. Circuit
   equivalence and an `-O0` compiled CPU measurement are complete for S; M has
   trace, simplification, equivalence, and framework-level PyTorch GPU timing.
@@ -1491,14 +1560,21 @@ separate generic rule shared by dense and convolutional architectures. U2's
 full S result clears the requested +3 pp test-gain target without changing
 gate count, routing storage, training effort, memory, or measured runtime.
 The responsible next additions are two more full S random/U2 seeds,
-protocol-identical published-baseline reproduction, and hardware energy/
-synthesis evidence. `SECOND_ROUND_CONCLUSIONS.md` gives the complete claim,
-trade-off, scope, and nine-step disposition.
+two more matched M seeds if S remains positive, the bounded WARP/rank-four
+matrix above, protocol-identical published-baseline reproduction, and hardware
+energy/synthesis evidence. `SECOND_ROUND_CONCLUSIONS.md` gives the completed
+second-round claim, trade-off, scope, and nine-step disposition.
 
 ## Final verification
 
 Final verification after regenerating the summary artifacts:
 
+- the later third-round complete suite supersedes the earlier whole-suite
+  count below and passes with **3,412 passed, 3,038 skipped, and one
+  pre-existing warning** in 257.62 seconds;
+- the September 6 handoff-focused topology/parameterization/protocol suite
+  passes with **215 passed, 2 skipped, and one pre-existing warning** in
+  117.53 seconds;
 - the August 10 evidence-consistency audit reports `pass` for all legacy and
   second-round checks, including 110/110 completion, frozen-before-test
   provenance, exact declared cost, U2 accuracy, learning curve, and deployment
@@ -1515,8 +1591,8 @@ Final verification after regenerating the summary artifacts:
   1,660 skipped**;
 - the July 29 topology/protocol/circuit/task-aware focused suite passes with
   **157 passed** in 208.18 seconds, including post-rewire circuit equivalence;
-- the complete TorchLogix suite passes with **3,367 passed, 3,038 skipped, and
-  one pre-existing warning** in 244.56 seconds;
+- the earlier August 10 complete-suite snapshot passed with **3,367 passed,
+  3,038 skipped, and one pre-existing warning** in 244.56 seconds;
 - all three generated SVGs parse as valid XML;
 - the pre-analysis source archive passes its recorded SHA-256 check; and
 - `nvidia-smi` reports both RTX PRO 6000 GPUs at 0% utilization with no running

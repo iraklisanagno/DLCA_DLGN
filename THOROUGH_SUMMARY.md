@@ -261,14 +261,14 @@ V3 should appear as a dense specialization or ablation, not as a second headline
 
 Run:
 
-- LogicTreeNet-S random versus U2 to five full seeds.
+- LogicTreeNet-S random versus U2 to three full seeds by adding seeds 1 and 2.
 - LogicTreeNet-M random versus U2 to three full seeds.
 
 Suggested promotion criteria:
 
 - At least +1 pp mean hardened-test gain.
 - Positive paired confidence interval.
-- U2 wins at least four of five S seeds and all or most M seeds.
+- U2 wins at least two of three pairs, preferably all three, at both scales.
 
 Without this, the convolutional claim remains vulnerable.
 
@@ -345,6 +345,114 @@ Once U2 and its training parameterization are frozen, evaluate an untouched data
 - CIFAR-10.1 as distribution-shift confirmation.
 
 Do not retune U2 for the dataset. A successful frozen transfer would address the research-overfitting concern.
+
+## 9. U2 extension decisions after the repository audit
+
+The priorities above are separate evidence axes, not instructions to create a
+new dataset-specific U2. The frozen rank-two method remains unchanged. The
+following details resolve the implementation and experiment questions raised
+after the initial assessment.
+
+### What the repository already supports
+
+| Capability | Current support | Important limitation |
+|---|---|---|
+| Raw LUTs | Dense and convolutional, rank two | Raw rank four would require choosing among 65,536 Boolean functions and is intentionally rejected |
+| WARP LUT parameterization | Dense and convolutional through the shared layer abstraction | U2 has not been paired with it in a controlled experiment |
+| Light/IWP parameterization | Dense and convolutional mechanically; rank 2/4/6 | The current implementation is not evidence for the optimized Light code or paper training recipe |
+| Soft/hard Gumbel sampling | Exposed for LUT parameterizations | Raw rank-two `gumbel_hard` approximates the core Mind-the-Gap mechanism, but the exact published pipeline is not validated here |
+| Learned routing | Fixed, Mommen-style, and Top-K/BitLogic adaptations exist | It is a comparator; U2 itself must retain zero learned routing |
+
+The existing six-channel WARP-style convolutional study should not be
+misread. It reconstructs the WARP architecture, binarization, and schedule but
+uses raw rank-two LUT parameterization. It shows Legacy V4 compatibility with
+that protocol; it does **not** show U2 on `parametrization="warp"` and does not
+establish U2's independence from gate parameterization.
+
+Combining U2 with Light, WARP, or hard Gumbel has two possible contributions:
+
+1. Show that U2 is a connectivity improvement that survives a change in gate
+   representation/training, rather than an artifact of raw soft LUTs.
+2. Show complementary trade-offs: the external method may reduce LUT training
+   parameters, discretization gap, or steps-to-target, while U2 removes learned
+   routing and may improve accuracy at the same fixed circuit topology.
+
+The comparison must credit those methods and cannot claim their speedups as a
+U2 invention. A failed combination is also informative because it identifies
+an interaction between connectivity and relaxation.
+
+### Rank-four U2 and BitLogic's fan-in-four choice
+
+A rank-two LUT consumes two inputs and has four truth-table entries. A
+rank-four LUT consumes four inputs and has 16 entries, permitting much richer
+local Boolean interactions. The complete set contains 65,536 rank-four Boolean
+functions, which makes the raw categorical parameterization impractical;
+Light/WARP use a compact 16-coefficient representation instead.
+
+BitLogic's best-of-space CIFAR-10 configuration uses rank-four Light gates and
+learnable-16 routing: every one of four input slots selects among 16 candidates.
+At 128K nodes this introduces 8.192M training-only routing logits. A rank-four
+U2 would use four deterministic indices per node and zero routing logits. The
+controlled comparison is therefore:
+
+- rank-four fixed random;
+- rank-four deterministic U2;
+- rank-four BitLogic learned-16;
+
+with encoder, width, Light parameterization, head, optimizer, schedule, and
+seeds held fixed.
+
+Rank four may improve accuracy over rank-two U2 because each gate is more
+expressive, but it is not a free improvement. Relative to rank-two random or
+U2 it doubles predecessor wires, enlarges each truth table from 4 to 16 bits,
+and is generally more expensive on an ASIC. On an FPGA, both rank two and rank
+four may fit in one LUT6, although routing pressure can still differ. Relative
+to rank-four learned routing, rank-four U2 should reduce training parameters,
+memory, and routing-search time, but may lose accuracy because it cannot adapt
+connections to the task. These are empirical trade-offs, not guaranteed wins.
+
+The rank-four implementation must preserve rank-two U2 bit-for-bit and use the
+same principle: semantic ordering, minimum feasible predecessor-degree spread,
+four distinct inputs, deterministic multiscale group selection, and no
+per-edge greedy ancestry swaps.
+
+### Minimal experiment matrix
+
+Parameterization and fan-in are conceptually orthogonal, but running every
+rank with every Light/WARP/Gumbel choice would be wasteful and would blur the
+attribution. Use this bounded matrix:
+
+| Question | Required comparison | Coordinates |
+|---|---|---|
+| Does U2 survive a modern parameterization? | rank-2 random vs rank-2 U2 under raw (existing) and WARP (new) | Dense CIFAR-10 M and LogicTreeNet-S |
+| Does the topology principle generalize to fan-in four? | rank-2 random/U2 and rank-4 random/U2 under one faithful Light recipe | BitLogic 2 x 16K and 2 x 64K |
+| What is the learned-routing trade-off? | rank-4 U2 vs rank-4 learned-16 | Same BitLogic coordinates |
+| Is Gumbel necessary? | One rank-2 raw random/U2 confirmation only if WARP/Light leave an unresolved soft-to-hard question | One predeclared central coordinate |
+
+Do not rerun all examples with every combination. Promote only positive pilot
+cells. Keep convolutional rank four optional until dense rank four and its
+hardware accounting work correctly.
+
+### Gate reduction and physical cost remain separate claims
+
+Current matched random/U2 experiments use the same nominal gate count. U2 has
+not yet removed gates at a fixed width. The existing dense frontier nevertheless
+shows that a narrower CoverageDLGN can exceed a much wider random DLGN, which
+supports a width-scaling compression study. For convolutional S, preserve all
+architecture ratios and evaluate a `k={16,20,24,28,32}` ladder before adding
+pruning.
+
+If unit tying is used, it must be credited and compared factorially: random,
+U2, random plus the same tying recipe, and U2 plus tying. The contribution
+would be complementarity, not ownership of tying.
+
+Equal gate count also does not guarantee equal silicon area. Same-width
+topologies will likely differ modestly unless synthesis exposes substantial
+constant propagation, buffering, or routing effects. Tens-of-percent savings
+are more plausible from narrower width or tying. Any area claim requires the
+same RTL, synthesis/place-route tools, device/library, clock constraint, and
+multiple implementation seeds, together with equivalence, area/LUT count,
+Fmax, power, energy, and routing measurements.
 
 ## Final recommendation
 

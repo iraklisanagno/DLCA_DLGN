@@ -10,6 +10,28 @@ Notation:
 - Topology construction is offline CPU preprocessing and is not included in GPU training time.
 - `N/R` = not recorded; `—` = not available or not run.
 
+## Current CoverageDLGN method status
+
+All V3 rows below remain valid. V3 (`semantic_balanced_hybrid`) is the strongest
+dense specialization. The unified paper candidate is U2
+(`semantic_multiscale_balanced`): the same semantic, degree-first multiscale
+fixed-routing rule is used in dense and convolutional networks, with zero
+learned routing. U2 has not replaced or overwritten V3, V4, or U1.
+
+| U2 evidence | Hardened result | Matched effect | Status |
+|---|---:|---:|---|
+| Dense CIFAR-10 M, 4 x 128K | 58.653 +/- 0.168 T (3) | +4.557 pp vs random, 3/3 | Unified transfer; tied with V3 within CI |
+| Dense CIFAR-10 L, 5 x 256K | 60.463 +/- 0.348 T (3) | +4.593 pp vs random, 3/3 | Unified transfer; V3 remains 0.610 pp higher |
+| LILogic M protocol, 64K | 52.543 +/- 0.296 T (3) | +3.533 pp vs random, 3/3 | Top-32 is more accurate but much more expensive |
+| LILogic L protocol, 256K | 60.193 +/- 0.286 T (3) | +4.860 pp vs random, 3/3 | Top-32 is +1.837 pp, with 5x training parameters |
+| LogicTreeNet-S, 350K | 60.630 T (1) | +3.260 pp vs random | Full one seed; 20K support is n=3, +2.173 pp |
+| LogicTreeNet-M, 200K | 71.650 T (1) | +2.080 pp vs random | Full one seed; +0.64 pp vs reported 71.01, not a statistical SOTA claim |
+| Dense CIFAR-100, 3 x 128K pilot | U2 +0.100 pp | Did not promote | Retain V3 result; U2 is not universal |
+
+Current U2 evidence uses raw rank-two LUTs. The WARP-style table below also
+uses raw LUT parameterization and Legacy V4, so it is not a U2+WARP result.
+U2 under TorchLogix WARP/Light/Gumbel and rank-four U2 are explicitly pending.
+
 ## Table I. Dense MNIST and Fashion-MNIST
 
 Six layers, 48K rank-2 gates, and 0.768M raw gate logits.
@@ -356,4 +378,19 @@ No matched local result is currently available, so this is not yet a manuscript-
 | L | ≈34.8M | WARP | Pending | — | No published exact L result |
 | L | ≈34.8M | CoverageDLGN-Channel | Pending | — | Requires input/teacher decision |
 
-The Markdown update remains uncommitted.
+## Pending controlled U2 evidence
+
+These are preregistration targets, not achieved results. Parameterization and
+fan-in are separate axes; do not run their full Cartesian product.
+
+| Question | Required cells | Status |
+|---|---|---|
+| Full convolutional replication | LogicTreeNet-S random/U2 seeds 1-2; promote matched M seeds 1-2 only if S remains positive | Pending |
+| Rank-2 parameterization independence | Raw random/U2 (existing) vs WARP random/U2 on dense CIFAR-10 M and LogicTreeNet-S | Pending WARP cells |
+| Rank-four topology | Light rank-4 fixed random vs rank-4 U2 vs BitLogic learned-16 | Not implemented |
+| Rank-four coordinates | BitLogic 2 x 16K and 2 x 64K CIFAR-10 protocols | Pending after implementation/tests |
+| Physical cost | Matched synthesis/place-route for selected random/U2 checkpoints | Pending; simplified IR alone is not area |
+
+The existing tables and U2 results are committed historical evidence. New
+cells must retain validation/test and provenance labels and must not alter the
+frozen V3/V4/U1/U2 definitions.
