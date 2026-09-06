@@ -40,6 +40,11 @@ htmlcov/
 **/runs/
 **/lightning_logs/
 
+# MarginSynth run artifacts are large, machine-local, and contain generated
+# checkpoints/netlists. Track protocols and summaries in source documents;
+# archive raw paper artifacts separately rather than adding this tree to Git.
+/repos/torchlogix/experiments/marginsynth/results/
+
 # Editor and operating-system noise
 **/.idea/
 **/.vscode/
