@@ -1,0 +1,15 @@
+{
+  "completion": "existing command/validate_run/write_new helpers; identical completion stamps",
+  "coordination": "Bounded seed-2 pair; GPU 1 finishes nominal seed 2 and factorial seed 1 before reaching these cells; monitor both processes",
+  "gpu": 0,
+  "names": [
+    "fourth_factorial_conv_s_body_seed2",
+    "fourth_factorial_conv_s_head_seed2"
+  ],
+  "preregistration_sha256": "b456a3f25103a23f9fadb4901c88259a314a54e89ccb4d4b74d4688b03b42649",
+  "primary_gpu": 1,
+  "primary_run_at_assignment": "fourth_mechanism_conv_s_nominal_seed2",
+  "recorded_at_utc": "2026-09-06T09:09:55.999840+00:00",
+  "scope": "scheduling_only_existing_preregistered_cells",
+  "source_or_config_changed": false
+}

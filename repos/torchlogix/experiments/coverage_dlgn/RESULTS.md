@@ -1,17 +1,155 @@
 # CoverageDLGN implementation and experiment history
 
-**Updated:** August 3, 2026
-**Status:** Dense semantic-balanced v3 and convolutional semantic-channel v4
-remain frozen. The separate unified semantic-degree-balanced U1 candidate
-completed its five-seed convolutional S gate but was not promoted. The
-original five-seed 48K study, a five-seed 512K
-escalation, a two-budget/three-depth study, and a three-seed convolutional
-pilot have frozen validation/test artifacts. V3 improves 512K dense CIFAR-10
-held-out accuracy by **+4.256 pp**; v4 improves the convolutional pilot by
-**+2.000 pp**. Component ablations and a one-seed 200K nine-channel
-LogicTreeNet-M comparison are complete; multi-seed long convolutional
-confirmation and protocol-identical named-method comparisons remain before a
-DATE claim.
+**Updated:** September 6, 2026
+**Status:** Frozen U2 is the unified dense/convolutional candidate; V3 remains
+the strongest dense specialization. Full nine-channel S/M U2 test results are
+60.630%/71.650%, gains of +3.260/+2.080 pp over matched random, each n=1.
+Third-round dense M/L and LILogic protocol results are complete. Historical
+sections below retain their original chronology and protocol scope.
+The September 6 repair fixes U2 topology-only ancestry, strengthens queue
+artifact requirements, and extends the evidence audit to third-round and M U2
+hashes/aggregates. No historical checkpoint or freeze is changed.
+Fourth-round preflight passed 3,455 tests (3,038 skipped, one existing warning)
+plus all GPU smokes. All 50 fourth-round cells are complete, with final JSON/CSV
+and 100 passing checkpoint metadata checks. Hardware and extra full-S seeds
+remain deferred. All 41 historical evidence-audit checks passed before launch
+and at final verification. The dated updates below preserve intermediate states.
+
+## September 6, 2026: fourth round complete, final WARP results and audits
+
+All 35 new training runs and 15 reused logical cells validate; six archived raw
+references are included in the final comparison. The primary and bounded queues
+finished. No completed training or frozen transfer inference was repeated.
+
+- Dense-M adapted WARP, 108K, n=3: U2 gains +4.700 pp best hard, sample SD
+  0.314 pp, paired 95% CI [3.919, 5.481], 3/3 wins. Final-hard gain is
+  +4.693 pp, CI [4.459, 4.928], also 3/3 [ADAPTED, V].
+- Convolutional-S adapted WARP, 20K, n=3: best gains 0.000/−0.400/+0.660 pp,
+  mean +0.087 pp, SD 0.535 pp, CI [−1.243, 1.417], one win/tie/loss.
+  Final gains −5.740/−0.400/+2.500 pp, mean −1.213 pp, SD 4.180 pp,
+  CI [−11.597, 9.171], 1/3 wins [ADAPTED, V]. This is inconclusive, not
+  equivalence or universal compatibility. Both coordinates trail matched raw
+  and have higher peak memory despite fewer WARP training parameters.
+- Both 20K mechanism coordinates fail to establish added novelty-selection
+  benefit. The factorial's positive body effect is conditional on fixed
+  reference-U2 classifier wiring. Frozen transfer supports dense-M shift
+  generalization, but S/M are mixed and each convolutional coordinate is n=1.
+
+Final sources: `summary/fourth_round_results.json`, `summary/fourth_round_runs.csv`,
+and the dense/convolutional WARP phase summaries. `FOURTH_ROUND_RESULTS.md`
+contains raw seeds, selected/final relaxed and hardened curves, matched raw
+context, resource costs and limitations. All intervals are exploratory,
+unadjusted Student-t; the positive pilot conditioned WARP expansion.
+
+The independent statistics audit passes 1,799 scalar checks; all 100 best/final
+checkpoint metadata records and all twelve factorial wiring records pass.
+Saved transfer verification confirms ten queries, zero extra inference, and
+the preserved aggregate-only recovery. Supplemental tests pass 36/36 with
+source/log hashes. Historical audit passes 41/41 within its documented scope;
+this is not a claim to have re-audited every historical experiment. Neither
+frozen source/configuration nor historical checkpoint/selection was changed.
+
+## September 6, 2026: body/head factorial complete, fourth round
+
+All twelve 20K factorial cells completed, and all three seeds pass the seven
+saved-wiring independence checks. The fixed-U2-head body contrast is +2.140 pp,
+paired 95% CI [0.674, 3.606], with gains of +1.540/+2.720/+2.160 pp [OUR, V].
+The body effect with random head is +1.207 pp [−3.169, 5.582]; head effects are
+−0.433 pp [−5.725, 4.858] with random body and +0.500 pp [−1.410, 2.410] with
+U2 body. Interaction is +0.933 pp [−4.766, 6.633]. All effects are n=3,
+exploratory and not multiplicity-adjusted. All raw effects/SD/intervals/wins
+were independently recomputed.
+
+This supports a conditional body/channel-wiring contribution without changing
+classifier indices. Because that head uses reference U2-body ancestry, it is
+not evidence of head-agnostic superiority or statistical additivity. Retain
+the inconclusive random-head, head-only and interaction results. Full evidence:
+`summary/fourth_round_factorial.json`, its linked
+`summary/fourth_round_factorial_wiring_audit.json`, and `FOURTH_ROUND_RESULTS.md`.
+No source/configuration changed. Both GPUs now run promoted WARP replications;
+those and consolidated reporting remain required.
+
+## September 6, 2026: convolutional mechanism complete, fourth round
+
+The final nominal seed-2 control completed and passed artifact checks, closing
+all 24 dense/convolutional mechanism cells. At convolutional S, 20K updates,
+seeds 0/1/2, U2 reaches 58.847 ± 0.600% best hardened validation [OUR, V]. Its
+paired gains are +0.213 pp over balanced-random (95% CI [−0.836, 1.263]) and
++0.593 pp over nominal (CI [−1.121, 2.308]), both 2/3 wins. Against the matched
+explicit-random baseline the gain is +1.707 pp (CI [−2.600, 6.013]), 3/3 wins.
+All effects are [OUR, V], exploratory and not multiplicity-adjusted. Do not
+substitute the historical +2.173 pp contrast against a different control.
+
+Neither dense nor convolutional 20K evidence establishes a benefit from U2's
+extra novelty selection. The convolutional point estimates are positive but
+inconclusive; this does not prove equivalence. The paired construction increments
+are +0.411 seconds over balanced-random and +0.259 over nominal, at unchanged
+declared cost. Full raw seeds/resources are in `summary/fourth_round_conv_mechanism.json`
+and `FOURTH_ROUND_RESULTS.md`. Independent raw-seed reconstruction passed for
+all six dense/convolutional paired effects, sample SDs, intervals and win counts.
+No method/configuration changed after these outcomes. Both GPUs continue the
+remaining body/head attribution runs; promoted WARP confirmation remains pending.
+
+## September 6, 2026: WARP pilot promoted, fourth round
+
+The matched dense-M WARP pilot completed 20K updates for seed 0. Best hardened
+validation is 53.660% random versus 57.680% U2, +4.020 pp [ADAPTED, V]. The
+predeclared random floor (40%) and strictly positive topology-gain gate both
+pass. The twelve frozen follow-ups are now required; this is not completed
+three-seed compatibility evidence. Final hard accuracies are 52.280%/57.680%,
+with final relaxed accuracies 53.780%/58.800%. No held-out test was accessed.
+
+Both arms use 512K LUTs, 2.048M trainable parameters and 1.235 GiB peak GPU
+allocation. Matching raw uses 8.192M parameters and 1.123 GiB; WARP is less
+accurate by 1.740/1.180 pp for random/U2 at the same 20K budget. The positive
+claim is topology compatibility within this adapted WARP recipe, not WARP
+accuracy or memory superiority. The source is `summary/fourth_round_warp_pilot.json`
+and the immutable `logs/fourth_round/warp_promotion.json` decision.
+
+## September 6, 2026: frozen CIFAR-10.1 transfer, fourth round
+
+All ten preselected checkpoints were evaluated once on the pinned v6 dataset,
+without adaptation. Dense-M random/U2 test means are 41.967 ± 0.126% /
+45.700 ± 0.250%, seeds 0/1/2. The paired U2 gain is +3.733 pp, sample SD
+0.375 pp, exploratory paired 95% CI [2.801, 4.666], 3/3 wins [OUR, T].
+Full-S random/U2 are 46.000%/45.950% (−0.050 pp); full-M are
+54.100%/56.050% (+1.950 pp), both descriptive n=1. Random values are
+[REPRODUCED, T], U2 values [OUR, T]. Dense generalization is positive here;
+the S result does not support a universal shift-robustness claim.
+
+The evaluator saved all ten per-model records before failing aggregate JSON
+serialization on a NumPy `int64` win count. The frozen source was preserved.
+The separately tested `recover_transfer_report.py` verified saved predictions
+against labels, dataset/checkpoint hashes and freeze timing, then recovered
+only reporting artifacts, with zero repeat inference. Seven regression tests
+passed. `logs/fourth_round_transfer/recovery.json` records the original failure,
+record/code hashes and zero new queries; `completed.json` hashes that receipt
+and the final summary. Raw seeds and claim boundaries are in
+`FOURTH_ROUND_RESULTS.md`; source is `summary/fourth_round_transfer_results.json`.
+GPU evaluation overlapped nominal convolutional seed-0 training from 07:59:11
+to 08:02:06 UTC, so that run's wall time is not an isolated timing benchmark.
+
+## September 6, 2026: dense mechanism result, fourth round
+
+At 20K updates and paired seeds 0/1/2, U2 reaches 59.133 ± 0.316% hardened
+validation [OUR, V]. Its +4.313 pp gain over matched random has paired 95% CI
+[2.475, 6.152]. Against balanced-random the gain is +0.487 pp, CI [−0.795,
+1.768]; against nominal multiscale it is −0.087 pp, CI [−1.759, 1.585]. All
+effects are [OUR, V], exploratory and not multiplicity-adjusted. These data do
+not establish a dense benefit from novelty selection, nor prove equivalence.
+The negative/inconclusive controls are retained without retuning. Full seeds,
+construction costs and hashes are in `summary/fourth_round_dense_mechanism.json`
+and `FOURTH_ROUND_RESULTS.md`. Other fourth-round studies are not yet complete.
+
+September 6 structural correction: source inspection and saved checkpoint wiring
+show that dense native random already balances encoded-input fan-out (27–28 in
+the dense-M first layer, exactly 2 in every deeper layer). The structured arms
+also have deeper fan-out 2. Historical statements attributing most dense gains
+to degree balancing alone are therefore superseded; the comparisons change
+pairing structure. Native convolutional random cycles adjacent channel groups
+with random spatial sampling, so its baseline must be described separately.
+`summary/fourth_round_wiring_audit.json` records the checkpoint-hashed, dataset-free
+diagnostic. No configuration, checkpoint, accuracy, or frozen method changed.
 
 ## Paper-architecture convolutional correction
 
@@ -849,9 +987,11 @@ and trained only six missing arms. Balanced butterfly fan-out contributes
 +4.160 pp over random (95% CI [+3.988, +4.332]). Adding the semantic first
 layer contributes +0.273 pp (95% CI [-0.780, +1.326]), and the ancestry-swap
 stage contributes +0.040 pp (95% CI [-0.434, +0.514]). Full V3 remains
-+4.473 pp over random (95% CI [+3.624, +5.323]). Thus balanced fan-out is the
-dominant measured component at this coordinate; the smaller semantic and
-ancestry increments are inconclusive.
++4.473 pp over random (95% CI [+3.624, +5.323]). September 6 interpretation
+correction: the balanced-butterfly arm recovers most of the gain, but native
+random already balances fan-out. This is a structured-routing contrast, not an
+isolated degree-balance effect; the smaller semantic and ancestry increments
+are inconclusive.
 
 A separate one-shot task-aware extension was implemented without changing
 V3. It preserved the exact predecessor-degree vector and deployment cost,

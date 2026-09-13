@@ -1,0 +1,27 @@
+{
+  "artifacts": {
+    "best_checkpoint.pt": "03e3d1958866cbf00b8ac914607fc1fcddf4eeffac0ed146b2b64afba9de4c4f",
+    "environment.json": "02eb8fd0cb0da690f0cd82d0a19a1409453767e9b0d80ca6cbed6cd245f983fb",
+    "final_checkpoint.pt": "598033c20ab7b26e26d7cb0af5ce40f76f1237b7b890f1091c5f7927a85e6927",
+    "metrics.csv": "e07eeaf653960c13fe8f3fff388a37ebe465124ae061bc417c7f1e67ab9d9aa0",
+    "run_summary.json": "05eb1d515dd15a3ffe37705d3d00d37686d4e4c277aa4cbbaa260267ddd5a649",
+    "topology.json": "6ed88585014ad0ac1acebebfcaa8c6a3d0918881db4569a8b0a149c6a8478d8c",
+    "training_config.json": "be15b41a1f8943cc7f5bb000659a1c4c4d1d7a8027597a67379aca36f33166a9"
+  },
+  "implementation_sha256": "3d1c59d3b2d0948235c66a78b5f4861cc0b55844f5291f4e602a7ae8dc519a0b",
+  "signature": {
+    "classifier": "6aa60a76981ab6d83ac87f4fc9b76fdfe2ef7c42d149b06cccd973add3a8635b",
+    "cost": {
+      "candidate_indices_tensor_bytes": 8192000,
+      "dense_gate_count": 512000,
+      "deployed_routing_bits": 16640000,
+      "deployed_routing_bytes_packed": 2080000,
+      "trainable_parameters": 8192000,
+      "training_routing_parameters": 0
+    },
+    "cpu_rng": "1ccf17250133dec5e96478acd63e13d728d0dbbabb30389415a302c6f872f81f",
+    "cuda_rng": "1f4a81df7ac47d62676760757944089a226294b1f30b429791470f217153d1a6",
+    "parameters": "c02c318aa186c909852f4cf36f76942566dee27913ad0869fd5f7184fe317cf2",
+    "spatial": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

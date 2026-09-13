@@ -1,0 +1,18 @@
+{
+  "additional_inference_queries": 0,
+  "csv_sha256": "149e7c35c7044f83bf5c06138dc69e15c0d294d313c1ce38402415ad3c944980",
+  "final_csv_rows": 50,
+  "fresh_csv_and_resource_rows": 56,
+  "group_checks": 18,
+  "method": "Fresh CSV and resource JSON reconstruction; manual means and sample variances; preregistered Student-t critical constants; paired seed arithmetic and discordant-count transfer checks",
+  "paired_contrasts": 14,
+  "preregistration_sha256": "b456a3f25103a23f9fadb4901c88259a314a54e89ccb4d4b74d4688b03b42649",
+  "scalar_checks": 1799,
+  "scope": "fourth_round_validation_and_saved_transfer_statistics_only",
+  "status": "pass",
+  "summary_sha256": "4d8f6f13545c60582071c9e94ab1941017998262772638efef5ca96dc6feca81",
+  "transfer_contrasts": 3,
+  "transfer_summary_sha256": "8a5648d8087021d9f5647b2108effb7626e09e88e415ae141d0823983d639509",
+  "unique_run_outputs": 50,
+  "warp_raw_comparisons": 14
+}

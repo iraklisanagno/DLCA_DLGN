@@ -6,6 +6,7 @@ from ..topology import (
     add_identity_to_ancestry,
     combine_channel_spatial_ancestry,
     image_input_semantics,
+    generate_dense_topology,
     packed_identity_in_universe,
 )
 
@@ -199,6 +200,7 @@ class ClgnCifar10(torch.nn.Sequential):
         binarization_module = setup_binarization(thresholds, binarization, **binarization_kwargs)
 
         base_connections_kwargs = dict(connections_kwargs)
+        classifier_reference_u2 = base_connections_kwargs.pop("classifier_reference_u2", False)
         conv_method = (
             base_connections_kwargs.pop("conv_init_method", None)
             or base_connections_kwargs["init_method"]
@@ -232,17 +234,23 @@ class ClgnCifar10(torch.nn.Sequential):
                 "ancestry_channel_hybrid",
                 "coverage_reuse_hybrid",
                 "semantic_multiscale_balanced",
+                "semantic_random_balanced",
+                "semantic_multiscale_nominal",
             }
             and (
                 conv_method in {
                     "ancestry_channel_hybrid",
                     "coverage_reuse_hybrid",
                     "semantic_multiscale_balanced",
+                    "semantic_random_balanced",
+                    "semantic_multiscale_nominal",
                 }
                 or classifier_method in {
                     "semantic_balanced_hybrid",
                     "semantic_classifier_hybrid",
                     "semantic_multiscale_balanced",
+                    "semantic_random_balanced",
+                    "semantic_multiscale_nominal",
                 }
             )
         )
@@ -312,6 +320,24 @@ class ClgnCifar10(torch.nn.Sequential):
                 320 * self.k_num * self.output_gate_factor,
             ),
         ]
+        # Opt-in factorial control: identical U2 classifier indices regardless
+        # of the actual body. Rebuild only the offline reference ancestry;
+        # never instantiate a second trainable model or consume Torch RNG.
+        if classifier_reference_u2 and classifier_method == "semantic_multiscale_balanced":
+            channel_ancestry = packed_identity_in_universe(input_channels, ancestry_universe)
+            reference_offset = input_channels
+            for depth, (_, channels, outputs, _) in enumerate(conv_specs):
+                reference = generate_dense_topology(
+                    channels, outputs, strategy="semantic_multiscale_balanced",
+                    topology_seed=base_connections_kwargs.get("topology_seed") or 0,
+                    layer_index=depth, input_ancestry=channel_ancestry,
+                    input_semantics=image_input_semantics(3, 1, 1, n_thresholds, layout="channel_interleaved") if depth == 0 else None,
+                )
+                channel_ancestry = add_identity_to_ancestry(
+                    reference.output_ancestry, offset=reference_offset,
+                    universe_size=ancestry_universe,
+                )
+                reference_offset += outputs
         dense_ancestry = None
         dense_semantics = None
         if channel_ancestry is not None:

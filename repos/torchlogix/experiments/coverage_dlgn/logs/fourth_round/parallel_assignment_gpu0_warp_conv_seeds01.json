@@ -1,0 +1,19 @@
+{
+  "completion": "existing command/validate_run/write_new helpers; identical completion stamps",
+  "coordination": "Bounded convolutional seed-0/1 pairs only; primary finishes dense U2 seed 0 and both dense seed-1 arms before reaching convolutional cells; monitor both queues",
+  "gpu": 0,
+  "names": [
+    "fourth_warp_conv_conv_s_random_seed0",
+    "fourth_warp_conv_conv_s_u2_seed0",
+    "fourth_warp_conv_conv_s_random_seed1",
+    "fourth_warp_conv_conv_s_u2_seed1"
+  ],
+  "preregistration_sha256": "b456a3f25103a23f9fadb4901c88259a314a54e89ccb4d4b74d4688b03b42649",
+  "primary_gpu": 1,
+  "primary_run_at_assignment": "fourth_warp_confirm_dense_m_u2_seed0",
+  "promotion_sha256": "e30639ef0d841d1ec978aa82b4783b4f8cce72aa7fee71f24fff7de3835458c0",
+  "recorded_at_utc": "2026-09-06T11:10:14.362987+00:00",
+  "scope": "scheduling_only_preregistered_promoted_cells",
+  "source_or_config_changed": false,
+  "training_from_scratch": true
+}

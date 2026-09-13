@@ -1,0 +1,238 @@
+{
+  "execution_freeze_sha256": "77bd84bc23601c5e127b81a0d4108ee4e32259faaab2de00d7ce9bbdf4399ae1",
+  "limitations": [
+    "Four new full-S validation runs only; old seed-0 test evidence is unchanged",
+    "No new test queries; select/freeze new checkpoints before any later test evaluation"
+  ],
+  "phase": "full_s",
+  "provenance": "OUR",
+  "rows": [
+    {
+      "artifacts": {
+        "best_checkpoint.pt": "03633db1e2564f08e9c6baba6f72293df32b04f550d0e3214fee8eec0ee0f7a7",
+        "environment.json": "785e0e802adaaf8eff705cf714941060e184ef000b58ec027b2d4657f3dcaa5a",
+        "final_checkpoint.pt": "fcbe41d234af58a3c659149473753684bf252ec487a06e4008e33fa428b98ad4",
+        "metrics.csv": "5b84cf2575346717b03672fa17f32a14434cb4ecd7165d1a5226623fc54c60d3",
+        "run_summary.json": "d0879cefcd4d0148edd9af44cfb185cc8cef0a5df8c89a50f7e80cb6b88e168c",
+        "topology.json": "0131c41d3c87afd741d69e5ccfead7406231552cd6a34c5e0dfa91dbb6504950",
+        "training_config.json": "740558d535ecfd75b6789a18ecc180cd42cc9ef392e27a29b65afb104d24d026",
+        "ur1_construction.json": "db14f38b2c9e8b7b6c2254f57c5c6729b0044f455784b510b3872457aa8f1e2e"
+      },
+      "best_validation_hard_pct": 59.84,
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_full_conv_s_random_seed1.json",
+      "cost": {
+        "candidate_indices_tensor_bytes": 1146880,
+        "dense_gate_count": 71680,
+        "deployed_routing_bits": 1945600,
+        "deployed_routing_bytes_packed": 243200,
+        "trainable_parameters": 1336832,
+        "training_routing_parameters": 0
+      },
+      "family": "random",
+      "final_validation_hard_pct": 58.64,
+      "final_validation_relaxed_pct": 62.13999999999999,
+      "metadata": [
+        {
+          "kind": "best",
+          "metrics": {
+            "val_acc_discrete": 0.5984,
+            "val_acc_relaxed": 0.6216,
+            "val_loss_discrete": 1.1541168142318725,
+            "val_loss_relaxed": 1.084735711479187
+          },
+          "step": 272000
+        },
+        {
+          "kind": "final",
+          "metrics": {
+            "val_acc_discrete": 0.5864,
+            "val_acc_relaxed": 0.6214,
+            "val_loss_discrete": 1.1574125197410583,
+            "val_loss_relaxed": 1.0786568489074706
+          },
+          "step": 350000
+        }
+      ],
+      "name": "ur1_full_conv_s_random_seed1",
+      "output": "experiments/coverage_dlgn/unified_refinement/results/ur1_full_conv_s_random_seed1",
+      "peak_gpu_memory_bytes": 1965652480,
+      "phase": "full_s",
+      "reference_config_sha256": "333453c311ae7214f711ddae43af6dd966a55128d56945b3bcb115b11f72e5f8",
+      "reference_output": "experiments/coverage_dlgn/results/second_full_conv_cifar10_s_random_seed0",
+      "reuse": false,
+      "seed": 1,
+      "wall_seconds": 17855.11884533288
+    },
+    {
+      "artifacts": {
+        "best_checkpoint.pt": "aaf8e93296880e5ae5e80d9d20d4dac58655bec0d6809011e622d6e9294de414",
+        "environment.json": "785e0e802adaaf8eff705cf714941060e184ef000b58ec027b2d4657f3dcaa5a",
+        "final_checkpoint.pt": "9523b37b853b44203b2ea7d44b0344397438208b3cc465fc5f17567db6572f29",
+        "metrics.csv": "670bc1ced269c894699a9a921f78dab48993d977f21814dc24c5623055a4f8f4",
+        "run_summary.json": "002190e3f47b8e48ade26a4ee2da2c3a8a8d050483596222c9a275c05039eb22",
+        "topology.json": "a3ee85eee0e8e78a5d617263f7f2496c5a1d81f6516c71bbed2a14346fe942b8",
+        "training_config.json": "a12c6e006a74a79d1a9c9edbef97b43bb8e3aa89c7deaa8fc59d6252e22ba341",
+        "ur1_construction.json": "db14f38b2c9e8b7b6c2254f57c5c6729b0044f455784b510b3872457aa8f1e2e"
+      },
+      "best_validation_hard_pct": 62.12,
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_full_conv_s_u2_seed1.json",
+      "cost": {
+        "candidate_indices_tensor_bytes": 1146880,
+        "dense_gate_count": 71680,
+        "deployed_routing_bits": 1945600,
+        "deployed_routing_bytes_packed": 243200,
+        "trainable_parameters": 1336832,
+        "training_routing_parameters": 0
+      },
+      "family": "u2",
+      "final_validation_hard_pct": 60.919999999999995,
+      "final_validation_relaxed_pct": 64.24,
+      "metadata": [
+        {
+          "kind": "best",
+          "metrics": {
+            "val_acc_discrete": 0.6212,
+            "val_acc_relaxed": 0.637,
+            "val_loss_discrete": 1.080559446334839,
+            "val_loss_relaxed": 1.025481445789337
+          },
+          "step": 284000
+        },
+        {
+          "kind": "final",
+          "metrics": {
+            "val_acc_discrete": 0.6092,
+            "val_acc_relaxed": 0.6424,
+            "val_loss_discrete": 1.0917499502182006,
+            "val_loss_relaxed": 1.0253882516860962
+          },
+          "step": 350000
+        }
+      ],
+      "name": "ur1_full_conv_s_u2_seed1",
+      "output": "experiments/coverage_dlgn/unified_refinement/results/ur1_full_conv_s_u2_seed1",
+      "peak_gpu_memory_bytes": 1965679616,
+      "phase": "full_s",
+      "reference_config_sha256": "715da2d22e4685af6fa48396dbb4d8675777ba2b9a34c1d7dfb1155f61dace23",
+      "reference_output": "experiments/coverage_dlgn/results/second_final_u2_conv_cifar10_s_seed0",
+      "reuse": false,
+      "seed": 1,
+      "wall_seconds": 17921.76431895187
+    },
+    {
+      "artifacts": {
+        "best_checkpoint.pt": "234469cb4fce6871326b00e78e68654f63f35da7e89332a1b0dd42033ee1fd73",
+        "environment.json": "8b03e8882f50bf3ae57d160d468c22bb6ae2118b1d06574dcc5aba03aea552d2",
+        "final_checkpoint.pt": "99cef68b7dec2f1bd2cce68493da044565bc34232573b527bc0dd922f4f29bab",
+        "metrics.csv": "bcc4301890b90ddb71530218543596418b0b9c6ac7fad286e4687786291b0b1e",
+        "run_summary.json": "eb07a223ae00d75abfa2c4d3da6e95ac4c5bd5fbde45889c73c5b2b86e4dec62",
+        "topology.json": "38f66a68ab1620ba04e0a0dfd94e99e6d742b5fce3cb727c4e80080d0a5fb810",
+        "training_config.json": "6a8dfc5a1a3603348008a0f7847ac5a9e3ba1e93564d5a32599f561578678760",
+        "ur1_construction.json": "b43b6b9fc499b893c60b1a7fcbea0ce8ef417997e59de2928fd96d8989118cb4"
+      },
+      "best_validation_hard_pct": 60.940000000000005,
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_full_conv_s_random_seed2.json",
+      "cost": {
+        "candidate_indices_tensor_bytes": 1146880,
+        "dense_gate_count": 71680,
+        "deployed_routing_bits": 1945600,
+        "deployed_routing_bytes_packed": 243200,
+        "trainable_parameters": 1336832,
+        "training_routing_parameters": 0
+      },
+      "family": "random",
+      "final_validation_hard_pct": 60.34,
+      "final_validation_relaxed_pct": 62.660000000000004,
+      "metadata": [
+        {
+          "kind": "best",
+          "metrics": {
+            "val_acc_discrete": 0.6094,
+            "val_acc_relaxed": 0.6228,
+            "val_loss_discrete": 1.1377262227058411,
+            "val_loss_relaxed": 1.0692442723274231
+          },
+          "step": 252000
+        },
+        {
+          "kind": "final",
+          "metrics": {
+            "val_acc_discrete": 0.6034,
+            "val_acc_relaxed": 0.6266,
+            "val_loss_discrete": 1.1357764801979064,
+            "val_loss_relaxed": 1.0677729438781738
+          },
+          "step": 350000
+        }
+      ],
+      "name": "ur1_full_conv_s_random_seed2",
+      "output": "experiments/coverage_dlgn/unified_refinement/results/ur1_full_conv_s_random_seed2",
+      "peak_gpu_memory_bytes": 1965652480,
+      "phase": "full_s",
+      "reference_config_sha256": "333453c311ae7214f711ddae43af6dd966a55128d56945b3bcb115b11f72e5f8",
+      "reference_output": "experiments/coverage_dlgn/results/second_full_conv_cifar10_s_random_seed0",
+      "reuse": false,
+      "seed": 2,
+      "wall_seconds": 17864.28577560885
+    },
+    {
+      "artifacts": {
+        "best_checkpoint.pt": "d4e343adcb35760b58296661038e0871a15eafa8067bb6d53e14f7b802592887",
+        "environment.json": "abe021f6264c21b71f8746847f1177425de0c54b2171369c5d3e819c2b616f4b",
+        "final_checkpoint.pt": "8d565667e7a5c46e9245b3bcd6cd3bc31de1d07ecca69aeb8dba0ea8cd2a5c75",
+        "metrics.csv": "41f859d458424ddfbad3c642881c266efa0a6fbeaa4e851aae0b91b2dd460528",
+        "run_summary.json": "28d1f3e22568afc6a74336a35423e0dd168dcdb5c7cc2a5c09cbaf120eda65e9",
+        "topology.json": "eba56349fdabaff6612548f3c082e3ca319f2293e86fe107bbb757ead8c89a6e",
+        "training_config.json": "4dc2efaed02d5a11e2b83dbd0253a85cc95e312fe77b5a46d3f7b40e78e56741",
+        "ur1_construction.json": "b43b6b9fc499b893c60b1a7fcbea0ce8ef417997e59de2928fd96d8989118cb4"
+      },
+      "best_validation_hard_pct": 60.040000000000006,
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_full_conv_s_u2_seed2.json",
+      "cost": {
+        "candidate_indices_tensor_bytes": 1146880,
+        "dense_gate_count": 71680,
+        "deployed_routing_bits": 1945600,
+        "deployed_routing_bytes_packed": 243200,
+        "trainable_parameters": 1336832,
+        "training_routing_parameters": 0
+      },
+      "family": "u2",
+      "final_validation_hard_pct": 59.34,
+      "final_validation_relaxed_pct": 62.72,
+      "metadata": [
+        {
+          "kind": "best",
+          "metrics": {
+            "val_acc_discrete": 0.6004,
+            "val_acc_relaxed": 0.629,
+            "val_loss_discrete": 1.1384208238601685,
+            "val_loss_relaxed": 1.072703551387787
+          },
+          "step": 148000
+        },
+        {
+          "kind": "final",
+          "metrics": {
+            "val_acc_discrete": 0.5934,
+            "val_acc_relaxed": 0.6272,
+            "val_loss_discrete": 1.1475623764038085,
+            "val_loss_relaxed": 1.0720358004570008
+          },
+          "step": 350000
+        }
+      ],
+      "name": "ur1_full_conv_s_u2_seed2",
+      "output": "experiments/coverage_dlgn/unified_refinement/results/ur1_full_conv_s_u2_seed2",
+      "peak_gpu_memory_bytes": 1965679616,
+      "phase": "full_s",
+      "reference_config_sha256": "715da2d22e4685af6fa48396dbb4d8675777ba2b9a34c1d7dfb1155f61dace23",
+      "reference_output": "experiments/coverage_dlgn/results/second_final_u2_conv_cifar10_s_seed0",
+      "reuse": false,
+      "seed": 2,
+      "wall_seconds": 17935.40887915902
+    }
+  ],
+  "scope": "V",
+  "status": "complete",
+  "test_queries": 0
+}

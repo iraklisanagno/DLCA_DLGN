@@ -9,6 +9,154 @@ TorchLogix protocol from numbers reported under other papers' protocols.
 
 ## Notation and comparison rules
 
+September 6 addition: the preregistered fourth-round dense and convolutional
+mechanism coordinates are complete (20K, paired seeds 0/1/2, validation only).
+Frozen transfer and body/head attribution are also complete, as recorded below;
+both promoted WARP coordinates are complete. Final JSON/CSV cover all 50 cells,
+and the checkpoint-metadata audit passes 100/100 best/final checkpoints.
+These studies do not replace the full-budget CIFAR-10 test frontier.
+
+| Dense-M wiring | Hardened validation mean ± sample SD | Paired U2-minus-control effect, 95% CI | U2 wins |
+|---|---|---|---:|
+| Explicit random | 54.820 ± 0.530% [REPRODUCED, V] | +4.313 pp [2.475, 6.152] [OUR, V] | 3/3 |
+| Balanced-random | 58.647 ± 0.200% [OUR, V] | +0.487 pp [−0.795, 1.768] [OUR, V] | 3/3 |
+| Nominal-multiscale | 59.220 ± 0.420% [OUR, V] | −0.087 pp [−1.759, 1.585] [OUR, V] | 1/3 |
+| U2 | 59.133 ± 0.316% [OUR, V] | Reference arm | — |
+
+All rows use 512K LUT functions, matched raw parameterization, and 1.123 GiB
+peak allocated GPU memory. U2's layer-reported construction time exceeds
+nominal by 0.462 seconds on average, with no established accuracy benefit at
+this coordinate. The exploratory intervals are not multiplicity-adjusted and
+do not establish equivalence. Raw seeds, timing definitions and verified hashes
+are in `FOURTH_ROUND_RESULTS.md` and `summary/fourth_round_dense_mechanism.json`.
+
+| Convolutional-S wiring | Raw seed accuracies (%) | Mean ± sample SD (%) | U2-minus-control, paired 95% CI (pp) | U2 wins |
+|---|---|---:|---|---:|
+| Explicit random [REPRODUCED, V] | 55.000, 57.960, 58.460 | 57.140 ± 1.870 | +1.707 [−2.600, 6.013] [OUR, V] | 3/3 |
+| Balanced-random [OUR, V] | 58.680, 58.880, 58.340 | 58.633 ± 0.273 | +0.213 [−0.836, 1.263] [OUR, V] | 2/3 |
+| Nominal-multiscale [OUR, V] | 58.600, 58.940, 57.220 | 58.253 ± 0.911 | +0.593 [−1.121, 2.308] [OUR, V] | 2/3 |
+| U2 [OUR, V] | 58.500, 59.540, 58.500 | 58.847 ± 0.600 | Reference arm | — |
+
+All arms use 83,552 LUT functions and 1,336,832 raw trainable parameters, with
+approximately 1.831 GiB peak GPU allocation. U2 adds 0.411/0.259 seconds of
+layer-reported construction over balanced-random/nominal. None of these U2
+contrasts establishes a convolutional accuracy benefit at this 20K pilot budget; neither coordinate
+establishes an incremental novelty-selection benefit. This is not equivalence
+evidence. These exploratory intervals are not multiplicity-adjusted. Raw
+resources and hashes are in `summary/fourth_round_conv_mechanism.json`.
+
+Completed convolutional-S factorial, 20K, seeds 0/1/2:
+
+| Body / head | Raw seed accuracies (%) | Mean ± sample SD (%) |
+|---|---|---:|
+| Random / random [REPRODUCED, V] | 55.000, 57.960, 58.460 | 57.140 ± 1.870 |
+| U2 / random [OUR, V] | 58.240, 58.180, 58.620 | 58.347 ± 0.239 |
+| Random / U2 [OUR, V] | 56.960, 56.820, 56.340 | 56.707 ± 0.325 |
+| U2 / U2 [OUR, V] | 58.500, 59.540, 58.500 | 58.847 ± 0.600 |
+
+All following effects are [OUR, V], n=3, exploratory paired 95% intervals
+without multiplicity adjustment:
+
+| Controlled effect | Gain (pp) | Paired 95% CI (pp) | Positive seeds |
+|---|---:|---|---:|
+| Body with random head fixed | +1.207 | [−3.169, 5.582] | 3/3 |
+| Body with U2 head fixed | +2.140 | [0.674, 3.606] | 3/3 |
+| Head with random body fixed | −0.433 | [−5.725, 4.858] | 1/3 |
+| Head with U2 body fixed | +0.500 | [−1.410, 2.410] | 2/3 |
+| Body–head interaction | +0.933 | [−4.766, 6.633] | 2/3 |
+
+All twelve saved checkpoints pass the same-head/body/spatial and distinct-
+treatment checks. The positive body contrast holds classifier indices fixed,
+but that classifier uses reference U2-body ancestry: do not claim a head-agnostic
+benefit or additivity. All other effects remain inconclusive. Costs stay at
+83,552 LUT functions and 1,336,832 raw parameters, approximately 1.831 GiB peak
+GPU allocation. Complete resources/raw effects and the wiring-audit hash are in
+`summary/fourth_round_factorial.json` and `FOURTH_ROUND_RESULTS.md`.
+
+Frozen CIFAR-10.1 v6 transfer, without adaptation or checkpoint reselection:
+
+| Coordinate | Random raw seeds (%) [REPRODUCED, T] | U2 raw seeds (%) [OUR, T] | Paired effect [OUR, T] |
+|---|---|---|---|
+| Dense M, seeds 0/1/2 | 42.100, 41.850, 41.950 | 45.450, 45.950, 45.700 | +3.733 pp; sample SD 0.375; 95% CI [2.801, 4.666]; 3/3 wins |
+| Convolutional S, seed 0 | 46.000 | 45.950 | −0.050 pp; descriptive n=1 |
+| Convolutional M, seed 0 | 54.100 | 56.050 | +1.950 pp; descriptive n=1 |
+
+Dense method means ± sample SD: random 41.967 ± 0.126%, U2 45.700 ± 0.250%.
+The interval is exploratory paired Student-t; individual examples are not
+independent training seeds. S does not retain its original CIFAR-10 gain in
+this pair. All ten predictions completed once; a subsequent NumPy aggregate
+serialization failure was recovered from saved records with zero new inference.
+See `FOURTH_ROUND_RESULTS.md`, `summary/fourth_round_transfer_results.json`, and
+the hash-linked recovery/completion receipts in `logs/fourth_round_transfer/`.
+
+WARP compatibility pilot, dense M, 20K, seed 0, all [ADAPTED, V]:
+
+| Wiring | Best / final hard (%) | Final relaxed (%) | Peak GPU (GiB) | Wall (min) | Layer construction (s) |
+|---|---:|---:|---:|---:|---:|
+| Random | 53.660 / 52.280 | 53.780 | 1.235 | 7.690 | 5.028 |
+| U2 | 57.680 / 57.680 | 58.800 | 1.235 | 7.685 | 14.124 |
+
+The +4.020 pp best-hard gain passes the frozen pilot gate; the twelve-run
+preregistered follow-up study is complete. No training-seed CI is estimable for
+this one pair. Both use 512K LUTs and 2.048M WARP parameters, without learned
+routing. Matching raw uses 8.192M parameters and 1.123 GiB and is more accurate
+by 1.740/1.180 pp for random/U2. Parameterization savings are not credited to
+topology, and this adapted WARP recipe is not claimed superior to raw. Source:
+`summary/fourth_round_warp_pilot.json`; full details in `FOURTH_ROUND_RESULTS.md`.
+
+Complete dense-M 108K WARP results [ADAPTED, V], paired seeds 0/1/2:
+
+| Wiring | Best hard seeds 0/1/2 (%) | Best mean ± sample SD (%) | Final hard seeds 0/1/2 (%) | Final mean ± sample SD (%) |
+|---|---|---:|---|---:|
+| Random | 53.660, 53.160, 52.920 | 53.247 ± 0.378 | 50.600, 50.920, 50.800 | 50.773 ± 0.162 |
+| U2 | 58.000, 58.080, 57.760 | 57.947 ± 0.167 | 55.400, 55.580, 55.420 | 55.467 ± 0.099 |
+
+Best-hard paired gains are +4.340/+4.920/+4.840 pp, mean +4.700 pp,
+sample SD 0.314 pp, paired Student-t 95% CI [3.919, 5.481], 3/3 wins.
+Final-hard gains are +4.800/+4.660/+4.620 pp, mean +4.693 pp, SD 0.095 pp,
+CI [4.459, 4.928], 3/3 wins. Intervals are exploratory and unadjusted; expansion
+was conditioned on the positive seed-0 pilot, which is not an extra replicate.
+All runs peak before 108K. Random/U2 selected relaxed-minus-hard mean gaps are
+1.087/1.133 pp; final gaps 1.560/1.260 pp. Complete curves and selected steps
+are in `summary/fourth_round_warp_dense.json` and `FOURTH_ROUND_RESULTS.md`.
+
+Both arms retain 512K LUTs, 2.048M WARP parameters and 1.235 GiB peak allocation,
+without learned routing. Mean wall times are 41.827/41.667 minutes, layer
+construction 4.980/14.221 seconds. Matched raw best accuracies are
+55.400/55.340/54.740% random [REPRODUCED, V] and 59.320/59.780/59.540% U2
+[OUR, V]. WARP-minus-raw means are −1.913 pp (95% CI [−2.496, −1.331]) and
+−1.600 pp (CI [−2.211, −0.989]), each 0/3 wins [ADAPTED, V]. Raw uses 8.192M
+parameters but lower peak memory (1.123 GiB). Thus this demonstrates a dense
+topology gain within the adapted WARP recipe, not WARP superiority over raw
+or a U2 parameter-count saving. Shared-host timings are not speed claims.
+
+Complete convolutional-S 20K WARP results [ADAPTED, V], paired seeds 0/1/2:
+
+| Wiring | Best hard seeds 0/1/2 (%) | Best mean ± sample SD (%) | Final hard seeds 0/1/2 (%) | Final mean ± sample SD (%) |
+|---|---|---:|---|---:|
+| Random | 45.020, 43.300, 44.640 | 44.320 ± 0.904 | 36.060, 37.600, 38.840 | 37.500 ± 1.393 |
+| U2 | 45.020, 42.900, 45.300 | 44.407 ± 1.312 | 30.320, 37.200, 41.340 | 36.287 ± 5.566 |
+
+Best-hard gains 0.000/−0.400/+0.660 pp give mean +0.087 pp, sample SD
+0.535 pp, paired 95% CI [−1.243, 1.417], one win/tie/loss. Final-hard gains
+−5.740/−0.400/+2.500 pp give −1.213 pp, SD 4.180 pp, CI [−11.597, 9.171],
+1/3 wins. Intervals are exploratory, unadjusted and do not establish equivalence.
+All runs peak before 20K. Random/U2 selected relaxed-minus-hard mean gaps are
+1.353/1.040 pp; final gaps 1.960/3.373 pp. Complete selected steps, relaxed
+curves and hashes: `summary/fourth_round_warp_conv.json` and `FOURTH_ROUND_RESULTS.md`.
+
+Both arms use 83,552 LUT functions, 334,208 trainable WARP parameters, no
+learned routing and approximately 2.176 GiB peak allocation. Mean wall times
+are 17.123/17.152 minutes, layer construction 0.200/1.375 seconds for random/U2.
+Raw uses 1,336,832 parameters but lower peak memory (approximately 1.831 GiB).
+Matched raw best seeds are 55.000/57.960/58.460% random [REPRODUCED, V] and
+58.500/59.540/58.500% U2 [OUR, V]. WARP-minus-raw seed effects are
+−9.980/−14.660/−13.820 pp random and −13.480/−16.640/−13.200 pp U2:
+means −12.820/−14.440 pp, SDs 2.495/1.910 pp, CIs [−19.019, −6.621] /
+[−19.186, −9.694], both 0/3 wins [ADAPTED, V]. This supplies no established
+convolutional topology benefit under the adapted recipe. Preserve the negative
+raw comparison and late decline. WARP's parameter savings are not U2 gains.
+
 Every accuracy value must carry one of these provenance labels directly in
 its table cell:
 
@@ -869,6 +1017,14 @@ expensive scale.
    machine-readable summaries.
 
 ## Immediate next work
+
+The fourth round and all twelve promoted WARP runs are complete. The next
+experimental decision is preregistered full-schedule LogicTreeNet-S paired
+seeds; manuscript claims must reflect the mixed completed findings. The current
+checklist is in `docs/AI_HANDOFF.md`. Do not rerun completed studies or frozen
+transfer. Hardware, rank-four extensions and broader searches are deferred.
+
+### Historical search plan (not the current execution queue)
 
 1. Freeze the per-cell selection protocol and search budget in a
    machine-readable manifest.

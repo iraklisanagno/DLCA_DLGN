@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import hashlib
 from pathlib import Path
 
 try:
@@ -16,6 +17,19 @@ except ModuleNotFoundError:
 ROOT = Path(__file__).resolve().parent
 FREEZE = ROOT / "summary" / "second_round_convolutional_validation_freeze.json"
 LOG_DIR = ROOT / "logs" / "second_round_convolutional_final_test"
+
+
+def verify_pending_artifacts(row):
+    run_dir = Path(row["run_dir"])
+    required = {"best_checkpoint.pt", "training_config.json", "environment.json", "run_summary.json"}
+    artifacts = row.get("artifacts", {})
+    if not required.issubset(artifacts):
+        raise RuntimeError("legacy/incomplete freeze has no required artifact hashes; do not re-query archived test sets")
+    for name in required:
+        with (run_dir / name).open("rb") as handle:
+            actual = hashlib.file_digest(handle, "sha256").hexdigest()
+        if actual != artifacts[name]["sha256"]:
+            raise RuntimeError(f"frozen artifact hash mismatch: {run_dir / name}")
 
 
 def parse_args() -> argparse.Namespace:
@@ -49,8 +63,23 @@ def main() -> int:
     ]
     if missing:
         raise RuntimeError(f"missing frozen checkpoints: {missing}")
+    for row in freeze["runs"].values():
+        run_dir = Path(row["run_dir"])
+        if run_dir not in pending:
+            continue
+        verify_pending_artifacts(row)
+
+    output = LOG_DIR / "test_evaluation_summary.json"
+    if not pending:
+        print(f"All frozen runs already evaluated; preserving archived evidence: {output}")
+        return 0
+    if output.exists() or (LOG_DIR / "started.json").exists():
+        raise RuntimeError("test evaluation already attempted; audit saved artifacts before any further query")
 
     LOG_DIR.mkdir(parents=True, exist_ok=True)
+    with (LOG_DIR / "started.json").open("x") as handle:
+        json.dump({"freeze_sha256": hashlib.sha256(FREEZE.read_bytes()).hexdigest(),
+                   "pending": [str(path) for path in pending]}, handle)
     records = evaluate_gpu(args.gpu, pending, args.data_path, LOG_DIR)
     failures = [row for row in records if row["return_code"] != 0]
     missing_after = [
@@ -66,8 +95,8 @@ def main() -> int:
         "failures": failures,
         "missing_after": sorted(missing_after),
     }
-    output = LOG_DIR / "test_evaluation_summary.json"
-    output.write_text(json.dumps(payload, indent=2) + "\n")
+    with output.open("x") as handle:
+        handle.write(json.dumps(payload, indent=2) + "\n")
     print(output)
     return 1 if failures or missing_after else 0
 

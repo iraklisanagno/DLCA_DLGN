@@ -19,9 +19,12 @@ evidence rules also apply when this project changes `src/torchlogix/`,
   coverage/reuse are preserved ablations or negative results.
 - Never silently change V3, V4, U1, or U2. Add a new strategy name for a new
   mechanism and regression-test the frozen methods for bit identity.
-- Do not revive maximum ancestry coverage as the main explanation. The evidence
-  says degree-balanced structured propagation drives most of the gain; greedy
-  swaps and maximum ancestry can be neutral or harmful.
+- Do not revive maximum ancestry coverage as the main explanation. Dense native
+  random already balances encoded-input fan-out; the structured-routing gains
+  do not isolate degree balancing. Native grouped convolution instead cycles
+  adjacent channel groups with random spatial samples, not iid channel pairs.
+  Greedy swaps and maximum ancestry can be neutral or harmful. Preserve these
+  baseline distinctions when interpreting the mechanism controls.
 
 ## Experimental integrity
 
@@ -108,11 +111,11 @@ evidence rules also apply when this project changes `src/torchlogix/`,
 - Add focused tests for determinism, index bounds, unique predecessors,
   fan-out balance, RNG isolation, ancestry propagation, checkpoint metadata,
   architecture/cost equality, and export equivalence as applicable.
-- Known issue to fix before relying on topology-only U2 reports:
-  `generate_dense_stack()` omits `semantic_multiscale_balanced` from its
-  semantic ancestry strategy sets. The model-construction path is correct.
-- The current evidence audit does not cover all third-round and LogicTreeNet-M
-  U2 facts. Extend it before calling it a whole-project consistency audit.
+- The September 6 repair adds U2 to `generate_dense_stack()` semantic ancestry
+  sets; regression tests compare all layers with the semantic model path.
+- The evidence audit now covers third-round artifact hashes, aggregates and
+  paired effects, plus LogicTreeNet-M U2. It still is not an audit of every
+  historical experiment. Its default is read-only; `--output` requires a new path.
 - Focused verification from `repos/torchlogix`:
 
   ```bash

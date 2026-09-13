@@ -1,0 +1,252 @@
+{
+  "definitions": "Exact local LUT relevance; dependency-pruned path unions upper-bound global support; GroupSum inputs are reachability roots; constants remain contributions; associations descriptive",
+  "protocol_sha256": "4223e9e42a22d9bc180e5a6974615877172ccbbb28fd0ba6b296f08dfe635578",
+  "rows": [
+    {
+      "checkpoint_sha256": "5928890aa7b05b5451641321c89f2f2d1c21468a4bc4af4096c99a6e1a9ebdfd",
+      "configuration_sha256": "99561777984f48df7965bce78b61efe969e5f4e8a164615e51fc09e129d9c2f4",
+      "family": "random",
+      "kind": "best",
+      "name": "fourth_mechanism_dense_m_random_seed0",
+      "output": "experiments/coverage_dlgn/results/pilot_cifar10_medium_random_v3_seed0",
+      "seed": 0,
+      "validation_hard_pct": 55.399998903274536
+    },
+    {
+      "checkpoint_sha256": "02cec4d4232e216c01b97e4db482a87f437625fb055552d18be47c005cf6186b",
+      "configuration_sha256": "99561777984f48df7965bce78b61efe969e5f4e8a164615e51fc09e129d9c2f4",
+      "family": "random",
+      "kind": "final",
+      "name": "fourth_mechanism_dense_m_random_seed0",
+      "output": "experiments/coverage_dlgn/results/pilot_cifar10_medium_random_v3_seed0",
+      "seed": 0,
+      "validation_hard_pct": 55.23999911546708
+    },
+    {
+      "checkpoint_sha256": "6a801ff39e274f6e1549f8de541ad6f7a53c9cf6e09c09fd014ede25dd73c1f1",
+      "configuration_sha256": "bdc73e1e964d612cc202397d676faa52c6e1aec245a25a216d1ccac82296696e",
+      "family": "balanced_random",
+      "kind": "best",
+      "name": "fourth_mechanism_dense_m_balanced_random_seed0",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_balanced_random_seed0",
+      "seed": 0,
+      "validation_hard_pct": 58.79999899864197
+    },
+    {
+      "checkpoint_sha256": "e4665e6e9906178ed25c7b0cddbdcee0a7dfc390b25c7ec9cc354668081a18f3",
+      "configuration_sha256": "bdc73e1e964d612cc202397d676faa52c6e1aec245a25a216d1ccac82296696e",
+      "family": "balanced_random",
+      "kind": "final",
+      "name": "fourth_mechanism_dense_m_balanced_random_seed0",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_balanced_random_seed0",
+      "seed": 0,
+      "validation_hard_pct": 58.539999067783356
+    },
+    {
+      "checkpoint_sha256": "d6d5aec223d9a2793258cafa4aba69534180278900385b6dd406d4230eb0928c",
+      "configuration_sha256": "38320a2ac13d324d623d320d7ec642fd682ee7d65edf5e46dacba2294f5f3e0a",
+      "family": "nominal",
+      "kind": "best",
+      "name": "fourth_mechanism_dense_m_nominal_seed0",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_nominal_seed0",
+      "seed": 0,
+      "validation_hard_pct": 59.2199986577034
+    },
+    {
+      "checkpoint_sha256": "ede1afcb17dcf8d732a84f5cae2a6eae199385f2087a92b4c9736a00c62817a2",
+      "configuration_sha256": "38320a2ac13d324d623d320d7ec642fd682ee7d65edf5e46dacba2294f5f3e0a",
+      "family": "nominal",
+      "kind": "final",
+      "name": "fourth_mechanism_dense_m_nominal_seed0",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_nominal_seed0",
+      "seed": 0,
+      "validation_hard_pct": 59.2199986577034
+    },
+    {
+      "checkpoint_sha256": "24c203cf906ceb0ddd9455cac231127d9d6a1cb88b481ced9d043da4c327691e",
+      "configuration_sha256": "8939869848795eadee21a7230f18c25c8d54badb84b204b26004f4d43db2a30a",
+      "family": "u2",
+      "kind": "best",
+      "name": "fourth_mechanism_dense_m_u2_seed0",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed0",
+      "seed": 0,
+      "validation_hard_pct": 58.85999858379364
+    },
+    {
+      "checkpoint_sha256": "e179a79643131c672268ce5cd99416e081a06d20e86758fe0637ffa1b4bc1e48",
+      "configuration_sha256": "8939869848795eadee21a7230f18c25c8d54badb84b204b26004f4d43db2a30a",
+      "family": "u2",
+      "kind": "final",
+      "name": "fourth_mechanism_dense_m_u2_seed0",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed0",
+      "seed": 0,
+      "validation_hard_pct": 58.779998779296875
+    },
+    {
+      "checkpoint_sha256": "bdbd8b693b517b30850d592e7173cc8b963af7e5e8a9153331d26f0e9242d744",
+      "configuration_sha256": "0606bcb53722ab01937f466e9b957a541fde555bbb57067c33943e1dfbd0d24d",
+      "family": "random",
+      "kind": "best",
+      "name": "fourth_mechanism_dense_m_random_seed1",
+      "output": "experiments/coverage_dlgn/results/pilot_cifar10_medium_random_v3_seed1",
+      "seed": 1,
+      "validation_hard_pct": 54.69999849796295
+    },
+    {
+      "checkpoint_sha256": "d44054e98188a0f53b345e898845c03e461ad3c054cb11b1a2a5261dbe770274",
+      "configuration_sha256": "0606bcb53722ab01937f466e9b957a541fde555bbb57067c33943e1dfbd0d24d",
+      "family": "random",
+      "kind": "final",
+      "name": "fourth_mechanism_dense_m_random_seed1",
+      "output": "experiments/coverage_dlgn/results/pilot_cifar10_medium_random_v3_seed1",
+      "seed": 1,
+      "validation_hard_pct": 54.69999849796295
+    },
+    {
+      "checkpoint_sha256": "5e5ee26ef28daf08ea74e8fa23564eab340f35fa9df07b95720bf2c69d473b43",
+      "configuration_sha256": "aae2b537b0fc11a687d16283e44d397c0ca1d14a8df743ed919de8b7bc24baeb",
+      "family": "balanced_random",
+      "kind": "best",
+      "name": "fourth_mechanism_dense_m_balanced_random_seed1",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_balanced_random_seed1",
+      "seed": 1,
+      "validation_hard_pct": 58.419998824596405
+    },
+    {
+      "checkpoint_sha256": "b7efa1dc4787ed3e06b0d78eb0ab6639ae9e7532c5906e569ab1c8f488b9c0c3",
+      "configuration_sha256": "aae2b537b0fc11a687d16283e44d397c0ca1d14a8df743ed919de8b7bc24baeb",
+      "family": "balanced_random",
+      "kind": "final",
+      "name": "fourth_mechanism_dense_m_balanced_random_seed1",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_balanced_random_seed1",
+      "seed": 1,
+      "validation_hard_pct": 58.379998624324806
+    },
+    {
+      "checkpoint_sha256": "55b15eb8b62ddc4ebdd06c9dc168930725b5d20d0d5be8a42768d41c84551d01",
+      "configuration_sha256": "d151e65d660d3261a4fe33e63554e69aad7c4adc4dcf0476c0e08e79343373d3",
+      "family": "nominal",
+      "kind": "best",
+      "name": "fourth_mechanism_dense_m_nominal_seed1",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_nominal_seed1",
+      "seed": 1,
+      "validation_hard_pct": 58.79999864101409
+    },
+    {
+      "checkpoint_sha256": "23258a3aa20132df7bc2c4737ac6d2603cdab4acba89a1570c1ade7ec3b0143b",
+      "configuration_sha256": "d151e65d660d3261a4fe33e63554e69aad7c4adc4dcf0476c0e08e79343373d3",
+      "family": "nominal",
+      "kind": "final",
+      "name": "fourth_mechanism_dense_m_nominal_seed1",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_nominal_seed1",
+      "seed": 1,
+      "validation_hard_pct": 58.51999884843826
+    },
+    {
+      "checkpoint_sha256": "e960df0ead1963a1be2a56d6104d6d2af9269cc0cde499c9684b689f45d2def1",
+      "configuration_sha256": "3dd94f6d6cc7f052a93209d43b82e017ab52c4ac01abc1161fd3dcd91b46d7d0",
+      "family": "u2",
+      "kind": "best",
+      "name": "fourth_mechanism_dense_m_u2_seed1",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed1",
+      "seed": 1,
+      "validation_hard_pct": 59.47999894618988
+    },
+    {
+      "checkpoint_sha256": "ff732524cd921cfa9f32aa67d0eaa8a5cc151b1f4347f150bb5a890e096385f4",
+      "configuration_sha256": "3dd94f6d6cc7f052a93209d43b82e017ab52c4ac01abc1161fd3dcd91b46d7d0",
+      "family": "u2",
+      "kind": "final",
+      "name": "fourth_mechanism_dense_m_u2_seed1",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed1",
+      "seed": 1,
+      "validation_hard_pct": 59.47999894618988
+    },
+    {
+      "checkpoint_sha256": "01dc4203d0da6512dcfdb921ca1c844083cdc4f51b575f4ba46366bfae558304",
+      "configuration_sha256": "3f6f68625773cc565c39a3f14794df4258749170f036e5666fdc11d524dfa402",
+      "family": "random",
+      "kind": "best",
+      "name": "fourth_mechanism_dense_m_random_seed2",
+      "output": "experiments/coverage_dlgn/results/pilot_cifar10_medium_random_v3_seed2",
+      "seed": 2,
+      "validation_hard_pct": 54.35999894142151
+    },
+    {
+      "checkpoint_sha256": "5a38d89d4f92f88beb1e36170495609633f8f201932a248282fda53d2475ea96",
+      "configuration_sha256": "3f6f68625773cc565c39a3f14794df4258749170f036e5666fdc11d524dfa402",
+      "family": "random",
+      "kind": "final",
+      "name": "fourth_mechanism_dense_m_random_seed2",
+      "output": "experiments/coverage_dlgn/results/pilot_cifar10_medium_random_v3_seed2",
+      "seed": 2,
+      "validation_hard_pct": 54.11999827623367
+    },
+    {
+      "checkpoint_sha256": "66742f75d39b70c258129617efa2f312375b2c9a1e9537f45e325f895b115425",
+      "configuration_sha256": "68c00bda25968c0f914b56b15c021b1a2ada9a64c4145cddda3d513c419e5724",
+      "family": "balanced_random",
+      "kind": "best",
+      "name": "fourth_mechanism_dense_m_balanced_random_seed2",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_balanced_random_seed2",
+      "seed": 2,
+      "validation_hard_pct": 58.7199986577034
+    },
+    {
+      "checkpoint_sha256": "9d14d845e6b634117da65b8f81fae48d5b5c22038464233732749d6487b27d3e",
+      "configuration_sha256": "68c00bda25968c0f914b56b15c021b1a2ada9a64c4145cddda3d513c419e5724",
+      "family": "balanced_random",
+      "kind": "final",
+      "name": "fourth_mechanism_dense_m_balanced_random_seed2",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_balanced_random_seed2",
+      "seed": 2,
+      "validation_hard_pct": 58.25999850034713
+    },
+    {
+      "checkpoint_sha256": "aed2dffc8a6b689eda8b78bc625eb8c59e8eb56f1c2391f313c57714a252d776",
+      "configuration_sha256": "570ebdd098dd5ea3df8af6efb07c8e01e0246ab05ad4dbe5017c8c0ea86a90dd",
+      "family": "nominal",
+      "kind": "best",
+      "name": "fourth_mechanism_dense_m_nominal_seed2",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_nominal_seed2",
+      "seed": 2,
+      "validation_hard_pct": 59.63999849557876
+    },
+    {
+      "checkpoint_sha256": "0079a84f25d7cf30adb12b329bb8cac7c291ae6c011c64ac3c0fccfd41390b17",
+      "configuration_sha256": "570ebdd098dd5ea3df8af6efb07c8e01e0246ab05ad4dbe5017c8c0ea86a90dd",
+      "family": "nominal",
+      "kind": "final",
+      "name": "fourth_mechanism_dense_m_nominal_seed2",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_nominal_seed2",
+      "seed": 2,
+      "validation_hard_pct": 59.63999849557876
+    },
+    {
+      "checkpoint_sha256": "45afed6c00401c16e540eee31e0b2069f48b3778124552fbb6ac1d7a71f10fcb",
+      "configuration_sha256": "249f49e30ff19be38d9d945b966873393f8938b47a119356fcd976427e9d6b81",
+      "family": "u2",
+      "kind": "best",
+      "name": "fourth_mechanism_dense_m_u2_seed2",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed2",
+      "seed": 2,
+      "validation_hard_pct": 59.059998869895935
+    },
+    {
+      "checkpoint_sha256": "052bd672652747292b2d9b63dbd079bd958af9aa14a91b1d98f3c7bf1eca1b9f",
+      "configuration_sha256": "249f49e30ff19be38d9d945b966873393f8938b47a119356fcd976427e9d6b81",
+      "family": "u2",
+      "kind": "final",
+      "name": "fourth_mechanism_dense_m_u2_seed2",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed2",
+      "seed": 2,
+      "validation_hard_pct": 59.059998869895935
+    }
+  ],
+  "scope": "checkpoint_only_no_dataset_no_inference",
+  "sources": {
+    "common.py": "c2aab4d4b2cd328db0ed710088d85f10e9f5131d61d5be79301d386c3d04d7cb",
+    "construction.py": "597472891835c3f993422712c5b6ffe993a82de0aec579718c4cd868010dc3f9",
+    "functional_support_v2.py": "257caa53bbc13df22e1749031c9883fb90fb678dff99a5accc61fbb9fb8c4dda"
+  }
+}

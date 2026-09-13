@@ -5,9 +5,41 @@ The project has produced a valid and potentially publishable contribution—but 
 - The original `coverage_hybrid` idea, based primarily on maximizing ancestry coverage through greedy swaps, did not survive experimentation.
 - The broader hypothesis—that fixed random wiring wastes capacity and that deterministic topology design can improve DLGNs—was strongly validated.
 - The most defensible method is Unified U2: deterministic semantic ordering, degree-balanced routing, and multiscale pairing, with no learned routing.
-- The current results are paper-quality, but I would not submit them to DATE yet as a definitive state-of-the-art paper. The main convolutional results need multi-seed confirmation, modern parameterizations, and synthesized hardware measurements.
+- The current results are paper-quality, but not a definitive state-of-the-art claim. Mechanism attribution, adapted WARP compatibility and frozen transfer are complete with mixed outcomes. The next experimental decision is full-schedule convolutional seed replication; manuscript claims must reflect the completed evidence. Hardware implementation is deferred by the user's current scope; physical area/energy claims remain unsupported.
 
 The project is therefore a scientific success, but the paper story needs to be revised.
+
+September 6 evidence update: the dense and convolutional 20K mechanism studies
+are complete. Neither establishes that U2's novelty selection improves on
+nominal multiscale wiring: the paired effects are −0.087 pp (95% CI [−1.759,
+1.585]) dense and +0.593 pp (CI [−1.121, 2.308]) convolutional [OUR, V].
+Native dense random already balances fan-out, so older degree-only explanations
+are superseded. Frozen CIFAR-10.1 v6 evaluation of ten preselected checkpoints
+is complete: dense-M U2 gains +3.733 pp, n=3, paired 95% CI [2.801, 4.666];
+convolutional S/M gains are −0.050/+1.950 pp, each n=1 [OUR, T]. This supports
+dense shift generalization, not universal convolutional robustness. An aggregate
+serialization failure was recovered from saved predictions without repeat
+inference. See `repos/torchlogix/experiments/coverage_dlgn/FOURTH_ROUND_RESULTS.md`
+for raw results and failure/recovery provenance. The WARP pilot passed its
+frozen gate (+4.020 pp, paired seed 0, [ADAPTED, V]), and all twelve promoted
+runs are complete. At dense M, 108K updates and
+three paired seeds, U2 gains +4.700 pp best hard (95% CI [3.919, 5.481]) and
++4.693 pp final hard (CI [4.459, 4.928]), both 3/3 wins [ADAPTED, V]. This
+supports topology-within-WARP compatibility, not WARP superiority over raw:
+matched raw best accuracy remains higher by 1.913/1.600 pp for random/U2,
+and raw peak memory is lower. The completed convolutional study (20K, n=3)
+gives +0.087 pp best hard (95% CI [−1.243, 1.417], one win/tie/loss), and
+−1.213 pp final hard (CI [−11.597, 9.171], 1/3 wins) [ADAPTED, V]. Both
+methods substantially trail matched raw. Retain these inconclusive/negative
+results without retuning or claiming equivalence. All 50 fourth-round cells
+and 100 checkpoint metadata records validate; final JSON/CSV and the independent
+statistics audit are saved. The three-seed body/head
+factorial is now complete: with U2 classifier
+indices fixed, the U2 body gains +2.140 pp (95% CI [0.674, 3.606]), 3/3 wins
+[OUR, V]. The other conditional effects and interaction remain inconclusive.
+This supports a body contribution conditional on the reference-U2 classifier,
+not head-agnostic superiority or additivity. All twelve saved wiring configurations
+pass the component-independence checks.
 
 ## 1. The original idea
 
@@ -104,11 +136,11 @@ The CIFAR-10 M component ablation is decisive:
 | + semantic first layer | 59.253% | +0.273 pp |
 | + ancestry swaps, full V3 | 59.293% | +0.040 pp |
 
-Approximately 93% of the observed V3 improvement came from degree-balanced routing. The semantic ordering helped modestly. Individual ancestry swaps contributed almost nothing measurable.
+The balanced-butterfly arm recovers approximately 93% of the observed V3 improvement. September 6 source/checkpoint verification shows that native dense random already balances encoded-input fan-out, so this does not isolate a degree-balance effect: the arm changes pairing structure. The semantic-ordering and ancestry-swap increments are small and statistically inconclusive.
 
 This rejects the strongest form of the original explanation. The result is not “more ancestry is always better.” It is:
 
-> Regular, degree-balanced and semantically structured information propagation is better than unconstrained random wiring; ancestry is useful as a constrained secondary criterion, not as an objective to maximize.
+> Structured pairing improves on the native degree-balanced random dense baseline at this coordinate; maximizing ancestry alone is not a sufficient explanation. The contribution of each additional construction rule still requires matched ablation evidence.
 
 ### MNIST and Fashion-MNIST
 
@@ -215,12 +247,13 @@ A reviewer could reasonably object that:
 
 - Full convolutional S and M results have only one seed.
 - The numerical margins over published S/M are only +0.25 and +0.64 pp.
-- The strongest modern parameterizations have not been combined with U2.
+- Adapted rank-two WARP retains the dense U2 gain but not an established
+  convolutional gain; faithful Light/Gumbel compatibility remains untested.
 - The method does not transfer convincingly to CIFAR-100.
 - Physical FPGA/ASIC area, timing and energy have not been measured.
 - U2’s simplified circuit was modestly larger despite identical declared gate counts.
 - The original ancestry narrative is contradicted by the ablation.
-- Repeated development on MNIST/CIFAR test benchmarks creates a research-overfitting concern, even though the final checkpoints were validation-selected and tested once.
+- Repeated development on MNIST/CIFAR test benchmarks creates a research-overfitting concern. The frozen CIFAR-10.1 test addresses this for dense M, but convolutional transfer remains mixed and unreplicated.
 - Several comparisons mix reported results, adapted implementations and exact reproductions, although our tables now label those distinctions correctly.
 
 My assessment is:
@@ -245,7 +278,13 @@ Modern training methods also address limitations that topology cannot:
 
 The important point is that these methods modify parameterization or optimization, while U2 modifies connectivity. They should be complementary.
 
-## 8. The recommended path to a strong DATE paper
+## 8. Historical recommended path before the fourth round
+
+This section preserves the earlier proposal, not the current execution queue.
+The fourth-round update at the top supersedes its untested WARP and untouched-
+transfer statements. Full-S replication is the next decision; rank extensions,
+hardware and broad training-method sweeps remain deferred. Proposed promotion
+criteria below were not enacted as a new full-S protocol.
 
 ### Priority 1: Freeze the method
 
@@ -358,7 +397,7 @@ after the initial assessment.
 | Capability | Current support | Important limitation |
 |---|---|---|
 | Raw LUTs | Dense and convolutional, rank two | Raw rank four would require choosing among 65,536 Boolean functions and is intentionally rejected |
-| WARP LUT parameterization | Dense and convolutional through the shared layer abstraction | U2 has not been paired with it in a controlled experiment |
+| WARP LUT parameterization | Dense and convolutional through the shared layer abstraction | Fourth-round paired U2/random study complete: positive dense effect, inconclusive convolutional effect; adapted recipe, not exact paper reproduction |
 | Light/IWP parameterization | Dense and convolutional mechanically; rank 2/4/6 | The current implementation is not evidence for the optimized Light code or paper training recipe |
 | Soft/hard Gumbel sampling | Exposed for LUT parameterizations | Raw rank-two `gumbel_hard` approximates the core Mind-the-Gap mechanism, but the exact published pipeline is not validated here |
 | Learned routing | Fixed, Mommen-style, and Top-K/BitLogic adaptations exist | It is a comparator; U2 itself must retain zero learned routing |
@@ -416,9 +455,10 @@ same principle: semantic ordering, minimum feasible predecessor-degree spread,
 four distinct inputs, deterministic multiscale group selection, and no
 per-edge greedy ancestry swaps.
 
-### Minimal experiment matrix
+### Historical minimal experiment matrix
 
-Parameterization and fan-in are conceptually orthogonal, but running every
+The rank-two WARP row is now complete; other rows are deferred proposals, not
+launch instructions. Parameterization and fan-in are conceptually orthogonal, but running every
 rank with every Light/WARP/Gumbel choice would be wasteful and would blur the
 attribution. Use this bounded matrix:
 
@@ -460,8 +500,10 @@ Continue with CoverageDLGN, but change the scientific claim.
 
 The strongest defensible narrative is:
 
-> Random DLGN wiring is not merely noisy; it creates avoidable degree imbalance and semantically poor information propagation. Maximum ancestry diversity is also insufficient and can be harmful. CoverageDLGN uses deterministic semantic, degree-balanced, multiscale routing to improve hardened accuracy and the accuracy–circuit-size Pareto frontier without learned routing. The same connectivity principle transfers from dense to convolutional DLGNs.
+> CoverageDLGN uses deterministic semantic, degree-balanced, multiscale routing to improve hardened accuracy without learned routing, with a dense accuracy–gate-count frontier benefit. The dense native random baseline already balances fan-out; the convolutional native baseline cycles adjacent channel groups with random spatial samples. The observed gains therefore do not isolate degree balancing alone. Completed controls do not establish an incremental novelty-selection benefit. Dense gains survive adapted WARP and frozen distribution shift, while convolutional evidence remains conditional and needs full-schedule replication.
 
-If the multi-seed convolutional gains survive, the gains remain under Light/Gumbel/WARP training, and synthesis shows a non-dominated accuracy–hardware point, this becomes a strong DATE contribution.
+The next experimental decision is full-S paired replication, alongside writing
+the paper around the completed evidence. Hardware may later support a separate
+physical-cost claim, but is not a current launch or completion requirement.
 
 If those confirmations fail, the honest fallback is a narrower dense-DLGN paper centered on V3’s five-seed CIFAR-10 gains and 67–80% demonstrated gate reductions—not a universal dense/convolutional claim.

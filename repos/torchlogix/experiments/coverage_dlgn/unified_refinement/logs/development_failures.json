@@ -1,0 +1,17 @@
+{
+  "before_accuracy_training": true,
+  "failures": [
+    {
+      "cause": "Partial-coverage boundary tests omitted historical allow_partial_input_coverage=True",
+      "resolution": "Corrected only new tests; 56 passed afterward",
+      "result": "48 failed, 8 passed",
+      "stage": "initial_unit_tests"
+    },
+    {
+      "cause": "Analyzer incorrectly required distinct parents for native-random checkpoint wiring",
+      "resolution": "Preserved v1 source and selection unchanged; added v2 and repeated-parent regression; same 24-checkpoint selection, no reselection",
+      "result": "Aborted on first checkpoint; zero completed checkpoint metrics",
+      "stage": "functional_support_v1"
+    }
+  ]
+}

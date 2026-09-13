@@ -1,0 +1,12 @@
+{
+  "artifacts": {
+    "best_checkpoint.pt": "62b988a6ccb835ef88d60de9bcac713bd88cfc823d00d81386c73ac27bbba193",
+    "environment.json": "fab620bb0710f11cc37cab84bd34c38c65f2024927ad7ce553b71a4d24703d3b",
+    "final_checkpoint.pt": "f021d2a2993fb0e0ab04915b5cf21c2c9a28c2f83989b363862d1ace8f09b6e6",
+    "metrics.csv": "092c8c12c02fc416c2e63f5b4574019858fbfb2ba9d26d96d116558919f9ce74",
+    "run_summary.json": "101fc31d5d0081a827a291ee97b90244faf56305ec81fa84220c5c8082b2464a",
+    "topology.json": "b26e65bcd78f61bf61c8d86c80542b97a49d62f485a19849a6a299f19949a632",
+    "training_config.json": "ce5bf68c2d3835bbca7c0ede0249842eafbd5d033786c58e47fd997ac29a8a06"
+  },
+  "scope": "V"
+}

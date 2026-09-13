@@ -1,0 +1,16 @@
+{
+  "gpu": 0,
+  "parent_pid": 636295,
+  "row": {
+    "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_full_conv_s_random_seed1.json",
+    "family": "random",
+    "name": "ur1_full_conv_s_random_seed1",
+    "output": "experiments/coverage_dlgn/unified_refinement/results/ur1_full_conv_s_random_seed1",
+    "phase": "full_s",
+    "reference_config_sha256": "333453c311ae7214f711ddae43af6dd966a55128d56945b3bcb115b11f72e5f8",
+    "reference_output": "experiments/coverage_dlgn/results/second_full_conv_cifar10_s_random_seed0",
+    "reuse": false,
+    "seed": 1
+  },
+  "started_utc": "2026-09-06T23:49:39.088699+00:00"
+}

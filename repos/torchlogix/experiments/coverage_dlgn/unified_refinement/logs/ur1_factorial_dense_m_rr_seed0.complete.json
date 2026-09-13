@@ -1,0 +1,34 @@
+{
+  "artifacts": {
+    "best_checkpoint.pt": "2d7a8b4e4cccda0859c8eb4b813097fc03d4845d67c19b1683a5ab9c204f6e3b",
+    "environment.json": "c0ad676ecf5f34d210ee9e5bf10c70c20c50fbdf6f79ea1afa762fae4f11b07e",
+    "final_checkpoint.pt": "d25542302a9883cd4ba4193936d92579c34a5fda2ae1ed204fd7138a827764a9",
+    "metrics.csv": "151d396389dd15051d9375a836f55a7c554ba1cfdecb9e1f87939f3955f8a06f",
+    "run_summary.json": "4e9a2d87cecbbe8c199228e7f01c15fabdfc3ae38b571543f4bd3e913f2523a8",
+    "topology.json": "8b00e36b5c7e9ee306ee71dea47380660e7d82c1f200e3ae9eacd817546eb3a9",
+    "training_config.json": "d7f9369ea96ca6d17e830978c60d368a4bb3ec0315b47f6bc95960cc953b8000",
+    "ur1_construction.json": "ab3a27fdd9672b6be7311471624b12c870bd49e93b4a42e04c06a75de3ee19df"
+  },
+  "metadata": [
+    {
+      "kind": "best",
+      "metrics": {
+        "val_acc_discrete": 0.547999986410141,
+        "val_acc_relaxed": 0.548799991607666,
+        "val_loss_discrete": 1.317929208278656,
+        "val_loss_relaxed": 1.3052113842964173
+      },
+      "step": 14000
+    },
+    {
+      "kind": "final",
+      "metrics": {
+        "val_acc_discrete": 0.5399999886751174,
+        "val_acc_relaxed": 0.5439999854564667,
+        "val_loss_discrete": 1.312814292907715,
+        "val_loss_relaxed": 1.3055510807037354
+      },
+      "step": 20000
+    }
+  ]
+}

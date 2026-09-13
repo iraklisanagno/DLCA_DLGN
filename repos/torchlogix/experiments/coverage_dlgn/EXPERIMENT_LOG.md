@@ -3,6 +3,416 @@
 This log records operational failures and protocol decisions made after commit
 `7332d91`. Raw run artifacts remain the source of truth for numerical results.
 
+## September 6, 2026: authorized fourth-round execution
+
+- Final convolutional WARP U2 seed 2 completed 20K: best hard/selected relaxed
+  45.300%/46.460% at 4K, final hard/relaxed 41.340%/42.820% [ADAPTED, V],
+  wall 17.254 minutes, peak allocation 2.176 GiB, construction 1.378 seconds.
+  The primary queue finished successfully; all bounded assignments had exited.
+  All 50 matrix cells are complete. No new full-S seeds or hardware work ran.
+- Saved `summary/fourth_round_warp_conv.json`, the consolidated final
+  `summary/fourth_round_results.json` / `summary/fourth_round_runs.csv`, and
+  final statistics/checkpoint certificates. Convolutional best-hard U2 gain
+  +0.087 pp, SD 0.535 pp, 95% CI [−1.243, 1.417], one win/tie/loss; final
+  −1.213 pp, SD 4.180 pp, CI [−11.597, 9.171], 1/3 wins, n=3 [ADAPTED, V].
+  Both WARP arms trail matched raw. No rescue recipe or endpoint reselection.
+- Final read-only verification reproduced the consolidated report exactly,
+  all 100 checkpoint metadata records and all twelve factorial wiring records.
+  Independent statistics certificate records 1,799 scalar checks, 18 groups,
+  14 paired effects, 14 WARP/raw comparisons and three transfer comparisons.
+  Transfer records verify with zero new inference. Historical audit passes
+  41/41 with its documented scope. Supplemental tests pass 36/36 and their
+  saved receipt hashes the actual log and all six auditor/test sources.
+  Reconciled current handoff/results/paper tables; intermediate counters below
+  remain historical scheduling notes. All frozen artifacts remain unchanged.
+- Random convolutional WARP seed 2 completed 20K: best hard/selected relaxed
+  44.640%/44.940% at 10K, final hard/relaxed 38.840%/40.200% [ADAPTED, V],
+  wall 17.129 minutes, peak allocation 2.176 GiB, construction 0.201 seconds.
+  Artifact/metadata checks passed at 48/50 cells and 96 checkpoints. Its
+  bounded GPU-0 assignment exited 0, ahead of the primary queue as planned.
+- Dense U2 seed 1 then completed 108K: best hard/selected relaxed
+  58.080%/59.580% at 12K, final hard/relaxed 55.580%/56.720% [ADAPTED, V],
+  wall 41.800 minutes, peak allocation 1.235 GiB, construction 14.182 seconds.
+  All six dense WARP runs are now complete. Saved the immutable coordinate
+  summary `summary/fourth_round_warp_dense.json`. Independently reconstructed
+  every group statistic, best/final paired effect, construction delta and
+  WARP-versus-raw comparison. Best-hard gain +4.700 pp, paired SD 0.314 pp,
+  95% CI [3.919, 5.481], 3/3 wins; final-hard +4.693 pp, SD 0.095 pp,
+  CI [4.459, 4.928], 3/3 wins [ADAPTED, V]. Matched raw best accuracy remains
+  higher by 1.913/1.600 pp for random/U2. Retain that context and all early-
+  peak/late-decline curves; no claim that WARP beats raw or saves peak memory.
+- The primary queue skipped all five verified side-completed convolutional
+  cells and started the last run, U2 convolutional seed 2, on GPU 1. Latest
+  audits verify 49/50 cells and 98 checkpoints across 49 unique completed
+  runs including raw references. The full report and final audit certificate
+  remain pending this last run; no source/configuration changed.
+- Convolutional WARP U2 seed 1 completed 20K and passed artifact/metadata checks:
+  best hard/selected relaxed 42.900%/44.220% at 6K, final hard/relaxed
+  37.200%/39.240% [ADAPTED, V], wall 17.100 minutes, peak allocation 2.176 GiB,
+  construction 1.378 seconds. Best/final paired effects are both −0.400 pp,
+  independently reconstructed from CSV. Best accuracy is 16.640 pp below
+  matched raw. Both completed convolutional pairs have nonpositive best and
+  negative final effects; preserve them and complete seed 2 without retuning.
+  Audits verify 47/50 cells and all 94 checkpoints across 47 unique completed
+  runs, including raw references.
+- The bounded GPU-0 convolutional seed-0/1 assignment exited 0. Fresh host
+  checks found GPU 0 free, actual CUDA allocation passed, and the primary queue
+  still trained dense U2 seed 1. Its last saved step was 42K/108K, supplying
+  observed lead for one roughly 17-minute convolutional run. At approximately
+  12:21 UTC started ONLY random convolutional seed 2 on GPU 0 using the frozen
+  config and unchanged helpers. Receipt:
+  `logs/fourth_round/parallel_assignment_gpu0_warp_conv_random_seed2.json`.
+  The assignment exits after this one run; final U2 convolutional seed 2 is
+  left to the primary queue to avoid an incomplete-output collision. Three
+  cells remain, two active and one pending; no source/configuration changed.
+- Both seed-1 random WARP arms completed and passed artifact/metadata checks.
+  Convolutional S at 20K: best hard/selected relaxed 43.300%/46.200% at 4K,
+  final hard/relaxed 37.600%/39.200% [ADAPTED, V], wall 17.115 minutes, peak
+  allocation 2.176 GiB, layer construction 0.200 seconds. Dense M at 108K:
+  best hard/selected relaxed 53.160%/54.480% at 8K, final hard/relaxed
+  50.920%/51.920% [ADAPTED, V], wall 41.994 minutes, peak allocation 1.235 GiB,
+  construction 4.979 seconds. The queues automatically advanced to the U2
+  seed-1 partners. Audits verify 46/50 cells and all 92 checkpoints across 46
+  unique completed runs including raw references. Four cells remain: the two
+  active U2 partners and the not-yet-side-assigned convolutional seed-2 pair.
+  Neither three-seed WARP coordinate is complete; no final report written.
+- Convolutional WARP U2 seed 0 completed 20K and passed artifact/metadata checks:
+  best hard/selected relaxed 45.020%/45.660% at 8K, final hard/relaxed
+  30.320%/36.920% [ADAPTED, V]. Wall time is 17.103 minutes, peak allocation
+  2.176 GiB and layer construction 1.369 seconds. Its seed-0 pair ties random
+  on best hard (0.000 pp), but loses 5.740 pp at the final endpoint; both
+  effects were independently reconstructed from CSV. U2 WARP best trails
+  matched raw by 13.480 pp. This descriptive n=1 result gives no positive
+  convolutional compatibility evidence; preserve the decline and complete the
+  remaining preregistered seeds without retuning. GPU 0 automatically advanced
+  to convolutional random seed 1; GPU 1 continues dense random seed 1. Audits
+  verify 44/50 cells and all 88 checkpoints across 44 unique completed runs,
+  including raw references. Six WARP cells remain; no final certificate written.
+- Dense WARP U2 seed 0 completed 108K and passed artifact/metadata checks:
+  best hard/selected relaxed 58.000%/58.660% at 22K, final hard/relaxed
+  55.400%/56.700% [ADAPTED, V]. Wall time is 41.880 minutes, peak allocation
+  1.235 GiB and layer construction 14.233 seconds. Independently reconstructed
+  best/final gains +4.340/+4.800 pp from raw CSV. Both completed dense pairs
+  (seeds 0/2) are positive, but seed 1 remains required. GPU 1 automatically
+  advanced to dense random seed 1. The interim audit passed 42/50 cells and
+  84 best/final checkpoints.
+- Convolutional WARP random seed 0 then completed 20K and passed the same
+  checks: best hard/selected relaxed 45.020%/45.880% at 8K, final hard/relaxed
+  36.060%/38.980% [ADAPTED, V]. Wall time is 17.124 minutes, peak allocation
+  2.176 GiB and layer construction 0.199 seconds. Its best hard accuracy is
+  9.980 pp below matched raw, and final hard is 8.960 pp below its own best.
+  WARP's 334,208 trainable parameters are fewer than raw's 1,336,832, but peak
+  memory exceeds raw's 1.831 GiB. Retain all negative results and curves; no
+  recipe change. GPU 0 automatically started the assigned U2 seed-0 partner.
+  Latest audits verify 43/50 cells and 86 checkpoints across 43 unique completed
+  runs, including raw references. Seven WARP cells remain pending; no final
+  certificate or three-seed WARP summary has been written.
+- Dense-M WARP U2 seed 2 completed 108K and passed artifact/metadata checks.
+  Best hard/selected relaxed validation is 57.760%/59.000% at 10K, final hard/
+  relaxed 55.420%/56.760% [ADAPTED, V]. Wall time is 41.321 minutes, peak
+  allocation 1.235 GiB and layer construction 14.248 seconds. The first complete
+  108K pair gains +4.840 pp best hard and +4.620 pp final hard; descriptive
+  n=1 only, not completed three-seed evidence. Audits verify 41/50 cells and all
+  82 best/final checkpoints across 41 unique completed runs; nine WARP cells
+  remain pending.
+- The bounded GPU-0 dense seed-2 assignment exited 0. Fresh host checks found
+  GPU 0 free and the primary GPU-1 queue still training dense U2 seed 0; a
+  CUDA tensor allocation passed. After revalidating the frozen positive gate,
+  started only the four declared convolutional WARP cells for random/U2 seeds
+  0/1 on GPU 0, from scratch, at approximately 11:10 UTC. Receipt:
+  `logs/fourth_round/parallel_assignment_gpu0_warp_conv_seeds01.json`. The
+  primary queue still has dense U2 seed 0 and the complete dense seed-1 pair
+  before reaching these cells. Monitor both queues; convolutional seed 2 is
+  not included in this bounded assignment. Frozen source/configs and completion
+  checks are unchanged; no unrelated process was displaced.
+- Dense-M WARP random seed 0 completed 108K and passed artifact/metadata checks.
+  Best hard/selected relaxed validation is 53.660%/54.480% at 8K; final hard/
+  relaxed is 50.600%/52.400% [ADAPTED, V]. Wall time is 41.984 minutes, peak
+  allocation 1.235 GiB and layer construction 4.971 seconds. GPU 1 automatically
+  started U2 seed 0; GPU 0 continues U2 seed 2. Fresh audits verify 40/50 cells
+  and all 80 best/final checkpoints from 40 unique completed runs, including
+  raw references. Ten required WARP runs remain; no 108K pair is complete.
+- The first promoted 108K WARP run, dense-M random seed 2, completed and
+  passed ordinary artifact checks plus the supplemental metadata audit. Best
+  hard validation is 52.920% at 24K (selected relaxed 54.040%); final hard/
+  relaxed is 50.800%/52.680% [ADAPTED, V]. Wall time is 41.503 minutes, peak
+  GPU allocation 1.235 GiB and layer construction 4.989 seconds. This is one
+  arm, not a paired conclusion. GPU 0 automatically started its already-assigned
+  U2 seed-2 partner; GPU 1 continues random seed 0. Fresh audits verify 39/50
+  matrix cells and 78 best/final checkpoints across 39 unique completed runs,
+  with eleven required WARP cells still pending. No final certificate written.
+- Added supplemental `audit_checkpoint_metadata.py` and 21 passing regression
+  tests outside the frozen implementation. Its read-only real-artifact run
+  verifies all 76 currently available best/final checkpoints across 38 unique
+  completed runs, including raw references. It reproduces the earlier manual
+  selection/configuration/validation-metric checks and rejects a final
+  certificate while required WARP cells remain pending. No dataset access,
+  model inference or training-source change; the execution freeze still passes.
+- Reconciled stale prospective instructions in the handoff and paper-facing
+  documents with the completed mechanism/factorial/transfer evidence. Preserved
+  the original broader search plan under an explicit historical heading. A
+  fresh read-only artifact check still verifies 38/50 matrix cells, with only
+  the twelve promoted WARP runs pending; host inspection and live tool handles
+  confirmed both existing queues. Frozen implementation/configuration checks
+  pass after these documentation-only edits. No run was restarted or added.
+- After factorial closure, extended the CPU-only metadata audit to all 38
+  completed unique runs including raw references: all 76 best/final checkpoints
+  match their selected/final CSV steps, hard/relaxed accuracy and loss, and
+  saved configuration. No dataset access or inference was performed. The
+  historical evidence audit remains 41/41 passing. Repeat the metadata audit
+  after the twelve promoted WARP runs complete before final acceptance.
+- Head-only seed 1 completed, closing all twelve factorial cells. The full
+  saved-wiring auditor passed all seven checks for each of seeds 0/1/2 and
+  wrote `summary/fourth_round_factorial_wiring_audit.json`. Saved the statistical
+  snapshot `summary/fourth_round_factorial.json`, linked by audit hash.
+  Independently reconstructed all five effects, sample SDs, intervals and wins.
+- The fixed-U2-head body effect is +2.140 pp (paired 95% CI [0.674, 3.606]),
+  3/3 wins [OUR, V]. Other conditional effects and interaction are inconclusive.
+  This is conditional on the reference-U2 classifier, not a head-agnostic or
+  additive claim. All rows are retained in the report without retuning.
+- GPU 1 skipped the verified side-assigned seed-2 factorial cells and both
+  completed pilots, rechecked the identical positive promotion decision, and
+  started dense-M WARP random seed 0 at 108K. GPU 0 remains on the bounded
+  108K seed-2 pair. Both queues use unchanged frozen configs and source.
+- Body-only seed 1 and head-only seed 2 completed 20K and passed artifact checks:
+  best/final hardened validation 58.180%/58.000% and 56.340%/56.340% [OUR, V].
+  The trained seed-0 and seed-2 factorials each pass all seven saved-wiring
+  checks; only head-only seed 1 remains for full factorial certification.
+- The bounded GPU-0 factorial process exited 0. After confirming GPU 0 free,
+  allocating CUDA, and revalidating the positive WARP gate, started the promoted
+  dense-M 108K WARP seed-2 pair (random then U2), from scratch. GPU 1 is on
+  head-only seed 1 and later handles WARP seeds 0/1 before the side-assigned
+  seed 2. Receipt: `logs/fourth_round/parallel_assignment_gpu0_warp_confirm_seed2.json`.
+  Frozen configs/source and normal completion checks remain unchanged.
+- Independently compared all fourteen declared WARP/raw config pairs after
+  resolving parser defaults. Apart from parameterization and metadata paths,
+  only the already documented inactive fixed-routing Gumbel flag differs;
+  optimizer, schedule, initialization, data/split, architecture and budgets match.
+  This validates declared comparability, not completion of pending runs.
+- Nominal convolutional seed 2 completed 20K updates with 57.220% best and
+  56.840% final hardened validation [OUR, V], passing artifact checks. All 24
+  mechanism cells are now complete. Saved the immutable convolutional phase
+  snapshot `summary/fourth_round_conv_mechanism.json`. U2 − balanced-random is
+  +0.213 pp (paired 95% CI [−0.836, 1.263]); U2 − nominal is +0.593 pp
+  (CI [−1.121, 2.308]), each 2/3 wins [OUR, V]. The random contrast is +1.707 pp
+  (CI [−2.600, 6.013]), 3/3. Neither coordinate establishes novelty's incremental
+  benefit. Independently reconstructed all six dense/convolutional effects,
+  sample SDs, intervals and wins from raw seeds. No source/configuration changed.
+- The serial GPU-1 queue skipped the verified seed-0 factorial cells and moved
+  to body seed 1. GPU 0 continues its bounded body/head seed-2 assignment. The
+  four remaining mixed arms and twelve promoted WARP runs are still required.
+- Both WARP pilot runs completed and passed artifact checks. Random/U2 best
+  hardened validation is 53.660%/57.680%, +4.020 pp [ADAPTED, V]. Recorded the
+  positive frozen gate in `logs/fourth_round/warp_promotion.json` and preserved
+  all pilot/raw-context evidence in `summary/fourth_round_warp_pilot.json`.
+  Twelve follow-ups are now required, not yet completed. WARP is 1.740/1.180 pp
+  below matched raw random/U2 at 20K; retain that context rather than claim
+  superiority of the adapted recipe. The bounded pilot process exited 0.
+- After fresh free-GPU and CUDA-allocation checks, GPU 0 started the bounded
+  factorial seed-2 body/head pair using the unchanged runner helpers. GPU 1 was
+  on nominal convolutional seed 2 and will handle factorial seed 1 before it
+  reaches the side-assigned seed-2 cells. Receipt:
+  `logs/fourth_round/parallel_assignment_gpu0_seed2.json`. Monitor both queues;
+  no duplicate job or conditional WARP follow-up was launched in this assignment.
+- The WARP random pilot completed and passed ordinary artifact checks: 53.660%
+  best and 52.280% final hardened validation [ADAPTED, V]. Its U2 partner was
+  still running; passing the random 40% floor alone does not satisfy promotion.
+- A supplemental CPU-only checkpoint metadata audit passed for 31 unique
+  completed runs, including the six archived raw references: all 62 best/final
+  checkpoints match their complete CSV histories' selected/final steps, hard
+  and relaxed validation accuracy/loss, and saved training configuration.
+  Selection uses the first maximum, matching the strict-improvement callback.
+  No dataset was accessed or inference repeated. This is an interim audit;
+  repeat it over the complete required matrix before final acceptance.
+- Nominal convolutional seed 1 and head-only factorial seed 0 completed their
+  20K updates and passed artifact validation: best/final hardened validation
+  58.940% and 56.960%, respectively [OUR, V]. All four trained factorial seed-0
+  checkpoints now pass the seven same-body/same-head/spatial and distinct-
+  treatment checks. The three-seed factorial is still incomplete.
+- At approximately 08:52 UTC the bounded GPU-0 seed-0 factorial assignment had
+  exited 0, GPU 0 was free, and a fresh CUDA allocation passed. Started the two
+  preregistered dense-M WARP pilots (random then U2 seed 0) on GPU 0 while GPU 1
+  trained balanced-random convolutional seed 2. The new bounded assignment uses
+  the same frozen runner helpers, writes ordinary completion stamps, and records
+  the unchanged promotion gate only after both pilots finish. It launches no
+  conditional follow-ups. Scheduling receipt:
+  `logs/fourth_round/parallel_assignment_gpu0_warp_pilot.json`. No source or
+  configuration changed; later serial execution must skip only verified cells.
+- Additional 20K runs completed and passed configuration, checkpoint-hash,
+  metric-history and GPU-evidence validation: convolutional balanced-random
+  seed 1 reached 58.880% best/final hardened validation; factorial body-only
+  seed 0 reached 58.240% best/final [OUR, V]. These are individual runs, not
+  completed three-seed mechanism/attribution conclusions. The saved body-only
+  checkpoint also matches the random arm's classifier, the U2/U2 arm's body,
+  and both arms' spatial indices. Head-only seed 0 and the other mixed seeds
+  are still needed for full factorial certification. GPU 1 advanced to nominal
+  seed 1; GPU 0 advanced to its bounded assignment's head-only seed 0.
+- Around 08:16 UTC GPU 0 became free (0% utilization, 2 MiB occupied) and
+  passed actual CUDA allocation through the venv. Started a bounded GPU-0
+  assignment for factorial body seed 0 then head seed 0, using existing frozen
+  `command`, `validate_run` and `write_new` helpers and ordinary completion
+  stamps. GPU 1 was running balanced-random convolutional seed 1 with four
+  convolutional cells still unfinished. No config/source changed; the primary
+  runner will skip the side assignment only after its hash-checked completion.
+  `logs/fourth_round/parallel_assignment_gpu0_seed0.json` records coordination.
+  Check both processes before any additional assignment or restart.
+- Added a supplemental saved-factorial wiring auditor, `audit_saved_wiring.py`,
+  outside the frozen training implementation. Eight regression tests pass.
+  The four smoke checkpoints pass all seven same-body/same-head/spatial and
+  distinct-treatment checks, saved in
+  `summary/fourth_round_factorial_smoke_wiring_audit.json`. Full trained-seed
+  certification remains pending; the auditor refuses to certify incomplete
+  cells and performs no inference or dataset access.
+- Frozen transfer inference finished all ten checkpoint records at 08:02:06 UTC.
+  The evaluator then exited 1 while serializing the aggregate: `TypeError:
+  Object of type int64 is not JSON serializable`, caused by a NumPy-valued win
+  count. No aggregate/completed file had been written; all ten prediction files,
+  the started marker and dataset receipt were intact. No inference was repeated.
+- Added the separate artifact-only `recover_transfer_report.py` and seven
+  regression tests in `test_transfer_report_recovery.py`, outside the frozen
+  training code/test tree. The tests reproduce the serialization failure and
+  check native-Python aggregation and rejection of corrupt/missing evidence.
+  All seven passed. The recovery verifies all 20,000 saved predictions against
+  the already-downloaded labels, frozen checkpoint hashes and access timing.
+- At 08:05:55 UTC wrote the missing transfer summary and hash-linked recovery/
+  completion receipts. Independent discordant-count gain and paired-CI
+  reconstruction also passed. Dense-M U2 gains +3.733 pp (n=3, paired 95% CI
+  [2.801, 4.666]); S/M gains are −0.050/+1.950 pp, each n=1 [OUR, T]. The
+  original evaluator and execution freeze remain unchanged. Use read-only
+  recovery verification, never run the locked evaluation a second time.
+- At 07:59:11 UTC, after fresh CUDA allocation and 65 GiB free-memory checks,
+  the one-time frozen CIFAR-10.1 evaluation wrote its exclusive started marker
+  and began downloading the pinned dataset. There was no earlier dataset
+  directory or transfer log. It runs concurrently on GPU 1 with convolutional
+  nominal seed 0; the ten checkpoint choices remain independent of fourth-round
+  outcomes. Record this overlap when interpreting training wall time. No
+  configuration or selection was changed, and no automatic retry is allowed.
+- A subsequent dataset-free structural audit checked twelve completed dense
+  checkpoints and four convolutional GPU smoke checkpoints against recorded
+  hashes. Dense native random already has fan-out 27–28 in its first layer and
+  exactly 2 deeper down; all structured dense arms also have deeper fan-out 2.
+  Native grouped convolution cycles adjacent channel groups and samples spatial
+  coordinates randomly. Saved `summary/fourth_round_wiring_audit.json` and
+  corrected the causal interpretation in reporting documents. This changes no
+  frozen code, protocol, configuration, checkpoint, or numerical result.
+- The user authorized all six steps: host GPU verification/freeze, mechanism
+  controls, body/head factorial, conditional WARP replication, frozen transfer,
+  and complete reporting. Hardware and extra full-schedule S seeds stay deferred.
+- Host preflight at 06:08 UTC passed CUDA allocation on GPU 1. GPU 0 was busy
+  with another workload; GPU 1 had an idle VLLM reservation and enough free
+  memory. Jobs use GPU 1 serially without displacing unrelated processes.
+- Added validation-only reporting with seed-paired intervals, five factorial
+  contrasts, construction/resource costs, raw/WARP context and explicit skipped
+  promotion cells. Focused tests: 97 passed in 4.28 seconds.
+- Prepared 50 declared cells: 15 reused, 23 new initial runs and 12 conditional
+  WARP follow-ups; six 108K raw dense-M references are additionally hash-checked.
+- At 06:13:59 UTC froze all ten preselected transfer checkpoint/config hashes
+  against pinned CIFAR-10.1 v6 revision
+  `d9982abb0bfc4846b8d13a11e66b887d946205d0`. No new arrays were accessed.
+- Launched `run_fourth_round.py preflight` with `CUDA_VISIBLE_DEVICES=1`,
+  `OMP_NUM_THREADS=2`, `MKL_NUM_THREADS=2`, and the existing CIFAR-10 dataset
+  root. It must pass the host suite, all training-family GPU smokes, and ten
+  synthetic checkpoint-load smokes before writing the execution freeze.
+- Host preflight completed successfully: 3,455 tests passed, 3,038 skipped,
+  one existing warning in 287.93 seconds; all 16 ten-update GPU training smokes
+  passed matched-parameter/cost/RNG/spatial checks, including the factorial
+  same-head invariants. All ten transfer checkpoints loaded strictly and emitted
+  finite hardened outputs on synthetic inputs. No new transfer data was used.
+- Wrote `summary/fourth_round_preregistration.json` after verification. The
+  read-only reporter verified 15 reused cells and six full raw references;
+  35 conditional/new cells remain. Its existing controlled-random convolutional
+  gain is +1.707 pp (n=3; interval crosses zero), not the historical +2.173 pp
+  against the different original random baseline.
+- At approximately 06:25 UTC launched the serial accuracy queue on GPU 1,
+  beginning with `fourth_mechanism_dense_m_balanced_random_seed0`. GPU 0 remained
+  busy; GPU 1 had about 70 GiB free before launch. Results storage had 6.0 TiB
+  available. The verified code/protocol must not change while this queue runs.
+- Additional synthetic-only transfer cross-check matched the historical
+  `ToTensor` preprocessing exactly. Hardened outputs were bit-identical for
+  dense-M random seed 0 and full-S U2 seed 0 under both tensor layouts; no
+  dataset/labels were accessed and no training was performed in this check.
+- First new run completed: `fourth_mechanism_dense_m_balanced_random_seed0`,
+  20K updates, best/final hardened validation 58.800%/58.540% [OUR, V], 7.732
+  minutes wall time, 1.123 GiB peak allocated GPU memory, 11.561 seconds offline
+  topology construction. Complete history/configuration/hash checks passed.
+  This is n=1, not a mechanism conclusion. The queue advanced to nominal seed 0;
+  the reporter has 1 new completed cell and 34 pending conditional/new cells.
+- Second new run completed: `fourth_mechanism_dense_m_nominal_seed0`, 20K
+  updates, best/final hardened validation 59.220%/59.220% [OUR, V], 7.754 minutes,
+  1.123 GiB peak allocated GPU memory, and 13.649 seconds topology construction.
+  Frozen hash/history/configuration verification passed; U2 seed 0 started next.
+  There are two new completed cells and 33 pending conditional/new cells.
+- Added `FOURTH_ROUND_RESULTS.md` as an explicitly incomplete reporting scaffold.
+  Read-only smoke-checkpoint inspection confirms nominal versus U2 wiring differs
+  in deeper dense/convolutional layers, while intended input/spatial invariants
+  remain matched. No training source or frozen configuration was changed.
+- Third new run completed: `fourth_mechanism_dense_m_u2_seed0`, 20K updates,
+  best/final hardened validation 58.860%/58.780% [OUR, V], 7.765 minutes wall,
+  1.123 GiB peak allocated GPU memory, and 14.095 seconds construction. The
+  verified seed-0 effects are +3.460 pp over archived explicit random, +0.060 pp
+  over balanced-random, and −0.360 pp against nominal. No seed-level CI exists
+  at n=1; the non-positive nominal contrast is retained without retuning.
+  The queue advanced to balanced-random seed 1. Three new cells are complete;
+  32 conditional/new cells remain. The interim report records all four arms.
+- Dense-M seed 1 completed all three new arms with verified artifacts [OUR, V]:
+  balanced-random best/final 58.420%/58.380%, nominal 58.800%/58.520%, and U2
+  59.480%/59.480%. U2's paired gains are +1.060 pp over balanced-random and
+  +0.680 pp over nominal. The nominal contrast changes sign relative to seed 0;
+  no reliable novelty benefit is claimed from two seeds. Six new runs are
+  complete and 29 conditional/new cells remain; balanced-random seed 2 started.
+  The reporting scaffold now retains both seeds and clarifies the layer-only
+  scope of the recorded construction timers.
+- Completed and independently verified all 12 cells of the dense-M mechanism
+  coordinate (nine new runs plus three archived random controls). Saved the
+  immutable phase-only `summary/fourth_round_dense_mechanism.json`. U2's
+  three-seed effects [OUR, V] are +4.313 pp versus random (95% CI [2.475, 6.152]),
+  +0.487 versus balanced-random (CI [−0.795, 1.768]), and −0.087 versus nominal
+  (CI [−1.759, 1.585]). The novelty benefit is not established at this dense
+  coordinate; the unfavorable/inconclusive comparisons are retained unchanged.
+- The serial queue advanced to convolutional balanced-random seed 0. Nine new
+  runs are complete, 26 conditional/new cells remain. Updated the reporting
+  scaffold, README, RESULTS, handoff and paper-facing tables together. Clarified
+  that `run_summary` wall time includes setup/construction and that layer timer
+  sums are not a comprehensive model-construction benchmark. No frozen source,
+  configuration, historical checkpoint or prior manifest was overwritten.
+
+## September 6, 2026: pre-experiment handoff repairs
+
+- Fixed U2 semantic ancestry in the topology-only stack helper, including the
+  deeper-index consequence. Added semantic-path and pre-edit frozen-method
+  digest regressions. Targeted topology/repair tests: 63 passed.
+- Expanded the evidence audit to third-round hashes, per-run data, aggregates,
+  paired effects, and M U2 selection/test hashes. All 41 checks passed in
+  `summary/evidence_consistency_audit_20260906.json`; old audit/freeze files
+  remain unchanged. The audit defaults to stdout and refuses report overwrite.
+- Queue completion now requires nonempty checkpoints and topology, as well as
+  metadata. This remains a presence check, not a substitute for phase hashes.
+- Reconciled stale handoff/README/RESULTS status and selected Fashion numbers.
+  Exact resume, rank-four U2, broad dataset gains and physical hardware evidence
+  remain limitations; no such capabilities are claimed as repaired.
+- Sandbox CUDA allocation failed. Authorized host preflight succeeded with
+  PyTorch 2.9.0+cu130 and driver 580.173.02. GPU 0 was occupied; GPU 1 hosted
+  an idle VLLM service. No full experiment was launched before verification.
+- Added failure-path regressions for malformed completion metadata, missing
+  freeze hashes, changed checkpoint contents, and preservation of completed
+  evaluation logs. Future S evaluations record an exclusive started marker
+  before test access; historical freezes/logs remain untouched.
+- Fixed the staged transfer validator's truncated-selection acceptance and
+  missing-hash checks, plus nonfinite summary acceptance in the staged runner.
+  All 15 reused matrix cells passed read-only configuration/history/artifact
+  checks. Their historical `connections_gumbel` difference is retained and
+  tested to have no effect on fixed-model state or RNG consumption.
+- Final focused verification: 95 passed in 6.73 seconds. Complete verification:
+  **3,453 passed, 3,038 skipped, one pre-existing warning in 244.71 seconds**,
+  with `OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 venv/bin/python -m pytest tests -q`.
+  An earlier full-suite attempt was manually interrupted at 96% without a
+  reported failure before this complete capped-thread rerun; it is not counted
+  as a successful verification. The read-only audit again passed all 41 checks.
+- Fourth-round implementation remains staged, not execution-frozen: no new
+  accuracy runs, GPU training smokes, generated matrix configs, or transfer
+  queries. No CIFAR-10.1 arrays were downloaded/opened. Host GPU smoke checks
+  remain required before launching the authorized studies.
+
 ## July 24, 2026: Table 1 startup
 
 - The first GPU check failed with `Failed to initialize NVML: Driver/library
@@ -893,10 +1303,12 @@ This log records operational failures and protocol decisions made after commit
   semantic/no-swap arm was +0.040 pp (95% CI [-0.434, +0.514]), while the
   complete V3 gain over random remained +4.473 pp
   (95% CI [+3.624, +5.323]).
-- The dominant measured mechanism at this coordinate is therefore balanced
-  fan-out. Semantic pairing and ancestry swaps remain parts of the frozen V3
-  algorithm but do not have independently significant incremental effects in
-  this three-seed pilot.
+- September 6 correction to the original balanced-fan-out interpretation:
+  native dense random already balances fan-out. The balanced-butterfly arm
+  recovers most of the gain but also changes pairing structure, so it does not
+  isolate a degree-balance effect. Semantic pairing and ancestry swaps remain
+  parts of frozen V3 but do not have independently significant incremental
+  effects in this three-seed pilot. All historical numerical results stand.
 
 ## July 29, 2026: one-shot task-aware rewiring negative result
 

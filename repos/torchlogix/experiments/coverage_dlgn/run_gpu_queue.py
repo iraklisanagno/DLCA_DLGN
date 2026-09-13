@@ -31,10 +31,29 @@ def is_complete(output: Path) -> bool:
         "environment.json",
         "metrics.csv",
         "run_summary.json",
+        "best_checkpoint.pt",
+        "final_checkpoint.pt",
     }
-    return output.is_dir() and required.issubset(
-        {path.name for path in output.iterdir()}
+    present = output.is_dir() and all(
+        (output / name).is_file() and (output / name).stat().st_size > 0
+        for name in required
     )
+    if not present:
+        return False
+    try:
+        config = json.loads((output / "training_config.json").read_text())
+        summary = json.loads((output / "run_summary.json").read_text())
+        # Learned-routing runs intentionally do not emit fixed-topology reports.
+        topology = summary.get("topology", [])
+        learned_only = bool(topology) and all(
+            row.get("strategy", "").startswith("learnable") for row in topology
+        )
+        if config.get("connections", "fixed") == "fixed" and not learned_only:
+            report = output / "topology.json"
+            return report.is_file() and report.stat().st_size > 0
+        return True
+    except (OSError, ValueError, AttributeError, TypeError):
+        return False
 
 
 def require_cuda_devices(gpus: list[int]) -> None:

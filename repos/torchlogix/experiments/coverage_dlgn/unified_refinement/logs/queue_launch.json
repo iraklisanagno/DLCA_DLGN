@@ -1,0 +1,23 @@
+{
+  "command": [
+    "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/venv/bin/python",
+    "-m",
+    "experiments.coverage_dlgn.unified_refinement.queue",
+    "--gpus",
+    "0",
+    "1",
+    "--phases",
+    "factorial",
+    "full_s"
+  ],
+  "execution_freeze_sha256": "77bd84bc23601c5e127b81a0d4108ee4e32259faaab2de00d7ce9bbdf4399ae1",
+  "gpus": [
+    0,
+    1
+  ],
+  "new_factorial_runs": 9,
+  "new_full_s_runs": 4,
+  "pid": 636295,
+  "started_utc": "2026-09-06T23:08:46.131728+00:00",
+  "test_queries_authorized_by_queue": 0
+}

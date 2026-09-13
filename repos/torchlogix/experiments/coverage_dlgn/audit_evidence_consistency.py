@@ -4,6 +4,8 @@
 from __future__ import annotations
 
 import json
+import argparse
+import hashlib
 from pathlib import Path
 
 
@@ -23,7 +25,56 @@ def close(actual: float, expected: float, tolerance: float = 1e-9) -> bool:
     return abs(actual - expected) <= tolerance
 
 
-def main() -> int:
+def latest_checks() -> dict[str, bool]:
+    """Check latest aggregates against per-run artifacts, without dataset access."""
+    try:
+        from . import summarize_third_round as third
+    except ImportError:
+        import summarize_third_round as third
+    frozen = load("third_round_validation_freeze.json")
+    recorded = load("third_round_results.json")
+    rows = [row for group in frozen["groups"].values() for row in group]
+    rebuilt = []
+    hash_matches = True
+    for row in rows:
+        row = dict(row)
+        path = Path(row["run_dir"])
+        if not path.is_absolute():
+            path = ROOT.parents[1] / path
+        row["run_dir"] = str(path)
+        for name, expected in row["artifacts"].items():
+            with (path / name).open("rb") as handle:
+                hash_matches &= hashlib.file_digest(handle, "sha256").hexdigest() == expected["sha256"]
+        rebuilt.append(third.collect_run(row))
+    medium = load("cifar10_paper_medium_u2_200k_freeze.json")
+    run = ROOT / medium["run_dir"]
+    log = json.loads((ROOT / "logs/cifar10_paper_medium_u2_200k/test/test_evaluation_summary.json").read_text())
+    metrics = json.loads((run / "test_metrics.json").read_text())
+    medium_hashes = True
+    for name, key in [("best_checkpoint.pt", "checkpoint_sha256"),
+                      ("training_config.json", "training_config_sha256"),
+                      ("environment.json", "environment_sha256"),
+                      ("metrics.csv", "metrics_sha256")]:
+        with (run / name).open("rb") as handle:
+            medium_hashes &= hashlib.file_digest(handle, "sha256").hexdigest() == medium[key]
+    return {
+        "third_round_38_runs_76_checkpoints": len(rows) == 38 and frozen["checkpoint_count"] == 76,
+        "third_round_frozen_hashes_match": bool(hash_matches),
+        "third_round_per_run_records_match": rebuilt == recorded["runs"],
+        "third_round_aggregates_match": third.aggregate_runs(rebuilt) == recorded["groups"],
+        "third_round_paired_effects_match": third.paired_effects(rebuilt) == recorded["paired_effects"],
+        "third_round_dense_cross_comparisons_match": third.current_dense_cross_comparisons() == recorded["current_dense_cross_comparisons"],
+        "third_round_predeclared_queries": all(r["heldout_checkpoint_queries"] == 2 and r["test_checkpoint_sha256_matches_freeze"] for r in rebuilt),
+        "third_round_test_absent_at_freeze": all(not r["test_metrics_existing_at_freeze"] for r in rows),
+        "medium_u2_frozen_hashes_match": bool(medium_hashes),
+        "medium_u2_test_hash_matches": hashlib.sha256((run / "test_metrics.json").read_bytes()).hexdigest() == log["test_metrics_sha256"],
+        "medium_u2_frozen_before_query": not medium["test_set_used"] and medium["heldout_checkpoint_queries"] == 0 and log["heldout_checkpoint_queries"] == 1 and medium["frozen_at_utc"] < log["evaluated_at_utc"],
+        "medium_u2_test_71_65": close(metrics["test_hard_accuracy"], .7165) and metrics["test_hard_accuracy"] == log["test_hard_accuracy"],
+        "medium_u2_selected_step_136000": medium["selected_step"] == 136000 == metrics["validation_selection_step"],
+    }
+
+
+def main(output: Path | None = None) -> int:
     tables = TABLES.read_text()
     dense_s = load("paper_cifar10_semantic_v3.json")["test_hard_accuracy"]
     fashion_final = load("table1_fashion_final.json")
@@ -183,11 +234,14 @@ def main() -> int:
             for document in (tables, results, conclusions)
         ),
     }
+    checks.update(latest_checks())
     failed = sorted(name for name, passed in checks.items() if not passed)
     payload = {
         "status": "pass" if not failed else "fail",
         "checks": checks,
         "failed": failed,
+        "scope": "Legacy/second-round checks plus third-round and M U2 artifacts; not every historical experiment",
+        "limitations": ["Full-S legacy freeze lacks checkpoint-content hashes", "Historical full-S export equivalence uses one synthetic example", "No exact training resume or physical hardware claim"],
         "source_files": [
             "summary/paper_cifar10_semantic_v3.json",
             "summary/table1_fashion_final.json",
@@ -203,12 +257,20 @@ def main() -> int:
             "PAPER_COMPARISON_TABLES.md",
             "RESULTS.md",
             "SECOND_ROUND_CONCLUSIONS.md",
+            "summary/third_round_validation_freeze.json",
+            "summary/third_round_results.json",
+            "summary/cifar10_paper_medium_u2_200k_freeze.json",
+            "logs/cifar10_paper_medium_u2_200k/test/test_evaluation_summary.json",
         ],
     }
-    OUTPUT.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+    if output is not None:
+        with output.open("x") as handle:
+            handle.write(json.dumps(payload, indent=2, sort_keys=True) + "\n")
     print(json.dumps(payload, indent=2, sort_keys=True))
     return 0 if not failed else 1
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--output", type=Path, help="Optional NEW report path; never overwrite archived evidence")
+    raise SystemExit(main(parser.parse_args().output))

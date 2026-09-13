@@ -47,6 +47,7 @@ except ImportError:  # Direct execution: python experiments/train.py
 
 def get_parser():
     parser = argparse.ArgumentParser(description="Train TorchLogix models")
+    parser.add_argument("--classifier-reference-u2", action="store_true", help="Factorial ablation: freeze classifier topology to the U2-body reference ancestry")
     parser.add_argument(
         "--config", type=Path, default=None,
         help="JSON file providing parser defaults; explicit CLI arguments take precedence"

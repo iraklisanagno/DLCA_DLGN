@@ -1,0 +1,101 @@
+{
+  "arm": "SR",
+  "cost": {
+    "candidate_indices_tensor_bytes": 8192000,
+    "dense_gate_count": 512000,
+    "deployed_routing_bits": 16640000,
+    "deployed_routing_bytes_packed": 2080000,
+    "trainable_parameters": 8192000,
+    "training_routing_parameters": 0
+  },
+  "cost_note": "Reference construction remains in layer metadata; add null_construction_seconds once",
+  "cpu_rng_sha256": "c89f56975864c872a039be8d8bf64a86908aa81fec53e2d44b8b59679a12cba0",
+  "cuda_rng_sha256": "8537afe4bb3828e890f8ee182b0ce6ba2e7e9e056e6ebfe171b0b7e6b5512a51",
+  "dataset_integrity": {
+    "root": "/tmp/torchlogix-datasets/data-cifar/cifar-10-batches-py",
+    "scope": "file integrity only; no predictions or test evaluation",
+    "sha256": {
+      "batches.meta": "f962466ef690d46b226450fb9aadc74ba4bc64a76aa526b5827fe4bc5c7125cb",
+      "data_batch_1": "54636561a3ce25bd3e19253c6b0d8538147b0ae398331ac4a2d86c6d987368cd",
+      "data_batch_2": "766b2cef9fbc745cf056b3152224f7cf77163b330ea9a15f9392beb8b89bc5a8",
+      "data_batch_3": "0f00d98ebfb30b3ec0ad19f9756dc2630b89003e10525f5e148445e82aa6a1f9",
+      "data_batch_4": "3f7bb240661948b8f4d53e36ec720d8306f5668bd0071dcb4e6c947f78e9682b",
+      "data_batch_5": "d91802434d8376bbaeeadf58a737e3a1b12ac839077e931237e0dcd43adcb154",
+      "test_batch": "f53d8d457504f7cff4ea9e021afcf0e0ad8e24a91f3fc42091b8adef61157831"
+    }
+  },
+  "initial_parameters_sha256": "970928076bbe7a1ba9e1c3b7e1178d6ee56f82dc1bcf05874a2a8e6408083042",
+  "layers": [
+    {
+      "depth": 0,
+      "output_sha256": "02679f0c37476940bc930ef6acf50b68d5b83aa89c148081fe353d09f6215e85",
+      "structured": true
+    },
+    {
+      "accepted": 5120000,
+      "changed_pair_multiset": true,
+      "depth": 1,
+      "exact_per_node_slot_degrees": true,
+      "nontrivial_swaps": 5119957,
+      "output_sha256": "ee1b764464e078f4fefeb097148213ef785900c5a3521625a20b0929acc523c5",
+      "proposals": 5120000,
+      "reference_sha256": "22fb294f35267f4f4ead0c88521c454e79acf093f6a4d8e3036d8356ad45a387",
+      "rounds_per_slot": 40,
+      "seed": 1365643250,
+      "seed_entropy": [
+        20260906,
+        1,
+        1
+      ],
+      "structured": false,
+      "unchanged_edge_fraction": 2.34375e-05
+    },
+    {
+      "accepted": 5119997,
+      "changed_pair_multiset": true,
+      "depth": 2,
+      "exact_per_node_slot_degrees": true,
+      "nontrivial_swaps": 5119956,
+      "output_sha256": "d5de0a408716686b99c89d8cd047265cf70b8f5031cdc4231f5e38c85b00b0fe",
+      "proposals": 5120000,
+      "reference_sha256": "14f36478b92b7ecc7cff6a587d4758cafddddc9b0fae05d43a8726bf1619b22f",
+      "rounds_per_slot": 40,
+      "seed": 1919534867,
+      "seed_entropy": [
+        20260906,
+        1,
+        2
+      ],
+      "structured": false,
+      "unchanged_edge_fraction": 1.5625e-05
+    },
+    {
+      "accepted": 5119994,
+      "changed_pair_multiset": true,
+      "depth": 3,
+      "exact_per_node_slot_degrees": true,
+      "nontrivial_swaps": 5119950,
+      "output_sha256": "571e2986e533d69ba91ba5285e5ddf34574425c319760194bc66014ae90f4c25",
+      "proposals": 5120000,
+      "reference_sha256": "4a8b13ad58307150ccd1d3aef091b4f6324e11ce8261840b9a4c549ed87dda33",
+      "rounds_per_slot": 40,
+      "seed": 3181622940,
+      "seed_entropy": [
+        20260906,
+        1,
+        3
+      ],
+      "structured": false,
+      "unchanged_edge_fraction": 3.125e-05
+    }
+  ],
+  "null_construction_seconds": 0.39309420669451356,
+  "reference_indices_sha256": [
+    "02679f0c37476940bc930ef6acf50b68d5b83aa89c148081fe353d09f6215e85",
+    "22fb294f35267f4f4ead0c88521c454e79acf093f6a4d8e3036d8356ad45a387",
+    "14f36478b92b7ecc7cff6a587d4758cafddddc9b0fae05d43a8726bf1619b22f",
+    "4a8b13ad58307150ccd1d3aef091b4f6324e11ce8261840b9a4c549ed87dda33"
+  ],
+  "topology_seed": 1,
+  "ur1_source_sha256": "04674a5678f891ce08cb960bf1c63c6fd85427da8ef0483e794515bc3c3bdfdc"
+}

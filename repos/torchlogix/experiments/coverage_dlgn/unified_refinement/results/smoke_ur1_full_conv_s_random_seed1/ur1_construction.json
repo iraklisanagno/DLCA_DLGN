@@ -1,0 +1,29 @@
+{
+  "arm": "identity",
+  "cost": {
+    "candidate_indices_tensor_bytes": 1146880,
+    "dense_gate_count": 71680,
+    "deployed_routing_bits": 1945600,
+    "deployed_routing_bytes_packed": 243200,
+    "trainable_parameters": 1336832,
+    "training_routing_parameters": 0
+  },
+  "cpu_rng_sha256": "5555108698ca5dcbf6ae8ba23009a728baec7e17e9c2d85e42332bbbb1b23f9e",
+  "cuda_rng_sha256": "f1d03a15e2bb25e1a70c48c2dca74b5be8d84adbe17b3e14c7c945f5f46f7b2d",
+  "dataset_integrity": {
+    "root": "/tmp/torchlogix-datasets/data-cifar/cifar-10-batches-py",
+    "scope": "file integrity only; no predictions or test evaluation",
+    "sha256": {
+      "batches.meta": "f962466ef690d46b226450fb9aadc74ba4bc64a76aa526b5827fe4bc5c7125cb",
+      "data_batch_1": "54636561a3ce25bd3e19253c6b0d8538147b0ae398331ac4a2d86c6d987368cd",
+      "data_batch_2": "766b2cef9fbc745cf056b3152224f7cf77163b330ea9a15f9392beb8b89bc5a8",
+      "data_batch_3": "0f00d98ebfb30b3ec0ad19f9756dc2630b89003e10525f5e148445e82aa6a1f9",
+      "data_batch_4": "3f7bb240661948b8f4d53e36ec720d8306f5668bd0071dcb4e6c947f78e9682b",
+      "data_batch_5": "d91802434d8376bbaeeadf58a737e3a1b12ac839077e931237e0dcd43adcb154",
+      "test_batch": "f53d8d457504f7cff4ea9e021afcf0e0ad8e24a91f3fc42091b8adef61157831"
+    }
+  },
+  "initial_parameters_sha256": "a6fa251691384d603b0389cd0258cf84d8284bf9afb8ef802eaa743a53ebecd7",
+  "null_construction_seconds": 0,
+  "ur1_source_sha256": "04674a5678f891ce08cb960bf1c63c6fd85427da8ef0483e794515bc3c3bdfdc"
+}

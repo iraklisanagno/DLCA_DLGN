@@ -1,0 +1,112 @@
+{
+  "checkpoint_selection": "existing best hardened CIFAR-10 validation; all cells predeclared",
+  "dataset": "CIFAR-10.1",
+  "dataset_accessed": false,
+  "examples": 2000,
+  "frozen_at_utc": "2026-09-06T06:13:59.064151+00:00",
+  "preprocessing": "NHWC uint8 to NCHW float32 / 255; checkpoint thresholds; no adaptation",
+  "revision": "d9982abb0bfc4846b8d13a11e66b887d946205d0",
+  "rows": [
+    {
+      "artifacts": {
+        "best_checkpoint.pt": "3851adf80d1e87c80dde8cf61b0bdbe1f1455fef0dbcc29e49105de1005ff338",
+        "training_config.json": "08ed9607d9a5ee95928315edb5cd91f2f92ae0f6ad4681f5d781c5d3f46e5304"
+      },
+      "coordinate": "dense_m",
+      "family": "random",
+      "name": "paper_cifar10_medium_random_seed0",
+      "seed": 0
+    },
+    {
+      "artifacts": {
+        "best_checkpoint.pt": "8756bec711fa74a76dc7e804701dfb7d17522ea82dc061c66c36d839767461d5",
+        "training_config.json": "a976f6f7dcd92cd3ed0425924e08a3e41eed38be033106aa0bd69f8f3dd3812f"
+      },
+      "coordinate": "dense_m",
+      "family": "u2",
+      "name": "third_u2_cifar10_m_seed0",
+      "seed": 0
+    },
+    {
+      "artifacts": {
+        "best_checkpoint.pt": "cae8072f2a2650a85d7c9ef0f94e641df42ef63a5899c5a8e6288ab599285772",
+        "training_config.json": "121a59eb11ed35362895196d59fefb4a11cafe509fe08c0a1d55eceb695169dc"
+      },
+      "coordinate": "dense_m",
+      "family": "random",
+      "name": "paper_cifar10_medium_random_seed1",
+      "seed": 1
+    },
+    {
+      "artifacts": {
+        "best_checkpoint.pt": "0e21344291fadca98bbb6e538e9104ba4425bfc2d66e4c7575ee643b7735ac8f",
+        "training_config.json": "08bfe973e13c654d157cad4ce78970ae262df69a49a0717ef9e63e6f12eed3c1"
+      },
+      "coordinate": "dense_m",
+      "family": "u2",
+      "name": "third_u2_cifar10_m_seed1",
+      "seed": 1
+    },
+    {
+      "artifacts": {
+        "best_checkpoint.pt": "b532d7706b2a3caf31f8aa679e281f4466fea55f2fc9a02d18d9128c0e76c994",
+        "training_config.json": "2c61e84ff4d874800cd88a8b556bc3315678881f65178dd594129284e11e89e4"
+      },
+      "coordinate": "dense_m",
+      "family": "random",
+      "name": "paper_cifar10_medium_random_seed2",
+      "seed": 2
+    },
+    {
+      "artifacts": {
+        "best_checkpoint.pt": "59b7859aae4d13ff96a4314867f47a518d479423d810677668096ef282d518a1",
+        "training_config.json": "fbd85e2e9827c15c02ccec67548aad64d3a486a7d4edc6a7eaaba060552e4bf5"
+      },
+      "coordinate": "dense_m",
+      "family": "u2",
+      "name": "third_u2_cifar10_m_seed2",
+      "seed": 2
+    },
+    {
+      "artifacts": {
+        "best_checkpoint.pt": "9d4a7a04fc7ec5b7f3d799983a222e22fd659a657f983e2eb38c41b04ee041f9",
+        "training_config.json": "333453c311ae7214f711ddae43af6dd966a55128d56945b3bcb115b11f72e5f8"
+      },
+      "coordinate": "conv_s",
+      "family": "random",
+      "name": "second_full_conv_cifar10_s_random_seed0",
+      "seed": 0
+    },
+    {
+      "artifacts": {
+        "best_checkpoint.pt": "b2b2de23ba06053212619c2259f2e543fb77cee05d14223b72dca1a47a5717bd",
+        "training_config.json": "715da2d22e4685af6fa48396dbb4d8675777ba2b9a34c1d7dfb1155f61dace23"
+      },
+      "coordinate": "conv_s",
+      "family": "u2",
+      "name": "second_final_u2_conv_cifar10_s_seed0",
+      "seed": 0
+    },
+    {
+      "artifacts": {
+        "best_checkpoint.pt": "19d5a2fa50da88caa1bdb353b7122b5daa269c72885e019bff7c73af889fa40e",
+        "training_config.json": "f7ec50684417e8cb1087f2e97e6e828b63114404a7dfd2808518555ece2a7b3a"
+      },
+      "coordinate": "conv_m",
+      "family": "random",
+      "name": "full_conv_cifar10_paper_medium_random_seed0_200k",
+      "seed": 0
+    },
+    {
+      "artifacts": {
+        "best_checkpoint.pt": "f2bf39448cd8810ffaa349d2a96c078eef2b3c1fd3b6f8c8e144645ce3d2f69b",
+        "training_config.json": "eb94106d3b823abd6ac8a6795a608a45f138cec827d607aafec4375048ff27ae"
+      },
+      "coordinate": "conv_m",
+      "family": "u2",
+      "name": "full_conv_cifar10_paper_medium_u2_seed0_200k",
+      "seed": 0
+    }
+  ],
+  "version": "v6"
+}

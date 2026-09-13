@@ -70,6 +70,8 @@ class Dlgn(torch.nn.Sequential):
                 "semantic_balanced_hybrid",
                 "semantic_degree_balanced",
                 "semantic_multiscale_balanced",
+                "semantic_random_balanced",
+                "semantic_multiscale_nominal",
             }
             or (
                 llkw.get("connections", "fixed") == "fixed"
@@ -85,6 +87,8 @@ class Dlgn(torch.nn.Sequential):
                 "semantic_balanced_hybrid",
                 "semantic_degree_balanced",
                 "semantic_multiscale_balanced",
+                "semantic_random_balanced",
+                "semantic_multiscale_nominal",
             }
             and semantics is not None
             else packed_identity(in_dim) if track_ancestry else None
@@ -104,6 +108,8 @@ class Dlgn(torch.nn.Sequential):
                     "semantic_balanced_hybrid",
                     "semantic_degree_balanced",
                     "semantic_multiscale_balanced",
+                    "semantic_random_balanced",
+                    "semantic_multiscale_nominal",
                 }
                 and semantics is not None
                 and i == 0

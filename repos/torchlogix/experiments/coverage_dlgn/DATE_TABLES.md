@@ -7,10 +7,93 @@ Notation:
 - `†` = nonmatched architecture, budget, fan-in, or protocol.
 - Training time is the mean wall time for one run, not the total across seeds.
 - GPU memory is peak PyTorch allocation. Additional hardware headroom is advisable.
-- Topology construction is offline CPU preprocessing and is not included in GPU training time.
+- Topology construction is offline CPU preprocessing. Local `run_summary` wall
+  times include setup/construction unless explicitly stated otherwise; do not
+  add the separately reported construction timer a second time.
 - `N/R` = not recorded; `—` = not available or not run.
 
 ## Current CoverageDLGN method status
+
+Fourth round complete: 50/50 matrix cells, 100 audited best/final checkpoints.
+Final raw evidence: `summary/fourth_round_results.json` and
+`summary/fourth_round_runs.csv`; complete interpretation: `FOURTH_ROUND_RESULTS.md`.
+
+September 6 fourth-round dense mechanism result (20K updates, seeds 0/1/2,
+validation only): U2 is 59.133 ± 0.316% [OUR, V], nominal multiscale is
+59.220 ± 0.420% [OUR, V], and balanced-random is 58.647 ± 0.200% [OUR, V].
+U2 gains +4.313 pp over matched random (paired 95% CI [2.475, 6.152]), but
+only +0.487 pp over balanced-random (CI [−0.795, 1.768]) and −0.087 pp versus
+nominal (CI [−1.759, 1.585]); all effects [OUR, V]. Novelty's incremental
+benefit is not established at this coordinate. These are exploratory pilot
+contrasts, not replacements for the full-budget test results below. See
+`FOURTH_ROUND_RESULTS.md` and `summary/fourth_round_dense_mechanism.json`.
+
+The convolutional-S mechanism coordinate is also complete (20K, seeds 0/1/2,
+validation only). Random/balanced-random/nominal/U2 means ± sample SD are
+57.140 ± 1.870% / 58.633 ± 0.273% / 58.253 ± 0.911% / 58.847 ± 0.600%
+(random [REPRODUCED, V], structured arms [OUR, V]). U2 gains +0.213 pp over
+balanced-random (95% CI [−0.836, 1.263]) and +0.593 pp over nominal
+(CI [−1.121, 2.308]), both 2/3 wins [OUR, V]. The matched random contrast is
++1.707 pp (CI [−2.600, 6.013]), 3/3 wins. None establishes an incremental
+convolutional accuracy benefit at this pilot budget; neither architecture
+establishes a novelty-selection benefit. Intervals crossing zero do not prove
+equivalence. Raw seeds/resources: `summary/fourth_round_conv_mechanism.json`.
+
+The body/head factorial is complete (20K, three paired seeds, [OUR, V]).
+With the U2 classifier indices fixed, changing the body to U2 gains +2.140 pp,
+95% CI [0.674, 3.606], 3/3 wins. The corresponding random-head effect is
++1.207 pp [−3.169, 5.582]. Head effects are −0.433 pp [−5.725, 4.858] with
+random body and +0.500 pp [−1.410, 2.410] with U2 body; interaction is
++0.933 pp [−4.766, 6.633]. Intervals are exploratory and unadjusted. This
+supports a conditional channel-wiring contribution with the reference-U2 head,
+not head-independent superiority or additivity. All twelve checkpoints pass
+the wiring audit; full raw seeds/resources are in `summary/fourth_round_factorial.json`.
+
+September 6 frozen CIFAR-10.1 v6 transfer (no adaptation, ten fixed checkpoints):
+
+| Coordinate | Random [REPRODUCED, T] | U2 [OUR, T] | Paired gain [OUR, T] | Training seeds |
+|---|---:|---:|---|---:|
+| Dense M | 41.967 ± 0.126% | 45.700 ± 0.250% | +3.733 pp; 95% CI [2.801, 4.666], 3/3 wins | 3 |
+| Convolutional S | 46.000% | 45.950% | −0.050 pp; descriptive | 1 |
+| Convolutional M | 54.100% | 56.050% | +1.950 pp; descriptive | 1 |
+
+Spreads are sample SD; the dense interval is exploratory paired Student-t.
+These are distribution-shift test accuracies, not the CIFAR-10 results below.
+S supplies no positive shift evidence in this checkpoint pair. Full raw seeds
+and the disclosed aggregate-only recovery (zero repeated inference) are in
+`FOURTH_ROUND_RESULTS.md` and `summary/fourth_round_transfer_results.json`.
+
+WARP compatibility pilot: at dense M, 20K updates and paired seed 0, random/U2
+reach 53.660%/57.680% best hardened validation, +4.020 pp [ADAPTED, V]. The
+frozen gate passed; all twelve preregistered follow-up runs are complete. WARP is
+1.740/1.180 pp below the matched raw random/U2 arms, so this is positive
+topology-within-WARP evidence, not a claim that WARP beats raw. Full pilot
+curves/resources and hashes: `summary/fourth_round_warp_pilot.json`.
+
+The dense-M 108K WARP coordinate is complete (three paired seeds, [ADAPTED, V]):
+random/U2 best hard is 53.247 ± 0.378% / 57.947 ± 0.167%, paired gains
++4.340/+4.920/+4.840 pp, mean +4.700 pp, sample SD 0.314 pp, 95% CI
+[3.919, 5.481], 3/3 wins. Final-hard gain is +4.693 pp, CI [4.459, 4.928],
+also 3/3. This supports dense connectivity within adapted WARP, not superiority
+over raw: WARP-minus-raw best differences are −1.913 pp [−2.496, −1.331]
+for random and −1.600 pp [−2.211, −0.989] for U2, each 0/3 wins. Both WARP
+arms use 2.048M parameters and 1.235 GiB, versus raw 8.192M and 1.123 GiB;
+the parameter savings belong to WARP, not U2. Full raw seeds, curves and costs:
+`summary/fourth_round_warp_dense.json` and `FOURTH_ROUND_RESULTS.md`.
+
+Convolutional WARP is complete (20K, three paired seeds, [ADAPTED, V]).
+Random/U2 best-hard means ± sample SD are 44.320 ± 0.904% / 44.407 ± 1.312%.
+Paired gains 0.000/−0.400/+0.660 pp give +0.087 pp, SD 0.535 pp, 95% CI
+[−1.243, 1.417], one win/tie/loss. Final-hard gain is −1.213 pp, SD 4.180 pp,
+CI [−11.597, 9.171], 1/3 wins. Neither establishes a topology benefit or
+equivalence. WARP-minus-raw best means are −12.820 pp [−19.019, −6.621]
+random and −14.440 pp [−19.186, −9.694] U2, both 0/3 wins. WARP uses 334,208
+parameters and 2.176 GiB versus raw 1,336,832 and approximately 1.831 GiB.
+Both retain 83,552 LUT functions. Preserve the negative raw comparison and
+late declines without retuning. Raw seeds, curves and resources:
+`summary/fourth_round_warp_conv.json`. All intervals above are exploratory,
+unadjusted paired Student-t intervals; pilot-conditioned expansion is not
+selection-independent confirmation.
 
 All V3 rows below remain valid. V3 (`semantic_balanced_hybrid`) is the strongest
 dense specialization. The unified paper candidate is U2
@@ -28,9 +111,11 @@ learned routing. U2 has not replaced or overwritten V3, V4, or U1.
 | LogicTreeNet-M, 200K | 71.650 T (1) | +2.080 pp vs random | Full one seed; +0.64 pp vs reported 71.01, not a statistical SOTA claim |
 | Dense CIFAR-100, 3 x 128K pilot | U2 +0.100 pp | Did not promote | Retain V3 result; U2 is not universal |
 
-Current U2 evidence uses raw rank-two LUTs. The WARP-style table below also
-uses raw LUT parameterization and Legacy V4, so it is not a U2+WARP result.
-U2 under TorchLogix WARP/Light/Gumbel and rank-four U2 are explicitly pending.
+The U2 evidence in the table above uses raw rank-two LUTs. The legacy
+WARP-style table below also uses raw LUT parameterization and Legacy V4, so
+it is not a U2+WARP result. The separate adapted U2+WARP studies above are
+complete, with positive dense and inconclusive convolutional effects. Light/Gumbel
+extensions and rank-four U2 remain deferred.
 
 ## Table I. Dense MNIST and Fashion-MNIST
 
@@ -194,7 +279,7 @@ CIFAR-10 M, 512K gates, three seeds, 20K updates, hardened validation.
 | + semantic first layer, no swaps | 59.253 ± 0.153 | +0.273 pp; CI [−0.780, +1.326] | 7.70 min | 1.123 GiB | 12.25 s |
 | + ancestry swaps: full V3 | **59.293 ± 0.214** | +0.040 pp; CI [−0.434, +0.514] | 7.70 min | 1.123 GiB | 107.87 s |
 
-Full V3 gains +4.473 pp over random, with a 95% CI of [+3.624, +5.323]. Degree-balanced fan-out accounts for most of the improvement.
+Full V3 gains +4.473 pp over random, with a 95% CI of [+3.624, +5.323]. The balanced-butterfly arm recovers most of that gain, but native dense random already balances fan-out: this identifies a structured-routing contrast, not the isolated contribution of degree balancing.
 
 ## Table V. Paper-faithful convolutional CIFAR-10
 
@@ -378,15 +463,16 @@ No matched local result is currently available, so this is not yet a manuscript-
 | L | ≈34.8M | WARP | Pending | — | No published exact L result |
 | L | ≈34.8M | CoverageDLGN-Channel | Pending | — | Requires input/teacher decision |
 
-## Pending controlled U2 evidence
+## Controlled U2 evidence and deferred extensions
 
-These are preregistration targets, not achieved results. Parameterization and
-fan-in are separate axes; do not run their full Cartesian product.
+Only the WARP row below is complete. The other rows are deferred decisions,
+not authorized queue additions. Parameterization and fan-in are separate axes;
+do not run their full Cartesian product.
 
 | Question | Required cells | Status |
 |---|---|---|
 | Full convolutional replication | LogicTreeNet-S random/U2 seeds 1-2; promote matched M seeds 1-2 only if S remains positive | Pending |
-| Rank-2 parameterization independence | Raw random/U2 (existing) vs WARP random/U2 on dense CIFAR-10 M and LogicTreeNet-S | Pending WARP cells |
+| Rank-2 parameterization compatibility | Matched raw/WARP random/U2 on dense CIFAR-10 M and LogicTreeNet-S | Complete; dense U2 gain positive, convolutional inconclusive under adapted WARP |
 | Rank-four topology | Light rank-4 fixed random vs rank-4 U2 vs BitLogic learned-16 | Not implemented |
 | Rank-four coordinates | BitLogic 2 x 16K and 2 x 64K CIFAR-10 protocols | Pending after implementation/tests |
 | Physical cost | Matched synthesis/place-route for selected random/U2 checkpoints | Pending; simplified IR alone is not area |

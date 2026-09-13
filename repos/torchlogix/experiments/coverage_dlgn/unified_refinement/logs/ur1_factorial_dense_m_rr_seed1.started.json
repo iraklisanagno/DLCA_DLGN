@@ -1,0 +1,24 @@
+{
+  "gpu": 1,
+  "parent_pid": 636295,
+  "row": {
+    "arm": "RR",
+    "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_factorial_dense_m_rr_seed1.json",
+    "name": "ur1_factorial_dense_m_rr_seed1",
+    "output": "experiments/coverage_dlgn/unified_refinement/results/ur1_factorial_dense_m_rr_seed1",
+    "phase": "factorial",
+    "reference_artifacts": {
+      "best_checkpoint.pt": "e960df0ead1963a1be2a56d6104d6d2af9269cc0cde499c9684b689f45d2def1",
+      "environment.json": "17467dc8d67e714bf4ff3229f7b19b8a9f4906b4b0bd54704fe45730456d2f0f",
+      "final_checkpoint.pt": "ff732524cd921cfa9f32aa67d0eaa8a5cc151b1f4347f150bb5a890e096385f4",
+      "metrics.csv": "67b9662804929b017acc84139732ca17813b46abc79970c2f083105cdf7c0589",
+      "run_summary.json": "c468d31498ab0eaa4f1e551454a835570a6843a60e7179850c8b2a94e54c381b",
+      "topology.json": "e12b3c797308bbed490ebe841a191a97801ff7a60ecd97d966d2bedf910959c1",
+      "training_config.json": "3dd94f6d6cc7f052a93209d43b82e017ab52c4ac01abc1161fd3dcd91b46d7d0"
+    },
+    "reference_output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed1",
+    "reuse": false,
+    "seed": 1
+  },
+  "started_utc": "2026-09-06T23:25:14.708660+00:00"
+}

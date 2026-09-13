@@ -1,0 +1,1201 @@
+{
+  "factorial": [
+    {
+      "archived_reference_indices_match": true,
+      "arms": {
+        "RR": {
+          "arm": "RR",
+          "cost_note": "Reference construction remains in layer metadata; add null_construction_seconds once",
+          "layers": [
+            {
+              "accepted": 5118959,
+              "changed_pair_multiset": true,
+              "depth": 0,
+              "exact_per_node_slot_degrees": true,
+              "nontrivial_swaps": 5118386,
+              "output_sha256": "914a7aedf22f07357b81b2894ac39c9142d1117575e3f45175719d914e9865eb",
+              "proposals": 5120000,
+              "reference_sha256": "2e5ac9edf16a87dbe8e5de73139c55c563b7c006e38944aeda669128019cd502",
+              "rounds_per_slot": 40,
+              "seed": 3305903252,
+              "seed_entropy": [
+                20260906,
+                0,
+                0
+              ],
+              "structured": false,
+              "unchanged_edge_fraction": 9.375e-05
+            },
+            {
+              "accepted": 5120000,
+              "changed_pair_multiset": true,
+              "depth": 1,
+              "exact_per_node_slot_degrees": true,
+              "nontrivial_swaps": 5119953,
+              "output_sha256": "5422071f7ba67fd033b342e8438ca3ab7ab9f4b3decb8e216b1ccc6e8020acf2",
+              "proposals": 5120000,
+              "reference_sha256": "58215eb156a904956129ee41b888961d66db73cdde9701ed314ade3f7731bd93",
+              "rounds_per_slot": 40,
+              "seed": 464685944,
+              "seed_entropy": [
+                20260906,
+                0,
+                1
+              ],
+              "structured": false,
+              "unchanged_edge_fraction": 2.34375e-05
+            },
+            {
+              "accepted": 5120000,
+              "changed_pair_multiset": true,
+              "depth": 2,
+              "exact_per_node_slot_degrees": true,
+              "nontrivial_swaps": 5119951,
+              "output_sha256": "ce8b6ed059349e57beb1feef42239c23f8cba4877eaa5f0e8c8c6f10d455cecf",
+              "proposals": 5120000,
+              "reference_sha256": "669ce010ae473da978ad537e43ae4b2bfc6c4189a8136728a84aa4cc64af21a4",
+              "rounds_per_slot": 40,
+              "seed": 1353665978,
+              "seed_entropy": [
+                20260906,
+                0,
+                2
+              ],
+              "structured": false,
+              "unchanged_edge_fraction": 2.734375e-05
+            },
+            {
+              "accepted": 5119913,
+              "changed_pair_multiset": true,
+              "depth": 3,
+              "exact_per_node_slot_degrees": true,
+              "nontrivial_swaps": 5119913,
+              "output_sha256": "e34eab68fc8f05357ec04f7bc6ddf517981bde2cee68e6c435f707d5170be0bb",
+              "proposals": 5120000,
+              "reference_sha256": "2f1876af30dd76835113662f3b352371d7ae8e036c96c74427d80092ca238fb9",
+              "rounds_per_slot": 40,
+              "seed": 1155447810,
+              "seed_entropy": [
+                20260906,
+                0,
+                3
+              ],
+              "structured": false,
+              "unchanged_edge_fraction": 7.8125e-06
+            }
+          ],
+          "null_construction_seconds": 0.5226827277801931,
+          "reference_indices_sha256": [
+            "2e5ac9edf16a87dbe8e5de73139c55c563b7c006e38944aeda669128019cd502",
+            "58215eb156a904956129ee41b888961d66db73cdde9701ed314ade3f7731bd93",
+            "669ce010ae473da978ad537e43ae4b2bfc6c4189a8136728a84aa4cc64af21a4",
+            "2f1876af30dd76835113662f3b352371d7ae8e036c96c74427d80092ca238fb9"
+          ],
+          "topology_seed": 0
+        },
+        "RS": {
+          "arm": "RS",
+          "cost_note": "Reference construction remains in layer metadata; add null_construction_seconds once",
+          "layers": [
+            {
+              "accepted": 5118959,
+              "changed_pair_multiset": true,
+              "depth": 0,
+              "exact_per_node_slot_degrees": true,
+              "nontrivial_swaps": 5118386,
+              "output_sha256": "914a7aedf22f07357b81b2894ac39c9142d1117575e3f45175719d914e9865eb",
+              "proposals": 5120000,
+              "reference_sha256": "2e5ac9edf16a87dbe8e5de73139c55c563b7c006e38944aeda669128019cd502",
+              "rounds_per_slot": 40,
+              "seed": 3305903252,
+              "seed_entropy": [
+                20260906,
+                0,
+                0
+              ],
+              "structured": false,
+              "unchanged_edge_fraction": 9.375e-05
+            },
+            {
+              "depth": 1,
+              "output_sha256": "58215eb156a904956129ee41b888961d66db73cdde9701ed314ade3f7731bd93",
+              "structured": true
+            },
+            {
+              "depth": 2,
+              "output_sha256": "669ce010ae473da978ad537e43ae4b2bfc6c4189a8136728a84aa4cc64af21a4",
+              "structured": true
+            },
+            {
+              "depth": 3,
+              "output_sha256": "2f1876af30dd76835113662f3b352371d7ae8e036c96c74427d80092ca238fb9",
+              "structured": true
+            }
+          ],
+          "null_construction_seconds": 0.13280359515920281,
+          "reference_indices_sha256": [
+            "2e5ac9edf16a87dbe8e5de73139c55c563b7c006e38944aeda669128019cd502",
+            "58215eb156a904956129ee41b888961d66db73cdde9701ed314ade3f7731bd93",
+            "669ce010ae473da978ad537e43ae4b2bfc6c4189a8136728a84aa4cc64af21a4",
+            "2f1876af30dd76835113662f3b352371d7ae8e036c96c74427d80092ca238fb9"
+          ],
+          "topology_seed": 0
+        },
+        "SR": {
+          "arm": "SR",
+          "cost_note": "Reference construction remains in layer metadata; add null_construction_seconds once",
+          "layers": [
+            {
+              "depth": 0,
+              "output_sha256": "2e5ac9edf16a87dbe8e5de73139c55c563b7c006e38944aeda669128019cd502",
+              "structured": true
+            },
+            {
+              "accepted": 5120000,
+              "changed_pair_multiset": true,
+              "depth": 1,
+              "exact_per_node_slot_degrees": true,
+              "nontrivial_swaps": 5119953,
+              "output_sha256": "5422071f7ba67fd033b342e8438ca3ab7ab9f4b3decb8e216b1ccc6e8020acf2",
+              "proposals": 5120000,
+              "reference_sha256": "58215eb156a904956129ee41b888961d66db73cdde9701ed314ade3f7731bd93",
+              "rounds_per_slot": 40,
+              "seed": 464685944,
+              "seed_entropy": [
+                20260906,
+                0,
+                1
+              ],
+              "structured": false,
+              "unchanged_edge_fraction": 2.34375e-05
+            },
+            {
+              "accepted": 5120000,
+              "changed_pair_multiset": true,
+              "depth": 2,
+              "exact_per_node_slot_degrees": true,
+              "nontrivial_swaps": 5119951,
+              "output_sha256": "ce8b6ed059349e57beb1feef42239c23f8cba4877eaa5f0e8c8c6f10d455cecf",
+              "proposals": 5120000,
+              "reference_sha256": "669ce010ae473da978ad537e43ae4b2bfc6c4189a8136728a84aa4cc64af21a4",
+              "rounds_per_slot": 40,
+              "seed": 1353665978,
+              "seed_entropy": [
+                20260906,
+                0,
+                2
+              ],
+              "structured": false,
+              "unchanged_edge_fraction": 2.734375e-05
+            },
+            {
+              "accepted": 5119913,
+              "changed_pair_multiset": true,
+              "depth": 3,
+              "exact_per_node_slot_degrees": true,
+              "nontrivial_swaps": 5119913,
+              "output_sha256": "e34eab68fc8f05357ec04f7bc6ddf517981bde2cee68e6c435f707d5170be0bb",
+              "proposals": 5120000,
+              "reference_sha256": "2f1876af30dd76835113662f3b352371d7ae8e036c96c74427d80092ca238fb9",
+              "rounds_per_slot": 40,
+              "seed": 1155447810,
+              "seed_entropy": [
+                20260906,
+                0,
+                3
+              ],
+              "structured": false,
+              "unchanged_edge_fraction": 7.8125e-06
+            }
+          ],
+          "null_construction_seconds": 0.39323268085718155,
+          "reference_indices_sha256": [
+            "2e5ac9edf16a87dbe8e5de73139c55c563b7c006e38944aeda669128019cd502",
+            "58215eb156a904956129ee41b888961d66db73cdde9701ed314ade3f7731bd93",
+            "669ce010ae473da978ad537e43ae4b2bfc6c4189a8136728a84aa4cc64af21a4",
+            "2f1876af30dd76835113662f3b352371d7ae8e036c96c74427d80092ca238fb9"
+          ],
+          "topology_seed": 0
+        },
+        "SS": {
+          "arm": "SS",
+          "cost_note": "Reference construction remains in layer metadata; add null_construction_seconds once",
+          "layers": [
+            {
+              "depth": 0,
+              "output_sha256": "2e5ac9edf16a87dbe8e5de73139c55c563b7c006e38944aeda669128019cd502",
+              "structured": true
+            },
+            {
+              "depth": 1,
+              "output_sha256": "58215eb156a904956129ee41b888961d66db73cdde9701ed314ade3f7731bd93",
+              "structured": true
+            },
+            {
+              "depth": 2,
+              "output_sha256": "669ce010ae473da978ad537e43ae4b2bfc6c4189a8136728a84aa4cc64af21a4",
+              "structured": true
+            },
+            {
+              "depth": 3,
+              "output_sha256": "2f1876af30dd76835113662f3b352371d7ae8e036c96c74427d80092ca238fb9",
+              "structured": true
+            }
+          ],
+          "null_construction_seconds": 0.0034279311075806618,
+          "reference_indices_sha256": [
+            "2e5ac9edf16a87dbe8e5de73139c55c563b7c006e38944aeda669128019cd502",
+            "58215eb156a904956129ee41b888961d66db73cdde9701ed314ade3f7731bd93",
+            "669ce010ae473da978ad537e43ae4b2bfc6c4189a8136728a84aa4cc64af21a4",
+            "2f1876af30dd76835113662f3b352371d7ae8e036c96c74427d80092ca238fb9"
+          ],
+          "topology_seed": 0
+        }
+      },
+      "cost": {
+        "candidate_indices_tensor_bytes": 8192000,
+        "dense_gate_count": 512000,
+        "deployed_routing_bits": 16640000,
+        "deployed_routing_bytes_packed": 2080000,
+        "trainable_parameters": 8192000,
+        "training_routing_parameters": 0
+      },
+      "initial_parameters_sha256": "3551498618375f9027bba58a0cb1fdf671b92954b0b350e69eb9831748633e45",
+      "reuse": {
+        "artifacts": {
+          "best_checkpoint.pt": "24c203cf906ceb0ddd9455cac231127d9d6a1cb88b481ced9d043da4c327691e",
+          "environment.json": "4d458cd3e204c8f2366d4695dc830ab4e8bd5088ca9920fce71e8107516b9a39",
+          "final_checkpoint.pt": "e179a79643131c672268ce5cd99416e081a06d20e86758fe0637ffa1b4bc1e48",
+          "metrics.csv": "c45da74cb9702f86ea5dccf7ac5fd483e6e0dd7029d7b2aac5624fae91969c24",
+          "run_summary.json": "d3667f79d6ce46a15b94f69f46ddd5373f8b14ced162e205cb0112e737ac3bb0",
+          "topology.json": "2b970d6f8b76c11793071c3b490133c8034204590c023691af0aeda3cf30894f",
+          "training_config.json": "8939869848795eadee21a7230f18c25c8d54badb84b204b26004f4d43db2a30a"
+        },
+        "metadata": [
+          {
+            "kind": "best",
+            "metrics": {
+              "val_acc_discrete": 0.5885999858379364,
+              "val_acc_relaxed": 0.5873999881744385,
+              "val_loss_discrete": 1.183579901456833,
+              "val_loss_relaxed": 1.1747930788993834
+            },
+            "step": 12000
+          },
+          {
+            "kind": "final",
+            "metrics": {
+              "val_acc_discrete": 0.5877999877929687,
+              "val_acc_relaxed": 0.5879999887943268,
+              "val_loss_discrete": 1.1809463214874267,
+              "val_loss_relaxed": 1.173205931186676
+            },
+            "step": 20000
+          }
+        ]
+      },
+      "seed": 0
+    },
+    {
+      "archived_reference_indices_match": true,
+      "arms": {
+        "RR": {
+          "arm": "RR",
+          "cost_note": "Reference construction remains in layer metadata; add null_construction_seconds once",
+          "layers": [
+            {
+              "accepted": 5118977,
+              "changed_pair_multiset": true,
+              "depth": 0,
+              "exact_per_node_slot_degrees": true,
+              "nontrivial_swaps": 5118432,
+              "output_sha256": "e3ead41639f5e9c5fbf33142e2df0881d5bb8e7372a4205d62459aab4bea01e0",
+              "proposals": 5120000,
+              "reference_sha256": "02679f0c37476940bc930ef6acf50b68d5b83aa89c148081fe353d09f6215e85",
+              "rounds_per_slot": 40,
+              "seed": 2883326500,
+              "seed_entropy": [
+                20260906,
+                1,
+                0
+              ],
+              "structured": false,
+              "unchanged_edge_fraction": 0.0001015625
+            },
+            {
+              "accepted": 5120000,
+              "changed_pair_multiset": true,
+              "depth": 1,
+              "exact_per_node_slot_degrees": true,
+              "nontrivial_swaps": 5119957,
+              "output_sha256": "ee1b764464e078f4fefeb097148213ef785900c5a3521625a20b0929acc523c5",
+              "proposals": 5120000,
+              "reference_sha256": "22fb294f35267f4f4ead0c88521c454e79acf093f6a4d8e3036d8356ad45a387",
+              "rounds_per_slot": 40,
+              "seed": 1365643250,
+              "seed_entropy": [
+                20260906,
+                1,
+                1
+              ],
+              "structured": false,
+              "unchanged_edge_fraction": 2.34375e-05
+            },
+            {
+              "accepted": 5119997,
+              "changed_pair_multiset": true,
+              "depth": 2,
+              "exact_per_node_slot_degrees": true,
+              "nontrivial_swaps": 5119956,
+              "output_sha256": "d5de0a408716686b99c89d8cd047265cf70b8f5031cdc4231f5e38c85b00b0fe",
+              "proposals": 5120000,
+              "reference_sha256": "14f36478b92b7ecc7cff6a587d4758cafddddc9b0fae05d43a8726bf1619b22f",
+              "rounds_per_slot": 40,
+              "seed": 1919534867,
+              "seed_entropy": [
+                20260906,
+                1,
+                2
+              ],
+              "structured": false,
+              "unchanged_edge_fraction": 1.5625e-05
+            },
+            {
+              "accepted": 5119994,
+              "changed_pair_multiset": true,
+              "depth": 3,
+              "exact_per_node_slot_degrees": true,
+              "nontrivial_swaps": 5119950,
+              "output_sha256": "571e2986e533d69ba91ba5285e5ddf34574425c319760194bc66014ae90f4c25",
+              "proposals": 5120000,
+              "reference_sha256": "4a8b13ad58307150ccd1d3aef091b4f6324e11ce8261840b9a4c549ed87dda33",
+              "rounds_per_slot": 40,
+              "seed": 3181622940,
+              "seed_entropy": [
+                20260906,
+                1,
+                3
+              ],
+              "structured": false,
+              "unchanged_edge_fraction": 3.125e-05
+            }
+          ],
+          "null_construction_seconds": 0.5195953981019557,
+          "reference_indices_sha256": [
+            "02679f0c37476940bc930ef6acf50b68d5b83aa89c148081fe353d09f6215e85",
+            "22fb294f35267f4f4ead0c88521c454e79acf093f6a4d8e3036d8356ad45a387",
+            "14f36478b92b7ecc7cff6a587d4758cafddddc9b0fae05d43a8726bf1619b22f",
+            "4a8b13ad58307150ccd1d3aef091b4f6324e11ce8261840b9a4c549ed87dda33"
+          ],
+          "topology_seed": 1
+        },
+        "RS": {
+          "arm": "RS",
+          "cost_note": "Reference construction remains in layer metadata; add null_construction_seconds once",
+          "layers": [
+            {
+              "accepted": 5118977,
+              "changed_pair_multiset": true,
+              "depth": 0,
+              "exact_per_node_slot_degrees": true,
+              "nontrivial_swaps": 5118432,
+              "output_sha256": "e3ead41639f5e9c5fbf33142e2df0881d5bb8e7372a4205d62459aab4bea01e0",
+              "proposals": 5120000,
+              "reference_sha256": "02679f0c37476940bc930ef6acf50b68d5b83aa89c148081fe353d09f6215e85",
+              "rounds_per_slot": 40,
+              "seed": 2883326500,
+              "seed_entropy": [
+                20260906,
+                1,
+                0
+              ],
+              "structured": false,
+              "unchanged_edge_fraction": 0.0001015625
+            },
+            {
+              "depth": 1,
+              "output_sha256": "22fb294f35267f4f4ead0c88521c454e79acf093f6a4d8e3036d8356ad45a387",
+              "structured": true
+            },
+            {
+              "depth": 2,
+              "output_sha256": "14f36478b92b7ecc7cff6a587d4758cafddddc9b0fae05d43a8726bf1619b22f",
+              "structured": true
+            },
+            {
+              "depth": 3,
+              "output_sha256": "4a8b13ad58307150ccd1d3aef091b4f6324e11ce8261840b9a4c549ed87dda33",
+              "structured": true
+            }
+          ],
+          "null_construction_seconds": 0.13290561689063907,
+          "reference_indices_sha256": [
+            "02679f0c37476940bc930ef6acf50b68d5b83aa89c148081fe353d09f6215e85",
+            "22fb294f35267f4f4ead0c88521c454e79acf093f6a4d8e3036d8356ad45a387",
+            "14f36478b92b7ecc7cff6a587d4758cafddddc9b0fae05d43a8726bf1619b22f",
+            "4a8b13ad58307150ccd1d3aef091b4f6324e11ce8261840b9a4c549ed87dda33"
+          ],
+          "topology_seed": 1
+        },
+        "SR": {
+          "arm": "SR",
+          "cost_note": "Reference construction remains in layer metadata; add null_construction_seconds once",
+          "layers": [
+            {
+              "depth": 0,
+              "output_sha256": "02679f0c37476940bc930ef6acf50b68d5b83aa89c148081fe353d09f6215e85",
+              "structured": true
+            },
+            {
+              "accepted": 5120000,
+              "changed_pair_multiset": true,
+              "depth": 1,
+              "exact_per_node_slot_degrees": true,
+              "nontrivial_swaps": 5119957,
+              "output_sha256": "ee1b764464e078f4fefeb097148213ef785900c5a3521625a20b0929acc523c5",
+              "proposals": 5120000,
+              "reference_sha256": "22fb294f35267f4f4ead0c88521c454e79acf093f6a4d8e3036d8356ad45a387",
+              "rounds_per_slot": 40,
+              "seed": 1365643250,
+              "seed_entropy": [
+                20260906,
+                1,
+                1
+              ],
+              "structured": false,
+              "unchanged_edge_fraction": 2.34375e-05
+            },
+            {
+              "accepted": 5119997,
+              "changed_pair_multiset": true,
+              "depth": 2,
+              "exact_per_node_slot_degrees": true,
+              "nontrivial_swaps": 5119956,
+              "output_sha256": "d5de0a408716686b99c89d8cd047265cf70b8f5031cdc4231f5e38c85b00b0fe",
+              "proposals": 5120000,
+              "reference_sha256": "14f36478b92b7ecc7cff6a587d4758cafddddc9b0fae05d43a8726bf1619b22f",
+              "rounds_per_slot": 40,
+              "seed": 1919534867,
+              "seed_entropy": [
+                20260906,
+                1,
+                2
+              ],
+              "structured": false,
+              "unchanged_edge_fraction": 1.5625e-05
+            },
+            {
+              "accepted": 5119994,
+              "changed_pair_multiset": true,
+              "depth": 3,
+              "exact_per_node_slot_degrees": true,
+              "nontrivial_swaps": 5119950,
+              "output_sha256": "571e2986e533d69ba91ba5285e5ddf34574425c319760194bc66014ae90f4c25",
+              "proposals": 5120000,
+              "reference_sha256": "4a8b13ad58307150ccd1d3aef091b4f6324e11ce8261840b9a4c549ed87dda33",
+              "rounds_per_slot": 40,
+              "seed": 3181622940,
+              "seed_entropy": [
+                20260906,
+                1,
+                3
+              ],
+              "structured": false,
+              "unchanged_edge_fraction": 3.125e-05
+            }
+          ],
+          "null_construction_seconds": 0.39345781598240137,
+          "reference_indices_sha256": [
+            "02679f0c37476940bc930ef6acf50b68d5b83aa89c148081fe353d09f6215e85",
+            "22fb294f35267f4f4ead0c88521c454e79acf093f6a4d8e3036d8356ad45a387",
+            "14f36478b92b7ecc7cff6a587d4758cafddddc9b0fae05d43a8726bf1619b22f",
+            "4a8b13ad58307150ccd1d3aef091b4f6324e11ce8261840b9a4c549ed87dda33"
+          ],
+          "topology_seed": 1
+        },
+        "SS": {
+          "arm": "SS",
+          "cost_note": "Reference construction remains in layer metadata; add null_construction_seconds once",
+          "layers": [
+            {
+              "depth": 0,
+              "output_sha256": "02679f0c37476940bc930ef6acf50b68d5b83aa89c148081fe353d09f6215e85",
+              "structured": true
+            },
+            {
+              "depth": 1,
+              "output_sha256": "22fb294f35267f4f4ead0c88521c454e79acf093f6a4d8e3036d8356ad45a387",
+              "structured": true
+            },
+            {
+              "depth": 2,
+              "output_sha256": "14f36478b92b7ecc7cff6a587d4758cafddddc9b0fae05d43a8726bf1619b22f",
+              "structured": true
+            },
+            {
+              "depth": 3,
+              "output_sha256": "4a8b13ad58307150ccd1d3aef091b4f6324e11ce8261840b9a4c549ed87dda33",
+              "structured": true
+            }
+          ],
+          "null_construction_seconds": 0.00360727496445179,
+          "reference_indices_sha256": [
+            "02679f0c37476940bc930ef6acf50b68d5b83aa89c148081fe353d09f6215e85",
+            "22fb294f35267f4f4ead0c88521c454e79acf093f6a4d8e3036d8356ad45a387",
+            "14f36478b92b7ecc7cff6a587d4758cafddddc9b0fae05d43a8726bf1619b22f",
+            "4a8b13ad58307150ccd1d3aef091b4f6324e11ce8261840b9a4c549ed87dda33"
+          ],
+          "topology_seed": 1
+        }
+      },
+      "cost": {
+        "candidate_indices_tensor_bytes": 8192000,
+        "dense_gate_count": 512000,
+        "deployed_routing_bits": 16640000,
+        "deployed_routing_bytes_packed": 2080000,
+        "trainable_parameters": 8192000,
+        "training_routing_parameters": 0
+      },
+      "initial_parameters_sha256": "970928076bbe7a1ba9e1c3b7e1178d6ee56f82dc1bcf05874a2a8e6408083042",
+      "reuse": {
+        "artifacts": {
+          "best_checkpoint.pt": "e960df0ead1963a1be2a56d6104d6d2af9269cc0cde499c9684b689f45d2def1",
+          "environment.json": "17467dc8d67e714bf4ff3229f7b19b8a9f4906b4b0bd54704fe45730456d2f0f",
+          "final_checkpoint.pt": "ff732524cd921cfa9f32aa67d0eaa8a5cc151b1f4347f150bb5a890e096385f4",
+          "metrics.csv": "67b9662804929b017acc84139732ca17813b46abc79970c2f083105cdf7c0589",
+          "run_summary.json": "c468d31498ab0eaa4f1e551454a835570a6843a60e7179850c8b2a94e54c381b",
+          "topology.json": "e12b3c797308bbed490ebe841a191a97801ff7a60ecd97d966d2bedf910959c1",
+          "training_config.json": "3dd94f6d6cc7f052a93209d43b82e017ab52c4ac01abc1161fd3dcd91b46d7d0"
+        },
+        "metadata": [
+          {
+            "kind": "best",
+            "metrics": {
+              "val_acc_discrete": 0.5947999894618988,
+              "val_acc_relaxed": 0.5947999846935272,
+              "val_loss_discrete": 1.17675164103508,
+              "val_loss_relaxed": 1.1732676196098328
+            },
+            "step": 20000
+          },
+          {
+            "kind": "final",
+            "metrics": {
+              "val_acc_discrete": 0.5947999894618988,
+              "val_acc_relaxed": 0.5947999846935272,
+              "val_loss_discrete": 1.17675164103508,
+              "val_loss_relaxed": 1.1732676196098328
+            },
+            "step": 20000
+          }
+        ]
+      },
+      "seed": 1
+    },
+    {
+      "archived_reference_indices_match": true,
+      "arms": {
+        "RR": {
+          "arm": "RR",
+          "cost_note": "Reference construction remains in layer metadata; add null_construction_seconds once",
+          "layers": [
+            {
+              "accepted": 5118982,
+              "changed_pair_multiset": true,
+              "depth": 0,
+              "exact_per_node_slot_degrees": true,
+              "nontrivial_swaps": 5118355,
+              "output_sha256": "426b3f79e94fa632eb9728b3ea34801db8c9a6375eb37758d86b4d9588c21e33",
+              "proposals": 5120000,
+              "reference_sha256": "2d2e34cd1bd3a74b98af348b707465aa9a74f4d04510b85c77d1bdc0d61feefd",
+              "rounds_per_slot": 40,
+              "seed": 1896133715,
+              "seed_entropy": [
+                20260906,
+                2,
+                0
+              ],
+              "structured": false,
+              "unchanged_edge_fraction": 0.0001171875
+            },
+            {
+              "accepted": 5120000,
+              "changed_pair_multiset": true,
+              "depth": 1,
+              "exact_per_node_slot_degrees": true,
+              "nontrivial_swaps": 5119954,
+              "output_sha256": "464e58478d897ce1605ba243965f4b859a257acce26fd7cba3561477cee0b763",
+              "proposals": 5120000,
+              "reference_sha256": "847e57003a0e8699d120b66931697bdb6e27f776eb0ec6fb37e3dbdd2ec4fcca",
+              "rounds_per_slot": 40,
+              "seed": 3971336663,
+              "seed_entropy": [
+                20260906,
+                2,
+                1
+              ],
+              "structured": false,
+              "unchanged_edge_fraction": 1.953125e-05
+            },
+            {
+              "accepted": 5119935,
+              "changed_pair_multiset": true,
+              "depth": 2,
+              "exact_per_node_slot_degrees": true,
+              "nontrivial_swaps": 5119933,
+              "output_sha256": "5d133e23da595b773cb160807f6643fa8a93e1a4cb1c6df443d893ac2938f95a",
+              "proposals": 5120000,
+              "reference_sha256": "4306354126c0594af8264758282d18f5504ce5262edc1f70a04f0fb6ec602e7b",
+              "rounds_per_slot": 40,
+              "seed": 2927634945,
+              "seed_entropy": [
+                20260906,
+                2,
+                2
+              ],
+              "structured": false,
+              "unchanged_edge_fraction": 1.171875e-05
+            },
+            {
+              "accepted": 5119995,
+              "changed_pair_multiset": true,
+              "depth": 3,
+              "exact_per_node_slot_degrees": true,
+              "nontrivial_swaps": 5119956,
+              "output_sha256": "2911a0e7439e33a7acf40239ad8bc013a3803ed2192a1779b09b0618f3a745e4",
+              "proposals": 5120000,
+              "reference_sha256": "0cfd03e0a80357d70fe6cdfebc56350525898c7995b4a3ad0bd8afd4e2a563df",
+              "rounds_per_slot": 40,
+              "seed": 2552440923,
+              "seed_entropy": [
+                20260906,
+                2,
+                3
+              ],
+              "structured": false,
+              "unchanged_edge_fraction": 1.171875e-05
+            }
+          ],
+          "null_construction_seconds": 0.5218583261594176,
+          "reference_indices_sha256": [
+            "2d2e34cd1bd3a74b98af348b707465aa9a74f4d04510b85c77d1bdc0d61feefd",
+            "847e57003a0e8699d120b66931697bdb6e27f776eb0ec6fb37e3dbdd2ec4fcca",
+            "4306354126c0594af8264758282d18f5504ce5262edc1f70a04f0fb6ec602e7b",
+            "0cfd03e0a80357d70fe6cdfebc56350525898c7995b4a3ad0bd8afd4e2a563df"
+          ],
+          "topology_seed": 2
+        },
+        "RS": {
+          "arm": "RS",
+          "cost_note": "Reference construction remains in layer metadata; add null_construction_seconds once",
+          "layers": [
+            {
+              "accepted": 5118982,
+              "changed_pair_multiset": true,
+              "depth": 0,
+              "exact_per_node_slot_degrees": true,
+              "nontrivial_swaps": 5118355,
+              "output_sha256": "426b3f79e94fa632eb9728b3ea34801db8c9a6375eb37758d86b4d9588c21e33",
+              "proposals": 5120000,
+              "reference_sha256": "2d2e34cd1bd3a74b98af348b707465aa9a74f4d04510b85c77d1bdc0d61feefd",
+              "rounds_per_slot": 40,
+              "seed": 1896133715,
+              "seed_entropy": [
+                20260906,
+                2,
+                0
+              ],
+              "structured": false,
+              "unchanged_edge_fraction": 0.0001171875
+            },
+            {
+              "depth": 1,
+              "output_sha256": "847e57003a0e8699d120b66931697bdb6e27f776eb0ec6fb37e3dbdd2ec4fcca",
+              "structured": true
+            },
+            {
+              "depth": 2,
+              "output_sha256": "4306354126c0594af8264758282d18f5504ce5262edc1f70a04f0fb6ec602e7b",
+              "structured": true
+            },
+            {
+              "depth": 3,
+              "output_sha256": "0cfd03e0a80357d70fe6cdfebc56350525898c7995b4a3ad0bd8afd4e2a563df",
+              "structured": true
+            }
+          ],
+          "null_construction_seconds": 0.1321460329927504,
+          "reference_indices_sha256": [
+            "2d2e34cd1bd3a74b98af348b707465aa9a74f4d04510b85c77d1bdc0d61feefd",
+            "847e57003a0e8699d120b66931697bdb6e27f776eb0ec6fb37e3dbdd2ec4fcca",
+            "4306354126c0594af8264758282d18f5504ce5262edc1f70a04f0fb6ec602e7b",
+            "0cfd03e0a80357d70fe6cdfebc56350525898c7995b4a3ad0bd8afd4e2a563df"
+          ],
+          "topology_seed": 2
+        },
+        "SR": {
+          "arm": "SR",
+          "cost_note": "Reference construction remains in layer metadata; add null_construction_seconds once",
+          "layers": [
+            {
+              "depth": 0,
+              "output_sha256": "2d2e34cd1bd3a74b98af348b707465aa9a74f4d04510b85c77d1bdc0d61feefd",
+              "structured": true
+            },
+            {
+              "accepted": 5120000,
+              "changed_pair_multiset": true,
+              "depth": 1,
+              "exact_per_node_slot_degrees": true,
+              "nontrivial_swaps": 5119954,
+              "output_sha256": "464e58478d897ce1605ba243965f4b859a257acce26fd7cba3561477cee0b763",
+              "proposals": 5120000,
+              "reference_sha256": "847e57003a0e8699d120b66931697bdb6e27f776eb0ec6fb37e3dbdd2ec4fcca",
+              "rounds_per_slot": 40,
+              "seed": 3971336663,
+              "seed_entropy": [
+                20260906,
+                2,
+                1
+              ],
+              "structured": false,
+              "unchanged_edge_fraction": 1.953125e-05
+            },
+            {
+              "accepted": 5119935,
+              "changed_pair_multiset": true,
+              "depth": 2,
+              "exact_per_node_slot_degrees": true,
+              "nontrivial_swaps": 5119933,
+              "output_sha256": "5d133e23da595b773cb160807f6643fa8a93e1a4cb1c6df443d893ac2938f95a",
+              "proposals": 5120000,
+              "reference_sha256": "4306354126c0594af8264758282d18f5504ce5262edc1f70a04f0fb6ec602e7b",
+              "rounds_per_slot": 40,
+              "seed": 2927634945,
+              "seed_entropy": [
+                20260906,
+                2,
+                2
+              ],
+              "structured": false,
+              "unchanged_edge_fraction": 1.171875e-05
+            },
+            {
+              "accepted": 5119995,
+              "changed_pair_multiset": true,
+              "depth": 3,
+              "exact_per_node_slot_degrees": true,
+              "nontrivial_swaps": 5119956,
+              "output_sha256": "2911a0e7439e33a7acf40239ad8bc013a3803ed2192a1779b09b0618f3a745e4",
+              "proposals": 5120000,
+              "reference_sha256": "0cfd03e0a80357d70fe6cdfebc56350525898c7995b4a3ad0bd8afd4e2a563df",
+              "rounds_per_slot": 40,
+              "seed": 2552440923,
+              "seed_entropy": [
+                20260906,
+                2,
+                3
+              ],
+              "structured": false,
+              "unchanged_edge_fraction": 1.171875e-05
+            }
+          ],
+          "null_construction_seconds": 0.39351697685196996,
+          "reference_indices_sha256": [
+            "2d2e34cd1bd3a74b98af348b707465aa9a74f4d04510b85c77d1bdc0d61feefd",
+            "847e57003a0e8699d120b66931697bdb6e27f776eb0ec6fb37e3dbdd2ec4fcca",
+            "4306354126c0594af8264758282d18f5504ce5262edc1f70a04f0fb6ec602e7b",
+            "0cfd03e0a80357d70fe6cdfebc56350525898c7995b4a3ad0bd8afd4e2a563df"
+          ],
+          "topology_seed": 2
+        },
+        "SS": {
+          "arm": "SS",
+          "cost_note": "Reference construction remains in layer metadata; add null_construction_seconds once",
+          "layers": [
+            {
+              "depth": 0,
+              "output_sha256": "2d2e34cd1bd3a74b98af348b707465aa9a74f4d04510b85c77d1bdc0d61feefd",
+              "structured": true
+            },
+            {
+              "depth": 1,
+              "output_sha256": "847e57003a0e8699d120b66931697bdb6e27f776eb0ec6fb37e3dbdd2ec4fcca",
+              "structured": true
+            },
+            {
+              "depth": 2,
+              "output_sha256": "4306354126c0594af8264758282d18f5504ce5262edc1f70a04f0fb6ec602e7b",
+              "structured": true
+            },
+            {
+              "depth": 3,
+              "output_sha256": "0cfd03e0a80357d70fe6cdfebc56350525898c7995b4a3ad0bd8afd4e2a563df",
+              "structured": true
+            }
+          ],
+          "null_construction_seconds": 0.0036364831030368805,
+          "reference_indices_sha256": [
+            "2d2e34cd1bd3a74b98af348b707465aa9a74f4d04510b85c77d1bdc0d61feefd",
+            "847e57003a0e8699d120b66931697bdb6e27f776eb0ec6fb37e3dbdd2ec4fcca",
+            "4306354126c0594af8264758282d18f5504ce5262edc1f70a04f0fb6ec602e7b",
+            "0cfd03e0a80357d70fe6cdfebc56350525898c7995b4a3ad0bd8afd4e2a563df"
+          ],
+          "topology_seed": 2
+        }
+      },
+      "cost": {
+        "candidate_indices_tensor_bytes": 8192000,
+        "dense_gate_count": 512000,
+        "deployed_routing_bits": 16640000,
+        "deployed_routing_bytes_packed": 2080000,
+        "trainable_parameters": 8192000,
+        "training_routing_parameters": 0
+      },
+      "initial_parameters_sha256": "bb3371d725f7c5393b57993cd07af1287e65e9f87194f8193f34a0e5f3b4dee0",
+      "reuse": {
+        "artifacts": {
+          "best_checkpoint.pt": "45afed6c00401c16e540eee31e0b2069f48b3778124552fbb6ac1d7a71f10fcb",
+          "environment.json": "d5d35fd3c8de5cca154d052a0afda6ab3a9b8d68dc0c26203dd3f7ab78eae4a5",
+          "final_checkpoint.pt": "052bd672652747292b2d9b63dbd079bd958af9aa14a91b1d98f3c7bf1eca1b9f",
+          "metrics.csv": "8468e637da6b7c3bdf957891dbd7dd3073a0444189dfb50118a2d2022da3bba2",
+          "run_summary.json": "6cbff4cec00275295a5873c84eafdc131ebdcbf6116192a59138052480962d65",
+          "topology.json": "d551228f44c9fbdbb060ff6ebdfa9bd1f31fefca601452243122b2180f1c42d5",
+          "training_config.json": "249f49e30ff19be38d9d945b966873393f8938b47a119356fcd976427e9d6b81"
+        },
+        "metadata": [
+          {
+            "kind": "best",
+            "metrics": {
+              "val_acc_discrete": 0.5905999886989594,
+              "val_acc_relaxed": 0.5899999868869782,
+              "val_loss_discrete": 1.1746758258342742,
+              "val_loss_relaxed": 1.169190938472748
+            },
+            "step": 20000
+          },
+          {
+            "kind": "final",
+            "metrics": {
+              "val_acc_discrete": 0.5905999886989594,
+              "val_acc_relaxed": 0.5899999868869782,
+              "val_loss_discrete": 1.1746758258342742,
+              "val_loss_relaxed": 1.169190938472748
+            },
+            "step": 20000
+          }
+        ]
+      },
+      "seed": 2
+    }
+  ],
+  "nominal": [
+    {
+      "archived_wiring_match": true,
+      "coordinate": "dense_m",
+      "layers": [
+        {
+          "layer_index": 0,
+          "sha256": "2e5ac9edf16a87dbe8e5de73139c55c563b7c006e38944aeda669128019cd502",
+          "shape": [
+            2,
+            128000
+          ]
+        },
+        {
+          "layer_index": 1,
+          "sha256": "c32b45ac9feac27277394f3b7614ae84740a5ba3023528f1042bec8226f58ada",
+          "shape": [
+            2,
+            128000
+          ]
+        },
+        {
+          "layer_index": 2,
+          "sha256": "3b209051636a748b2976a4cb3692af117946bb9e101d030b46feb82e85e7ff9b",
+          "shape": [
+            2,
+            128000
+          ]
+        },
+        {
+          "layer_index": 3,
+          "sha256": "125985fd6b14144069cb5c915e2dc49c8d72db4b4def33769d918ca4a1a6dcce",
+          "shape": [
+            2,
+            128000
+          ]
+        }
+      ],
+      "seed": 0
+    },
+    {
+      "archived_wiring_match": true,
+      "coordinate": "dense_m",
+      "layers": [
+        {
+          "layer_index": 0,
+          "sha256": "02679f0c37476940bc930ef6acf50b68d5b83aa89c148081fe353d09f6215e85",
+          "shape": [
+            2,
+            128000
+          ]
+        },
+        {
+          "layer_index": 1,
+          "sha256": "c9b76b5e297cc772f029d9b6d234aa12b8c956f299a82101270a3a0dfdbab36e",
+          "shape": [
+            2,
+            128000
+          ]
+        },
+        {
+          "layer_index": 2,
+          "sha256": "8f9489410177b111f930d5917d8b2cc05f9b23d07ceb0677d29e0d39e8b66f0b",
+          "shape": [
+            2,
+            128000
+          ]
+        },
+        {
+          "layer_index": 3,
+          "sha256": "c2b971ddf5f206e96a801782044a357b72c2655ab09cf5750c9cc19b6dd7a209",
+          "shape": [
+            2,
+            128000
+          ]
+        }
+      ],
+      "seed": 1
+    },
+    {
+      "archived_wiring_match": true,
+      "coordinate": "dense_m",
+      "layers": [
+        {
+          "layer_index": 0,
+          "sha256": "2d2e34cd1bd3a74b98af348b707465aa9a74f4d04510b85c77d1bdc0d61feefd",
+          "shape": [
+            2,
+            128000
+          ]
+        },
+        {
+          "layer_index": 1,
+          "sha256": "c227b46b5cc48d6c752f0c00d3773865b79aad486ba292a83e6414c093acbfe2",
+          "shape": [
+            2,
+            128000
+          ]
+        },
+        {
+          "layer_index": 2,
+          "sha256": "aa0325fb31078f83a5d2a183c3cafd334f56cc04b96783274782087bdb6b5880",
+          "shape": [
+            2,
+            128000
+          ]
+        },
+        {
+          "layer_index": 3,
+          "sha256": "f8ec520d51835341317ad8337281dc487daff4e53c9540a8a93e1349ae7a4aeb",
+          "shape": [
+            2,
+            128000
+          ]
+        }
+      ],
+      "seed": 2
+    },
+    {
+      "archived_wiring_match": true,
+      "coordinate": "conv_s",
+      "layers": [
+        {
+          "layer_index": 0,
+          "sha256": "2b8c5839f678ef28fa036c7f6f8f77d37720a0b440bf0931b4d56167b735b7e6",
+          "shape": [
+            2,
+            32
+          ]
+        },
+        {
+          "layer_index": 1,
+          "sha256": "c89ac57306cc946a6e681066249fc48558a4dced6a690a4371e68d4a5c46f082",
+          "shape": [
+            2,
+            128
+          ]
+        },
+        {
+          "layer_index": 2,
+          "sha256": "31e6d60204b2bf916272f7e95313aaf83a6acdf4d977d9628b963ae49c8b3f7f",
+          "shape": [
+            2,
+            512
+          ]
+        },
+        {
+          "layer_index": 3,
+          "sha256": "efa8eec096c0a716080b3d2c392d6ef4cf6baffdd7cf0f4c6808d1cc52f3092d",
+          "shape": [
+            2,
+            1024
+          ]
+        },
+        {
+          "layer_index": 4,
+          "sha256": "2de4e018bfca73664f96fca5fa9f7c70495a9d7a67b28cbc6931397b5c49a54c",
+          "shape": [
+            2,
+            40960
+          ]
+        },
+        {
+          "layer_index": 5,
+          "sha256": "9bd1e64dc55a6fa722b13dabea44eff93f19bbc8632ee909ccded7848a458643",
+          "shape": [
+            2,
+            20480
+          ]
+        },
+        {
+          "layer_index": 6,
+          "sha256": "83d91c14fbc5af569514c18bf4f0a264f0726bafc46de82858404d379c50bcdc",
+          "shape": [
+            2,
+            10240
+          ]
+        }
+      ],
+      "seed": 0
+    },
+    {
+      "archived_wiring_match": true,
+      "coordinate": "conv_s",
+      "layers": [
+        {
+          "layer_index": 0,
+          "sha256": "2b8c5839f678ef28fa036c7f6f8f77d37720a0b440bf0931b4d56167b735b7e6",
+          "shape": [
+            2,
+            32
+          ]
+        },
+        {
+          "layer_index": 1,
+          "sha256": "9572553a927b904c725166bd39f894e341f4eee5612601d51e678c48a1e849cf",
+          "shape": [
+            2,
+            128
+          ]
+        },
+        {
+          "layer_index": 2,
+          "sha256": "ab24949923970379a1db6c29b4215d8d23dc0d61d6c0caa47be6286eb3743570",
+          "shape": [
+            2,
+            512
+          ]
+        },
+        {
+          "layer_index": 3,
+          "sha256": "e06afc51a020ce49697142f028c97039959fb12f98a00a51fb684f49932a26b0",
+          "shape": [
+            2,
+            1024
+          ]
+        },
+        {
+          "layer_index": 4,
+          "sha256": "2de4e018bfca73664f96fca5fa9f7c70495a9d7a67b28cbc6931397b5c49a54c",
+          "shape": [
+            2,
+            40960
+          ]
+        },
+        {
+          "layer_index": 5,
+          "sha256": "cdb289f7f80fee9fdccbf1c7d731d56606d10a7b7d64b66f4d3600fb41f5135d",
+          "shape": [
+            2,
+            20480
+          ]
+        },
+        {
+          "layer_index": 6,
+          "sha256": "e28a27a477c2c81173ae16282a231666df1a50f322b573eb7005c9e69372c661",
+          "shape": [
+            2,
+            10240
+          ]
+        }
+      ],
+      "seed": 1
+    },
+    {
+      "archived_wiring_match": true,
+      "coordinate": "conv_s",
+      "layers": [
+        {
+          "layer_index": 0,
+          "sha256": "2b8c5839f678ef28fa036c7f6f8f77d37720a0b440bf0931b4d56167b735b7e6",
+          "shape": [
+            2,
+            32
+          ]
+        },
+        {
+          "layer_index": 1,
+          "sha256": "dfca699770b419831f66d663cbca7c9927baa42befae6bc4855e9be8a30db8a5",
+          "shape": [
+            2,
+            128
+          ]
+        },
+        {
+          "layer_index": 2,
+          "sha256": "4fe24221ca7c55a51e7e36ab1562869e904c6be059950819b3038835bf7c71d1",
+          "shape": [
+            2,
+            512
+          ]
+        },
+        {
+          "layer_index": 3,
+          "sha256": "d813ef1b26aa6eeefc254c9f0f01b9824e69b6ee43eae4b26bf0f1b44ddc2147",
+          "shape": [
+            2,
+            1024
+          ]
+        },
+        {
+          "layer_index": 4,
+          "sha256": "1978bbaea9941e51afeffa597b6a588ab17c5bf3f405c7d58095ba44d5596adb",
+          "shape": [
+            2,
+            40960
+          ]
+        },
+        {
+          "layer_index": 5,
+          "sha256": "9eb629ac347e625c7e92512d72013670b698cb145478aacb65196009d911338d",
+          "shape": [
+            2,
+            20480
+          ]
+        },
+        {
+          "layer_index": 6,
+          "sha256": "19a5c4201222d07b6df9db4a1982e4ce45b38a7384ad4c3a167c156c9e6fbe27",
+          "shape": [
+            2,
+            10240
+          ]
+        }
+      ],
+      "seed": 2
+    }
+  ],
+  "status": "pass"
+}

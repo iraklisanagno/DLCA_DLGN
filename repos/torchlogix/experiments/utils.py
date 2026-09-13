@@ -165,6 +165,7 @@ def get_model(thresholds, args):
     llkw = {
         "connections": args.connections,
         "connections_kwargs": {
+            "classifier_reference_u2": getattr(args, "classifier_reference_u2", False),
             "init_method": args.connections_init_method,
             "conv_init_method": getattr(
                 args, "conv_connections_init_method", None

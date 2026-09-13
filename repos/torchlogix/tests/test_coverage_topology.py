@@ -559,14 +559,15 @@ def test_coverage_reuse_zero_change_is_exact_base_and_validates_weight():
         )
 
 
-def test_semantic_stack_reports_source_and_group_diagnostics():
+@pytest.mark.parametrize("strategy", ["semantic_balanced_hybrid", "semantic_multiscale_balanced"])
+def test_semantic_stack_reports_source_and_group_diagnostics(strategy):
     semantics = image_input_semantics(
         1, 4, 4, 3, layout="pixel_interleaved"
     )
     _, rows = generate_dense_stack(
         semantics.n_inputs,
         [64, 64],
-        strategy="semantic_balanced_hybrid",
+        strategy=strategy,
         topology_seed=3,
         input_semantics=semantics,
         candidate_pool_size=8,
@@ -577,6 +578,25 @@ def test_semantic_stack_reports_source_and_group_diagnostics():
     assert rows[0]["same_source_pair_fraction"] == 0.0
     assert 0.0 <= rows[-1]["source_cross_gate_jaccard_mean"] <= 1.0
     assert 0.0 <= rows[-1]["source_group_coverage_min"] <= 1.0
+
+
+def test_u2_stack_matches_model_semantic_ancestry_path():
+    semantics = image_input_semantics(1, 4, 4, 3, layout="pixel_interleaved")
+    stack, rows = generate_dense_stack(
+        semantics.n_inputs, [64, 64, 64], strategy="semantic_multiscale_balanced",
+        topology_seed=3, input_semantics=semantics,
+    )
+    ancestry = semantics.source_ancestry()
+    for depth, result in enumerate(stack):
+        expected = generate_dense_topology(
+            ancestry.shape[0], 64, strategy="semantic_multiscale_balanced",
+            topology_seed=3, layer_index=depth, input_ancestry=ancestry,
+            input_semantics=semantics if depth == 0 else None,
+        )
+        assert np.array_equal(result.indices, expected.indices)
+        assert np.array_equal(result.output_ancestry, expected.output_ancestry)
+        ancestry = expected.output_ancestry
+        assert rows[depth]["source_original_inputs"] == 16
 
 
 def test_classwise_ancestry_metrics_detect_group_imbalance():

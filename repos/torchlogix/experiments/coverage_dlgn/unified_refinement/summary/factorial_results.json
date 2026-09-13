@@ -1,0 +1,1043 @@
+{
+  "contrasts": {
+    "best_validation_hard_pct": {
+      "deeper_given_randomized_first": {
+        "ci95_pp": [
+          -2.684513135836794,
+          2.1111790777109753
+        ],
+        "losses": 2,
+        "mean_pp": -0.28666702906290925,
+        "n": 3,
+        "raw_pp": [
+          -0.5399998426437449,
+          0.7799990773200918,
+          -1.1000003218650747
+        ],
+        "sample_sd_pp": 0.965262954361004,
+        "ties": 0,
+        "wins": 1
+      },
+      "deeper_given_structured_first": {
+        "ci95_pp": [
+          -0.5233375152864236,
+          1.5633383513409078
+        ],
+        "losses": 0,
+        "mean_pp": 0.5200004180272421,
+        "n": 3,
+        "raw_pp": [
+          0.04000037908554077,
+          0.7000004053115845,
+          0.8200004696846008
+        ],
+        "sample_sd_pp": 0.42000003797667457,
+        "ties": 0,
+        "wins": 3
+      },
+      "first_given_randomized_deeper": {
+        "ci95_pp": [
+          1.6205962833944239,
+          5.7527359389083355
+        ],
+        "losses": 0,
+        "mean_pp": 3.68666611115138,
+        "n": 3,
+        "raw_pp": [
+          4.019999563694,
+          4.299999296665192,
+          2.7399994730949473
+        ],
+        "sample_sd_pp": 0.8317050290354062,
+        "ties": 0,
+        "wins": 3
+      },
+      "first_given_structured_deeper": {
+        "ci95_pp": [
+          3.9006015183792835,
+          5.086065598103779
+        ],
+        "losses": 0,
+        "mean_pp": 4.493333558241531,
+        "n": 3,
+        "raw_pp": [
+          4.599999785423286,
+          4.220000624656684,
+          4.660000264644623
+        ],
+        "sample_sd_pp": 0.2386067555901785,
+        "ties": 0,
+        "wins": 3
+      },
+      "interaction": {
+        "ci95_pp": [
+          -1.7248785090141237,
+          3.338213403194426
+        ],
+        "losses": 1,
+        "mean_pp": 0.8066674470901513,
+        "n": 3,
+        "raw_pp": [
+          0.5800002217292857,
+          -0.0799986720085073,
+          1.9200007915496755
+        ],
+        "sample_sd_pp": 1.0190843865195118,
+        "ties": 0,
+        "wins": 2
+      }
+    },
+    "final_validation_hard_pct": {
+      "deeper_given_randomized_first": {
+        "ci95_pp": [
+          -2.6421086806126635,
+          2.428775630202706
+        ],
+        "losses": 1,
+        "mean_pp": -0.10666652520497877,
+        "n": 3,
+        "raw_pp": [
+          0.25999993085861206,
+          0.6799997091293335,
+          -1.2599992156028819
+        ],
+        "sample_sd_pp": 1.020652817804474,
+        "ties": 0,
+        "wins": 2
+      },
+      "deeper_given_structured_first": {
+        "ci95_pp": [
+          -0.17697867634179065,
+          1.5903119731176132
+        ],
+        "losses": 0,
+        "mean_pp": 0.7066666483879113,
+        "n": 3,
+        "raw_pp": [
+          0.30000007152558084,
+          0.8600003123283457,
+          0.9599995613098073
+        ],
+        "sample_sd_pp": 0.3557151121359738,
+        "ties": 0,
+        "wins": 3
+      },
+      "first_given_randomized_deeper": {
+        "ci95_pp": [
+          1.4956884242437263,
+          6.07764507757207
+        ],
+        "losses": 0,
+        "mean_pp": 3.786666750907898,
+        "n": 3,
+        "raw_pp": [
+          4.479999840259552,
+          4.13999938964843,
+          2.7400010228157115
+        ],
+        "sample_sd_pp": 0.9222428836136398,
+        "ties": 0,
+        "wins": 3
+      },
+      "first_given_structured_deeper": {
+        "ci95_pp": [
+          3.786658444408755,
+          5.413341404592821
+        ],
+        "losses": 0,
+        "mean_pp": 4.599999924500788,
+        "n": 3,
+        "raw_pp": [
+          4.519999980926521,
+          4.319999992847443,
+          4.959999799728401
+        ],
+        "sample_sd_pp": 0.32741400616166433,
+        "ties": 0,
+        "wins": 3
+      },
+      "interaction": {
+        "ci95_pp": [
+          -2.21785551626294,
+          3.84452186344872
+        ],
+        "losses": 0,
+        "mean_pp": 0.81333317359289,
+        "n": 3,
+        "raw_pp": [
+          0.040000140666968775,
+          0.18000060319901223,
+          2.219998776912689
+        ],
+        "sample_sd_pp": 1.2202176535559497,
+        "ties": 0,
+        "wins": 3
+      }
+    },
+    "final_validation_relaxed_pct": {
+      "deeper_given_randomized_first": {
+        "ci95_pp": [
+          -2.5965536942820964,
+          2.48988712934069
+        ],
+        "losses": 1,
+        "mean_pp": -0.053333282470703125,
+        "n": 3,
+        "raw_pp": [
+          0.2000001072883677,
+          0.8200001716613698,
+          -1.180000126361847
+        ],
+        "sample_sd_pp": 1.0237839873715329,
+        "ties": 0,
+        "wins": 2
+      },
+      "deeper_given_structured_first": {
+        "ci95_pp": [
+          -0.8383737044913564,
+          1.4383738475425039
+        ],
+        "losses": 1,
+        "mean_pp": 0.30000007152557373,
+        "n": 3,
+        "raw_pp": [
+          -0.1999993920326233,
+          0.6999997496604919,
+          0.39999985694885254
+        ],
+        "sample_sd_pp": 0.4582571129569211,
+        "ties": 0,
+        "wins": 2
+      },
+      "first_given_randomized_deeper": {
+        "ci95_pp": [
+          1.8038271824619718,
+          6.169505898147667
+        ],
+        "losses": 0,
+        "mean_pp": 3.9866665403048196,
+        "n": 3,
+        "raw_pp": [
+          4.599999725818634,
+          4.3799999356269765,
+          2.9799999594688487
+        ],
+        "sample_sd_pp": 0.878711090546877,
+        "ties": 0,
+        "wins": 3
+      },
+      "first_given_structured_deeper": {
+        "ci95_pp": [
+          3.8608767982950476,
+          4.819122990307146
+        ],
+        "losses": 0,
+        "mean_pp": 4.339999894301097,
+        "n": 3,
+        "raw_pp": [
+          4.200000226497643,
+          4.259999513626099,
+          4.559999942779548
+        ],
+        "sample_sd_pp": 0.19287300125178608,
+        "ties": 0,
+        "wins": 3
+      },
+      "interaction": {
+        "ci95_pp": [
+          -2.308444414253135,
+          3.015111122245689
+        ],
+        "losses": 2,
+        "mean_pp": 0.35333335399627686,
+        "n": 3,
+        "raw_pp": [
+          -0.399999499320991,
+          -0.1200004220008779,
+          1.5799999833106995
+        ],
+        "sample_sd_pp": 1.0715097458400618,
+        "ties": 0,
+        "wins": 1
+      }
+    }
+  },
+  "execution_freeze_sha256": "77bd84bc23601c5e127b81a0d4108ee4e32259faaab2de00d7ce9bbdf4399ae1",
+  "limitations": [
+    "Five exploratory unadjusted paired intervals; n=3",
+    "Exact per-node per-slot null is not native random or a uniform graph sampler",
+    "Conditional effects, not semantic ordering alone"
+  ],
+  "phase": "factorial",
+  "provenance": "OUR",
+  "rows": [
+    {
+      "arm": "SS",
+      "artifacts": {
+        "best_checkpoint.pt": "24c203cf906ceb0ddd9455cac231127d9d6a1cb88b481ced9d043da4c327691e",
+        "environment.json": "4d458cd3e204c8f2366d4695dc830ab4e8bd5088ca9920fce71e8107516b9a39",
+        "final_checkpoint.pt": "e179a79643131c672268ce5cd99416e081a06d20e86758fe0637ffa1b4bc1e48",
+        "metrics.csv": "c45da74cb9702f86ea5dccf7ac5fd483e6e0dd7029d7b2aac5624fae91969c24",
+        "run_summary.json": "d3667f79d6ce46a15b94f69f46ddd5373f8b14ced162e205cb0112e737ac3bb0",
+        "topology.json": "2b970d6f8b76c11793071c3b490133c8034204590c023691af0aeda3cf30894f",
+        "training_config.json": "8939869848795eadee21a7230f18c25c8d54badb84b204b26004f4d43db2a30a"
+      },
+      "best_validation_hard_pct": 58.85999858379364,
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_factorial_dense_m_ss_seed0.json",
+      "cost": {
+        "candidate_indices_tensor_bytes": 8192000,
+        "dense_gate_count": 512000,
+        "deployed_routing_bits": 16640000,
+        "deployed_routing_bytes_packed": 2080000,
+        "trainable_parameters": 8192000,
+        "training_routing_parameters": 0
+      },
+      "final_validation_hard_pct": 58.779998779296875,
+      "final_validation_relaxed_pct": 58.79999887943268,
+      "metadata": [
+        {
+          "kind": "best",
+          "metrics": {
+            "val_acc_discrete": 0.5885999858379364,
+            "val_acc_relaxed": 0.5873999881744385,
+            "val_loss_discrete": 1.183579901456833,
+            "val_loss_relaxed": 1.1747930788993834
+          },
+          "step": 12000
+        },
+        {
+          "kind": "final",
+          "metrics": {
+            "val_acc_discrete": 0.5877999877929687,
+            "val_acc_relaxed": 0.5879999887943268,
+            "val_loss_discrete": 1.1809463214874267,
+            "val_loss_relaxed": 1.173205931186676
+          },
+          "step": 20000
+        }
+      ],
+      "name": "ur1_factorial_dense_m_ss_seed0",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed0",
+      "peak_gpu_memory_bytes": 1206192640,
+      "phase": "factorial",
+      "reference_artifacts": {
+        "best_checkpoint.pt": "24c203cf906ceb0ddd9455cac231127d9d6a1cb88b481ced9d043da4c327691e",
+        "environment.json": "4d458cd3e204c8f2366d4695dc830ab4e8bd5088ca9920fce71e8107516b9a39",
+        "final_checkpoint.pt": "e179a79643131c672268ce5cd99416e081a06d20e86758fe0637ffa1b4bc1e48",
+        "metrics.csv": "c45da74cb9702f86ea5dccf7ac5fd483e6e0dd7029d7b2aac5624fae91969c24",
+        "run_summary.json": "d3667f79d6ce46a15b94f69f46ddd5373f8b14ced162e205cb0112e737ac3bb0",
+        "topology.json": "2b970d6f8b76c11793071c3b490133c8034204590c023691af0aeda3cf30894f",
+        "training_config.json": "8939869848795eadee21a7230f18c25c8d54badb84b204b26004f4d43db2a30a"
+      },
+      "reference_output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed0",
+      "reuse": true,
+      "seed": 0,
+      "wall_seconds": 465.88061423413455
+    },
+    {
+      "arm": "SR",
+      "artifacts": {
+        "best_checkpoint.pt": "833268a6f2aab0559a689b4065283dcd545174e47ed6494e88e19af4dcfa82fb",
+        "environment.json": "428731b7954abe6fca1bfe68f8a185dd5b7521afa084edffc7402bd3c1d0faad",
+        "final_checkpoint.pt": "8cab384a7068dc76e726efb9811b44839ec64f0f78c1dfe6891b7a950774256a",
+        "metrics.csv": "bfe816e1503ede9e1ada8fdfc5b86d5adf0c4bf27de1549b317b49c842b78495",
+        "run_summary.json": "7a8164cbbe265c61ba1906b6abcde64a2794e353ef16d867b3e6fc21938a479f",
+        "topology.json": "29190dd80b5ab7c7daf70657fae16736abb8a41aea9f76b0f3aacf7cc0d799f1",
+        "training_config.json": "2649d9023c0d0ab7a9e43315fe1835916de4108db4f8a9e38baa4a9ab2858d95",
+        "ur1_construction.json": "64cfa5efbc384909156e1cd0eba050575ad294bc459a39fdd952cac2ba77ea70"
+      },
+      "best_validation_hard_pct": 58.8199982047081,
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_factorial_dense_m_sr_seed0.json",
+      "cost": {
+        "candidate_indices_tensor_bytes": 8192000,
+        "dense_gate_count": 512000,
+        "deployed_routing_bits": 16640000,
+        "deployed_routing_bytes_packed": 2080000,
+        "trainable_parameters": 8192000,
+        "training_routing_parameters": 0
+      },
+      "final_validation_hard_pct": 58.479998707771294,
+      "final_validation_relaxed_pct": 58.9999982714653,
+      "metadata": [
+        {
+          "kind": "best",
+          "metrics": {
+            "val_acc_discrete": 0.588199982047081,
+            "val_acc_relaxed": 0.5925999879837036,
+            "val_loss_discrete": 1.1712081277370452,
+            "val_loss_relaxed": 1.1645282542705535
+          },
+          "step": 14000
+        },
+        {
+          "kind": "final",
+          "metrics": {
+            "val_acc_discrete": 0.584799987077713,
+            "val_acc_relaxed": 0.589999982714653,
+            "val_loss_discrete": 1.1701437759399413,
+            "val_loss_relaxed": 1.1651659536361694
+          },
+          "step": 20000
+        }
+      ],
+      "name": "ur1_factorial_dense_m_sr_seed0",
+      "output": "experiments/coverage_dlgn/unified_refinement/results/ur1_factorial_dense_m_sr_seed0",
+      "peak_gpu_memory_bytes": 1206192640,
+      "phase": "factorial",
+      "reference_artifacts": {
+        "best_checkpoint.pt": "24c203cf906ceb0ddd9455cac231127d9d6a1cb88b481ced9d043da4c327691e",
+        "environment.json": "4d458cd3e204c8f2366d4695dc830ab4e8bd5088ca9920fce71e8107516b9a39",
+        "final_checkpoint.pt": "e179a79643131c672268ce5cd99416e081a06d20e86758fe0637ffa1b4bc1e48",
+        "metrics.csv": "c45da74cb9702f86ea5dccf7ac5fd483e6e0dd7029d7b2aac5624fae91969c24",
+        "run_summary.json": "d3667f79d6ce46a15b94f69f46ddd5373f8b14ced162e205cb0112e737ac3bb0",
+        "topology.json": "2b970d6f8b76c11793071c3b490133c8034204590c023691af0aeda3cf30894f",
+        "training_config.json": "8939869848795eadee21a7230f18c25c8d54badb84b204b26004f4d43db2a30a"
+      },
+      "reference_output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed0",
+      "reuse": false,
+      "seed": 0,
+      "wall_seconds": 460.07031978759915
+    },
+    {
+      "arm": "RS",
+      "artifacts": {
+        "best_checkpoint.pt": "266e3d9e4c90ac7479440b607bb5b2b5fa8ad4d75553ade8696f722e42611a65",
+        "environment.json": "428731b7954abe6fca1bfe68f8a185dd5b7521afa084edffc7402bd3c1d0faad",
+        "final_checkpoint.pt": "96476e7b3c7590f939e2ddfac053f5e8981a3c593775d8d42763163dcfce462f",
+        "metrics.csv": "39239b4a80321e25f2ce8bf7f4230bad87b665f8966668aee7f4eaa08558311d",
+        "run_summary.json": "fd844a80a78728cc22b6e9dfc57f2af67df1524c72a4cb755b1c01458b2c4d48",
+        "topology.json": "36eee0c7d79e85250e9c1bc6a03b7d1470b1746c88af2d490586e72ec20107cf",
+        "training_config.json": "398d43006d364f443f46306647c9a20c0680cf41d0635395b79d280e45350b89",
+        "ur1_construction.json": "44ad5cb7566ffde4338802ec5ba3762ddd07a20e871d1007980ef57a6332ba1f"
+      },
+      "best_validation_hard_pct": 54.259998798370354,
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_factorial_dense_m_rs_seed0.json",
+      "cost": {
+        "candidate_indices_tensor_bytes": 8192000,
+        "dense_gate_count": 512000,
+        "deployed_routing_bits": 16640000,
+        "deployed_routing_bytes_packed": 2080000,
+        "trainable_parameters": 8192000,
+        "training_routing_parameters": 0
+      },
+      "final_validation_hard_pct": 54.259998798370354,
+      "final_validation_relaxed_pct": 54.599998652935035,
+      "metadata": [
+        {
+          "kind": "best",
+          "metrics": {
+            "val_acc_discrete": 0.5425999879837036,
+            "val_acc_relaxed": 0.5459999865293503,
+            "val_loss_discrete": 1.3027740955352782,
+            "val_loss_relaxed": 1.2948791098594665
+          },
+          "step": 20000
+        },
+        {
+          "kind": "final",
+          "metrics": {
+            "val_acc_discrete": 0.5425999879837036,
+            "val_acc_relaxed": 0.5459999865293503,
+            "val_loss_discrete": 1.3027740955352782,
+            "val_loss_relaxed": 1.2948791098594665
+          },
+          "step": 20000
+        }
+      ],
+      "name": "ur1_factorial_dense_m_rs_seed0",
+      "output": "experiments/coverage_dlgn/unified_refinement/results/ur1_factorial_dense_m_rs_seed0",
+      "peak_gpu_memory_bytes": 1206192640,
+      "phase": "factorial",
+      "reference_artifacts": {
+        "best_checkpoint.pt": "24c203cf906ceb0ddd9455cac231127d9d6a1cb88b481ced9d043da4c327691e",
+        "environment.json": "4d458cd3e204c8f2366d4695dc830ab4e8bd5088ca9920fce71e8107516b9a39",
+        "final_checkpoint.pt": "e179a79643131c672268ce5cd99416e081a06d20e86758fe0637ffa1b4bc1e48",
+        "metrics.csv": "c45da74cb9702f86ea5dccf7ac5fd483e6e0dd7029d7b2aac5624fae91969c24",
+        "run_summary.json": "d3667f79d6ce46a15b94f69f46ddd5373f8b14ced162e205cb0112e737ac3bb0",
+        "topology.json": "2b970d6f8b76c11793071c3b490133c8034204590c023691af0aeda3cf30894f",
+        "training_config.json": "8939869848795eadee21a7230f18c25c8d54badb84b204b26004f4d43db2a30a"
+      },
+      "reference_output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed0",
+      "reuse": false,
+      "seed": 0,
+      "wall_seconds": 464.250978265889
+    },
+    {
+      "arm": "RR",
+      "artifacts": {
+        "best_checkpoint.pt": "2d7a8b4e4cccda0859c8eb4b813097fc03d4845d67c19b1683a5ab9c204f6e3b",
+        "environment.json": "c0ad676ecf5f34d210ee9e5bf10c70c20c50fbdf6f79ea1afa762fae4f11b07e",
+        "final_checkpoint.pt": "d25542302a9883cd4ba4193936d92579c34a5fda2ae1ed204fd7138a827764a9",
+        "metrics.csv": "151d396389dd15051d9375a836f55a7c554ba1cfdecb9e1f87939f3955f8a06f",
+        "run_summary.json": "4e9a2d87cecbbe8c199228e7f01c15fabdfc3ae38b571543f4bd3e913f2523a8",
+        "topology.json": "8b00e36b5c7e9ee306ee71dea47380660e7d82c1f200e3ae9eacd817546eb3a9",
+        "training_config.json": "d7f9369ea96ca6d17e830978c60d368a4bb3ec0315b47f6bc95960cc953b8000",
+        "ur1_construction.json": "ab3a27fdd9672b6be7311471624b12c870bd49e93b4a42e04c06a75de3ee19df"
+      },
+      "best_validation_hard_pct": 54.7999986410141,
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_factorial_dense_m_rr_seed0.json",
+      "cost": {
+        "candidate_indices_tensor_bytes": 8192000,
+        "dense_gate_count": 512000,
+        "deployed_routing_bits": 16640000,
+        "deployed_routing_bytes_packed": 2080000,
+        "trainable_parameters": 8192000,
+        "training_routing_parameters": 0
+      },
+      "final_validation_hard_pct": 53.99999886751174,
+      "final_validation_relaxed_pct": 54.39999854564667,
+      "metadata": [
+        {
+          "kind": "best",
+          "metrics": {
+            "val_acc_discrete": 0.547999986410141,
+            "val_acc_relaxed": 0.548799991607666,
+            "val_loss_discrete": 1.317929208278656,
+            "val_loss_relaxed": 1.3052113842964173
+          },
+          "step": 14000
+        },
+        {
+          "kind": "final",
+          "metrics": {
+            "val_acc_discrete": 0.5399999886751174,
+            "val_acc_relaxed": 0.5439999854564667,
+            "val_loss_discrete": 1.312814292907715,
+            "val_loss_relaxed": 1.3055510807037354
+          },
+          "step": 20000
+        }
+      ],
+      "name": "ur1_factorial_dense_m_rr_seed0",
+      "output": "experiments/coverage_dlgn/unified_refinement/results/ur1_factorial_dense_m_rr_seed0",
+      "peak_gpu_memory_bytes": 1206192640,
+      "phase": "factorial",
+      "reference_artifacts": {
+        "best_checkpoint.pt": "24c203cf906ceb0ddd9455cac231127d9d6a1cb88b481ced9d043da4c327691e",
+        "environment.json": "4d458cd3e204c8f2366d4695dc830ab4e8bd5088ca9920fce71e8107516b9a39",
+        "final_checkpoint.pt": "e179a79643131c672268ce5cd99416e081a06d20e86758fe0637ffa1b4bc1e48",
+        "metrics.csv": "c45da74cb9702f86ea5dccf7ac5fd483e6e0dd7029d7b2aac5624fae91969c24",
+        "run_summary.json": "d3667f79d6ce46a15b94f69f46ddd5373f8b14ced162e205cb0112e737ac3bb0",
+        "topology.json": "2b970d6f8b76c11793071c3b490133c8034204590c023691af0aeda3cf30894f",
+        "training_config.json": "8939869848795eadee21a7230f18c25c8d54badb84b204b26004f4d43db2a30a"
+      },
+      "reference_output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed0",
+      "reuse": false,
+      "seed": 0,
+      "wall_seconds": 462.4518351419829
+    },
+    {
+      "arm": "SS",
+      "artifacts": {
+        "best_checkpoint.pt": "e960df0ead1963a1be2a56d6104d6d2af9269cc0cde499c9684b689f45d2def1",
+        "environment.json": "17467dc8d67e714bf4ff3229f7b19b8a9f4906b4b0bd54704fe45730456d2f0f",
+        "final_checkpoint.pt": "ff732524cd921cfa9f32aa67d0eaa8a5cc151b1f4347f150bb5a890e096385f4",
+        "metrics.csv": "67b9662804929b017acc84139732ca17813b46abc79970c2f083105cdf7c0589",
+        "run_summary.json": "c468d31498ab0eaa4f1e551454a835570a6843a60e7179850c8b2a94e54c381b",
+        "topology.json": "e12b3c797308bbed490ebe841a191a97801ff7a60ecd97d966d2bedf910959c1",
+        "training_config.json": "3dd94f6d6cc7f052a93209d43b82e017ab52c4ac01abc1161fd3dcd91b46d7d0"
+      },
+      "best_validation_hard_pct": 59.47999894618988,
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_factorial_dense_m_ss_seed1.json",
+      "cost": {
+        "candidate_indices_tensor_bytes": 8192000,
+        "dense_gate_count": 512000,
+        "deployed_routing_bits": 16640000,
+        "deployed_routing_bytes_packed": 2080000,
+        "trainable_parameters": 8192000,
+        "training_routing_parameters": 0
+      },
+      "final_validation_hard_pct": 59.47999894618988,
+      "final_validation_relaxed_pct": 59.47999846935272,
+      "metadata": [
+        {
+          "kind": "best",
+          "metrics": {
+            "val_acc_discrete": 0.5947999894618988,
+            "val_acc_relaxed": 0.5947999846935272,
+            "val_loss_discrete": 1.17675164103508,
+            "val_loss_relaxed": 1.1732676196098328
+          },
+          "step": 20000
+        },
+        {
+          "kind": "final",
+          "metrics": {
+            "val_acc_discrete": 0.5947999894618988,
+            "val_acc_relaxed": 0.5947999846935272,
+            "val_loss_discrete": 1.17675164103508,
+            "val_loss_relaxed": 1.1732676196098328
+          },
+          "step": 20000
+        }
+      ],
+      "name": "ur1_factorial_dense_m_ss_seed1",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed1",
+      "peak_gpu_memory_bytes": 1206192640,
+      "phase": "factorial",
+      "reference_artifacts": {
+        "best_checkpoint.pt": "e960df0ead1963a1be2a56d6104d6d2af9269cc0cde499c9684b689f45d2def1",
+        "environment.json": "17467dc8d67e714bf4ff3229f7b19b8a9f4906b4b0bd54704fe45730456d2f0f",
+        "final_checkpoint.pt": "ff732524cd921cfa9f32aa67d0eaa8a5cc151b1f4347f150bb5a890e096385f4",
+        "metrics.csv": "67b9662804929b017acc84139732ca17813b46abc79970c2f083105cdf7c0589",
+        "run_summary.json": "c468d31498ab0eaa4f1e551454a835570a6843a60e7179850c8b2a94e54c381b",
+        "topology.json": "e12b3c797308bbed490ebe841a191a97801ff7a60ecd97d966d2bedf910959c1",
+        "training_config.json": "3dd94f6d6cc7f052a93209d43b82e017ab52c4ac01abc1161fd3dcd91b46d7d0"
+      },
+      "reference_output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed1",
+      "reuse": true,
+      "seed": 1,
+      "wall_seconds": 464.95609037717804
+    },
+    {
+      "arm": "SR",
+      "artifacts": {
+        "best_checkpoint.pt": "2dad1ed32ac2fbad555be98bfbb6b6f0a4ac9dc7a9a7b1ca7313c0bac057bd4f",
+        "environment.json": "c0ad676ecf5f34d210ee9e5bf10c70c20c50fbdf6f79ea1afa762fae4f11b07e",
+        "final_checkpoint.pt": "b705a4f3fe3a9f66e8ef27776bbd69f7e5c3ba0fd126f2815358cd547d71fb92",
+        "metrics.csv": "2a67c9fbc6199764a0e5811a11d57f37470406019606156d5f5701bbe2c1aa07",
+        "run_summary.json": "b3c9c2ba5dca326e5a295e51364abdae4f274313ca647e198d32e1382336f821",
+        "topology.json": "334b8cc2e546de0033c06089aa262d26a533833eee47f37a067c5593c72f6443",
+        "training_config.json": "c6569e0fcdc6b47bb65e6ed3a7c3fad83880369ca579512916776a0317377d88",
+        "ur1_construction.json": "5edfe11bc0c3754c2eb680526ef9fc3651bbf970dfc3bbb8fe39e33500a7b77e"
+      },
+      "best_validation_hard_pct": 58.779998540878296,
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_factorial_dense_m_sr_seed1.json",
+      "cost": {
+        "candidate_indices_tensor_bytes": 8192000,
+        "dense_gate_count": 512000,
+        "deployed_routing_bits": 16640000,
+        "deployed_routing_bytes_packed": 2080000,
+        "trainable_parameters": 8192000,
+        "training_routing_parameters": 0
+      },
+      "final_validation_hard_pct": 58.619998633861535,
+      "final_validation_relaxed_pct": 58.77999871969223,
+      "metadata": [
+        {
+          "kind": "best",
+          "metrics": {
+            "val_acc_discrete": 0.587799985408783,
+            "val_acc_relaxed": 0.5901999866962433,
+            "val_loss_discrete": 1.1836239171028138,
+            "val_loss_relaxed": 1.173322114944458
+          },
+          "step": 12000
+        },
+        {
+          "kind": "final",
+          "metrics": {
+            "val_acc_discrete": 0.5861999863386154,
+            "val_acc_relaxed": 0.5877999871969223,
+            "val_loss_discrete": 1.1763133585453034,
+            "val_loss_relaxed": 1.1725624930858611
+          },
+          "step": 20000
+        }
+      ],
+      "name": "ur1_factorial_dense_m_sr_seed1",
+      "output": "experiments/coverage_dlgn/unified_refinement/results/ur1_factorial_dense_m_sr_seed1",
+      "peak_gpu_memory_bytes": 1206192640,
+      "phase": "factorial",
+      "reference_artifacts": {
+        "best_checkpoint.pt": "e960df0ead1963a1be2a56d6104d6d2af9269cc0cde499c9684b689f45d2def1",
+        "environment.json": "17467dc8d67e714bf4ff3229f7b19b8a9f4906b4b0bd54704fe45730456d2f0f",
+        "final_checkpoint.pt": "ff732524cd921cfa9f32aa67d0eaa8a5cc151b1f4347f150bb5a890e096385f4",
+        "metrics.csv": "67b9662804929b017acc84139732ca17813b46abc79970c2f083105cdf7c0589",
+        "run_summary.json": "c468d31498ab0eaa4f1e551454a835570a6843a60e7179850c8b2a94e54c381b",
+        "topology.json": "e12b3c797308bbed490ebe841a191a97801ff7a60ecd97d966d2bedf910959c1",
+        "training_config.json": "3dd94f6d6cc7f052a93209d43b82e017ab52c4ac01abc1161fd3dcd91b46d7d0"
+      },
+      "reference_output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed1",
+      "reuse": false,
+      "seed": 1,
+      "wall_seconds": 465.5224106851965
+    },
+    {
+      "arm": "RS",
+      "artifacts": {
+        "best_checkpoint.pt": "6b7e789c66180ac917897de2462e498102392b908f3a95d15e16457227eb41d3",
+        "environment.json": "d155c659bcbe12e1b2f7b8acb0a5c3046eaa369c5e4c3516e13e1c99dabce317",
+        "final_checkpoint.pt": "88d3adedf6ffc99b3143c85b4ece29337c2912487dcced6069ce18ed437074dc",
+        "metrics.csv": "a2f1535af9f911da7c411bb9be50a5f5f65e246b7eb3337e0e892247724bdb4d",
+        "run_summary.json": "a18fd29921fe46abd471667b2250508cb76430fae91c9cea693604cc9a02bece",
+        "topology.json": "851595c633f44c46be7ea0795318b264b6862f868b59b3ea7d225731c919bc8d",
+        "training_config.json": "7287ccd4b21328b684ea014faad599e9ed192309f6383fe725b8451d156414d1",
+        "ur1_construction.json": "e5232ed9e1257ae242895571dee5b59bf67830410cf498b324e519409a7d0bb8"
+      },
+      "best_validation_hard_pct": 55.259998321533196,
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_factorial_dense_m_rs_seed1.json",
+      "cost": {
+        "candidate_indices_tensor_bytes": 8192000,
+        "dense_gate_count": 512000,
+        "deployed_routing_bits": 16640000,
+        "deployed_routing_bytes_packed": 2080000,
+        "trainable_parameters": 8192000,
+        "training_routing_parameters": 0
+      },
+      "final_validation_hard_pct": 55.15999895334244,
+      "final_validation_relaxed_pct": 55.21999895572662,
+      "metadata": [
+        {
+          "kind": "best",
+          "metrics": {
+            "val_acc_discrete": 0.552599983215332,
+            "val_acc_relaxed": 0.5509999877214432,
+            "val_loss_discrete": 1.3004673254489898,
+            "val_loss_relaxed": 1.2931178045272826
+          },
+          "step": 18000
+        },
+        {
+          "kind": "final",
+          "metrics": {
+            "val_acc_discrete": 0.5515999895334244,
+            "val_acc_relaxed": 0.5521999895572662,
+            "val_loss_discrete": 1.299761588573456,
+            "val_loss_relaxed": 1.292877367734909
+          },
+          "step": 20000
+        }
+      ],
+      "name": "ur1_factorial_dense_m_rs_seed1",
+      "output": "experiments/coverage_dlgn/unified_refinement/results/ur1_factorial_dense_m_rs_seed1",
+      "peak_gpu_memory_bytes": 1206192640,
+      "phase": "factorial",
+      "reference_artifacts": {
+        "best_checkpoint.pt": "e960df0ead1963a1be2a56d6104d6d2af9269cc0cde499c9684b689f45d2def1",
+        "environment.json": "17467dc8d67e714bf4ff3229f7b19b8a9f4906b4b0bd54704fe45730456d2f0f",
+        "final_checkpoint.pt": "ff732524cd921cfa9f32aa67d0eaa8a5cc151b1f4347f150bb5a890e096385f4",
+        "metrics.csv": "67b9662804929b017acc84139732ca17813b46abc79970c2f083105cdf7c0589",
+        "run_summary.json": "c468d31498ab0eaa4f1e551454a835570a6843a60e7179850c8b2a94e54c381b",
+        "topology.json": "e12b3c797308bbed490ebe841a191a97801ff7a60ecd97d966d2bedf910959c1",
+        "training_config.json": "3dd94f6d6cc7f052a93209d43b82e017ab52c4ac01abc1161fd3dcd91b46d7d0"
+      },
+      "reference_output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed1",
+      "reuse": false,
+      "seed": 1,
+      "wall_seconds": 464.57232422428206
+    },
+    {
+      "arm": "RR",
+      "artifacts": {
+        "best_checkpoint.pt": "821fae165e08935d9d5b5cabe30e8af48478e1a4721c7663255765e0a91f8938",
+        "environment.json": "d155c659bcbe12e1b2f7b8acb0a5c3046eaa369c5e4c3516e13e1c99dabce317",
+        "final_checkpoint.pt": "aa4e96dfe1627de40188c19c8d1cb6e26970c543c4b943e3164b4db3717ea236",
+        "metrics.csv": "797a96de9a11252ddb9aad7a981a62566b62b02187fdf344e8941dfbcc8e3f93",
+        "run_summary.json": "f362ce66155e4770fbe3d7b8e01c18c55b7e9292f195ab47b3ae2965a0b05dfa",
+        "topology.json": "b5c22b83c9f4ae884a1e4da9a40c81f862089ff5c28cea941d9413838e4abd65",
+        "training_config.json": "b6d6a5a326c60b34f5d41474eba0306144c473b04e0bc3ced6361f03a556bce8",
+        "ur1_construction.json": "4a4becdb7c5c13c0082be44d3d8f6e4f59e8b9a8aae54d52acdaa5593d7f7554"
+      },
+      "best_validation_hard_pct": 54.479999244213104,
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_factorial_dense_m_rr_seed1.json",
+      "cost": {
+        "candidate_indices_tensor_bytes": 8192000,
+        "dense_gate_count": 512000,
+        "deployed_routing_bits": 16640000,
+        "deployed_routing_bytes_packed": 2080000,
+        "trainable_parameters": 8192000,
+        "training_routing_parameters": 0
+      },
+      "final_validation_hard_pct": 54.479999244213104,
+      "final_validation_relaxed_pct": 54.399998784065254,
+      "metadata": [
+        {
+          "kind": "best",
+          "metrics": {
+            "val_acc_discrete": 0.5447999924421311,
+            "val_acc_relaxed": 0.5439999878406525,
+            "val_loss_discrete": 1.316293032169342,
+            "val_loss_relaxed": 1.3098708152770997
+          },
+          "step": 20000
+        },
+        {
+          "kind": "final",
+          "metrics": {
+            "val_acc_discrete": 0.5447999924421311,
+            "val_acc_relaxed": 0.5439999878406525,
+            "val_loss_discrete": 1.316293032169342,
+            "val_loss_relaxed": 1.3098708152770997
+          },
+          "step": 20000
+        }
+      ],
+      "name": "ur1_factorial_dense_m_rr_seed1",
+      "output": "experiments/coverage_dlgn/unified_refinement/results/ur1_factorial_dense_m_rr_seed1",
+      "peak_gpu_memory_bytes": 1206192640,
+      "phase": "factorial",
+      "reference_artifacts": {
+        "best_checkpoint.pt": "e960df0ead1963a1be2a56d6104d6d2af9269cc0cde499c9684b689f45d2def1",
+        "environment.json": "17467dc8d67e714bf4ff3229f7b19b8a9f4906b4b0bd54704fe45730456d2f0f",
+        "final_checkpoint.pt": "ff732524cd921cfa9f32aa67d0eaa8a5cc151b1f4347f150bb5a890e096385f4",
+        "metrics.csv": "67b9662804929b017acc84139732ca17813b46abc79970c2f083105cdf7c0589",
+        "run_summary.json": "c468d31498ab0eaa4f1e551454a835570a6843a60e7179850c8b2a94e54c381b",
+        "topology.json": "e12b3c797308bbed490ebe841a191a97801ff7a60ecd97d966d2bedf910959c1",
+        "training_config.json": "3dd94f6d6cc7f052a93209d43b82e017ab52c4ac01abc1161fd3dcd91b46d7d0"
+      },
+      "reference_output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed1",
+      "reuse": false,
+      "seed": 1,
+      "wall_seconds": 475.6047591371462
+    },
+    {
+      "arm": "SS",
+      "artifacts": {
+        "best_checkpoint.pt": "45afed6c00401c16e540eee31e0b2069f48b3778124552fbb6ac1d7a71f10fcb",
+        "environment.json": "d5d35fd3c8de5cca154d052a0afda6ab3a9b8d68dc0c26203dd3f7ab78eae4a5",
+        "final_checkpoint.pt": "052bd672652747292b2d9b63dbd079bd958af9aa14a91b1d98f3c7bf1eca1b9f",
+        "metrics.csv": "8468e637da6b7c3bdf957891dbd7dd3073a0444189dfb50118a2d2022da3bba2",
+        "run_summary.json": "6cbff4cec00275295a5873c84eafdc131ebdcbf6116192a59138052480962d65",
+        "topology.json": "d551228f44c9fbdbb060ff6ebdfa9bd1f31fefca601452243122b2180f1c42d5",
+        "training_config.json": "249f49e30ff19be38d9d945b966873393f8938b47a119356fcd976427e9d6b81"
+      },
+      "best_validation_hard_pct": 59.059998869895935,
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_factorial_dense_m_ss_seed2.json",
+      "cost": {
+        "candidate_indices_tensor_bytes": 8192000,
+        "dense_gate_count": 512000,
+        "deployed_routing_bits": 16640000,
+        "deployed_routing_bytes_packed": 2080000,
+        "trainable_parameters": 8192000,
+        "training_routing_parameters": 0
+      },
+      "final_validation_hard_pct": 59.059998869895935,
+      "final_validation_relaxed_pct": 58.99999868869782,
+      "metadata": [
+        {
+          "kind": "best",
+          "metrics": {
+            "val_acc_discrete": 0.5905999886989594,
+            "val_acc_relaxed": 0.5899999868869782,
+            "val_loss_discrete": 1.1746758258342742,
+            "val_loss_relaxed": 1.169190938472748
+          },
+          "step": 20000
+        },
+        {
+          "kind": "final",
+          "metrics": {
+            "val_acc_discrete": 0.5905999886989594,
+            "val_acc_relaxed": 0.5899999868869782,
+            "val_loss_discrete": 1.1746758258342742,
+            "val_loss_relaxed": 1.169190938472748
+          },
+          "step": 20000
+        }
+      ],
+      "name": "ur1_factorial_dense_m_ss_seed2",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed2",
+      "peak_gpu_memory_bytes": 1206192640,
+      "phase": "factorial",
+      "reference_artifacts": {
+        "best_checkpoint.pt": "45afed6c00401c16e540eee31e0b2069f48b3778124552fbb6ac1d7a71f10fcb",
+        "environment.json": "d5d35fd3c8de5cca154d052a0afda6ab3a9b8d68dc0c26203dd3f7ab78eae4a5",
+        "final_checkpoint.pt": "052bd672652747292b2d9b63dbd079bd958af9aa14a91b1d98f3c7bf1eca1b9f",
+        "metrics.csv": "8468e637da6b7c3bdf957891dbd7dd3073a0444189dfb50118a2d2022da3bba2",
+        "run_summary.json": "6cbff4cec00275295a5873c84eafdc131ebdcbf6116192a59138052480962d65",
+        "topology.json": "d551228f44c9fbdbb060ff6ebdfa9bd1f31fefca601452243122b2180f1c42d5",
+        "training_config.json": "249f49e30ff19be38d9d945b966873393f8938b47a119356fcd976427e9d6b81"
+      },
+      "reference_output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed2",
+      "reuse": true,
+      "seed": 2,
+      "wall_seconds": 464.87657879525796
+    },
+    {
+      "arm": "SR",
+      "artifacts": {
+        "best_checkpoint.pt": "14fa0fe2167c312e06b7750a36442fc5d575a5c7123f735daf3a98cd079b0190",
+        "environment.json": "b8ca107fe5709bc4c19825cab1339ce7a1807f0c1796b0511e55e499fc58fa47",
+        "final_checkpoint.pt": "a1ccd9fe858e5ac7bf4aec3ea7dbef8b3cdeebbb79a4cf18da9a00584057da24",
+        "metrics.csv": "5294bb453ee7f842122b9bff3fb78b5201be293c3f13e1cb9fdcaeaade331724",
+        "run_summary.json": "1a0e69f167110b807cbf5be6b1cf082cc89d25022c2daa3d88dace68f4f86fd4",
+        "topology.json": "ba263fd3fd8fa71392158ef8fc2c6ff5c5bdac6d04924ec739b750013c7b4428",
+        "training_config.json": "08f67212ff8b7a2e16ddd1869e6f74350509c1772aa90d58a4e7e4e2ac294ce0",
+        "ur1_construction.json": "d269b3012a8da4d147783d5b2ec45457fb679b29ab1c3d33ac880b7184c180e9"
+      },
+      "best_validation_hard_pct": 58.239998400211334,
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_factorial_dense_m_sr_seed2.json",
+      "cost": {
+        "candidate_indices_tensor_bytes": 8192000,
+        "dense_gate_count": 512000,
+        "deployed_routing_bits": 16640000,
+        "deployed_routing_bytes_packed": 2080000,
+        "trainable_parameters": 8192000,
+        "training_routing_parameters": 0
+      },
+      "final_validation_hard_pct": 58.09999930858613,
+      "final_validation_relaxed_pct": 58.59999883174897,
+      "metadata": [
+        {
+          "kind": "best",
+          "metrics": {
+            "val_acc_discrete": 0.5823999840021133,
+            "val_acc_relaxed": 0.586599987745285,
+            "val_loss_discrete": 1.1797533357143402,
+            "val_loss_relaxed": 1.171101030111313
+          },
+          "step": 16000
+        },
+        {
+          "kind": "final",
+          "metrics": {
+            "val_acc_discrete": 0.5809999930858613,
+            "val_acc_relaxed": 0.5859999883174897,
+            "val_loss_discrete": 1.1802694606781006,
+            "val_loss_relaxed": 1.1726938819885253
+          },
+          "step": 20000
+        }
+      ],
+      "name": "ur1_factorial_dense_m_sr_seed2",
+      "output": "experiments/coverage_dlgn/unified_refinement/results/ur1_factorial_dense_m_sr_seed2",
+      "peak_gpu_memory_bytes": 1206192640,
+      "phase": "factorial",
+      "reference_artifacts": {
+        "best_checkpoint.pt": "45afed6c00401c16e540eee31e0b2069f48b3778124552fbb6ac1d7a71f10fcb",
+        "environment.json": "d5d35fd3c8de5cca154d052a0afda6ab3a9b8d68dc0c26203dd3f7ab78eae4a5",
+        "final_checkpoint.pt": "052bd672652747292b2d9b63dbd079bd958af9aa14a91b1d98f3c7bf1eca1b9f",
+        "metrics.csv": "8468e637da6b7c3bdf957891dbd7dd3073a0444189dfb50118a2d2022da3bba2",
+        "run_summary.json": "6cbff4cec00275295a5873c84eafdc131ebdcbf6116192a59138052480962d65",
+        "topology.json": "d551228f44c9fbdbb060ff6ebdfa9bd1f31fefca601452243122b2180f1c42d5",
+        "training_config.json": "249f49e30ff19be38d9d945b966873393f8938b47a119356fcd976427e9d6b81"
+      },
+      "reference_output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed2",
+      "reuse": false,
+      "seed": 2,
+      "wall_seconds": 461.3807132737711
+    },
+    {
+      "arm": "RS",
+      "artifacts": {
+        "best_checkpoint.pt": "24d197e67c66f83e12e671437586b36a436a4531da9cae4e81a0478766990a1f",
+        "environment.json": "b8ca107fe5709bc4c19825cab1339ce7a1807f0c1796b0511e55e499fc58fa47",
+        "final_checkpoint.pt": "832491892161508828074c35554fa7b6ed2c6fa375fd33515d328f5dc577028e",
+        "metrics.csv": "a36f3177a045924ccea0628d2a0d5e1e43289bd65c66e2b20f966c3dcf94d028",
+        "run_summary.json": "b298c36cb96d6e4a2733156d5aa780f0029b5c44952394be0e9a412c20018190",
+        "topology.json": "626a18938f1c4f729af393e2ae86f300d02e7aed9788d19e4abb8b6400f74bb3",
+        "training_config.json": "2a9e1629ff530a564ced6eff9a3a2e2275f5efb6641a890a1d40dad4020e988e",
+        "ur1_construction.json": "35ca9aca9671ec45fef1637cef1e8c5f6347f57439f8ec6156a11a0c664d8c0c"
+      },
+      "best_validation_hard_pct": 54.39999860525131,
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_factorial_dense_m_rs_seed2.json",
+      "cost": {
+        "candidate_indices_tensor_bytes": 8192000,
+        "dense_gate_count": 512000,
+        "deployed_routing_bits": 16640000,
+        "deployed_routing_bytes_packed": 2080000,
+        "trainable_parameters": 8192000,
+        "training_routing_parameters": 0
+      },
+      "final_validation_hard_pct": 54.099999070167534,
+      "final_validation_relaxed_pct": 54.439998745918274,
+      "metadata": [
+        {
+          "kind": "best",
+          "metrics": {
+            "val_acc_discrete": 0.5439999860525131,
+            "val_acc_relaxed": 0.5421999871730805,
+            "val_loss_discrete": 1.309366843700409,
+            "val_loss_relaxed": 1.3016004073619842
+          },
+          "step": 14000
+        },
+        {
+          "kind": "final",
+          "metrics": {
+            "val_acc_discrete": 0.5409999907016754,
+            "val_acc_relaxed": 0.5443999874591827,
+            "val_loss_discrete": 1.3030770778656007,
+            "val_loss_relaxed": 1.298876953125
+          },
+          "step": 20000
+        }
+      ],
+      "name": "ur1_factorial_dense_m_rs_seed2",
+      "output": "experiments/coverage_dlgn/unified_refinement/results/ur1_factorial_dense_m_rs_seed2",
+      "peak_gpu_memory_bytes": 1206192640,
+      "phase": "factorial",
+      "reference_artifacts": {
+        "best_checkpoint.pt": "45afed6c00401c16e540eee31e0b2069f48b3778124552fbb6ac1d7a71f10fcb",
+        "environment.json": "d5d35fd3c8de5cca154d052a0afda6ab3a9b8d68dc0c26203dd3f7ab78eae4a5",
+        "final_checkpoint.pt": "052bd672652747292b2d9b63dbd079bd958af9aa14a91b1d98f3c7bf1eca1b9f",
+        "metrics.csv": "8468e637da6b7c3bdf957891dbd7dd3073a0444189dfb50118a2d2022da3bba2",
+        "run_summary.json": "6cbff4cec00275295a5873c84eafdc131ebdcbf6116192a59138052480962d65",
+        "topology.json": "d551228f44c9fbdbb060ff6ebdfa9bd1f31fefca601452243122b2180f1c42d5",
+        "training_config.json": "249f49e30ff19be38d9d945b966873393f8938b47a119356fcd976427e9d6b81"
+      },
+      "reference_output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed2",
+      "reuse": false,
+      "seed": 2,
+      "wall_seconds": 464.89233019715175
+    },
+    {
+      "arm": "RR",
+      "artifacts": {
+        "best_checkpoint.pt": "08a9b30b6962944564153e1cad1aca75b875ee46366f18133160760c85878ea8",
+        "environment.json": "59fc25de3e3507683b9d84d7f407ca9ff04989def8162ffae6def91b79a2a2ad",
+        "final_checkpoint.pt": "bba1f0353bc825f643326fe03a3b228e6a7d798751e34338710ab3b1c96234cb",
+        "metrics.csv": "8adef07a896667342700f7ac99c87f2c14ecec0ba072a7afd6b462fea4edbd13",
+        "run_summary.json": "9cfbe4adc158e2fde2fc5a7e304ddee6c65ed6a1d2c6bcc65b9592d1e62f6236",
+        "topology.json": "5bd9feda364db1fff1e9b6087b9ced2c61c19a6518a8bcacbcc07830e2670338",
+        "training_config.json": "42bd61140d58c8140b7324b3f23099aaf5581801814e41a4fa46debfa4264a65",
+        "ur1_construction.json": "bdaaca72a9a79f18e3f4cca33fdafdc6961748dcad61290a05c5b2ce4296601b"
+      },
+      "best_validation_hard_pct": 55.49999892711639,
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_factorial_dense_m_rr_seed2.json",
+      "cost": {
+        "candidate_indices_tensor_bytes": 8192000,
+        "dense_gate_count": 512000,
+        "deployed_routing_bits": 16640000,
+        "deployed_routing_bytes_packed": 2080000,
+        "trainable_parameters": 8192000,
+        "training_routing_parameters": 0
+      },
+      "final_validation_hard_pct": 55.359998285770416,
+      "final_validation_relaxed_pct": 55.61999887228012,
+      "metadata": [
+        {
+          "kind": "best",
+          "metrics": {
+            "val_acc_discrete": 0.5549999892711639,
+            "val_acc_relaxed": 0.5581999897956849,
+            "val_loss_discrete": 1.2993343138694764,
+            "val_loss_relaxed": 1.2908300852775574
+          },
+          "step": 14000
+        },
+        {
+          "kind": "final",
+          "metrics": {
+            "val_acc_discrete": 0.5535999828577042,
+            "val_acc_relaxed": 0.5561999887228012,
+            "val_loss_discrete": 1.296314730644226,
+            "val_loss_relaxed": 1.2889987659454345
+          },
+          "step": 20000
+        }
+      ],
+      "name": "ur1_factorial_dense_m_rr_seed2",
+      "output": "experiments/coverage_dlgn/unified_refinement/results/ur1_factorial_dense_m_rr_seed2",
+      "peak_gpu_memory_bytes": 1206192640,
+      "phase": "factorial",
+      "reference_artifacts": {
+        "best_checkpoint.pt": "45afed6c00401c16e540eee31e0b2069f48b3778124552fbb6ac1d7a71f10fcb",
+        "environment.json": "d5d35fd3c8de5cca154d052a0afda6ab3a9b8d68dc0c26203dd3f7ab78eae4a5",
+        "final_checkpoint.pt": "052bd672652747292b2d9b63dbd079bd958af9aa14a91b1d98f3c7bf1eca1b9f",
+        "metrics.csv": "8468e637da6b7c3bdf957891dbd7dd3073a0444189dfb50118a2d2022da3bba2",
+        "run_summary.json": "6cbff4cec00275295a5873c84eafdc131ebdcbf6116192a59138052480962d65",
+        "topology.json": "d551228f44c9fbdbb060ff6ebdfa9bd1f31fefca601452243122b2180f1c42d5",
+        "training_config.json": "249f49e30ff19be38d9d945b966873393f8938b47a119356fcd976427e9d6b81"
+      },
+      "reference_output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed2",
+      "reuse": false,
+      "seed": 2,
+      "wall_seconds": 462.12345699593425
+    }
+  ],
+  "scope": "V",
+  "status": "complete",
+  "test_queries": 0
+}

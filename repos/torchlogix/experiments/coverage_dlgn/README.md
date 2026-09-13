@@ -1,5 +1,42 @@
 # CoverageDLGN experiments
 
+Current status (September 6): U2 is the frozen unified method; V3 is the
+strongest dense specialization. Nine-channel full S/M U2 test results are
+60.630%/71.650% (one seed each). The third round is complete. The sections
+below include historical studies; use `docs/AI_HANDOFF.md`, `DATE_TABLES.md`
+and frozen JSON for the current disposition. The U2 analysis-helper and
+latest-evidence audit gaps are repaired. Hardware and extra full-S seeds are
+deferred. The fourth round is complete: 50/50 cells and 100 audited best/final
+checkpoints; final evidence is in `summary/fourth_round_results.json` and
+`summary/fourth_round_runs.csv`. Host preflight passed
+3,455 tests plus all GPU training/checkpoint smokes; the verified protocol is
+hash-frozen in `summary/fourth_round_preregistration.json`.
+The 20K three-seed mechanism study is complete at dense M and convolutional S.
+Neither coordinate establishes an incremental benefit over nominal multiscale:
+U2 − nominal is −0.087 pp (95% CI [−1.759, 1.585]) dense and +0.593 pp
+(CI [−1.121, 2.308]) convolutional [OUR, V]. Dense improves matched random;
+the convolutional +1.707 pp random contrast has a wide interval crossing zero.
+Body/head attribution is also complete: with U2 classifier indices held fixed,
+U2 body wiring gains +2.140 pp (95% CI [0.674, 3.606]), 3/3 wins [OUR, V].
+The other conditional effects and interaction remain inconclusive; this is not
+a head-agnostic or additive claim. The WARP pilot passed its
+frozen gate (+4.020 pp for U2, paired seed 0, [ADAPTED, V]); the twelve-run
+promoted study has completed both coordinates. Across three paired dense 108K
+seeds, U2 gains +4.700 pp best hard (95% CI [3.919, 5.481]) and +4.693 pp
+final hard (CI [4.459, 4.928]), 3/3 wins [ADAPTED, V]. Matched raw remains
+more accurate and uses less peak memory; this is topology-within-WARP evidence,
+not WARP superiority. The completed convolutional 20K WARP study gives
++0.087 pp best hard (95% CI [−1.243, 1.417], one win/tie/loss) and −1.213 pp
+final hard (CI [−11.597, 9.171], 1/3 wins), n=3 [ADAPTED, V]. Both methods
+remain far below matched raw. Retain these inconclusive/negative outcomes
+without retuning or claiming equivalence. Frozen CIFAR-10.1
+transfer is complete: dense-M U2 gains +3.733 pp (n=3, paired 95% CI [2.801,
+4.666]); S/M gains are −0.050/+1.950 pp, each n=1 [OUR, T]. All ten prediction
+records were preserved; an aggregate serialization failure was recovered without
+repeat inference. See `FOURTH_ROUND_RESULTS.md` for raw seeds, audit records and
+claim boundaries. Dense native random already balances fan-out, so the dense
+mechanism comparisons must not be described as isolating degree balancing.
+
 This directory contains the rank-2 CoverageDLGN implementation package. It
 follows the staged scope in `ideas/date_ideas/coverage_dlgn.md`: dense fixed
 connections and topology metrics were stabilized first, validated at two gate
@@ -20,7 +57,7 @@ Use only the repository virtual environment.  The validated local stack is:
 
 - Python 3.12.13;
 - PyTorch 2.9.0+cu130 and torchvision 0.24.0+cu130;
-- NVIDIA driver 580.159.03 and CUDA 13.0;
+- NVIDIA driver 580.173.02 and CUDA 13.0 (September 6 host check);
 - NVIDIA RTX PRO 6000 Blackwell.
 
 Installation with `uv`:
@@ -421,7 +458,7 @@ The final hardened results are:
 
 | Dataset | Random validation | V3 validation | Difference | Random test | V3 test | Difference |
 |---|---:|---:|---:|---:|---:|---:|
-| Fashion-MNIST | 87.4767% | 88.1667% | +0.690 pp | 86.3080% | 87.1580% | +0.850 pp |
+| Fashion-MNIST | 87.4767% | 87.8733% | +0.397 pp | 86.3080% | 87.1020% | +0.794 pp |
 | CIFAR-10 | 49.6920% | 53.1160% | +3.424 pp | 49.0560% | 52.3580% | +3.302 pp |
 
 All values are five-seed means. Paired 95% intervals exclude zero for
@@ -431,9 +468,12 @@ GPU allocation are unchanged; v3 adds only deterministic offline topology
 construction (about 5 seconds for Fashion and 9 seconds for CIFAR).
 
 This cleared the specification's continuation criterion. The subsequent
-budget/depth study and CIFAR-10 M component ablation are now complete;
-WARP/Light, named sparse-routing baselines, and deployment Pareto measurements
-remain—not yet a standalone DATE claim. Exact per-seed results and
+budget/depth study, CIFAR-10 M component ablation, and third-round learned-routing
+comparisons are complete. U2 WARP compatibility is now tested in the completed
+fourth round, positive for dense and inconclusive for convolutional S under the
+adapted recipe; faithful Light compatibility remains untested. Current
+deployment evidence is a software/IR snapshot. The selected Fashion row uses
+the later frozen swap-0.5 configuration. Exact per-seed results and
 experimental-history caveats are in `RESULTS.md`.
 
 ## Deep dense CIFAR-100 extension

@@ -1,0 +1,115 @@
+{
+  "arm": "RR",
+  "cost": {
+    "candidate_indices_tensor_bytes": 8192000,
+    "dense_gate_count": 512000,
+    "deployed_routing_bits": 16640000,
+    "deployed_routing_bytes_packed": 2080000,
+    "trainable_parameters": 8192000,
+    "training_routing_parameters": 0
+  },
+  "cost_note": "Reference construction remains in layer metadata; add null_construction_seconds once",
+  "cpu_rng_sha256": "cc72c748c4583cb1277e7d8778b5d4d1be6c674ceee20dee25aadd335d0e1a9a",
+  "cuda_rng_sha256": "66b418f7eef4dafdff764f4a72b4f65498c8c244cab4ea67bad4d2edbc0b8854",
+  "dataset_integrity": {
+    "root": "/tmp/torchlogix-datasets/data-cifar/cifar-10-batches-py",
+    "scope": "file integrity only; no predictions or test evaluation",
+    "sha256": {
+      "batches.meta": "f962466ef690d46b226450fb9aadc74ba4bc64a76aa526b5827fe4bc5c7125cb",
+      "data_batch_1": "54636561a3ce25bd3e19253c6b0d8538147b0ae398331ac4a2d86c6d987368cd",
+      "data_batch_2": "766b2cef9fbc745cf056b3152224f7cf77163b330ea9a15f9392beb8b89bc5a8",
+      "data_batch_3": "0f00d98ebfb30b3ec0ad19f9756dc2630b89003e10525f5e148445e82aa6a1f9",
+      "data_batch_4": "3f7bb240661948b8f4d53e36ec720d8306f5668bd0071dcb4e6c947f78e9682b",
+      "data_batch_5": "d91802434d8376bbaeeadf58a737e3a1b12ac839077e931237e0dcd43adcb154",
+      "test_batch": "f53d8d457504f7cff4ea9e021afcf0e0ad8e24a91f3fc42091b8adef61157831"
+    }
+  },
+  "initial_parameters_sha256": "3551498618375f9027bba58a0cb1fdf671b92954b0b350e69eb9831748633e45",
+  "layers": [
+    {
+      "accepted": 5118959,
+      "changed_pair_multiset": true,
+      "depth": 0,
+      "exact_per_node_slot_degrees": true,
+      "nontrivial_swaps": 5118386,
+      "output_sha256": "914a7aedf22f07357b81b2894ac39c9142d1117575e3f45175719d914e9865eb",
+      "proposals": 5120000,
+      "reference_sha256": "2e5ac9edf16a87dbe8e5de73139c55c563b7c006e38944aeda669128019cd502",
+      "rounds_per_slot": 40,
+      "seed": 3305903252,
+      "seed_entropy": [
+        20260906,
+        0,
+        0
+      ],
+      "structured": false,
+      "unchanged_edge_fraction": 9.375e-05
+    },
+    {
+      "accepted": 5120000,
+      "changed_pair_multiset": true,
+      "depth": 1,
+      "exact_per_node_slot_degrees": true,
+      "nontrivial_swaps": 5119953,
+      "output_sha256": "5422071f7ba67fd033b342e8438ca3ab7ab9f4b3decb8e216b1ccc6e8020acf2",
+      "proposals": 5120000,
+      "reference_sha256": "58215eb156a904956129ee41b888961d66db73cdde9701ed314ade3f7731bd93",
+      "rounds_per_slot": 40,
+      "seed": 464685944,
+      "seed_entropy": [
+        20260906,
+        0,
+        1
+      ],
+      "structured": false,
+      "unchanged_edge_fraction": 2.34375e-05
+    },
+    {
+      "accepted": 5120000,
+      "changed_pair_multiset": true,
+      "depth": 2,
+      "exact_per_node_slot_degrees": true,
+      "nontrivial_swaps": 5119951,
+      "output_sha256": "ce8b6ed059349e57beb1feef42239c23f8cba4877eaa5f0e8c8c6f10d455cecf",
+      "proposals": 5120000,
+      "reference_sha256": "669ce010ae473da978ad537e43ae4b2bfc6c4189a8136728a84aa4cc64af21a4",
+      "rounds_per_slot": 40,
+      "seed": 1353665978,
+      "seed_entropy": [
+        20260906,
+        0,
+        2
+      ],
+      "structured": false,
+      "unchanged_edge_fraction": 2.734375e-05
+    },
+    {
+      "accepted": 5119913,
+      "changed_pair_multiset": true,
+      "depth": 3,
+      "exact_per_node_slot_degrees": true,
+      "nontrivial_swaps": 5119913,
+      "output_sha256": "e34eab68fc8f05357ec04f7bc6ddf517981bde2cee68e6c435f707d5170be0bb",
+      "proposals": 5120000,
+      "reference_sha256": "2f1876af30dd76835113662f3b352371d7ae8e036c96c74427d80092ca238fb9",
+      "rounds_per_slot": 40,
+      "seed": 1155447810,
+      "seed_entropy": [
+        20260906,
+        0,
+        3
+      ],
+      "structured": false,
+      "unchanged_edge_fraction": 7.8125e-06
+    }
+  ],
+  "null_construction_seconds": 0.5406135921366513,
+  "reference_indices_sha256": [
+    "2e5ac9edf16a87dbe8e5de73139c55c563b7c006e38944aeda669128019cd502",
+    "58215eb156a904956129ee41b888961d66db73cdde9701ed314ade3f7731bd93",
+    "669ce010ae473da978ad537e43ae4b2bfc6c4189a8136728a84aa4cc64af21a4",
+    "2f1876af30dd76835113662f3b352371d7ae8e036c96c74427d80092ca238fb9"
+  ],
+  "topology_seed": 0,
+  "ur1_source_sha256": "04674a5678f891ce08cb960bf1c63c6fd85427da8ef0483e794515bc3c3bdfdc"
+}

@@ -40,6 +40,8 @@ STRATEGY_ALIASES = {
     "semantic_degree_balanced": "semantic_degree_balanced",
     "semantic-multiscale-balanced": "semantic_multiscale_balanced",
     "semantic_multiscale_balanced": "semantic_multiscale_balanced",
+    "semantic_random_balanced": "semantic_random_balanced",
+    "semantic_multiscale_nominal": "semantic_multiscale_nominal",
     "semantic-classifier-hybrid": "semantic_classifier_hybrid",
     "semantic_classifier_hybrid": "semantic_classifier_hybrid",
     "class-conditional-coverage": "class_conditional_coverage",
@@ -513,6 +515,7 @@ def _multiscale_saturation_balanced_indices(
     *,
     layer_index: int,
     topology_seed: int,
+    select_novelty: bool = True,
 ) -> np.ndarray:
     """Build balanced stages selected by normalized ancestry novelty.
 
@@ -545,7 +548,7 @@ def _multiscale_saturation_balanced_indices(
             for stage in range(n_stages)
         ]
         novelty = np.asarray([
-            _normalized_pair_novelty(input_ancestry, pairs)
+            _normalized_pair_novelty(input_ancestry, pairs) if select_novelty else 0.0
             for pairs in candidates
         ])
         available = [
@@ -602,6 +605,27 @@ def _multiscale_saturation_balanced_indices(
         produced += take
         block_index += 1
     return np.ascontiguousarray(np.concatenate(chosen, axis=0).T)
+
+
+def _random_balanced_indices(in_dim: int, out_dim: int, rng) -> np.ndarray:
+    """Random matchings with distinct endpoints and fan-out spread at most one.
+
+    Each stage pairs a random ordering of the least-used inputs. Degree takes
+    precedence over random tie-breaking, including odd widths and prefixes.
+    Semantic input layers use the frozen semantic builder instead.
+    """
+    degree = np.zeros(in_dim, dtype=np.int64)
+    stages = []
+    remaining = out_dim
+    while remaining:
+        take = min(remaining, in_dim // 2)
+        nodes = np.lexsort((rng.random(in_dim), degree))[:2 * take]
+        # Randomize pairing after choosing the balanced endpoint set.
+        pairs = rng.permutation(nodes).reshape(take, 2)
+        stages.append(pairs)
+        degree[nodes] += 1
+        remaining -= take
+    return np.ascontiguousarray(np.concatenate(stages).T)
 
 
 def _axis_strides(length: int) -> list[int]:
@@ -1851,6 +1875,8 @@ def generate_dense_topology(
         "semantic_balanced_hybrid",
         "semantic_degree_balanced",
         "semantic_multiscale_balanced",
+        "semantic_random_balanced",
+        "semantic_multiscale_nominal",
         "semantic_classifier_hybrid",
         "class_conditional_coverage",
         "coverage_reuse_hybrid",
@@ -1864,6 +1890,8 @@ def generate_dense_topology(
                 "semantic_balanced_hybrid",
                 "semantic_degree_balanced",
                 "semantic_multiscale_balanced",
+                "semantic_random_balanced",
+                "semantic_multiscale_nominal",
                 "semantic_classifier_hybrid",
                 "class_conditional_coverage",
                 "coverage_reuse_hybrid",
@@ -1945,7 +1973,7 @@ def generate_dense_topology(
                 layer_index,
                 topology_seed,
             )
-    elif strategy == "semantic_multiscale_balanced":
+    elif strategy in {"semantic_multiscale_balanced", "semantic_multiscale_nominal", "semantic_random_balanced"}:
         # Separate unified candidate U2. V3/V4/U1 remain frozen. Semantic
         # source ordering handles image inputs; subsequent stages select a
         # complete regular scale by normalized ancestry novelty, never swaps.
@@ -1960,12 +1988,15 @@ def generate_dense_topology(
                 layer_index,
                 topology_seed,
             )
+        elif strategy == "semantic_random_balanced":
+            indices = _random_balanced_indices(in_dim, out_dim, rng)
         else:
             indices = _multiscale_saturation_balanced_indices(
                 input_ancestry,
                 out_dim,
                 layer_index=layer_index,
                 topology_seed=topology_seed,
+                select_novelty=strategy == "semantic_multiscale_balanced",
             )
     elif strategy == "semantic_balanced_hybrid":
         if input_semantics is not None:
@@ -2480,6 +2511,9 @@ def generate_dense_stack(
         if canonical_strategy(strategy) in {
             "semantic_balanced_hybrid",
             "semantic_degree_balanced",
+            "semantic_multiscale_balanced",
+            "semantic_random_balanced",
+            "semantic_multiscale_nominal",
         }
         and input_semantics is not None
         else packed_identity(n_original_inputs)
@@ -2500,6 +2534,9 @@ def generate_dense_stack(
             and canonical_strategy(strategy) in {
                 "semantic_balanced_hybrid",
                 "semantic_degree_balanced",
+                "semantic_multiscale_balanced",
+                "semantic_random_balanced",
+                "semantic_multiscale_nominal",
             }
         ):
             layer_kwargs["swap_fraction"] = 0.0
@@ -2522,6 +2559,9 @@ def generate_dense_stack(
                 if canonical_strategy(strategy) in {
                     "semantic_balanced_hybrid",
                     "semantic_degree_balanced",
+                    "semantic_multiscale_balanced",
+                    "semantic_random_balanced",
+                    "semantic_multiscale_nominal",
                 }
                 and input_semantics is not None
                 else n_original_inputs

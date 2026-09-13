@@ -1,0 +1,303 @@
+{
+  "cache_policy": "fresh interpreter per observation; imports and semantic metadata setup excluded equally; no topology warmup",
+  "limitations": [
+    "Peak RSS includes interpreter/imports, not isolated allocator memory",
+    "No model initialization, spatial sampling, GPU transfer or full optional topology diagnostics measured",
+    "Legacy builder propagates ancestry; index-only row intentionally omits it; use ancestry-matched rows for that comparison",
+    "No accuracy or physical area/energy claim"
+  ],
+  "repeats": 3,
+  "rows": [
+    {
+      "ancestry_output_sha256": "f018981d97e1744ad15c8443a6fd3ad6c7e616d3b9b2b784f73b693ae78d82e2",
+      "fanout": [
+        {
+          "max": 29,
+          "min": 27
+        },
+        {
+          "max": 2,
+          "min": 2
+        },
+        {
+          "max": 2,
+          "min": 2
+        },
+        {
+          "max": 2,
+          "min": 2
+        }
+      ],
+      "indices_sha256": [
+        "2e5ac9edf16a87dbe8e5de73139c55c563b7c006e38944aeda669128019cd502",
+        "c32b45ac9feac27277394f3b7614ae84740a5ba3023528f1042bec8226f58ada",
+        "3b209051636a748b2976a4cb3692af117946bb9e101d030b46feb82e85e7ff9b",
+        "125985fd6b14144069cb5c915e2dc49c8d72db4b4def33769d918ca4a1a6dcce"
+      ],
+      "mode": "legacy_with_ancestry",
+      "peak_process_rss_bytes": 817299456,
+      "preconstruction_peak_rss_bytes": 605831168,
+      "repeat": 0,
+      "seconds": 13.718631802126765
+    },
+    {
+      "ancestry_output_sha256": null,
+      "fanout": [
+        {
+          "max": 29,
+          "min": 27
+        },
+        {
+          "max": 2,
+          "min": 2
+        },
+        {
+          "max": 2,
+          "min": 2
+        },
+        {
+          "max": 2,
+          "min": 2
+        }
+      ],
+      "indices_sha256": [
+        "2e5ac9edf16a87dbe8e5de73139c55c563b7c006e38944aeda669128019cd502",
+        "c32b45ac9feac27277394f3b7614ae84740a5ba3023528f1042bec8226f58ada",
+        "3b209051636a748b2976a4cb3692af117946bb9e101d030b46feb82e85e7ff9b",
+        "125985fd6b14144069cb5c915e2dc49c8d72db4b4def33769d918ca4a1a6dcce"
+      ],
+      "mode": "ur1_index_only",
+      "peak_process_rss_bytes": 657317888,
+      "preconstruction_peak_rss_bytes": 605622272,
+      "repeat": 0,
+      "seconds": 13.38210842711851
+    },
+    {
+      "ancestry_output_sha256": "f018981d97e1744ad15c8443a6fd3ad6c7e616d3b9b2b784f73b693ae78d82e2",
+      "fanout": [
+        {
+          "max": 29,
+          "min": 27
+        },
+        {
+          "max": 2,
+          "min": 2
+        },
+        {
+          "max": 2,
+          "min": 2
+        },
+        {
+          "max": 2,
+          "min": 2
+        }
+      ],
+      "indices_sha256": [
+        "2e5ac9edf16a87dbe8e5de73139c55c563b7c006e38944aeda669128019cd502",
+        "c32b45ac9feac27277394f3b7614ae84740a5ba3023528f1042bec8226f58ada",
+        "3b209051636a748b2976a4cb3692af117946bb9e101d030b46feb82e85e7ff9b",
+        "125985fd6b14144069cb5c915e2dc49c8d72db4b4def33769d918ca4a1a6dcce"
+      ],
+      "mode": "ur1_with_ancestry",
+      "peak_process_rss_bytes": 814743552,
+      "preconstruction_peak_rss_bytes": 605663232,
+      "repeat": 0,
+      "seconds": 13.563316078856587
+    },
+    {
+      "ancestry_output_sha256": "f018981d97e1744ad15c8443a6fd3ad6c7e616d3b9b2b784f73b693ae78d82e2",
+      "fanout": [
+        {
+          "max": 29,
+          "min": 27
+        },
+        {
+          "max": 2,
+          "min": 2
+        },
+        {
+          "max": 2,
+          "min": 2
+        },
+        {
+          "max": 2,
+          "min": 2
+        }
+      ],
+      "indices_sha256": [
+        "2e5ac9edf16a87dbe8e5de73139c55c563b7c006e38944aeda669128019cd502",
+        "c32b45ac9feac27277394f3b7614ae84740a5ba3023528f1042bec8226f58ada",
+        "3b209051636a748b2976a4cb3692af117946bb9e101d030b46feb82e85e7ff9b",
+        "125985fd6b14144069cb5c915e2dc49c8d72db4b4def33769d918ca4a1a6dcce"
+      ],
+      "mode": "legacy_with_ancestry",
+      "peak_process_rss_bytes": 814985216,
+      "preconstruction_peak_rss_bytes": 605515776,
+      "repeat": 1,
+      "seconds": 13.668036357033998
+    },
+    {
+      "ancestry_output_sha256": null,
+      "fanout": [
+        {
+          "max": 29,
+          "min": 27
+        },
+        {
+          "max": 2,
+          "min": 2
+        },
+        {
+          "max": 2,
+          "min": 2
+        },
+        {
+          "max": 2,
+          "min": 2
+        }
+      ],
+      "indices_sha256": [
+        "2e5ac9edf16a87dbe8e5de73139c55c563b7c006e38944aeda669128019cd502",
+        "c32b45ac9feac27277394f3b7614ae84740a5ba3023528f1042bec8226f58ada",
+        "3b209051636a748b2976a4cb3692af117946bb9e101d030b46feb82e85e7ff9b",
+        "125985fd6b14144069cb5c915e2dc49c8d72db4b4def33769d918ca4a1a6dcce"
+      ],
+      "mode": "ur1_index_only",
+      "peak_process_rss_bytes": 657866752,
+      "preconstruction_peak_rss_bytes": 605634560,
+      "repeat": 1,
+      "seconds": 13.46693833405152
+    },
+    {
+      "ancestry_output_sha256": "f018981d97e1744ad15c8443a6fd3ad6c7e616d3b9b2b784f73b693ae78d82e2",
+      "fanout": [
+        {
+          "max": 29,
+          "min": 27
+        },
+        {
+          "max": 2,
+          "min": 2
+        },
+        {
+          "max": 2,
+          "min": 2
+        },
+        {
+          "max": 2,
+          "min": 2
+        }
+      ],
+      "indices_sha256": [
+        "2e5ac9edf16a87dbe8e5de73139c55c563b7c006e38944aeda669128019cd502",
+        "c32b45ac9feac27277394f3b7614ae84740a5ba3023528f1042bec8226f58ada",
+        "3b209051636a748b2976a4cb3692af117946bb9e101d030b46feb82e85e7ff9b",
+        "125985fd6b14144069cb5c915e2dc49c8d72db4b4def33769d918ca4a1a6dcce"
+      ],
+      "mode": "ur1_with_ancestry",
+      "peak_process_rss_bytes": 814604288,
+      "preconstruction_peak_rss_bytes": 605634560,
+      "repeat": 1,
+      "seconds": 13.644181141629815
+    },
+    {
+      "ancestry_output_sha256": "f018981d97e1744ad15c8443a6fd3ad6c7e616d3b9b2b784f73b693ae78d82e2",
+      "fanout": [
+        {
+          "max": 29,
+          "min": 27
+        },
+        {
+          "max": 2,
+          "min": 2
+        },
+        {
+          "max": 2,
+          "min": 2
+        },
+        {
+          "max": 2,
+          "min": 2
+        }
+      ],
+      "indices_sha256": [
+        "2e5ac9edf16a87dbe8e5de73139c55c563b7c006e38944aeda669128019cd502",
+        "c32b45ac9feac27277394f3b7614ae84740a5ba3023528f1042bec8226f58ada",
+        "3b209051636a748b2976a4cb3692af117946bb9e101d030b46feb82e85e7ff9b",
+        "125985fd6b14144069cb5c915e2dc49c8d72db4b4def33769d918ca4a1a6dcce"
+      ],
+      "mode": "legacy_with_ancestry",
+      "peak_process_rss_bytes": 818966528,
+      "preconstruction_peak_rss_bytes": 605278208,
+      "repeat": 2,
+      "seconds": 13.685193788260221
+    },
+    {
+      "ancestry_output_sha256": null,
+      "fanout": [
+        {
+          "max": 29,
+          "min": 27
+        },
+        {
+          "max": 2,
+          "min": 2
+        },
+        {
+          "max": 2,
+          "min": 2
+        },
+        {
+          "max": 2,
+          "min": 2
+        }
+      ],
+      "indices_sha256": [
+        "2e5ac9edf16a87dbe8e5de73139c55c563b7c006e38944aeda669128019cd502",
+        "c32b45ac9feac27277394f3b7614ae84740a5ba3023528f1042bec8226f58ada",
+        "3b209051636a748b2976a4cb3692af117946bb9e101d030b46feb82e85e7ff9b",
+        "125985fd6b14144069cb5c915e2dc49c8d72db4b4def33769d918ca4a1a6dcce"
+      ],
+      "mode": "ur1_index_only",
+      "peak_process_rss_bytes": 657940480,
+      "preconstruction_peak_rss_bytes": 605716480,
+      "repeat": 2,
+      "seconds": 13.451384878717363
+    },
+    {
+      "ancestry_output_sha256": "f018981d97e1744ad15c8443a6fd3ad6c7e616d3b9b2b784f73b693ae78d82e2",
+      "fanout": [
+        {
+          "max": 29,
+          "min": 27
+        },
+        {
+          "max": 2,
+          "min": 2
+        },
+        {
+          "max": 2,
+          "min": 2
+        },
+        {
+          "max": 2,
+          "min": 2
+        }
+      ],
+      "indices_sha256": [
+        "2e5ac9edf16a87dbe8e5de73139c55c563b7c006e38944aeda669128019cd502",
+        "c32b45ac9feac27277394f3b7614ae84740a5ba3023528f1042bec8226f58ada",
+        "3b209051636a748b2976a4cb3692af117946bb9e101d030b46feb82e85e7ff9b",
+        "125985fd6b14144069cb5c915e2dc49c8d72db4b4def33769d918ca4a1a6dcce"
+      ],
+      "mode": "ur1_with_ancestry",
+      "peak_process_rss_bytes": 814514176,
+      "preconstruction_peak_rss_bytes": 605679616,
+      "repeat": 2,
+      "seconds": 13.682228431105614
+    }
+  ],
+  "scope": "CPU dense-M index-stack construction; NOT end-to-end model construction",
+  "seed": 0,
+  "status": "complete"
+}

@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="460" viewBox="0 0 960 460">
+<rect width="960" height="460" fill="white"/>
+<g font-family="sans-serif" font-size="12">
+<text x="30" y="25" font-size="16">Dependency-pruned raw-source path support: per-gate layer means (n=3)</text>
+<text x="70" y="55">best checkpoint; upper bound, not exact global support</text>
+<path d="M70,370.00 h340" stroke="#dddddd"/><text x="35" y="374.00">0.0</text>
+<path d="M70,300.00 h340" stroke="#dddddd"/><text x="35" y="304.00">1.9</text>
+<path d="M70,230.00 h340" stroke="#dddddd"/><text x="35" y="234.00">3.8</text>
+<path d="M70,160.00 h340" stroke="#dddddd"/><text x="35" y="164.00">5.7</text>
+<path d="M70,90.00 h340" stroke="#dddddd"/><text x="35" y="94.00">7.6</text>
+<text x="70" y="395">L1</text>
+<text x="175" y="395">L2</text>
+<text x="280" y="395">L3</text>
+<text x="385" y="395">L4</text>
+<polyline points="70,309.80 175,272.44 280,215.28 385,126.80" fill="none" stroke="#777777" stroke-opacity="0.4"/>
+<polyline points="70,309.75 175,272.17 280,214.34 385,124.06" fill="none" stroke="#777777" stroke-opacity="0.4"/>
+<polyline points="70,309.85 175,273.07 280,217.14 385,131.26" fill="none" stroke="#777777" stroke-opacity="0.4"/>
+<polyline points="70,309.80 175,272.56 280,215.59 385,127.37" fill="none" stroke="#777777" stroke-width="3"/>
+<polyline points="70,308.51 175,270.22 280,211.90 385,122.75" fill="none" stroke="#b77616" stroke-opacity="0.4"/>
+<polyline points="70,308.77 175,271.38 280,216.11 385,133.63" fill="none" stroke="#b77616" stroke-opacity="0.4"/>
+<polyline points="70,308.60 175,269.92 280,210.64 385,119.45" fill="none" stroke="#b77616" stroke-opacity="0.4"/>
+<polyline points="70,308.63 175,270.51 280,212.88 385,125.28" fill="none" stroke="#b77616" stroke-width="3"/>
+<polyline points="70,308.62 175,269.86 280,209.67 385,116.06" fill="none" stroke="#3567b1" stroke-opacity="0.4"/>
+<polyline points="70,308.96 175,271.83 280,216.63 385,134.47" fill="none" stroke="#3567b1" stroke-opacity="0.4"/>
+<polyline points="70,308.70 175,269.96 280,209.88 385,116.66" fill="none" stroke="#3567b1" stroke-opacity="0.4"/>
+<polyline points="70,308.76 175,270.55 280,212.06 385,122.40" fill="none" stroke="#3567b1" stroke-width="3"/>
+<polyline points="70,308.97 175,271.96 280,216.88 385,134.81" fill="none" stroke="#14835c" stroke-opacity="0.4"/>
+<polyline points="70,308.66 175,269.89 280,210.01 385,116.81" fill="none" stroke="#14835c" stroke-opacity="0.4"/>
+<polyline points="70,308.53 175,269.55 280,209.19 385,115.45" fill="none" stroke="#14835c" stroke-opacity="0.4"/>
+<polyline points="70,308.72 175,270.46 280,212.03 385,122.36" fill="none" stroke="#14835c" stroke-width="3"/>
+<text x="535" y="55">final checkpoint; upper bound, not exact global support</text>
+<path d="M535,370.00 h340" stroke="#dddddd"/><text x="500" y="374.00">0.0</text>
+<path d="M535,300.00 h340" stroke="#dddddd"/><text x="500" y="304.00">1.9</text>
+<path d="M535,230.00 h340" stroke="#dddddd"/><text x="500" y="234.00">3.8</text>
+<path d="M535,160.00 h340" stroke="#dddddd"/><text x="500" y="164.00">5.7</text>
+<path d="M535,90.00 h340" stroke="#dddddd"/><text x="500" y="94.00">7.6</text>
+<text x="535" y="395">L1</text>
+<text x="640" y="395">L2</text>
+<text x="745" y="395">L3</text>
+<text x="850" y="395">L4</text>
+<polyline points="535,309.75 640,272.10 745,214.12 850,123.59" fill="none" stroke="#777777" stroke-opacity="0.4"/>
+<polyline points="535,309.76 640,272.19 745,214.37 850,124.11" fill="none" stroke="#777777" stroke-opacity="0.4"/>
+<polyline points="535,309.73 640,272.25 745,214.29 850,123.87" fill="none" stroke="#777777" stroke-opacity="0.4"/>
+<polyline points="535,309.75 640,272.18 745,214.26 850,123.86" fill="none" stroke="#777777" stroke-width="3"/>
+<polyline points="535,308.42 640,269.50 745,209.23 850,115.45" fill="none" stroke="#b77616" stroke-opacity="0.4"/>
+<polyline points="535,308.46 640,269.32 745,209.20 850,115.48" fill="none" stroke="#b77616" stroke-opacity="0.4"/>
+<polyline points="535,308.55 640,269.58 745,209.38 850,115.91" fill="none" stroke="#b77616" stroke-opacity="0.4"/>
+<polyline points="535,308.48 640,269.47 745,209.27 850,115.61" fill="none" stroke="#b77616" stroke-width="3"/>
+<polyline points="535,308.64 640,269.88 745,209.70 850,116.12" fill="none" stroke="#3567b1" stroke-opacity="0.4"/>
+<polyline points="535,308.68 640,269.89 745,209.85 850,116.34" fill="none" stroke="#3567b1" stroke-opacity="0.4"/>
+<polyline points="535,308.72 640,269.98 745,209.92 850,116.71" fill="none" stroke="#3567b1" stroke-opacity="0.4"/>
+<polyline points="535,308.68 640,269.91 745,209.82 850,116.39" fill="none" stroke="#3567b1" stroke-width="3"/>
+<polyline points="535,308.62 640,269.89 745,209.69 850,116.26" fill="none" stroke="#14835c" stroke-opacity="0.4"/>
+<polyline points="535,308.68 640,269.91 745,210.04 850,116.87" fill="none" stroke="#14835c" stroke-opacity="0.4"/>
+<polyline points="535,308.55 640,269.57 745,209.23 850,115.51" fill="none" stroke="#14835c" stroke-opacity="0.4"/>
+<polyline points="535,308.61 640,269.79 745,209.65 850,116.21" fill="none" stroke="#14835c" stroke-width="3"/>
+<text x="70" y="440" fill="#777777">random</text>
+<text x="285" y="440" fill="#b77616">balanced_random</text>
+<text x="500" y="440" fill="#3567b1">nominal</text>
+<text x="715" y="440" fill="#14835c">u2</text>
+</g></svg>

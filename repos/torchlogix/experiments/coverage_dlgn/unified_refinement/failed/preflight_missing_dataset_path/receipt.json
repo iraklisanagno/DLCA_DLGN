@@ -1,0 +1,7 @@
+{
+  "preserved": "unit test/graph logs, smoke log, empty smoke output, partial duplicate download; originals untouched",
+  "reason": "DATASET_PATH omitted; duplicate download began in previously absent repos/torchlogix/data-cifar",
+  "repair": "Require explicit existing dataset and verify official integrity before creating training output; use /tmp/torchlogix-datasets",
+  "smoke_updates": 0,
+  "status": "interrupted_before_training"
+}

@@ -1,0 +1,15 @@
+{
+  "completion": "existing command/validate_run/write_new helpers; identical completion stamps",
+  "coordination": "Bounded two-run assignment ahead of the serial queue; monitor both processes and never duplicate an active output",
+  "gpu": 0,
+  "names": [
+    "fourth_factorial_conv_s_body_seed0",
+    "fourth_factorial_conv_s_head_seed0"
+  ],
+  "preregistration_sha256": "b456a3f25103a23f9fadb4901c88259a314a54e89ccb4d4b74d4688b03b42649",
+  "primary_gpu": 1,
+  "primary_run_at_assignment": "fourth_mechanism_conv_s_balanced_random_seed1",
+  "recorded_at_utc": "2026-09-06T08:17:49.758578+00:00",
+  "scope": "scheduling_only_existing_preregistered_cells",
+  "source_or_config_changed": false
+}

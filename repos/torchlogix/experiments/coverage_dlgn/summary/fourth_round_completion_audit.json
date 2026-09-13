@@ -1,0 +1,208 @@
+{
+  "status": "pass",
+  "completed_at_utc": "2026-09-06T13:26:05.463069+00:00",
+  "scope": "six_authorized_fourth_round_steps_only",
+  "path_bases": {
+    "artifact_sha256": "experiment root",
+    "document_sha256": "experiment root",
+    "source_sha256": "TorchLogix repository root",
+    "requirement_evidence": "experiment root except tests/ paths, which use TorchLogix repository root"
+  },
+  "requirements": [
+    {
+      "step": 1,
+      "requirement": "Repair handoff bugs, verify all GPU training paths and freeze the protocol before accuracy runs",
+      "status": "pass",
+      "evidence": [
+        "tests/test_handoff_repairs.py",
+        "tests/test_fourth_round.py",
+        "tests/test_coverage_topology.py",
+        "summary/fourth_round_preregistration.json"
+      ],
+      "verified": "Original full GPU suite: 3455 passed, 3038 skipped, one existing warning. All 16 training smoke artifact sets and 10 synthetic checkpoint loads reverified; paired cost/weights/RNG/spatial and fixed-head signatures agree. Frozen implementation/configuration unchanged.",
+      "repair_disposition": "Semantic ancestry helper, queue completion, historical evidence audit and future freeze/evaluation safeguards repaired. Exact resume, rank-four support and physical hardware are documented limitations, not implemented extensions."
+    },
+    {
+      "step": 2,
+      "requirement": "Test whether U2 warrants its additional construction logic",
+      "status": "pass",
+      "evidence": [
+        "summary/fourth_round_dense_mechanism.json",
+        "summary/fourth_round_conv_mechanism.json",
+        "summary/fourth_round_wiring_audit.json"
+      ],
+      "verified": "24 logical cells: native random, balanced-random, nominal and U2 at dense M and convolutional S, seeds 0/1/2, 20K. Accuracy, paired intervals and construction costs reported.",
+      "finding": "Neither coordinate establishes an incremental novelty-selection benefit; do not claim equivalence or retune U2."
+    },
+    {
+      "step": 3,
+      "requirement": "Determine independent channel/body wiring contribution with controlled classifier wiring",
+      "status": "pass",
+      "evidence": [
+        "summary/fourth_round_factorial.json",
+        "summary/fourth_round_factorial_wiring_audit.json"
+      ],
+      "verified": "12 factorial cells, three paired seeds, seven saved-wiring checks per seed. Regenerated certificate equals saved certificate. All five conditional/interaction contrasts retained.",
+      "finding": "Positive body effect conditional on the reference-U2 head; head-agnostic superiority and additivity not established."
+    },
+    {
+      "step": 4,
+      "requirement": "Test compatibility with a modern training method and execute all preregistered positive-gate follow-ups",
+      "status": "pass",
+      "evidence": [
+        "logs/fourth_round/warp_promotion.json",
+        "summary/fourth_round_warp_pilot.json",
+        "summary/fourth_round_warp_dense.json",
+        "summary/fourth_round_warp_conv.json"
+      ],
+      "verified": "Positive dense pilot gate; all 12 required follow-ups complete. Effective settings match within all pairs and across all 14 WARP/raw recipe comparisons apart from declared parameterization/metadata fields. Best/final hard/relaxed curves, gaps, resources and raw context retained.",
+      "finding": "Dense U2 gain positive within adapted rank-two WARP; convolutional gain inconclusive. Both coordinates trail raw. Pilot-conditioned expansion is exploratory, not independent confirmation."
+    },
+    {
+      "step": 5,
+      "requirement": "Perform one genuinely frozen transfer test without adaptation or checkpoint reselection",
+      "status": "pass",
+      "evidence": [
+        "summary/fourth_round_transfer_freeze.json",
+        "summary/fourth_round_transfer_results.json",
+        "logs/fourth_round_transfer/started.json",
+        "logs/fourth_round_transfer/dataset_receipt.json",
+        "logs/fourth_round_transfer/recovery.json",
+        "logs/fourth_round_transfer/completed.json"
+      ],
+      "verified": "Ten checkpoint/config selections frozen before access to pinned CIFAR-10.1 v6; one saved prediction record per checkpoint. Hashes, labels/prediction correctness and chronology reverified without inference.",
+      "finding": "Dense transfer positive; convolutional S/M mixed and each n=1. Original aggregate serialization failure retained; tested saved-record recovery used zero additional inference."
+    },
+    {
+      "step": 6,
+      "requirement": "Complete and reconcile the evidence report with all outcomes, raw seeds, paired uncertainty and resource accounting",
+      "status": "pass",
+      "evidence": [
+        "summary/fourth_round_results.json",
+        "summary/fourth_round_runs.csv",
+        "summary/fourth_round_statistics_audit.json",
+        "summary/fourth_round_checkpoint_metadata_audit.json",
+        "FOURTH_ROUND_RESULTS.md",
+        "docs/AI_HANDOFF.md",
+        "DATE_TABLES.md",
+        "PAPER_COMPARISON_TABLES.md",
+        "README.md",
+        "RESULTS.md",
+        "EXPERIMENT_LOG.md"
+      ],
+      "verified": "Final build_report reproduces saved JSON exactly; 50 CSV rows match fields. Independent saved statistics audit has 1799 scalar checks; closing independent recheck has 1256 scalar comparisons plus fresh curves/CSV. All 100 checkpoint metadata records reproduce. Current documents reconciled; chronological partial states labeled historical."
+    }
+  ],
+  "pending_requirements": [],
+  "matrix_cells": 50,
+  "new_training_runs": 35,
+  "reused_logical_cells": 15,
+  "unique_runs_including_raw_references": 50,
+  "checkpoints": 100,
+  "preregistration_sha256": "b456a3f25103a23f9fadb4901c88259a314a54e89ccb4d4b74d4688b03b42649",
+  "implementation_sha256": "3d1c59d3b2d0948235c66a78b5f4861cc0b55844f5291f4e602a7ae8dc519a0b",
+  "artifact_sha256": {
+    "DATE_TABLES.md": "728789e5493986eabb3c5b6b8cb7b08de64b5a387191924ce2337deb59706c89",
+    "EXPERIMENT_LOG.md": "aea79d6b273d141c0d96c6e04012642a7709d9aef342dbd37581be4795d35ed4",
+    "FOURTH_ROUND_PROTOCOL.md": "15cf7f9949c6592f120df1df05ab5b3458ed2a1dc94d2aecc40f3005c2f731ea",
+    "FOURTH_ROUND_RESULTS.md": "31351b5764394bcfc2c4efcdcdb0ad7e98fe8b59aa28688f251fafaff3348db8",
+    "PAPER_COMPARISON_TABLES.md": "6280701793d7c4c3195174ec7f2e2372e48438c32b4ab21a4b80116d295ebcc2",
+    "README.md": "7038b187411779c4d2d87fe45913668daa220527bb0479cdf42b7bb274195778",
+    "RESULTS.md": "94de240a2fbcb4edf22bdd81cd96a8df28b364b2031a43fda063cbedcceface5",
+    "docs/AI_HANDOFF.md": "e56b4a4ea7f9f5355c4c8befafda330ace55fc537b99a7099d6304e1cc5e9e9e",
+    "logs/fourth_round/full_tests.log": "dba840108da75b2c920fcd8ff60be6f5590557851d76ce82db0e7648a6e89483",
+    "logs/fourth_round/supplemental_audit_tests.json": "f01467880ea9947031eef998bb43969c4235975be8bb2d9a93384583511e0c00",
+    "logs/fourth_round/warp_promotion.json": "e30639ef0d841d1ec978aa82b4783b4f8cce72aa7fee71f24fff7de3835458c0",
+    "logs/fourth_round_transfer/completed.json": "6208e4933e3cdfc233f4757c875383ab151cc573797f0ab20ffee102541512c7",
+    "logs/fourth_round_transfer/dataset_receipt.json": "46db524f9067b60cb1b7528573839421b850c204c536a64c3bf952e321610158",
+    "logs/fourth_round_transfer/recovery.json": "979a904f1510ec68ccef15cc95289079e07f145cd652a524f711f51457536b73",
+    "logs/fourth_round_transfer/started.json": "83ce37d1403df14c5f7b3d271089cb266bac7efdc159cb0efeb1d02851cc5ce6",
+    "protocols/fourth_round.json": "c1c3ccc0e038bfa0cd8c72bbbeb3d52cf4e2279ce2a54e6d879762f8c180bcd9",
+    "summary/fourth_round_checkpoint_metadata_audit.json": "9ac7954c0d4422acae6efceb2c3c7d51256f58661adfc68bc94f1396e8458048",
+    "summary/fourth_round_conv_mechanism.json": "d52c80647ca3493dbd8ab31fe90aea7a427668ee8e9b5f7dd6940872f6511956",
+    "summary/fourth_round_dense_mechanism.json": "52e8ff810b022ba7f0ffffccd1bd5f155eee86d64c1db13dd6e5b5f6fb164452",
+    "summary/fourth_round_factorial.json": "0ade8a71d09fd21e0a1addaef81947f6d43e93cfdf08c1f8687d45fd356ef50f",
+    "summary/fourth_round_factorial_wiring_audit.json": "f83bcf0f5c32caf5345cd3cca8eb8b4e4cf355fc49bba6f9523bb7474b764585",
+    "summary/fourth_round_preregistration.json": "b456a3f25103a23f9fadb4901c88259a314a54e89ccb4d4b74d4688b03b42649",
+    "summary/fourth_round_results.json": "4d8f6f13545c60582071c9e94ab1941017998262772638efef5ca96dc6feca81",
+    "summary/fourth_round_runs.csv": "149e7c35c7044f83bf5c06138dc69e15c0d294d313c1ce38402415ad3c944980",
+    "summary/fourth_round_statistics_audit.json": "d7d85af9034b9f0b279188699c5be8e59c8369b7f086d5e34be2212063388f29",
+    "summary/fourth_round_transfer_freeze.json": "048540b9ba57b9dc1f0074c9be5605e15b58a3d358028bfb8797aaf751de9896",
+    "summary/fourth_round_transfer_results.json": "8a5648d8087021d9f5647b2108effb7626e09e88e415ae141d0823983d639509",
+    "summary/fourth_round_warp_conv.json": "f40bb07e3c7dcedfa9f06ea8d3812755e32fe6b424b9e5603e362dda228a8ade",
+    "summary/fourth_round_warp_dense.json": "199ffac648c1f686a52df0b81565b67733a62cd46fe1f763850da3b1c5403126",
+    "summary/fourth_round_warp_pilot.json": "e6f3d810c646b69d964bdafc13cdf3d29c5b63af223ce0300e03fa77c706071e",
+    "summary/fourth_round_wiring_audit.json": "63e0888dec2ceb433e1fc243f3a14def0734dab98be5c76949d90c155852e43a"
+  },
+  "source_sha256": {
+    "tests/test_handoff_repairs.py": "e0f65ece4d9a12d380decd681b561970b7c5a46d538ce264bb26b9878347ff47",
+    "tests/test_fourth_round.py": "27c969e5544301fa2f8f5374d1d39135334d013bf8c26e211b745d28a9d92420",
+    "tests/test_coverage_topology.py": "9f614b2ac23c3771692faa42a59751e9b005711da60b4f3d671ab81da4b090fd",
+    "experiments/coverage_dlgn/test_checkpoint_metadata_audit.py": "132879ce415f6f1593d43d8c22313fda1c43d31ee2af415f045cb3dd0fe3112b",
+    "experiments/coverage_dlgn/test_saved_wiring_audit.py": "e723b94a9a76090a0179bdfd8fba6f6098d264ca63c8ba08ec5437d6e301f4c0",
+    "experiments/coverage_dlgn/test_transfer_report_recovery.py": "af9ca58d222299267fba593e04b80fd757bb470e20838455681f97c81f6da16c",
+    "experiments/coverage_dlgn/audit_checkpoint_metadata.py": "4b7453c417735efbfd1de51a88fb33a8ea21f24f27d2100dcb7c6cceceb98cf3",
+    "experiments/coverage_dlgn/audit_saved_wiring.py": "dedb5fddb89b03887b52745c98ad00984f82c2bff3f25af2456756ceb10ac9d2",
+    "experiments/coverage_dlgn/recover_transfer_report.py": "6804cc50db241f24f96bb4e780b7b2ba1e9d34064d7eca7176b2b528ac5ca897"
+  },
+  "document_sha256": {
+    "FOURTH_ROUND_RESULTS.md": "31351b5764394bcfc2c4efcdcdb0ad7e98fe8b59aa28688f251fafaff3348db8",
+    "docs/AI_HANDOFF.md": "e56b4a4ea7f9f5355c4c8befafda330ace55fc537b99a7099d6304e1cc5e9e9e",
+    "DATE_TABLES.md": "728789e5493986eabb3c5b6b8cb7b08de64b5a387191924ce2337deb59706c89",
+    "PAPER_COMPARISON_TABLES.md": "6280701793d7c4c3195174ec7f2e2372e48438c32b4ab21a4b80116d295ebcc2",
+    "README.md": "7038b187411779c4d2d87fe45913668daa220527bb0479cdf42b7bb274195778",
+    "RESULTS.md": "94de240a2fbcb4edf22bdd81cd96a8df28b364b2031a43fda063cbedcceface5",
+    "EXPERIMENT_LOG.md": "aea79d6b273d141c0d96c6e04012642a7709d9aef342dbd37581be4795d35ed4",
+    "../../../../THOROUGH_SUMMARY.md": "85283fbc64c8e25826821143cc97074f737656635d050b4e945fd9d83087f97c"
+  },
+  "focused_tests": {
+    "command": [
+      "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_handoff_repairs.py",
+      "tests/test_fourth_round.py",
+      "tests/test_coverage_topology.py",
+      "experiments/coverage_dlgn/test_checkpoint_metadata_audit.py",
+      "experiments/coverage_dlgn/test_saved_wiring_audit.py",
+      "experiments/coverage_dlgn/test_transfer_report_recovery.py",
+      "-q"
+    ],
+    "cwd": "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix",
+    "environment": {
+      "OMP_NUM_THREADS": "2",
+      "MKL_NUM_THREADS": "2"
+    },
+    "exit_code": 0,
+    "passed": 133,
+    "log": "experiments/coverage_dlgn/logs/fourth_round/final_acceptance_tests.log",
+    "log_sha256": "1bf2cd4dd00f0b0528485fb37bba00c4f0d9f68f4aa0b880bbddc19b51e53f53"
+  },
+  "closing_read_only_checks": {
+    "final_report_reproduced": true,
+    "checkpoint_certificate_reproduced": true,
+    "factorial_certificate_reproduced": true,
+    "transfer_verified": true,
+    "smoke_artifact_sets": 16,
+    "synthetic_checkpoint_loads": 10,
+    "matched_warp_raw_recipes": 14,
+    "independent_scalar_recheck": 1256,
+    "historical_audit_checks": 41,
+    "historical_scope": "Implemented historical/second-round checks plus third-round and LogicTreeNet-M U2; not every historical experiment",
+    "git_diff_check": "pass",
+    "host_process_observation": "No experiment training or queue processes; unrelated VLLM PID 1961005 remained untouched"
+  },
+  "closeout_new_training_runs": 0,
+  "closeout_additional_heldout_inference_queries": 0,
+  "deferred": [
+    "Additional full-schedule LogicTreeNet-S paired seeds need a new approved frozen protocol",
+    "Full-M extra seeds",
+    "Hardware synthesis/place-route",
+    "Rank-four extensions and broader sweeps"
+  ],
+  "limitations": [
+    "Completion does not mean all scientific hypotheses were supported",
+    "Frozen transfer evaluator aggregate bug preserved with audited artifact-only recovery; do not rerun the original evaluation",
+    "Checkpoint binaries remain ignored and machine-local; no backup or commit/push performed"
+  ]
+}

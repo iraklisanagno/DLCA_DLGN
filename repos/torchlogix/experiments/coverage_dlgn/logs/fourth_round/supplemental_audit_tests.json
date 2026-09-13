@@ -1,0 +1,23 @@
+{
+  "command": [
+    "/ssd1/users/ianagno/my-repos/DLCA_DLGN_coverageDLGN/repos/torchlogix/venv/bin/python",
+    "-m",
+    "pytest",
+    "experiments/coverage_dlgn/test_checkpoint_metadata_audit.py",
+    "experiments/coverage_dlgn/test_saved_wiring_audit.py",
+    "experiments/coverage_dlgn/test_transfer_report_recovery.py",
+    "-q"
+  ],
+  "log_sha256": "61eb5e27f991a0828c5df4d77a609ed546fc2dd0aaefa219bd76ed013c5c46b9",
+  "scope": "supplemental_artifact_auditors_only_no_training_or_heldout_inference",
+  "source_hashes": {
+    "audit_checkpoint_metadata.py": "4b7453c417735efbfd1de51a88fb33a8ea21f24f27d2100dcb7c6cceceb98cf3",
+    "audit_saved_wiring.py": "dedb5fddb89b03887b52745c98ad00984f82c2bff3f25af2456756ceb10ac9d2",
+    "recover_transfer_report.py": "6804cc50db241f24f96bb4e780b7b2ba1e9d34064d7eca7176b2b528ac5ca897",
+    "test_checkpoint_metadata_audit.py": "132879ce415f6f1593d43d8c22313fda1c43d31ee2af415f045cb3dd0fe3112b",
+    "test_saved_wiring_audit.py": "e723b94a9a76090a0179bdfd8fba6f6098d264ca63c8ba08ec5437d6e301f4c0",
+    "test_transfer_report_recovery.py": "af9ca58d222299267fba593e04b80fd757bb470e20838455681f97c81f6da16c"
+  },
+  "status": "pass",
+  "tests_passed": 36
+}

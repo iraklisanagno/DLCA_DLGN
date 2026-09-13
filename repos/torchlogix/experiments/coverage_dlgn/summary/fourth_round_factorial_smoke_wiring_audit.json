@@ -1,0 +1,69 @@
+{
+  "auditor_sha256": "dedb5fddb89b03887b52745c98ad00984f82c2bff3f25af2456756ceb10ac9d2",
+  "pending": [],
+  "per_seed": [
+    {
+      "checks": {
+        "distinct_body_treatments": true,
+        "distinct_head_treatments": true,
+        "matched_spatial": true,
+        "random_body_held_fixed": true,
+        "random_head_held_fixed": true,
+        "u2_body_held_fixed": true,
+        "u2_head_held_fixed": true
+      },
+      "seed": 0
+    }
+  ],
+  "preregistration_sha256": "b456a3f25103a23f9fadb4901c88259a314a54e89ccb4d4b74d4688b03b42649",
+  "records": [
+    {
+      "checkpoint_sha256": "6b46efb04f7cb8edb35d10417338a7ed9ffc3ed319122c3c176d80e256bfe719",
+      "family": "random",
+      "fingerprints": {
+        "body": "d970343884171f0bf43e3f2f68c7c12de57824e2537d12756b6e99879aa3f2bd",
+        "head": "b0d6fcbe422255d6c4b591c8f137daadebf2c19be767574a931d788fc712ea1a",
+        "spatial": "c8fadc9158ca6e81829b4cea0060d25509286a97b5565731aa7bc6b2eaf3d779"
+      },
+      "name": "smoke_fourth_factorial_conv_s_random_seed0",
+      "seed": 0
+    },
+    {
+      "checkpoint_sha256": "73d928aa85a3f41fe6b35bf766d2e511e0b62e3c42c53a7489acaf2cbf4819e6",
+      "family": "body",
+      "fingerprints": {
+        "body": "b39dfb984c86708c421b2421f06c2894fc2c4c1f0e6b733c413cc403e35517d9",
+        "head": "b0d6fcbe422255d6c4b591c8f137daadebf2c19be767574a931d788fc712ea1a",
+        "spatial": "c8fadc9158ca6e81829b4cea0060d25509286a97b5565731aa7bc6b2eaf3d779"
+      },
+      "name": "smoke_fourth_factorial_conv_s_body_seed0",
+      "seed": 0
+    },
+    {
+      "checkpoint_sha256": "cc3117df1b14789449eaa9d881646a66f06158b6a151b4dfc2bccb661af84799",
+      "family": "head",
+      "fingerprints": {
+        "body": "d970343884171f0bf43e3f2f68c7c12de57824e2537d12756b6e99879aa3f2bd",
+        "head": "be8d8654e1898ee927541a30e033b541b5ec2deb2eea1d3105afd5621d005744",
+        "spatial": "c8fadc9158ca6e81829b4cea0060d25509286a97b5565731aa7bc6b2eaf3d779"
+      },
+      "name": "smoke_fourth_factorial_conv_s_head_seed0",
+      "seed": 0
+    },
+    {
+      "checkpoint_sha256": "fe6f7077c059e0894790e210ae8c4e3bf7c5e0480691302132f80eceaba3c501",
+      "family": "both",
+      "fingerprints": {
+        "body": "b39dfb984c86708c421b2421f06c2894fc2c4c1f0e6b733c413cc403e35517d9",
+        "head": "be8d8654e1898ee927541a30e033b541b5ec2deb2eea1d3105afd5621d005744",
+        "spatial": "c8fadc9158ca6e81829b4cea0060d25509286a97b5565731aa7bc6b2eaf3d779"
+      },
+      "name": "smoke_fourth_factorial_conv_s_both_seed0",
+      "seed": 0
+    }
+  ],
+  "regression_test_sha256": "e723b94a9a76090a0179bdfd8fba6f6098d264ca63c8ba08ec5437d6e301f4c0",
+  "scope": "saved_wiring_only_no_inference_or_dataset_access",
+  "smoke_only": true,
+  "status": "pass"
+}

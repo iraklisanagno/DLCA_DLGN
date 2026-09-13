@@ -1,0 +1,2061 @@
+{
+  "groups": [
+    {
+      "coordinate": "dense_m",
+      "family": "balanced_random",
+      "metrics": {
+        "best_step_gap_pp": {
+          "ci95_high": 0.8853018823052511,
+          "ci95_low": -0.6053019903883429,
+          "mean": 0.13999994595845408,
+          "n": 3,
+          "sample_sd": 0.3000001907348635
+        },
+        "best_validation_hard_pct": {
+          "ci95_high": 59.144360648688085,
+          "ci95_low": 58.148970338606425,
+          "mean": 58.646665493647255,
+          "n": 3,
+          "sample_sd": 0.2003330920779897
+        },
+        "final_gap_pp": {
+          "ci95_high": 0.88827930269984,
+          "ci95_low": 0.08505349975478582,
+          "mean": 0.4866664012273129,
+          "n": 3,
+          "sample_sd": 0.1616579015397561
+        },
+        "final_validation_hard_pct": {
+          "ci95_high": 58.742321147690205,
+          "ci95_low": 58.04434298061332,
+          "mean": 58.393332064151764,
+          "n": 3,
+          "sample_sd": 0.14047567371031322
+        },
+        "peak_gpu_gib": {
+          "ci95_high": 1.123354434967041,
+          "ci95_low": 1.123354434967041,
+          "mean": 1.123354434967041,
+          "n": 3,
+          "sample_sd": 0.0
+        },
+        "topology_seconds": {
+          "ci95_high": 11.63122268574507,
+          "ci95_low": 11.532997639282831,
+          "mean": 11.58211016251395,
+          "n": 3,
+          "sample_sd": 0.019768855571509716
+        },
+        "wall_minutes": {
+          "ci95_high": 7.783806669252008,
+          "ci95_low": 7.713338015507479,
+          "mean": 7.7485723423797435,
+          "n": 3,
+          "sample_sd": 0.014182580598013353
+        }
+      },
+      "phase": "mechanism",
+      "provenance": "OUR",
+      "scope": "V",
+      "seeds": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "coordinate": "dense_m",
+      "family": "nominal",
+      "metrics": {
+        "best_step_gap_pp": {
+          "ci95_high": 0.14201984951140156,
+          "ci95_low": 0.08464699835339291,
+          "mean": 0.11333342393239725,
+          "n": 3,
+          "sample_sd": 0.011546908340780607
+        },
+        "best_validation_hard_pct": {
+          "ci95_high": 60.263420464939124,
+          "ci95_low": 58.17657673125837,
+          "mean": 59.21999859809875,
+          "n": 3,
+          "sample_sd": 0.41999992728233654
+        },
+        "final_gap_pp": {
+          "ci95_high": 0.19009826647338124,
+          "ci95_low": -0.016765098443593432,
+          "mean": 0.08666658401489391,
+          "n": 3,
+          "sample_sd": 0.041633495033797506
+        },
+        "final_validation_hard_pct": {
+          "ci95_high": 60.53231156382673,
+          "ci95_low": 57.72101910398688,
+          "mean": 59.12666533390681,
+          "n": 3,
+          "sample_sd": 0.5658030880057995
+        },
+        "peak_gpu_gib": {
+          "ci95_high": 1.123354434967041,
+          "ci95_low": 1.123354434967041,
+          "mean": 1.123354434967041,
+          "n": 3,
+          "sample_sd": 0.0
+        },
+        "topology_seconds": {
+          "ci95_high": 13.695263147689769,
+          "ci95_low": 13.601136941747995,
+          "mean": 13.648200044718882,
+          "n": 3,
+          "sample_sd": 0.018943919476509943
+        },
+        "wall_minutes": {
+          "ci95_high": 7.759994653019747,
+          "ci95_low": 7.742631933525305,
+          "mean": 7.751313293272526,
+          "n": 3,
+          "sample_sd": 0.0034944355475179504
+        }
+      },
+      "phase": "mechanism",
+      "provenance": "OUR",
+      "scope": "V",
+      "seeds": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "coordinate": "dense_m",
+      "family": "random",
+      "metrics": {
+        "best_step_gap_pp": {
+          "ci95_high": 0.7219815338145646,
+          "ci95_low": -0.7619816943497381,
+          "mean": -0.020000080267586668,
+          "n": 3,
+          "sample_sd": 0.2986636890244595
+        },
+        "best_validation_hard_pct": {
+          "ci95_high": 56.137401031080955,
+          "ci95_low": 53.502596530691704,
+          "mean": 54.81999878088633,
+          "n": 3,
+          "sample_sd": 0.5302829726569043
+        },
+        "final_gap_pp": {
+          "ci95_high": 0.5739813560761206,
+          "ci95_low": -0.37398138786526947,
+          "mean": 0.09999998410542554,
+          "n": 3,
+          "sample_sd": 0.19078778017533038
+        },
+        "final_validation_hard_pct": {
+          "ci95_high": 56.07819145273115,
+          "ci95_low": 53.295139140377984,
+          "mean": 54.686665296554565,
+          "n": 3,
+          "sample_sd": 0.5601194521401043
+        },
+        "peak_gpu_gib": {
+          "ci95_high": 1.123354434967041,
+          "ci95_low": 1.123354434967041,
+          "mean": 1.123354434967041,
+          "n": 3,
+          "sample_sd": 0.0
+        },
+        "topology_seconds": {
+          "ci95_high": 6.373658237357064,
+          "ci95_low": 4.548917658938344,
+          "mean": 5.461287948147704,
+          "n": 3,
+          "sample_sd": 0.36724882552333765
+        },
+        "wall_minutes": {
+          "ci95_high": 7.774215051167752,
+          "ci95_low": 7.596195652989667,
+          "mean": 7.685205352078709,
+          "n": 3,
+          "sample_sd": 0.03582833399689485
+        }
+      },
+      "phase": "mechanism",
+      "provenance": "REPRODUCED",
+      "scope": "V",
+      "seeds": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "coordinate": "dense_m",
+      "family": "u2",
+      "metrics": {
+        "best_step_gap_pp": {
+          "ci95_high": 0.08905926849225329,
+          "ci95_low": -0.20905955141562851,
+          "mean": -0.060000141461687605,
+          "n": 3,
+          "sample_sd": 0.05999964475632434
+        },
+        "best_validation_hard_pct": {
+          "ci95_high": 59.919472835756956,
+          "ci95_low": 58.34719143082935,
+          "mean": 59.13333213329315,
+          "n": 3,
+          "sample_sd": 0.31643867965726236
+        },
+        "final_gap_pp": {
+          "ci95_high": 0.09009789047781451,
+          "ci95_low": -0.11676492907745896,
+          "mean": -0.01333351929982222,
+          "n": 3,
+          "sample_sd": 0.04163338527384224
+        },
+        "final_validation_hard_pct": {
+          "ci95_high": 59.98196170374762,
+          "ci95_low": 58.23136935984083,
+          "mean": 59.10666553179423,
+          "n": 3,
+          "sample_sd": 0.35232568940130693
+        },
+        "peak_gpu_gib": {
+          "ci95_high": 1.123354434967041,
+          "ci95_low": 1.123354434967041,
+          "mean": 1.123354434967041,
+          "n": 3,
+          "sample_sd": 0.0
+        },
+        "topology_seconds": {
+          "ci95_high": 14.151126750074145,
+          "ci95_low": 14.069572960076414,
+          "mean": 14.11034985507528,
+          "n": 3,
+          "sample_sd": 0.016413584455713524
+        },
+        "wall_minutes": {
+          "ci95_high": 7.777073025907181,
+          "ci95_low": 7.7308523452769355,
+          "mean": 7.753962685592058,
+          "n": 3,
+          "sample_sd": 0.009302413108528744
+        }
+      },
+      "phase": "mechanism",
+      "provenance": "OUR",
+      "scope": "V",
+      "seeds": [
+        0,
+        1,
+        2
+      ]
+    }
+  ],
+  "other_studies_not_covered": true,
+  "paired_effects": [
+    {
+      "construction_delta_seconds": {
+        "ci95_high": 9.560406712708012,
+        "ci95_low": 7.7377171011471395,
+        "mean": 8.649061906927576,
+        "n": 3,
+        "sample_sd": 0.36683604620629956
+      },
+      "contrast": "u2_minus_random",
+      "coordinate": "dense_m",
+      "equal_declared_cost": true,
+      "paired_effect": {
+        "ci95_high": 6.151968189425878,
+        "ci95_low": 2.474698515387761,
+        "mean": 4.313333352406819,
+        "n": 3,
+        "sample_sd": 0.7400903914206671
+      },
+      "per_seed": [
+        {
+          "construction_delta_seconds": 8.401621162891388,
+          "gain_pp": 3.459999680519104,
+          "seed": 0
+        },
+        {
+          "construction_delta_seconds": 8.475043310318142,
+          "gain_pp": 4.780000448226929,
+          "seed": 1
+        },
+        {
+          "construction_delta_seconds": 9.070521247573197,
+          "gain_pp": 4.699999928474426,
+          "seed": 2
+        }
+      ],
+      "phase": "mechanism",
+      "scope": "V",
+      "weights": {
+        "random": -1,
+        "u2": 1
+      },
+      "wins": 3
+    },
+    {
+      "construction_delta_seconds": {
+        "ci95_high": 2.572522524076414,
+        "ci95_low": 2.483956861046243,
+        "mean": 2.5282396925613284,
+        "n": 3,
+        "sample_sd": 0.017824799927292675
+      },
+      "contrast": "u2_minus_balanced_random",
+      "coordinate": "dense_m",
+      "equal_declared_cost": true,
+      "paired_effect": {
+        "ci95_high": 1.7682903442269622,
+        "ci95_low": -0.7949570649351736,
+        "mean": 0.48666663964589435,
+        "n": 3,
+        "sample_sd": 0.5158813322145143
+      },
+      "per_seed": [
+        {
+          "construction_delta_seconds": 2.5340163321234286,
+          "gain_pp": 0.05999958515167236,
+          "seed": 0
+        },
+        {
+          "construction_delta_seconds": 2.542459742631763,
+          "gain_pp": 1.0600001215934753,
+          "seed": 1
+        },
+        {
+          "construction_delta_seconds": 2.5082430029287934,
+          "gain_pp": 0.3400002121925354,
+          "seed": 2
+        }
+      ],
+      "phase": "mechanism",
+      "scope": "V",
+      "weights": {
+        "balanced_random": -1,
+        "u2": 1
+      },
+      "wins": 3
+    },
+    {
+      "construction_delta_seconds": {
+        "ci95_high": 0.5410101498604019,
+        "ci95_low": 0.38328947085239495,
+        "mean": 0.4621498103563984,
+        "n": 3,
+        "sample_sd": 0.03174299668209737
+      },
+      "contrast": "u2_minus_nominal",
+      "coordinate": "dense_m",
+      "equal_declared_cost": true,
+      "paired_effect": {
+        "ci95_high": 1.5853012757835259,
+        "ci95_low": -1.7586342053947226,
+        "mean": -0.0866664648055983,
+        "n": 3,
+        "sample_sd": 0.6730032710472934
+      },
+      "per_seed": [
+        {
+          "construction_delta_seconds": 0.4461544696241617,
+          "gain_pp": -0.3600000739097595,
+          "seed": 0
+        },
+        {
+          "construction_delta_seconds": 0.4987084618769586,
+          "gain_pp": 0.6800003051757884,
+          "seed": 1
+        },
+        {
+          "construction_delta_seconds": 0.44158649956807494,
+          "gain_pp": -0.5799996256828237,
+          "seed": 2
+        }
+      ],
+      "phase": "mechanism",
+      "scope": "V",
+      "weights": {
+        "nominal": -1,
+        "u2": 1
+      },
+      "wins": 1
+    }
+  ],
+  "preregistration_sha256": "b456a3f25103a23f9fadb4901c88259a314a54e89ccb4d4b74d4688b03b42649",
+  "rows": [
+    {
+      "architecture": "DlgnCifar10Medium",
+      "artifact_hashes": {
+        "best_checkpoint.pt": "5928890aa7b05b5451641321c89f2f2d1c21468a4bc4af4096c99a6e1a9ebdfd",
+        "environment.json": "f863dac26017e989be6caa715f68f4f66680f27511e871a97265b9ac200031f9",
+        "final_checkpoint.pt": "02cec4d4232e216c01b97e4db482a87f437625fb055552d18be47c005cf6186b",
+        "metrics.csv": "a249bbca3c1da84a8a6da461713c5f31d0e1d9e7fb05339dc842481726ccdc6b",
+        "run_summary.json": "7bc5e80b84cc4401ab27965df71f00d237c552049e16f1595b387c114d44fd37",
+        "topology.json": "70bc58b6fa779c1efbeed52037c4786b15b750f1e3c808237b95ff087943317a",
+        "training_config.json": "99561777984f48df7965bce78b61efe969e5f4e8a164615e51fc09e129d9c2f4"
+      },
+      "best_step": 18000,
+      "best_step_gap_pp": -0.24000000953674494,
+      "best_step_relaxed_pct": 55.15999889373779,
+      "best_validation_hard_pct": 55.399998903274536,
+      "config": "experiments/coverage_dlgn/configs/fourth_round/fourth_mechanism_dense_m_random_seed0.json",
+      "coordinate": "dense_m",
+      "cost": {
+        "candidate_indices_tensor_bytes": 8192000,
+        "dense_gate_count": 512000,
+        "deployed_routing_bits": 16640000,
+        "deployed_routing_bytes_packed": 2080000,
+        "trainable_parameters": 8192000,
+        "training_routing_parameters": 0
+      },
+      "family": "random",
+      "final_gap_pp": -2.980232283178452e-07,
+      "final_validation_hard_pct": 55.23999911546708,
+      "final_validation_relaxed_pct": 55.23999881744385,
+      "name": "fourth_mechanism_dense_m_random_seed0",
+      "output": "experiments/coverage_dlgn/results/pilot_cifar10_medium_random_v3_seed0",
+      "parametrization": "raw",
+      "peak_gpu_gib": 1.123354434967041,
+      "phase": "mechanism",
+      "provenance": "REPRODUCED",
+      "reuse": true,
+      "scope": "V",
+      "seed": 0,
+      "steps": 20000,
+      "topology_seconds": 5.693376813549548,
+      "validation_curve": [
+        {
+          "step": 2000.0,
+          "train_loss": 0.7976422119140625,
+          "val_acc_discrete": 0.494799987077713,
+          "val_acc_relaxed": 0.49519998490810396,
+          "val_loss_discrete": 1.735551233291626,
+          "val_loss_relaxed": 1.4385946297645569
+        },
+        {
+          "step": 4000.0,
+          "train_loss": 0.5762416381835938,
+          "val_acc_discrete": 0.5267999875545502,
+          "val_acc_relaxed": 0.5369999921321869,
+          "val_loss_discrete": 1.424535229206085,
+          "val_loss_relaxed": 1.3397048926353454
+        },
+        {
+          "step": 6000.0,
+          "train_loss": 0.4490558471679688,
+          "val_acc_discrete": 0.5401999890804291,
+          "val_acc_relaxed": 0.5477999901771545,
+          "val_loss_discrete": 1.3525954937934876,
+          "val_loss_relaxed": 1.3104572916030883
+        },
+        {
+          "step": 8000.0,
+          "train_loss": 0.366440185546875,
+          "val_acc_discrete": 0.5445999848842621,
+          "val_acc_relaxed": 0.5537999880313873,
+          "val_loss_discrete": 1.3283549785614013,
+          "val_loss_relaxed": 1.3001483392715454
+        },
+        {
+          "step": 10000.0,
+          "train_loss": 0.3154266052246094,
+          "val_acc_discrete": 0.547599984407425,
+          "val_acc_relaxed": 0.5539999866485595,
+          "val_loss_discrete": 1.3108238530158998,
+          "val_loss_relaxed": 1.2947082781791688
+        },
+        {
+          "step": 12000.0,
+          "train_loss": 0.28355413818359376,
+          "val_acc_discrete": 0.5461999827623367,
+          "val_acc_relaxed": 0.5519999867677688,
+          "val_loss_discrete": 1.3079002404212952,
+          "val_loss_relaxed": 1.2954429721832275
+        },
+        {
+          "step": 14000.0,
+          "train_loss": 0.2633517150878906,
+          "val_acc_discrete": 0.5525999873876571,
+          "val_acc_relaxed": 0.5513999837636948,
+          "val_loss_discrete": 1.2989230632781983,
+          "val_loss_relaxed": 1.291601574420929
+        },
+        {
+          "step": 16000.0,
+          "train_loss": 0.24841209411621096,
+          "val_acc_discrete": 0.552799985408783,
+          "val_acc_relaxed": 0.55259998857975,
+          "val_loss_discrete": 1.2995936036109925,
+          "val_loss_relaxed": 1.2930946922302247
+        },
+        {
+          "step": 18000.0,
+          "train_loss": 0.23880982971191406,
+          "val_acc_discrete": 0.5539999890327454,
+          "val_acc_relaxed": 0.5515999889373779,
+          "val_loss_discrete": 1.2975794529914857,
+          "val_loss_relaxed": 1.2922729897499083
+        },
+        {
+          "step": 20000.0,
+          "train_loss": 0.2305627899169922,
+          "val_acc_discrete": 0.5523999911546708,
+          "val_acc_relaxed": 0.5523999881744385,
+          "val_loss_discrete": 1.2957927179336548,
+          "val_loss_relaxed": 1.292136447429657
+        }
+      ],
+      "wall_minutes": 7.647506775536264
+    },
+    {
+      "architecture": "DlgnCifar10Medium",
+      "artifact_hashes": {
+        "best_checkpoint.pt": "6a801ff39e274f6e1549f8de541ad6f7a53c9cf6e09c09fd014ede25dd73c1f1",
+        "environment.json": "b02b57bdb976cc35d28bda6e486f98eb40ce509eb0836b18173538928e6936dd",
+        "final_checkpoint.pt": "e4665e6e9906178ed25c7b0cddbdcee0a7dfc390b25c7ec9cc354668081a18f3",
+        "metrics.csv": "cd51f4533e9d094a7d433cd55faaff2be059f2c4856ff5e2417010a7bd8e7469",
+        "run_summary.json": "a567bdfb154e2c83e134b16fd8c84b204af55e8fe53f6ebff87ae8c80e49c05e",
+        "topology.json": "8fa6fbb82cba6ff34179d77d0e890c9cd30ae65250170a97ac1b8d7f9c1236cd",
+        "training_config.json": "bdc73e1e964d612cc202397d676faa52c6e1aec245a25a216d1ccac82296696e"
+      },
+      "best_step": 16000,
+      "best_step_gap_pp": -0.16000026464462191,
+      "best_step_relaxed_pct": 58.639998733997345,
+      "best_validation_hard_pct": 58.79999899864197,
+      "config": "experiments/coverage_dlgn/configs/fourth_round/fourth_mechanism_dense_m_balanced_random_seed0.json",
+      "coordinate": "dense_m",
+      "cost": {
+        "candidate_indices_tensor_bytes": 8192000,
+        "dense_gate_count": 512000,
+        "deployed_routing_bits": 16640000,
+        "deployed_routing_bytes_packed": 2080000,
+        "trainable_parameters": 8192000,
+        "training_routing_parameters": 0
+      },
+      "family": "balanced_random",
+      "final_gap_pp": 0.4599994421005227,
+      "final_validation_hard_pct": 58.539999067783356,
+      "final_validation_relaxed_pct": 58.99999850988388,
+      "name": "fourth_mechanism_dense_m_balanced_random_seed0",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_balanced_random_seed0",
+      "parametrization": "raw",
+      "peak_gpu_gib": 1.123354434967041,
+      "phase": "mechanism",
+      "provenance": "OUR",
+      "reuse": false,
+      "scope": "V",
+      "seed": 0,
+      "steps": 20000,
+      "topology_seconds": 11.560981644317508,
+      "validation_curve": [
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 2000.0,
+          "train_loss": 0.7661893310546875,
+          "val_acc_discrete": 0.52359998524189,
+          "val_acc_relaxed": 0.5323999857902527,
+          "val_loss_discrete": 1.5613959670066833,
+          "val_loss_relaxed": 1.343027379512787
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 4000.0,
+          "train_loss": 0.536120849609375,
+          "val_acc_discrete": 0.5573999881744385,
+          "val_acc_relaxed": 0.5661999905109405,
+          "val_loss_discrete": 1.314888324737549,
+          "val_loss_relaxed": 1.2335405051708221
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 6000.0,
+          "train_loss": 0.41910177612304683,
+          "val_acc_discrete": 0.5667999857664108,
+          "val_acc_relaxed": 0.5799999856948852,
+          "val_loss_discrete": 1.238366016149521,
+          "val_loss_relaxed": 1.1962940275669098
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 8000.0,
+          "train_loss": 0.3446199951171875,
+          "val_acc_discrete": 0.5755999892950058,
+          "val_acc_relaxed": 0.5849999845027923,
+          "val_loss_discrete": 1.2042283523082733,
+          "val_loss_relaxed": 1.182224029302597
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 10000.0,
+          "train_loss": 0.29829452514648436,
+          "val_acc_discrete": 0.5759999841451645,
+          "val_acc_relaxed": 0.5841999864578247,
+          "val_loss_discrete": 1.189947714805603,
+          "val_loss_relaxed": 1.1750623774528504
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 12000.0,
+          "train_loss": 0.2692225341796875,
+          "val_acc_discrete": 0.5853999871015548,
+          "val_acc_relaxed": 0.5861999893188476,
+          "val_loss_discrete": 1.1830947065353394,
+          "val_loss_relaxed": 1.174552136659622
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 14000.0,
+          "train_loss": 0.25028369140625,
+          "val_acc_discrete": 0.5863999891281128,
+          "val_acc_relaxed": 0.5885999840497971,
+          "val_loss_discrete": 1.1788704311847686,
+          "val_loss_relaxed": 1.1717624759674072
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 16000.0,
+          "train_loss": 0.23636769104003907,
+          "val_acc_discrete": 0.5879999899864197,
+          "val_acc_relaxed": 0.5863999873399734,
+          "val_loss_discrete": 1.179226394891739,
+          "val_loss_relaxed": 1.1727867305278779
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 18000.0,
+          "train_loss": 0.22736347961425782,
+          "val_acc_discrete": 0.5879999881982804,
+          "val_acc_relaxed": 0.5899999886751175,
+          "val_loss_discrete": 1.1770871222019195,
+          "val_loss_relaxed": 1.1717653715610503
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 20000.0,
+          "train_loss": 0.2196869812011719,
+          "val_acc_discrete": 0.5853999906778335,
+          "val_acc_relaxed": 0.5899999850988388,
+          "val_loss_discrete": 1.1788769996166228,
+          "val_loss_relaxed": 1.1721270561218262
+        }
+      ],
+      "wall_minutes": 7.732237754149052
+    },
+    {
+      "architecture": "DlgnCifar10Medium",
+      "artifact_hashes": {
+        "best_checkpoint.pt": "d6d5aec223d9a2793258cafa4aba69534180278900385b6dd406d4230eb0928c",
+        "environment.json": "1b3511606a010de2c166e4e52c8ad05892b3ed538d2babd06ee3cfb8070a23ef",
+        "final_checkpoint.pt": "ede1afcb17dcf8d732a84f5cae2a6eae199385f2087a92b4c9736a00c62817a2",
+        "metrics.csv": "5cffb6b468562115214c3642028ffddc6de6848c1cfddd7196b88d794f6e4609",
+        "run_summary.json": "2eae2e62736163b038f966ccda06974a0aa0edad9b14766072ea7d1456198e60",
+        "topology.json": "08268843d8c4b0f9f75b83c146480f8bd674d8a76f47cce8d330ad28be69b1b6",
+        "training_config.json": "38320a2ac13d324d623d320d7ec642fd682ee7d65edf5e46dacba2294f5f3e0a"
+      },
+      "best_step": 20000,
+      "best_step_gap_pp": 0.11999988555908558,
+      "best_step_relaxed_pct": 59.33999854326248,
+      "best_validation_hard_pct": 59.2199986577034,
+      "config": "experiments/coverage_dlgn/configs/fourth_round/fourth_mechanism_dense_m_nominal_seed0.json",
+      "coordinate": "dense_m",
+      "cost": {
+        "candidate_indices_tensor_bytes": 8192000,
+        "dense_gate_count": 512000,
+        "deployed_routing_bits": 16640000,
+        "deployed_routing_bytes_packed": 2080000,
+        "trainable_parameters": 8192000,
+        "training_routing_parameters": 0
+      },
+      "family": "nominal",
+      "final_gap_pp": 0.11999988555908558,
+      "final_validation_hard_pct": 59.2199986577034,
+      "final_validation_relaxed_pct": 59.33999854326248,
+      "name": "fourth_mechanism_dense_m_nominal_seed0",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_nominal_seed0",
+      "parametrization": "raw",
+      "peak_gpu_gib": 1.123354434967041,
+      "phase": "mechanism",
+      "provenance": "OUR",
+      "reuse": false,
+      "scope": "V",
+      "seed": 0,
+      "steps": 20000,
+      "topology_seconds": 13.648843506816775,
+      "validation_curve": [
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 2000.0,
+          "train_loss": 0.76628759765625,
+          "val_acc_discrete": 0.519399990439415,
+          "val_acc_relaxed": 0.5341999900341033,
+          "val_loss_discrete": 1.5586410140991211,
+          "val_loss_relaxed": 1.3413759899139404
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 4000.0,
+          "train_loss": 0.5372664794921875,
+          "val_acc_discrete": 0.5627999848127365,
+          "val_acc_relaxed": 0.5679999834299088,
+          "val_loss_discrete": 1.2793760085105896,
+          "val_loss_relaxed": 1.2278384947776795
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 6000.0,
+          "train_loss": 0.4198844299316406,
+          "val_acc_discrete": 0.5823999863862991,
+          "val_acc_relaxed": 0.5845999872684479,
+          "val_loss_discrete": 1.2117405891418458,
+          "val_loss_relaxed": 1.1859896218776702
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 8000.0,
+          "train_loss": 0.346242431640625,
+          "val_acc_discrete": 0.5885999840497971,
+          "val_acc_relaxed": 0.5959999871253967,
+          "val_loss_discrete": 1.1944917964935302,
+          "val_loss_relaxed": 1.1721214497089385
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 10000.0,
+          "train_loss": 0.29998284912109374,
+          "val_acc_discrete": 0.591799989938736,
+          "val_acc_relaxed": 0.5917999857664108,
+          "val_loss_discrete": 1.1766109192371368,
+          "val_loss_relaxed": 1.1653295814990998
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 12000.0,
+          "train_loss": 0.27072030639648437,
+          "val_acc_discrete": 0.5905999892950058,
+          "val_acc_relaxed": 0.5937999856472015,
+          "val_loss_discrete": 1.1789198195934296,
+          "val_loss_relaxed": 1.1651312518119812
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 14000.0,
+          "train_loss": 0.25183227539062497,
+          "val_acc_discrete": 0.5909999853372574,
+          "val_acc_relaxed": 0.593599990606308,
+          "val_loss_discrete": 1.1713037741184236,
+          "val_loss_relaxed": 1.1636710894107818
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 16000.0,
+          "train_loss": 0.23807798767089844,
+          "val_acc_discrete": 0.5917999875545502,
+          "val_acc_relaxed": 0.5923999887704849,
+          "val_loss_discrete": 1.176039569377899,
+          "val_loss_relaxed": 1.1658720207214355
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 18000.0,
+          "train_loss": 0.2291187744140625,
+          "val_acc_discrete": 0.5891999864578247,
+          "val_acc_relaxed": 0.5929999858140945,
+          "val_loss_discrete": 1.1737586951255798,
+          "val_loss_relaxed": 1.1638473403453826
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 20000.0,
+          "train_loss": 0.22140058898925782,
+          "val_acc_discrete": 0.592199986577034,
+          "val_acc_relaxed": 0.5933999854326248,
+          "val_loss_discrete": 1.1708700704574584,
+          "val_loss_relaxed": 1.1642891132831574
+        }
+      ],
+      "wall_minutes": 7.753723536354179
+    },
+    {
+      "architecture": "DlgnCifar10Medium",
+      "artifact_hashes": {
+        "best_checkpoint.pt": "24c203cf906ceb0ddd9455cac231127d9d6a1cb88b481ced9d043da4c327691e",
+        "environment.json": "4d458cd3e204c8f2366d4695dc830ab4e8bd5088ca9920fce71e8107516b9a39",
+        "final_checkpoint.pt": "e179a79643131c672268ce5cd99416e081a06d20e86758fe0637ffa1b4bc1e48",
+        "metrics.csv": "c45da74cb9702f86ea5dccf7ac5fd483e6e0dd7029d7b2aac5624fae91969c24",
+        "run_summary.json": "d3667f79d6ce46a15b94f69f46ddd5373f8b14ced162e205cb0112e737ac3bb0",
+        "topology.json": "2b970d6f8b76c11793071c3b490133c8034204590c023691af0aeda3cf30894f",
+        "training_config.json": "8939869848795eadee21a7230f18c25c8d54badb84b204b26004f4d43db2a30a"
+      },
+      "best_step": 12000,
+      "best_step_gap_pp": -0.1199997663497876,
+      "best_step_relaxed_pct": 58.73999881744385,
+      "best_validation_hard_pct": 58.85999858379364,
+      "config": "experiments/coverage_dlgn/configs/fourth_round/fourth_mechanism_dense_m_u2_seed0.json",
+      "coordinate": "dense_m",
+      "cost": {
+        "candidate_indices_tensor_bytes": 8192000,
+        "dense_gate_count": 512000,
+        "deployed_routing_bits": 16640000,
+        "deployed_routing_bytes_packed": 2080000,
+        "trainable_parameters": 8192000,
+        "training_routing_parameters": 0
+      },
+      "family": "u2",
+      "final_gap_pp": 0.02000010013580855,
+      "final_validation_hard_pct": 58.779998779296875,
+      "final_validation_relaxed_pct": 58.79999887943268,
+      "name": "fourth_mechanism_dense_m_u2_seed0",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed0",
+      "parametrization": "raw",
+      "peak_gpu_gib": 1.123354434967041,
+      "phase": "mechanism",
+      "provenance": "OUR",
+      "reuse": false,
+      "scope": "V",
+      "seed": 0,
+      "steps": 20000,
+      "topology_seconds": 14.094997976440936,
+      "validation_curve": [
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 2000.0,
+          "train_loss": 0.7660943603515625,
+          "val_acc_discrete": 0.5277999877929688,
+          "val_acc_relaxed": 0.5329999887943268,
+          "val_loss_discrete": 1.564196937084198,
+          "val_loss_relaxed": 1.3440783643722534
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 4000.0,
+          "train_loss": 0.5373235473632813,
+          "val_acc_discrete": 0.5673999816179276,
+          "val_acc_relaxed": 0.5655999851226806,
+          "val_loss_discrete": 1.2919733381271363,
+          "val_loss_relaxed": 1.232596378326416
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 6000.0,
+          "train_loss": 0.42077618408203127,
+          "val_acc_discrete": 0.580399985909462,
+          "val_acc_relaxed": 0.586599988937378,
+          "val_loss_discrete": 1.2120360493659974,
+          "val_loss_relaxed": 1.1922747695446014
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 8000.0,
+          "train_loss": 0.34693814086914065,
+          "val_acc_discrete": 0.5827999848127365,
+          "val_acc_relaxed": 0.5861999887228012,
+          "val_loss_discrete": 1.1972008836269379,
+          "val_loss_relaxed": 1.1803601443767548
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 10000.0,
+          "train_loss": 0.30051361083984374,
+          "val_acc_discrete": 0.5835999935865402,
+          "val_acc_relaxed": 0.5885999876260758,
+          "val_loss_discrete": 1.1860741007328033,
+          "val_loss_relaxed": 1.1742251980304719
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 12000.0,
+          "train_loss": 0.27138238525390623,
+          "val_acc_discrete": 0.5885999858379364,
+          "val_acc_relaxed": 0.5873999881744385,
+          "val_loss_discrete": 1.183579901456833,
+          "val_loss_relaxed": 1.1747930788993834
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 14000.0,
+          "train_loss": 0.2524180908203125,
+          "val_acc_discrete": 0.584799987077713,
+          "val_acc_relaxed": 0.5865999907255173,
+          "val_loss_discrete": 1.1850579154491425,
+          "val_loss_relaxed": 1.1725545406341553
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 16000.0,
+          "train_loss": 0.2384821014404297,
+          "val_acc_discrete": 0.5823999899625778,
+          "val_acc_relaxed": 0.5903999894857407,
+          "val_loss_discrete": 1.1835602164268493,
+          "val_loss_relaxed": 1.1735505998134612
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 18000.0,
+          "train_loss": 0.2296288604736328,
+          "val_acc_discrete": 0.5881999880075455,
+          "val_acc_relaxed": 0.5831999897956848,
+          "val_loss_discrete": 1.1791924047470093,
+          "val_loss_relaxed": 1.1729810881614684
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 20000.0,
+          "train_loss": 0.22187307739257814,
+          "val_acc_discrete": 0.5877999877929687,
+          "val_acc_relaxed": 0.5879999887943268,
+          "val_loss_discrete": 1.1809463214874267,
+          "val_loss_relaxed": 1.173205931186676
+        }
+      ],
+      "wall_minutes": 7.7646769039022425
+    },
+    {
+      "architecture": "DlgnCifar10Medium",
+      "artifact_hashes": {
+        "best_checkpoint.pt": "bdbd8b693b517b30850d592e7173cc8b963af7e5e8a9153331d26f0e9242d744",
+        "environment.json": "f863dac26017e989be6caa715f68f4f66680f27511e871a97265b9ac200031f9",
+        "final_checkpoint.pt": "d44054e98188a0f53b345e898845c03e461ad3c054cb11b1a2a5261dbe770274",
+        "metrics.csv": "273f5675b0b8bd7332c28d25e724ae6b47b836f11340a46b4762d54837d9a05a",
+        "run_summary.json": "520fd9944a1e6f09dd286829034c6b447b475bedf216c791bfad5b4ed5e05f51",
+        "topology.json": "8e1c9ea1ab711cc2560dd394308bc26e29165d7b213a075bd1d17cbd35a11651",
+        "training_config.json": "0606bcb53722ab01937f466e9b957a541fde555bbb57067c33943e1dfbd0d24d"
+      },
+      "best_step": 20000,
+      "best_step_gap_pp": 0.3199999332427983,
+      "best_step_relaxed_pct": 55.01999843120575,
+      "best_validation_hard_pct": 54.69999849796295,
+      "config": "experiments/coverage_dlgn/configs/fourth_round/fourth_mechanism_dense_m_random_seed1.json",
+      "coordinate": "dense_m",
+      "cost": {
+        "candidate_indices_tensor_bytes": 8192000,
+        "dense_gate_count": 512000,
+        "deployed_routing_bits": 16640000,
+        "deployed_routing_bytes_packed": 2080000,
+        "trainable_parameters": 8192000,
+        "training_routing_parameters": 0
+      },
+      "family": "random",
+      "final_gap_pp": 0.3199999332427983,
+      "final_validation_hard_pct": 54.69999849796295,
+      "final_validation_relaxed_pct": 55.01999843120575,
+      "name": "fourth_mechanism_dense_m_random_seed1",
+      "output": "experiments/coverage_dlgn/results/pilot_cifar10_medium_random_v3_seed1",
+      "parametrization": "raw",
+      "peak_gpu_gib": 1.123354434967041,
+      "phase": "mechanism",
+      "provenance": "REPRODUCED",
+      "reuse": true,
+      "scope": "V",
+      "seed": 1,
+      "steps": 20000,
+      "topology_seconds": 5.652607743628323,
+      "validation_curve": [
+        {
+          "step": 2000.0,
+          "train_loss": 0.7976799926757813,
+          "val_acc_discrete": 0.4779999881982803,
+          "val_acc_relaxed": 0.49439999043941496,
+          "val_loss_discrete": 1.8370057845115662,
+          "val_loss_relaxed": 1.437210955619812
+        },
+        {
+          "step": 4000.0,
+          "train_loss": 0.5773856201171875,
+          "val_acc_discrete": 0.5073999863862991,
+          "val_acc_relaxed": 0.5311999881267547,
+          "val_loss_discrete": 1.4618230223655702,
+          "val_loss_relaxed": 1.3476833486557007
+        },
+        {
+          "step": 6000.0,
+          "train_loss": 0.4496417846679687,
+          "val_acc_discrete": 0.5293999844789505,
+          "val_acc_relaxed": 0.5419999885559083,
+          "val_loss_discrete": 1.3569349718093873,
+          "val_loss_relaxed": 1.3124932432174683
+        },
+        {
+          "step": 8000.0,
+          "train_loss": 0.3666584167480469,
+          "val_acc_discrete": 0.5345999896526337,
+          "val_acc_relaxed": 0.5459999865293503,
+          "val_loss_discrete": 1.330685658454895,
+          "val_loss_relaxed": 1.30190771818161
+        },
+        {
+          "step": 10000.0,
+          "train_loss": 0.31586666870117186,
+          "val_acc_discrete": 0.5375999873876571,
+          "val_acc_relaxed": 0.5457999885082245,
+          "val_loss_discrete": 1.3178282380104065,
+          "val_loss_relaxed": 1.301272451877594
+        },
+        {
+          "step": 12000.0,
+          "train_loss": 0.283742431640625,
+          "val_acc_discrete": 0.5411999893188476,
+          "val_acc_relaxed": 0.5497999876737595,
+          "val_loss_discrete": 1.3076948738098144,
+          "val_loss_relaxed": 1.2936548137664794
+        },
+        {
+          "step": 14000.0,
+          "train_loss": 0.2629623718261719,
+          "val_acc_discrete": 0.5449999839067459,
+          "val_acc_relaxed": 0.5519999879598617,
+          "val_loss_discrete": 1.305045771598816,
+          "val_loss_relaxed": 1.2926820874214173
+        },
+        {
+          "step": 16000.0,
+          "train_loss": 0.248867431640625,
+          "val_acc_discrete": 0.5453999865055085,
+          "val_acc_relaxed": 0.5493999880552292,
+          "val_loss_discrete": 1.3029990816116332,
+          "val_loss_relaxed": 1.2939113879203796
+        },
+        {
+          "step": 18000.0,
+          "train_loss": 0.23857223510742187,
+          "val_acc_discrete": 0.5453999853134155,
+          "val_acc_relaxed": 0.5521999830007553,
+          "val_loss_discrete": 1.3023187327384949,
+          "val_loss_relaxed": 1.2921438646316528
+        },
+        {
+          "step": 20000.0,
+          "train_loss": 0.23066519165039065,
+          "val_acc_discrete": 0.5469999849796295,
+          "val_acc_relaxed": 0.5501999843120575,
+          "val_loss_discrete": 1.298423810005188,
+          "val_loss_relaxed": 1.2927902722358704
+        }
+      ],
+      "wall_minutes": 7.718812096499217
+    },
+    {
+      "architecture": "DlgnCifar10Medium",
+      "artifact_hashes": {
+        "best_checkpoint.pt": "5e5ee26ef28daf08ea74e8fa23564eab340f35fa9df07b95720bf2c69d473b43",
+        "environment.json": "567c612a486d821dce846dd25ad32a6a20560fb7827670a4604eb3f0f6825f2b",
+        "final_checkpoint.pt": "b7efa1dc4787ed3e06b0d78eb0ab6639ae9e7532c5906e569ab1c8f488b9c0c3",
+        "metrics.csv": "7d5bf29886606764a1c1fb6a19e0ab99696e879bb6782f6cb48ab9f01e6e0b6e",
+        "run_summary.json": "f822b77832fe3519bb004dabf1d0abab1117215751a4039a99a6ac1d937d8e01",
+        "topology.json": "4bd148f0e5c79c12d4a74ad562b5477c9133c9b9840fa24bf9097796e283f41c",
+        "training_config.json": "aae2b537b0fc11a687d16283e44d397c0ca1d14a8df743ed919de8b7bc24baeb"
+      },
+      "best_step": 12000,
+      "best_step_gap_pp": 0.4400001168251011,
+      "best_step_relaxed_pct": 58.85999894142151,
+      "best_validation_hard_pct": 58.419998824596405,
+      "config": "experiments/coverage_dlgn/configs/fourth_round/fourth_mechanism_dense_m_balanced_random_seed1.json",
+      "coordinate": "dense_m",
+      "cost": {
+        "candidate_indices_tensor_bytes": 8192000,
+        "dense_gate_count": 512000,
+        "deployed_routing_bits": 16640000,
+        "deployed_routing_bytes_packed": 2080000,
+        "trainable_parameters": 8192000,
+        "training_routing_parameters": 0
+      },
+      "family": "balanced_random",
+      "final_gap_pp": 0.3400000929832392,
+      "final_validation_hard_pct": 58.379998624324806,
+      "final_validation_relaxed_pct": 58.719998717308044,
+      "name": "fourth_mechanism_dense_m_balanced_random_seed1",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_balanced_random_seed1",
+      "parametrization": "raw",
+      "peak_gpu_gib": 1.123354434967041,
+      "phase": "mechanism",
+      "provenance": "OUR",
+      "reuse": false,
+      "scope": "V",
+      "seed": 1,
+      "steps": 20000,
+      "topology_seconds": 11.585191311314702,
+      "validation_curve": [
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 2000.0,
+          "train_loss": 0.7659560546875,
+          "val_acc_discrete": 0.5105999881029128,
+          "val_acc_relaxed": 0.5285999834537506,
+          "val_loss_discrete": 1.6219662642478943,
+          "val_loss_relaxed": 1.3420459198951722
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 4000.0,
+          "train_loss": 0.5362396850585938,
+          "val_acc_discrete": 0.5573999893665313,
+          "val_acc_relaxed": 0.5649999904632569,
+          "val_loss_discrete": 1.3047640323638916,
+          "val_loss_relaxed": 1.2451670598983764
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 6000.0,
+          "train_loss": 0.4183147888183593,
+          "val_acc_discrete": 0.5695999819040298,
+          "val_acc_relaxed": 0.5777999866008758,
+          "val_loss_discrete": 1.2348508298397065,
+          "val_loss_relaxed": 1.1994538831710815
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 8000.0,
+          "train_loss": 0.34389117431640626,
+          "val_acc_discrete": 0.5779999846220016,
+          "val_acc_relaxed": 0.5855999875068665,
+          "val_loss_discrete": 1.2045590138435365,
+          "val_loss_relaxed": 1.1882084560394288
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 10000.0,
+          "train_loss": 0.29865396118164067,
+          "val_acc_discrete": 0.5795999896526337,
+          "val_acc_relaxed": 0.5863999849557877,
+          "val_loss_discrete": 1.2007989311218261,
+          "val_loss_relaxed": 1.1835622227191924
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 12000.0,
+          "train_loss": 0.2694596557617187,
+          "val_acc_discrete": 0.5841999882459641,
+          "val_acc_relaxed": 0.5885999894142151,
+          "val_loss_discrete": 1.1907693672180175,
+          "val_loss_relaxed": 1.1770827960968018
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 14000.0,
+          "train_loss": 0.2503638610839844,
+          "val_acc_discrete": 0.5793999886512756,
+          "val_acc_relaxed": 0.5867999923229218,
+          "val_loss_discrete": 1.1892461037635804,
+          "val_loss_relaxed": 1.1763444066047668
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 16000.0,
+          "train_loss": 0.23712721252441407,
+          "val_acc_discrete": 0.581599987745285,
+          "val_acc_relaxed": 0.5875999897718429,
+          "val_loss_discrete": 1.1853158819675444,
+          "val_loss_relaxed": 1.1776507711410522
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 18000.0,
+          "train_loss": 0.22737835693359376,
+          "val_acc_discrete": 0.583999987244606,
+          "val_acc_relaxed": 0.5857999891042709,
+          "val_loss_discrete": 1.1833750486373902,
+          "val_loss_relaxed": 1.1764919698238372
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 20000.0,
+          "train_loss": 0.2200537414550781,
+          "val_acc_discrete": 0.583799986243248,
+          "val_acc_relaxed": 0.5871999871730804,
+          "val_loss_discrete": 1.1815158915519715,
+          "val_loss_relaxed": 1.1757313764095307
+        }
+      ],
+      "wall_minutes": 7.75572400225016
+    },
+    {
+      "architecture": "DlgnCifar10Medium",
+      "artifact_hashes": {
+        "best_checkpoint.pt": "55b15eb8b62ddc4ebdd06c9dc168930725b5d20d0d5be8a42768d41c84551d01",
+        "environment.json": "ccc790d9618a5de5e23d4d6c9393453fe8efda87f9294fc941c4c7c373ba9309",
+        "final_checkpoint.pt": "23258a3aa20132df7bc2c4737ac6d2603cdab4acba89a1570c1ade7ec3b0143b",
+        "metrics.csv": "74304b1c4a574620a35ddfaf0c34003214d5aa5662de0e2228fdb8ab7c019288",
+        "run_summary.json": "f88dd6e019699a2941b003d86201fbbb77aa13076352c8681bd3397e3ece09bd",
+        "topology.json": "8571916871608c2436cfa5c81408ad60689f9a31615d1ecd14b4814ea1373280",
+        "training_config.json": "d151e65d660d3261a4fe33e63554e69aad7c4adc4dcf0476c0e08e79343373d3"
+      },
+      "best_step": 12000,
+      "best_step_gap_pp": 0.1200001835823139,
+      "best_step_relaxed_pct": 58.91999882459641,
+      "best_validation_hard_pct": 58.79999864101409,
+      "config": "experiments/coverage_dlgn/configs/fourth_round/fourth_mechanism_dense_m_nominal_seed1.json",
+      "coordinate": "dense_m",
+      "cost": {
+        "candidate_indices_tensor_bytes": 8192000,
+        "dense_gate_count": 512000,
+        "deployed_routing_bits": 16640000,
+        "deployed_routing_bytes_packed": 2080000,
+        "trainable_parameters": 8192000,
+        "training_routing_parameters": 0
+      },
+      "family": "nominal",
+      "final_gap_pp": 0.03999966382980391,
+      "final_validation_hard_pct": 58.51999884843826,
+      "final_validation_relaxed_pct": 58.559998512268066,
+      "name": "fourth_mechanism_dense_m_nominal_seed1",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_nominal_seed1",
+      "parametrization": "raw",
+      "peak_gpu_gib": 1.123354434967041,
+      "phase": "mechanism",
+      "provenance": "OUR",
+      "reuse": false,
+      "scope": "V",
+      "seed": 1,
+      "steps": 20000,
+      "topology_seconds": 13.628942592069507,
+      "validation_curve": [
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 2000.0,
+          "train_loss": 0.7664428100585937,
+          "val_acc_discrete": 0.5231999868154525,
+          "val_acc_relaxed": 0.5313999825716018,
+          "val_loss_discrete": 1.5829291081428527,
+          "val_loss_relaxed": 1.3420276832580567
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 4000.0,
+          "train_loss": 0.5371177368164062,
+          "val_acc_discrete": 0.544599986076355,
+          "val_acc_relaxed": 0.560799987912178,
+          "val_loss_discrete": 1.3365073442459106,
+          "val_loss_relaxed": 1.244595363140106
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 6000.0,
+          "train_loss": 0.41950299072265623,
+          "val_acc_discrete": 0.569399990439415,
+          "val_acc_relaxed": 0.5801999896764756,
+          "val_loss_discrete": 1.2199721014499665,
+          "val_loss_relaxed": 1.1965412604808807
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 8000.0,
+          "train_loss": 0.34529666137695314,
+          "val_acc_discrete": 0.5727999871969223,
+          "val_acc_relaxed": 0.5835999894142151,
+          "val_loss_discrete": 1.214937778711319,
+          "val_loss_relaxed": 1.1838842499256135
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 10000.0,
+          "train_loss": 0.3001332092285156,
+          "val_acc_discrete": 0.5757999885082244,
+          "val_acc_relaxed": 0.5881999891996383,
+          "val_loss_discrete": 1.1940001618862153,
+          "val_loss_relaxed": 1.1781369543075562
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 12000.0,
+          "train_loss": 0.2707120361328125,
+          "val_acc_discrete": 0.587999986410141,
+          "val_acc_relaxed": 0.5891999882459641,
+          "val_loss_discrete": 1.175763475894928,
+          "val_loss_relaxed": 1.1702906453609467
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 14000.0,
+          "train_loss": 0.2515885925292969,
+          "val_acc_discrete": 0.5869999873638153,
+          "val_acc_relaxed": 0.584799987077713,
+          "val_loss_discrete": 1.175041538476944,
+          "val_loss_relaxed": 1.1684770429134368
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 16000.0,
+          "train_loss": 0.23835806274414062,
+          "val_acc_discrete": 0.5853999882936478,
+          "val_acc_relaxed": 0.5883999860286713,
+          "val_loss_discrete": 1.173387084007263,
+          "val_loss_relaxed": 1.1700890254974365
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 18000.0,
+          "train_loss": 0.22832254028320315,
+          "val_acc_discrete": 0.5831999880075455,
+          "val_acc_relaxed": 0.5883999872207641,
+          "val_loss_discrete": 1.174903814792633,
+          "val_loss_relaxed": 1.1679207932949067
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 20000.0,
+          "train_loss": 0.22096510314941406,
+          "val_acc_discrete": 0.5851999884843826,
+          "val_acc_relaxed": 0.5855999851226806,
+          "val_loss_discrete": 1.1719221258163453,
+          "val_loss_relaxed": 1.1677066469192505
+        }
+      ],
+      "wall_minutes": 7.747305650364918
+    },
+    {
+      "architecture": "DlgnCifar10Medium",
+      "artifact_hashes": {
+        "best_checkpoint.pt": "e960df0ead1963a1be2a56d6104d6d2af9269cc0cde499c9684b689f45d2def1",
+        "environment.json": "17467dc8d67e714bf4ff3229f7b19b8a9f4906b4b0bd54704fe45730456d2f0f",
+        "final_checkpoint.pt": "ff732524cd921cfa9f32aa67d0eaa8a5cc151b1f4347f150bb5a890e096385f4",
+        "metrics.csv": "67b9662804929b017acc84139732ca17813b46abc79970c2f083105cdf7c0589",
+        "run_summary.json": "c468d31498ab0eaa4f1e551454a835570a6843a60e7179850c8b2a94e54c381b",
+        "topology.json": "e12b3c797308bbed490ebe841a191a97801ff7a60ecd97d966d2bedf910959c1",
+        "training_config.json": "3dd94f6d6cc7f052a93209d43b82e017ab52c4ac01abc1161fd3dcd91b46d7d0"
+      },
+      "best_step": 20000,
+      "best_step_gap_pp": -4.768371586472142e-07,
+      "best_step_relaxed_pct": 59.47999846935272,
+      "best_validation_hard_pct": 59.47999894618988,
+      "config": "experiments/coverage_dlgn/configs/fourth_round/fourth_mechanism_dense_m_u2_seed1.json",
+      "coordinate": "dense_m",
+      "cost": {
+        "candidate_indices_tensor_bytes": 8192000,
+        "dense_gate_count": 512000,
+        "deployed_routing_bits": 16640000,
+        "deployed_routing_bytes_packed": 2080000,
+        "trainable_parameters": 8192000,
+        "training_routing_parameters": 0
+      },
+      "family": "u2",
+      "final_gap_pp": -4.768371586472142e-07,
+      "final_validation_hard_pct": 59.47999894618988,
+      "final_validation_relaxed_pct": 59.47999846935272,
+      "name": "fourth_mechanism_dense_m_u2_seed1",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed1",
+      "parametrization": "raw",
+      "peak_gpu_gib": 1.123354434967041,
+      "phase": "mechanism",
+      "provenance": "OUR",
+      "reuse": false,
+      "scope": "V",
+      "seed": 1,
+      "steps": 20000,
+      "topology_seconds": 14.127651053946465,
+      "validation_curve": [
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 2000.0,
+          "train_loss": 0.7665471801757812,
+          "val_acc_discrete": 0.5171999889612198,
+          "val_acc_relaxed": 0.5347999912500382,
+          "val_loss_discrete": 1.6059884786605836,
+          "val_loss_relaxed": 1.341874325275421
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 4000.0,
+          "train_loss": 0.53715966796875,
+          "val_acc_discrete": 0.5503999888896942,
+          "val_acc_relaxed": 0.5683999866247177,
+          "val_loss_discrete": 1.3222124338150025,
+          "val_loss_relaxed": 1.2417636919021606
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 6000.0,
+          "train_loss": 0.41951434326171877,
+          "val_acc_discrete": 0.5717999881505966,
+          "val_acc_relaxed": 0.5803999853134155,
+          "val_loss_discrete": 1.2294829344749452,
+          "val_loss_relaxed": 1.1967256140708924
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 8000.0,
+          "train_loss": 0.34568435668945313,
+          "val_acc_discrete": 0.5775999873876572,
+          "val_acc_relaxed": 0.5839999878406524,
+          "val_loss_discrete": 1.2091875624656678,
+          "val_loss_relaxed": 1.1856058585643767
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 10000.0,
+          "train_loss": 0.3007471313476563,
+          "val_acc_discrete": 0.5819999867677689,
+          "val_acc_relaxed": 0.5869999885559082,
+          "val_loss_discrete": 1.195769659280777,
+          "val_loss_relaxed": 1.182283762693405
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 12000.0,
+          "train_loss": 0.2713415832519531,
+          "val_acc_discrete": 0.5835999882221222,
+          "val_acc_relaxed": 0.5921999877691269,
+          "val_loss_discrete": 1.1899236381053924,
+          "val_loss_relaxed": 1.1755787181854247
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 14000.0,
+          "train_loss": 0.2522687683105469,
+          "val_acc_discrete": 0.5895999878644943,
+          "val_acc_relaxed": 0.5947999888658524,
+          "val_loss_discrete": 1.1836834144592285,
+          "val_loss_relaxed": 1.174066241979599
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 16000.0,
+          "train_loss": 0.23912956237792968,
+          "val_acc_discrete": 0.5905999863147735,
+          "val_acc_relaxed": 0.5891999846696854,
+          "val_loss_discrete": 1.183677487373352,
+          "val_loss_relaxed": 1.1760660588741303
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 18000.0,
+          "train_loss": 0.2291237030029297,
+          "val_acc_discrete": 0.590199984908104,
+          "val_acc_relaxed": 0.5949999850988388,
+          "val_loss_discrete": 1.179388520717621,
+          "val_loss_relaxed": 1.1734222126007081
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 20000.0,
+          "train_loss": 0.22181623840332032,
+          "val_acc_discrete": 0.5947999894618988,
+          "val_acc_relaxed": 0.5947999846935272,
+          "val_loss_discrete": 1.17675164103508,
+          "val_loss_relaxed": 1.1732676196098328
+        }
+      ],
+      "wall_minutes": 7.749268172952967
+    },
+    {
+      "architecture": "DlgnCifar10Medium",
+      "artifact_hashes": {
+        "best_checkpoint.pt": "01dc4203d0da6512dcfdb921ca1c844083cdc4f51b575f4ba46366bfae558304",
+        "environment.json": "f863dac26017e989be6caa715f68f4f66680f27511e871a97265b9ac200031f9",
+        "final_checkpoint.pt": "5a38d89d4f92f88beb1e36170495609633f8f201932a248282fda53d2475ea96",
+        "metrics.csv": "30cd758a242bc2f10e126fb90b62ba649ae419b86ee269b495febe7e3e2eb568",
+        "run_summary.json": "96fa68f599dc1ede99d65a25e653c6a7b48b42beb3db2631e8c8ad33a871ffc9",
+        "topology.json": "d900c529114d807008f5f5e9e4704454160f531fa64a181ccf969da7e62e2552",
+        "training_config.json": "3f6f68625773cc565c39a3f14794df4258749170f036e5666fdc11d524dfa402"
+      },
+      "best_step": 16000,
+      "best_step_gap_pp": -0.14000016450881336,
+      "best_step_relaxed_pct": 54.21999877691269,
+      "best_validation_hard_pct": 54.35999894142151,
+      "config": "experiments/coverage_dlgn/configs/fourth_round/fourth_mechanism_dense_m_random_seed2.json",
+      "coordinate": "dense_m",
+      "cost": {
+        "candidate_indices_tensor_bytes": 8192000,
+        "dense_gate_count": 512000,
+        "deployed_routing_bits": 16640000,
+        "deployed_routing_bytes_packed": 2080000,
+        "trainable_parameters": 8192000,
+        "training_routing_parameters": 0
+      },
+      "family": "random",
+      "final_gap_pp": -0.019999682903293348,
+      "final_validation_hard_pct": 54.11999827623367,
+      "final_validation_relaxed_pct": 54.099998593330376,
+      "name": "fourth_mechanism_dense_m_random_seed2",
+      "output": "experiments/coverage_dlgn/results/pilot_cifar10_medium_random_v3_seed2",
+      "parametrization": "raw",
+      "peak_gpu_gib": 1.123354434967041,
+      "phase": "mechanism",
+      "provenance": "REPRODUCED",
+      "reuse": true,
+      "scope": "V",
+      "seed": 2,
+      "steps": 20000,
+      "topology_seconds": 5.037879287265241,
+      "validation_curve": [
+        {
+          "step": 2000.0,
+          "train_loss": 0.7974034423828125,
+          "val_acc_discrete": 0.48219998717308044,
+          "val_acc_relaxed": 0.5035999864339828,
+          "val_loss_discrete": 1.8151334261894225,
+          "val_loss_relaxed": 1.4382066798210145
+        },
+        {
+          "step": 4000.0,
+          "train_loss": 0.57585302734375,
+          "val_acc_discrete": 0.5261999893188477,
+          "val_acc_relaxed": 0.5263999891281128,
+          "val_loss_discrete": 1.4359283065795898,
+          "val_loss_relaxed": 1.347012710571289
+        },
+        {
+          "step": 6000.0,
+          "train_loss": 0.4480152893066407,
+          "val_acc_discrete": 0.5231999868154525,
+          "val_acc_relaxed": 0.536799988746643,
+          "val_loss_discrete": 1.3746535682678223,
+          "val_loss_relaxed": 1.3201799416542053
+        },
+        {
+          "step": 8000.0,
+          "train_loss": 0.3655582275390625,
+          "val_acc_discrete": 0.5369999849796295,
+          "val_acc_relaxed": 0.5379999846220016,
+          "val_loss_discrete": 1.3385857367515563,
+          "val_loss_relaxed": 1.307299017906189
+        },
+        {
+          "step": 10000.0,
+          "train_loss": 0.31499087524414066,
+          "val_acc_discrete": 0.5355999892950059,
+          "val_acc_relaxed": 0.5409999859333038,
+          "val_loss_discrete": 1.3220251178741456,
+          "val_loss_relaxed": 1.303454384803772
+        },
+        {
+          "step": 12000.0,
+          "train_loss": 0.28388204956054686,
+          "val_acc_discrete": 0.5403999882936478,
+          "val_acc_relaxed": 0.5411999893188476,
+          "val_loss_discrete": 1.3151647996902467,
+          "val_loss_relaxed": 1.303974483013153
+        },
+        {
+          "step": 14000.0,
+          "train_loss": 0.26273168945312503,
+          "val_acc_discrete": 0.541799983382225,
+          "val_acc_relaxed": 0.5415999865531922,
+          "val_loss_discrete": 1.3116265606880189,
+          "val_loss_relaxed": 1.3014813542366028
+        },
+        {
+          "step": 16000.0,
+          "train_loss": 0.24856681823730467,
+          "val_acc_discrete": 0.5435999894142151,
+          "val_acc_relaxed": 0.5421999877691269,
+          "val_loss_discrete": 1.307168848514557,
+          "val_loss_relaxed": 1.2984668374061585
+        },
+        {
+          "step": 18000.0,
+          "train_loss": 0.23873847961425781,
+          "val_acc_discrete": 0.5397999894618988,
+          "val_acc_relaxed": 0.5435999894142151,
+          "val_loss_discrete": 1.306642973423004,
+          "val_loss_relaxed": 1.298836989402771
+        },
+        {
+          "step": 20000.0,
+          "train_loss": 0.23072576904296874,
+          "val_acc_discrete": 0.5411999827623367,
+          "val_acc_relaxed": 0.5409999859333038,
+          "val_loss_discrete": 1.303168740272522,
+          "val_loss_relaxed": 1.296999876499176
+        }
+      ],
+      "wall_minutes": 7.689297184200647
+    },
+    {
+      "architecture": "DlgnCifar10Medium",
+      "artifact_hashes": {
+        "best_checkpoint.pt": "66742f75d39b70c258129617efa2f312375b2c9a1e9537f45e325f895b115425",
+        "environment.json": "79cd4bdad7ce6f954381544b5174290897f87847c5a0b7b3e47356d9ab08a920",
+        "final_checkpoint.pt": "9d14d845e6b634117da65b8f81fae48d5b5c22038464233732749d6487b27d3e",
+        "metrics.csv": "fef7796df5d9c5c59109d3842cece02458e7a26f0ee24a7fb8e5be56b0e0e273",
+        "run_summary.json": "e2a99b88caced9aec78039b49e2e132304154d7078bb2a1b108aee175a268afc",
+        "topology.json": "052f5fc6d3cdd69e8428357ea582d7a3676be7dd73db096bc700d4f896ea1519",
+        "training_config.json": "68c00bda25968c0f914b56b15c021b1a2ada9a64c4145cddda3d513c419e5724"
+      },
+      "best_step": 18000,
+      "best_step_gap_pp": 0.13999998569488303,
+      "best_step_relaxed_pct": 58.859998643398285,
+      "best_validation_hard_pct": 58.7199986577034,
+      "config": "experiments/coverage_dlgn/configs/fourth_round/fourth_mechanism_dense_m_balanced_random_seed2.json",
+      "coordinate": "dense_m",
+      "cost": {
+        "candidate_indices_tensor_bytes": 8192000,
+        "dense_gate_count": 512000,
+        "deployed_routing_bits": 16640000,
+        "deployed_routing_bytes_packed": 2080000,
+        "trainable_parameters": 8192000,
+        "training_routing_parameters": 0
+      },
+      "family": "balanced_random",
+      "final_gap_pp": 0.6599996685981768,
+      "final_validation_hard_pct": 58.25999850034713,
+      "final_validation_relaxed_pct": 58.91999816894531,
+      "name": "fourth_mechanism_dense_m_balanced_random_seed2",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_balanced_random_seed2",
+      "parametrization": "raw",
+      "peak_gpu_gib": 1.123354434967041,
+      "phase": "mechanism",
+      "provenance": "OUR",
+      "reuse": false,
+      "scope": "V",
+      "seed": 2,
+      "steps": 20000,
+      "topology_seconds": 11.600157531909645,
+      "validation_curve": [
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 2000.0,
+          "train_loss": 0.7660784301757813,
+          "val_acc_discrete": 0.5087999856472015,
+          "val_acc_relaxed": 0.5321999853849411,
+          "val_loss_discrete": 1.6313461303710937,
+          "val_loss_relaxed": 1.339195694923401
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 4000.0,
+          "train_loss": 0.5357157592773437,
+          "val_acc_discrete": 0.553199987411499,
+          "val_acc_relaxed": 0.5651999861001968,
+          "val_loss_discrete": 1.302866930961609,
+          "val_loss_relaxed": 1.2336918377876283
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 6000.0,
+          "train_loss": 0.4182978515625,
+          "val_acc_discrete": 0.57339998960495,
+          "val_acc_relaxed": 0.578799986243248,
+          "val_loss_discrete": 1.236884481906891,
+          "val_loss_relaxed": 1.2013897693157196
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 8000.0,
+          "train_loss": 0.3443131408691406,
+          "val_acc_discrete": 0.5797999918460846,
+          "val_acc_relaxed": 0.5873999911546707,
+          "val_loss_discrete": 1.1995390260219574,
+          "val_loss_relaxed": 1.1830948674678803
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 10000.0,
+          "train_loss": 0.2981866760253906,
+          "val_acc_discrete": 0.5845999884605407,
+          "val_acc_relaxed": 0.5851999884843826,
+          "val_loss_discrete": 1.188046053647995,
+          "val_loss_relaxed": 1.1775922310352325
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 12000.0,
+          "train_loss": 0.26934243774414063,
+          "val_acc_discrete": 0.5833999902009964,
+          "val_acc_relaxed": 0.5849999892711639,
+          "val_loss_discrete": 1.1814870834350586,
+          "val_loss_relaxed": 1.1767652416229248
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 14000.0,
+          "train_loss": 0.2498565673828125,
+          "val_acc_discrete": 0.584999988079071,
+          "val_acc_relaxed": 0.5883999860286713,
+          "val_loss_discrete": 1.1792080402374268,
+          "val_loss_relaxed": 1.1735930478572845
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 16000.0,
+          "train_loss": 0.23672567749023435,
+          "val_acc_discrete": 0.586999989748001,
+          "val_acc_relaxed": 0.586599988937378,
+          "val_loss_discrete": 1.174352651834488,
+          "val_loss_relaxed": 1.1702749991416932
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 18000.0,
+          "train_loss": 0.2272325897216797,
+          "val_acc_discrete": 0.587199986577034,
+          "val_acc_relaxed": 0.5885999864339828,
+          "val_loss_discrete": 1.1759615290164946,
+          "val_loss_relaxed": 1.1710833406448364
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 20000.0,
+          "train_loss": 0.2196845397949219,
+          "val_acc_discrete": 0.5825999850034713,
+          "val_acc_relaxed": 0.5891999816894531,
+          "val_loss_discrete": 1.17620224237442,
+          "val_loss_relaxed": 1.1702391719818115
+        }
+      ],
+      "wall_minutes": 7.7577552707400175
+    },
+    {
+      "architecture": "DlgnCifar10Medium",
+      "artifact_hashes": {
+        "best_checkpoint.pt": "aed2dffc8a6b689eda8b78bc625eb8c59e8eb56f1c2391f313c57714a252d776",
+        "environment.json": "eb4a3ea1f371bd70d1bd5cfe2046d6d3decdfc59fc9f070e9a3ab4e5792d1686",
+        "final_checkpoint.pt": "0079a84f25d7cf30adb12b329bb8cac7c291ae6c011c64ac3c0fccfd41390b17",
+        "metrics.csv": "7010544051417c68ab82cb27382229b412aab4d30f455d814a3c0dd80a51423f",
+        "run_summary.json": "e5b63ec8abca0a2d33c2421ed2e203cf465d0573324dffaa90ec5661bd831d23",
+        "topology.json": "f882089e1fd0d75cc537cf21e6a7fa1ca3004dc8d939112e987f96003df347b7",
+        "training_config.json": "570ebdd098dd5ea3df8af6efb07c8e01e0246ab05ad4dbe5017c8c0ea86a90dd"
+      },
+      "best_step": 20000,
+      "best_step_gap_pp": 0.10000020265579224,
+      "best_step_relaxed_pct": 59.73999869823455,
+      "best_validation_hard_pct": 59.63999849557876,
+      "config": "experiments/coverage_dlgn/configs/fourth_round/fourth_mechanism_dense_m_nominal_seed2.json",
+      "coordinate": "dense_m",
+      "cost": {
+        "candidate_indices_tensor_bytes": 8192000,
+        "dense_gate_count": 512000,
+        "deployed_routing_bits": 16640000,
+        "deployed_routing_bytes_packed": 2080000,
+        "trainable_parameters": 8192000,
+        "training_routing_parameters": 0
+      },
+      "family": "nominal",
+      "final_gap_pp": 0.10000020265579224,
+      "final_validation_hard_pct": 59.63999849557876,
+      "final_validation_relaxed_pct": 59.73999869823455,
+      "name": "fourth_mechanism_dense_m_nominal_seed2",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_nominal_seed2",
+      "parametrization": "raw",
+      "peak_gpu_gib": 1.123354434967041,
+      "phase": "mechanism",
+      "provenance": "OUR",
+      "reuse": false,
+      "scope": "V",
+      "seed": 2,
+      "steps": 20000,
+      "topology_seconds": 13.666814035270363,
+      "validation_curve": [
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 2000.0,
+          "train_loss": 0.7660077514648437,
+          "val_acc_discrete": 0.5207999902963638,
+          "val_acc_relaxed": 0.5389999860525131,
+          "val_loss_discrete": 1.6149813389778138,
+          "val_loss_relaxed": 1.340595815181732
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 4000.0,
+          "train_loss": 0.5364185180664063,
+          "val_acc_discrete": 0.5653999865055084,
+          "val_acc_relaxed": 0.5691999900341034,
+          "val_loss_discrete": 1.294700276851654,
+          "val_loss_relaxed": 1.2304560375213622
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 6000.0,
+          "train_loss": 0.41980862426757815,
+          "val_acc_discrete": 0.5783999902009964,
+          "val_acc_relaxed": 0.5779999876022339,
+          "val_loss_discrete": 1.2157750082015992,
+          "val_loss_relaxed": 1.195745692253113
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 8000.0,
+          "train_loss": 0.346157958984375,
+          "val_acc_discrete": 0.5817999881505966,
+          "val_acc_relaxed": 0.586999989748001,
+          "val_loss_discrete": 1.193648535013199,
+          "val_loss_relaxed": 1.175639044046402
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 10000.0,
+          "train_loss": 0.3000220947265625,
+          "val_acc_discrete": 0.5817999839782715,
+          "val_acc_relaxed": 0.5897999876737594,
+          "val_loss_discrete": 1.183481377363205,
+          "val_loss_relaxed": 1.170253220796585
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 12000.0,
+          "train_loss": 0.2710790710449219,
+          "val_acc_discrete": 0.5881999903917312,
+          "val_acc_relaxed": 0.5907999867200852,
+          "val_loss_discrete": 1.178559103012085,
+          "val_loss_relaxed": 1.1691319823265076
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 14000.0,
+          "train_loss": 0.25162557983398437,
+          "val_acc_discrete": 0.589599991440773,
+          "val_acc_relaxed": 0.5931999868154526,
+          "val_loss_discrete": 1.1723679840564727,
+          "val_loss_relaxed": 1.1655512142181397
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 16000.0,
+          "train_loss": 0.23836286926269531,
+          "val_acc_discrete": 0.5957999855279923,
+          "val_acc_relaxed": 0.5973999893665314,
+          "val_loss_discrete": 1.1695076906681061,
+          "val_loss_relaxed": 1.1628913903236389
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 18000.0,
+          "train_loss": 0.22898542785644532,
+          "val_acc_discrete": 0.5943999856710434,
+          "val_acc_relaxed": 0.5967999893426895,
+          "val_loss_discrete": 1.1695167183876038,
+          "val_loss_relaxed": 1.1637742841243743
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 20000.0,
+          "train_loss": 0.22141835021972658,
+          "val_acc_discrete": 0.5963999849557876,
+          "val_acc_relaxed": 0.5973999869823455,
+          "val_loss_discrete": 1.1665997111797333,
+          "val_loss_relaxed": 1.162382664680481
+        }
+      ],
+      "wall_minutes": 7.752910693098481
+    },
+    {
+      "architecture": "DlgnCifar10Medium",
+      "artifact_hashes": {
+        "best_checkpoint.pt": "45afed6c00401c16e540eee31e0b2069f48b3778124552fbb6ac1d7a71f10fcb",
+        "environment.json": "d5d35fd3c8de5cca154d052a0afda6ab3a9b8d68dc0c26203dd3f7ab78eae4a5",
+        "final_checkpoint.pt": "052bd672652747292b2d9b63dbd079bd958af9aa14a91b1d98f3c7bf1eca1b9f",
+        "metrics.csv": "8468e637da6b7c3bdf957891dbd7dd3073a0444189dfb50118a2d2022da3bba2",
+        "run_summary.json": "6cbff4cec00275295a5873c84eafdc131ebdcbf6116192a59138052480962d65",
+        "topology.json": "d551228f44c9fbdbb060ff6ebdfa9bd1f31fefca601452243122b2180f1c42d5",
+        "training_config.json": "249f49e30ff19be38d9d945b966873393f8938b47a119356fcd976427e9d6b81"
+      },
+      "best_step": 20000,
+      "best_step_gap_pp": -0.060000181198116564,
+      "best_step_relaxed_pct": 58.99999868869782,
+      "best_validation_hard_pct": 59.059998869895935,
+      "config": "experiments/coverage_dlgn/configs/fourth_round/fourth_mechanism_dense_m_u2_seed2.json",
+      "coordinate": "dense_m",
+      "cost": {
+        "candidate_indices_tensor_bytes": 8192000,
+        "dense_gate_count": 512000,
+        "deployed_routing_bits": 16640000,
+        "deployed_routing_bytes_packed": 2080000,
+        "trainable_parameters": 8192000,
+        "training_routing_parameters": 0
+      },
+      "family": "u2",
+      "final_gap_pp": -0.060000181198116564,
+      "final_validation_hard_pct": 59.059998869895935,
+      "final_validation_relaxed_pct": 58.99999868869782,
+      "name": "fourth_mechanism_dense_m_u2_seed2",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed2",
+      "parametrization": "raw",
+      "peak_gpu_gib": 1.123354434967041,
+      "phase": "mechanism",
+      "provenance": "OUR",
+      "reuse": false,
+      "scope": "V",
+      "seed": 2,
+      "steps": 20000,
+      "topology_seconds": 14.108400534838438,
+      "validation_curve": [
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 2000.0,
+          "train_loss": 0.7661369018554688,
+          "val_acc_discrete": 0.5151999855041504,
+          "val_acc_relaxed": 0.5329999870061874,
+          "val_loss_discrete": 1.649460062980652,
+          "val_loss_relaxed": 1.34106689453125
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 4000.0,
+          "train_loss": 0.53680859375,
+          "val_acc_discrete": 0.5593999874591827,
+          "val_acc_relaxed": 0.5665999865531921,
+          "val_loss_discrete": 1.2989042603969574,
+          "val_loss_relaxed": 1.2350805330276489
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 6000.0,
+          "train_loss": 0.41893667602539064,
+          "val_acc_discrete": 0.5609999883174897,
+          "val_acc_relaxed": 0.5781999868154526,
+          "val_loss_discrete": 1.2457081592082977,
+          "val_loss_relaxed": 1.1997689247131347
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 8000.0,
+          "train_loss": 0.3452777404785156,
+          "val_acc_discrete": 0.5823999845981598,
+          "val_acc_relaxed": 0.5881999933719635,
+          "val_loss_discrete": 1.197994030714035,
+          "val_loss_relaxed": 1.1806040513515472
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 10000.0,
+          "train_loss": 0.2990477294921875,
+          "val_acc_discrete": 0.5837999922037125,
+          "val_acc_relaxed": 0.5885999953746796,
+          "val_loss_discrete": 1.188337504863739,
+          "val_loss_relaxed": 1.1765621817111969
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 12000.0,
+          "train_loss": 0.27032437133789067,
+          "val_acc_discrete": 0.5837999886274338,
+          "val_acc_relaxed": 0.589599991440773,
+          "val_loss_discrete": 1.1882780027389526,
+          "val_loss_relaxed": 1.1768191826343537
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 14000.0,
+          "train_loss": 0.25079701232910157,
+          "val_acc_discrete": 0.5829999876022339,
+          "val_acc_relaxed": 0.586999990940094,
+          "val_loss_discrete": 1.183794277906418,
+          "val_loss_relaxed": 1.1738606739044188
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 16000.0,
+          "train_loss": 0.237469970703125,
+          "val_acc_discrete": 0.5845999908447266,
+          "val_acc_relaxed": 0.5887999892234802,
+          "val_loss_discrete": 1.175866309404373,
+          "val_loss_relaxed": 1.1698607873916627
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 18000.0,
+          "train_loss": 0.22826214599609376,
+          "val_acc_discrete": 0.5875999867916107,
+          "val_acc_relaxed": 0.5895999866724014,
+          "val_loss_discrete": 1.1745375204086304,
+          "val_loss_relaxed": 1.1704867470264435
+        },
+        {
+          "connections_temperature": 0.001,
+          "parametrization_temperature": 1.0,
+          "step": 20000.0,
+          "train_loss": 0.22057791137695312,
+          "val_acc_discrete": 0.5905999886989594,
+          "val_acc_relaxed": 0.5899999868869782,
+          "val_loss_discrete": 1.1746758258342742,
+          "val_loss_relaxed": 1.169190938472748
+        }
+      ],
+      "wall_minutes": 7.747942979920966
+    }
+  ],
+  "scope": "V",
+  "status": "complete_for_dense_mechanism_only"
+}

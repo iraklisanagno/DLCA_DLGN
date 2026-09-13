@@ -1,0 +1,519 @@
+{
+  "conclusion": "Dense native random already balances encoded fan-out; dense gains do not isolate degree balancing. Native grouped convolution cycles adjacent channel groups and samples spatial coordinates randomly.",
+  "records": [
+    {
+      "checkpoint_sha256": "5928890aa7b05b5451641321c89f2f2d1c21468a4bc4af4096c99a6e1a9ebdfd",
+      "coordinate": "dense_m",
+      "family": "random",
+      "layers": [
+        {
+          "fanout_max": 28,
+          "fanout_min": 27,
+          "same_predecessor_gates": 12,
+          "state_key": "2.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 1,
+          "state_key": "3.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "4.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 1,
+          "state_key": "5.connections.indices"
+        }
+      ],
+      "seed": 0
+    },
+    {
+      "checkpoint_sha256": "6a801ff39e274f6e1549f8de541ad6f7a53c9cf6e09c09fd014ede25dd73c1f1",
+      "coordinate": "dense_m",
+      "family": "balanced_random",
+      "layers": [
+        {
+          "fanout_max": 29,
+          "fanout_min": 27,
+          "same_predecessor_gates": 0,
+          "state_key": "2.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "3.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "4.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "5.connections.indices"
+        }
+      ],
+      "seed": 0
+    },
+    {
+      "checkpoint_sha256": "d6d5aec223d9a2793258cafa4aba69534180278900385b6dd406d4230eb0928c",
+      "coordinate": "dense_m",
+      "family": "nominal",
+      "layers": [
+        {
+          "fanout_max": 29,
+          "fanout_min": 27,
+          "same_predecessor_gates": 0,
+          "state_key": "2.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "3.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "4.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "5.connections.indices"
+        }
+      ],
+      "seed": 0
+    },
+    {
+      "checkpoint_sha256": "24c203cf906ceb0ddd9455cac231127d9d6a1cb88b481ced9d043da4c327691e",
+      "coordinate": "dense_m",
+      "family": "u2",
+      "layers": [
+        {
+          "fanout_max": 29,
+          "fanout_min": 27,
+          "same_predecessor_gates": 0,
+          "state_key": "2.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "3.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "4.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "5.connections.indices"
+        }
+      ],
+      "seed": 0
+    },
+    {
+      "checkpoint_sha256": "bdbd8b693b517b30850d592e7173cc8b963af7e5e8a9153331d26f0e9242d744",
+      "coordinate": "dense_m",
+      "family": "random",
+      "layers": [
+        {
+          "fanout_max": 28,
+          "fanout_min": 27,
+          "same_predecessor_gates": 12,
+          "state_key": "2.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 1,
+          "state_key": "3.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "4.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 1,
+          "state_key": "5.connections.indices"
+        }
+      ],
+      "seed": 1
+    },
+    {
+      "checkpoint_sha256": "5e5ee26ef28daf08ea74e8fa23564eab340f35fa9df07b95720bf2c69d473b43",
+      "coordinate": "dense_m",
+      "family": "balanced_random",
+      "layers": [
+        {
+          "fanout_max": 29,
+          "fanout_min": 27,
+          "same_predecessor_gates": 0,
+          "state_key": "2.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "3.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "4.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "5.connections.indices"
+        }
+      ],
+      "seed": 1
+    },
+    {
+      "checkpoint_sha256": "55b15eb8b62ddc4ebdd06c9dc168930725b5d20d0d5be8a42768d41c84551d01",
+      "coordinate": "dense_m",
+      "family": "nominal",
+      "layers": [
+        {
+          "fanout_max": 29,
+          "fanout_min": 27,
+          "same_predecessor_gates": 0,
+          "state_key": "2.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "3.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "4.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "5.connections.indices"
+        }
+      ],
+      "seed": 1
+    },
+    {
+      "checkpoint_sha256": "e960df0ead1963a1be2a56d6104d6d2af9269cc0cde499c9684b689f45d2def1",
+      "coordinate": "dense_m",
+      "family": "u2",
+      "layers": [
+        {
+          "fanout_max": 29,
+          "fanout_min": 27,
+          "same_predecessor_gates": 0,
+          "state_key": "2.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "3.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "4.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "5.connections.indices"
+        }
+      ],
+      "seed": 1
+    },
+    {
+      "checkpoint_sha256": "01dc4203d0da6512dcfdb921ca1c844083cdc4f51b575f4ba46366bfae558304",
+      "coordinate": "dense_m",
+      "family": "random",
+      "layers": [
+        {
+          "fanout_max": 28,
+          "fanout_min": 27,
+          "same_predecessor_gates": 17,
+          "state_key": "2.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "3.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "4.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "5.connections.indices"
+        }
+      ],
+      "seed": 2
+    },
+    {
+      "checkpoint_sha256": "66742f75d39b70c258129617efa2f312375b2c9a1e9537f45e325f895b115425",
+      "coordinate": "dense_m",
+      "family": "balanced_random",
+      "layers": [
+        {
+          "fanout_max": 29,
+          "fanout_min": 27,
+          "same_predecessor_gates": 0,
+          "state_key": "2.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "3.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "4.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "5.connections.indices"
+        }
+      ],
+      "seed": 2
+    },
+    {
+      "checkpoint_sha256": "aed2dffc8a6b689eda8b78bc625eb8c59e8eb56f1c2391f313c57714a252d776",
+      "coordinate": "dense_m",
+      "family": "nominal",
+      "layers": [
+        {
+          "fanout_max": 29,
+          "fanout_min": 27,
+          "same_predecessor_gates": 0,
+          "state_key": "2.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "3.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "4.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "5.connections.indices"
+        }
+      ],
+      "seed": 2
+    },
+    {
+      "checkpoint_sha256": "45afed6c00401c16e540eee31e0b2069f48b3778124552fbb6ac1d7a71f10fcb",
+      "coordinate": "dense_m",
+      "family": "u2",
+      "layers": [
+        {
+          "fanout_max": 29,
+          "fanout_min": 27,
+          "same_predecessor_gates": 0,
+          "state_key": "2.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "3.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "4.connections.indices"
+        },
+        {
+          "fanout_max": 2,
+          "fanout_min": 2,
+          "same_predecessor_gates": 0,
+          "state_key": "5.connections.indices"
+        }
+      ],
+      "seed": 2
+    },
+    {
+      "checkpoint_sha256": "14e048ce9e3916b63cdb0a4f41caec9efa079327c69613d3225732fe9465be19",
+      "coordinate": "conv_s_smoke",
+      "family": "random",
+      "layers": [
+        {
+          "channel_pair_endpoint_max": 8,
+          "channel_pair_endpoint_min": 4,
+          "distinct_channel_pairs": 8,
+          "state_key": "1.connections._indices_L0"
+        },
+        {
+          "channel_pair_endpoint_max": 10,
+          "channel_pair_endpoint_min": 4,
+          "distinct_channel_pairs": 31,
+          "state_key": "3.connections._indices_L0"
+        },
+        {
+          "channel_pair_endpoint_max": 10,
+          "channel_pair_endpoint_min": 4,
+          "distinct_channel_pairs": 127,
+          "state_key": "5.connections._indices_L0"
+        },
+        {
+          "channel_pair_endpoint_max": 6,
+          "channel_pair_endpoint_min": 2,
+          "distinct_channel_pairs": 511,
+          "state_key": "7.connections._indices_L0"
+        }
+      ],
+      "seed": 0
+    },
+    {
+      "checkpoint_sha256": "78b168a2309745ce378efcb4b00539ce2aefa504ab87d974c957c9c8aad34220",
+      "coordinate": "conv_s_smoke",
+      "family": "balanced_random",
+      "layers": [
+        {
+          "channel_pair_endpoint_max": 8,
+          "channel_pair_endpoint_min": 6,
+          "distinct_channel_pairs": 9,
+          "state_key": "1.connections._indices_L0"
+        },
+        {
+          "channel_pair_endpoint_max": 8,
+          "channel_pair_endpoint_min": 8,
+          "distinct_channel_pairs": 118,
+          "state_key": "3.connections._indices_L0"
+        },
+        {
+          "channel_pair_endpoint_max": 8,
+          "channel_pair_endpoint_min": 8,
+          "distinct_channel_pairs": 497,
+          "state_key": "5.connections._indices_L0"
+        },
+        {
+          "channel_pair_endpoint_max": 4,
+          "channel_pair_endpoint_min": 4,
+          "distinct_channel_pairs": 1022,
+          "state_key": "7.connections._indices_L0"
+        }
+      ],
+      "seed": 0
+    },
+    {
+      "checkpoint_sha256": "9b51c7f2051c2f7932946a67d2fb72fe50e99384fb44dff626d711e52a78719b",
+      "coordinate": "conv_s_smoke",
+      "family": "nominal",
+      "layers": [
+        {
+          "channel_pair_endpoint_max": 8,
+          "channel_pair_endpoint_min": 6,
+          "distinct_channel_pairs": 9,
+          "state_key": "1.connections._indices_L0"
+        },
+        {
+          "channel_pair_endpoint_max": 8,
+          "channel_pair_endpoint_min": 8,
+          "distinct_channel_pairs": 80,
+          "state_key": "3.connections._indices_L0"
+        },
+        {
+          "channel_pair_endpoint_max": 8,
+          "channel_pair_endpoint_min": 8,
+          "distinct_channel_pairs": 448,
+          "state_key": "5.connections._indices_L0"
+        },
+        {
+          "channel_pair_endpoint_max": 4,
+          "channel_pair_endpoint_min": 4,
+          "distinct_channel_pairs": 1024,
+          "state_key": "7.connections._indices_L0"
+        }
+      ],
+      "seed": 0
+    },
+    {
+      "checkpoint_sha256": "1e6d376acc22edede24bbe6ea0fd03be5138d596432388ef9941692f735e13d3",
+      "coordinate": "conv_s_smoke",
+      "family": "u2",
+      "layers": [
+        {
+          "channel_pair_endpoint_max": 8,
+          "channel_pair_endpoint_min": 6,
+          "distinct_channel_pairs": 9,
+          "state_key": "1.connections._indices_L0"
+        },
+        {
+          "channel_pair_endpoint_max": 8,
+          "channel_pair_endpoint_min": 8,
+          "distinct_channel_pairs": 80,
+          "state_key": "3.connections._indices_L0"
+        },
+        {
+          "channel_pair_endpoint_max": 8,
+          "channel_pair_endpoint_min": 8,
+          "distinct_channel_pairs": 448,
+          "state_key": "5.connections._indices_L0"
+        },
+        {
+          "channel_pair_endpoint_max": 4,
+          "channel_pair_endpoint_min": 4,
+          "distinct_channel_pairs": 1024,
+          "state_key": "7.connections._indices_L0"
+        }
+      ],
+      "seed": 0
+    }
+  ],
+  "scope": "structural_only_no_dataset_access",
+  "source": "verified best-checkpoint fixed indices"
+}

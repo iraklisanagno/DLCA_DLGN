@@ -656,7 +656,7 @@ class FixedConvConnections(Connections):
                 channel_topology.temporary_bytes,
                 self.channel_pairs.numel() * self.channel_pairs.element_size(),
             )
-        elif self.strategy == "semantic_multiscale_balanced":
+        elif self.strategy in {"semantic_multiscale_balanced", "semantic_random_balanced", "semantic_multiscale_nominal"}:
             if self.channel_group_size != 2:
                 raise ValueError(
                     "semantic_multiscale_balanced currently requires "
@@ -685,7 +685,7 @@ class FixedConvConnections(Connections):
                 in_dim=self.channels,
                 out_dim=self.num_kernels,
                 lut_rank=2,
-                strategy="semantic_multiscale_balanced",
+                strategy=self.strategy,
                 topology_seed=(
                     0 if self.topology_seed is None else self.topology_seed
                 ),
@@ -840,6 +840,8 @@ class FixedConvConnections(Connections):
                 "semantic_channel_hybrid",
                 "semantic_degree_balanced",
                 "semantic_multiscale_balanced",
+                "semantic_random_balanced",
+                "semantic_multiscale_nominal",
                 "semantic_channel_spatial_hybrid",
                 "ancestry_channel_hybrid",
                 "coverage_reuse_hybrid",

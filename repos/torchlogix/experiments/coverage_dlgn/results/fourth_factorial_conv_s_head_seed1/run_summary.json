@@ -1,0 +1,116 @@
+{
+  "wall_seconds": 1027.782635522075,
+  "best_validation_hard_accuracy": 0.5682,
+  "final_metrics": {
+    "val_loss_discrete": 1.2277347478866578,
+    "val_acc_discrete": 0.565,
+    "val_loss_relaxed": 1.1407226303100586,
+    "val_acc_relaxed": 0.5954,
+    "train_loss": 0.3651137924194336,
+    "connections_temperature": 0.001,
+    "parametrization_temperature": 1.0
+  },
+  "peak_gpu_memory_bytes": 1965652480,
+  "topology": [
+    {
+      "structure": "conv",
+      "strategy": "random",
+      "topology_seed": 1,
+      "layer_index": 0,
+      "channels": 9,
+      "num_kernels": 32,
+      "channel_group_size": 2,
+      "construction_seconds": 0.03528648614883423,
+      "generator_temporary_bytes": 6144,
+      "swap_fraction": 0.25,
+      "novelty_weight": 1.0
+    },
+    {
+      "structure": "conv",
+      "strategy": "random",
+      "topology_seed": 1,
+      "layer_index": 1,
+      "channels": 32,
+      "num_kernels": 128,
+      "channel_group_size": 2,
+      "construction_seconds": 0.010866965632885695,
+      "generator_temporary_bytes": 24576,
+      "swap_fraction": 0.25,
+      "novelty_weight": 1.0
+    },
+    {
+      "structure": "conv",
+      "strategy": "random",
+      "topology_seed": 1,
+      "layer_index": 2,
+      "channels": 128,
+      "num_kernels": 512,
+      "channel_group_size": 2,
+      "construction_seconds": 0.041492564138025045,
+      "generator_temporary_bytes": 98304,
+      "swap_fraction": 0.25,
+      "novelty_weight": 1.0
+    },
+    {
+      "structure": "conv",
+      "strategy": "random",
+      "topology_seed": 1,
+      "layer_index": 3,
+      "channels": 512,
+      "num_kernels": 1024,
+      "channel_group_size": 2,
+      "construction_seconds": 0.08229617867618799,
+      "generator_temporary_bytes": 196608,
+      "swap_fraction": 0.25,
+      "novelty_weight": 1.0
+    },
+    {
+      "strategy": "semantic_multiscale_balanced",
+      "topology_seed": 1,
+      "layer_index": 4,
+      "construction_seconds": 0.7955104126594961,
+      "generator_temporary_bytes": 33456128,
+      "swap_fraction": 0.25,
+      "output_groups": 1,
+      "novelty_weight": 1.0,
+      "reuse_change_fraction": 0.25,
+      "reuse_weight": 1.0,
+      "class_balance_change_fraction": 0.25
+    },
+    {
+      "strategy": "semantic_multiscale_balanced",
+      "topology_seed": 1,
+      "layer_index": 5,
+      "construction_seconds": 0.23530608974397182,
+      "generator_temporary_bytes": 45056000,
+      "swap_fraction": 0.25,
+      "output_groups": 1,
+      "novelty_weight": 1.0,
+      "reuse_change_fraction": 0.25,
+      "reuse_weight": 1.0,
+      "class_balance_change_fraction": 0.25
+    },
+    {
+      "strategy": "semantic_multiscale_balanced",
+      "topology_seed": 1,
+      "layer_index": 6,
+      "construction_seconds": 0.16583379497751594,
+      "generator_temporary_bytes": 22528000,
+      "swap_fraction": 0.25,
+      "output_groups": 10,
+      "novelty_weight": 1.0,
+      "reuse_change_fraction": 0.25,
+      "reuse_weight": 1.0,
+      "class_balance_change_fraction": 0.25
+    }
+  ],
+  "cost": {
+    "dense_gate_count": 71680,
+    "trainable_parameters": 1336832,
+    "training_routing_parameters": 0,
+    "deployed_routing_bits": 1945600,
+    "deployed_routing_bytes_packed": 243200,
+    "candidate_indices_tensor_bytes": 1146880
+  },
+  "task_aware_rewire": null
+}

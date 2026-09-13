@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 from pathlib import Path
 
 
@@ -31,14 +32,20 @@ def main() -> None:
             "config": run_dir / "training_config.json",
             "environment": run_dir / "environment.json",
         }
-        missing = [str(path) for path in required.values() if not path.is_file()]
+        missing = [str(path) for path in required.values()
+                   if not path.is_file() or path.stat().st_size == 0]
         if missing:
             raise RuntimeError(f"cannot freeze {name}; missing {missing}")
         run_summary = json.loads(required["run_summary"].read_text())
         config = json.loads(required["config"].read_text())
         environment = json.loads(required["environment"].read_text())
+        artifacts = {}
+        for path in required.values():
+            with path.open("rb") as handle:
+                artifacts[path.name] = {"sha256": hashlib.file_digest(handle, "sha256").hexdigest()}
         rows[method] = {
             "name": name,
+            "artifacts": artifacts,
             "run_dir": str(run_dir),
             "seed": config["seed"],
             "best_hard_validation_pct": (
@@ -64,7 +71,8 @@ def main() -> None:
         "runs": rows,
     }
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT.write_text(json.dumps(payload, indent=2) + "\n")
+    with OUTPUT.open("x") as handle:
+        handle.write(json.dumps(payload, indent=2) + "\n")
     print(OUTPUT)
 
 

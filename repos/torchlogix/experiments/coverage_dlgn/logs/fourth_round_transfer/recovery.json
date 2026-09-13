@@ -1,0 +1,23 @@
+{
+  "additional_inference_queries": 0,
+  "checkpoint_queries": 10,
+  "frozen_evaluator_unchanged": true,
+  "original_failure": "TypeError: Object of type int64 is not JSON serializable; aggregate write after all ten saved records",
+  "receipt_sha256": "46db524f9067b60cb1b7528573839421b850c204c536a64c3bf952e321610158",
+  "recovered_at_utc": "2026-09-06T08:05:55.665831+00:00",
+  "recovery_source_sha256": "6804cc50db241f24f96bb4e780b7b2ba1e9d34064d7eca7176b2b528ac5ca897",
+  "regression_test_sha256": "af9ca58d222299267fba593e04b80fd757bb470e20838455681f97c81f6da16c",
+  "saved_prediction_hashes": {
+    "full_conv_cifar10_paper_medium_random_seed0_200k.json": "f8992c1b20124b0ccd2c50af67161ca19a1872e3d883b465a5ba58de543649af",
+    "full_conv_cifar10_paper_medium_u2_seed0_200k.json": "1013521209864b04fc0ef77956531365bfea5dcc3b8c6ab31377091718ff5c61",
+    "paper_cifar10_medium_random_seed0.json": "58238733c93adf3ca4ac5daaca238a906f4b37b3f82379fe20b1c3b5b3dcc392",
+    "paper_cifar10_medium_random_seed1.json": "1a5edb3b8020ebeb806c32a8b7328a23462d8c30d9bd7259bf950f2e3e93f7ee",
+    "paper_cifar10_medium_random_seed2.json": "7fe4f4b7fe51e95ae3cf0fa0dd3b61a8fe6648203f60980512859a2fdabe7c78",
+    "second_final_u2_conv_cifar10_s_seed0.json": "2534e63daefbf938b6deda29e6a7b7b66c90b91f116416c53b1ceff3dbf3cc4c",
+    "second_full_conv_cifar10_s_random_seed0.json": "474ad8448dae0b38b8e2c9d9af0646ebea3a72723f90ff04725b03b38ec8ebdc",
+    "third_u2_cifar10_m_seed0.json": "d76e9a5c544079e0ad9f081cc21961b45c390b082abc035b1837b52a5b0dbd8a",
+    "third_u2_cifar10_m_seed1.json": "4bb8b0bb65be382701b166fc5666e94fc23a39ca9de7d060302fb2ccd29b8fce",
+    "third_u2_cifar10_m_seed2.json": "7e123c6bd8c74a9e7b5a4c09137f5c11d1199c0544912dafbe818ccfe2efcb1d"
+  },
+  "started_sha256": "83ce37d1403df14c5f7b3d271089cb266bac7efdc159cb0efeb1d02851cc5ce6"
+}

@@ -1,0 +1,280 @@
+{
+  "entries": [
+    {
+      "arm": "SS",
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_factorial_dense_m_ss_seed0.json",
+      "name": "ur1_factorial_dense_m_ss_seed0",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed0",
+      "phase": "factorial",
+      "reference_artifacts": {
+        "best_checkpoint.pt": "24c203cf906ceb0ddd9455cac231127d9d6a1cb88b481ced9d043da4c327691e",
+        "environment.json": "4d458cd3e204c8f2366d4695dc830ab4e8bd5088ca9920fce71e8107516b9a39",
+        "final_checkpoint.pt": "e179a79643131c672268ce5cd99416e081a06d20e86758fe0637ffa1b4bc1e48",
+        "metrics.csv": "c45da74cb9702f86ea5dccf7ac5fd483e6e0dd7029d7b2aac5624fae91969c24",
+        "run_summary.json": "d3667f79d6ce46a15b94f69f46ddd5373f8b14ced162e205cb0112e737ac3bb0",
+        "topology.json": "2b970d6f8b76c11793071c3b490133c8034204590c023691af0aeda3cf30894f",
+        "training_config.json": "8939869848795eadee21a7230f18c25c8d54badb84b204b26004f4d43db2a30a"
+      },
+      "reference_output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed0",
+      "reuse": true,
+      "seed": 0
+    },
+    {
+      "arm": "SR",
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_factorial_dense_m_sr_seed0.json",
+      "name": "ur1_factorial_dense_m_sr_seed0",
+      "output": "experiments/coverage_dlgn/unified_refinement/results/ur1_factorial_dense_m_sr_seed0",
+      "phase": "factorial",
+      "reference_artifacts": {
+        "best_checkpoint.pt": "24c203cf906ceb0ddd9455cac231127d9d6a1cb88b481ced9d043da4c327691e",
+        "environment.json": "4d458cd3e204c8f2366d4695dc830ab4e8bd5088ca9920fce71e8107516b9a39",
+        "final_checkpoint.pt": "e179a79643131c672268ce5cd99416e081a06d20e86758fe0637ffa1b4bc1e48",
+        "metrics.csv": "c45da74cb9702f86ea5dccf7ac5fd483e6e0dd7029d7b2aac5624fae91969c24",
+        "run_summary.json": "d3667f79d6ce46a15b94f69f46ddd5373f8b14ced162e205cb0112e737ac3bb0",
+        "topology.json": "2b970d6f8b76c11793071c3b490133c8034204590c023691af0aeda3cf30894f",
+        "training_config.json": "8939869848795eadee21a7230f18c25c8d54badb84b204b26004f4d43db2a30a"
+      },
+      "reference_output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed0",
+      "reuse": false,
+      "seed": 0
+    },
+    {
+      "arm": "RS",
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_factorial_dense_m_rs_seed0.json",
+      "name": "ur1_factorial_dense_m_rs_seed0",
+      "output": "experiments/coverage_dlgn/unified_refinement/results/ur1_factorial_dense_m_rs_seed0",
+      "phase": "factorial",
+      "reference_artifacts": {
+        "best_checkpoint.pt": "24c203cf906ceb0ddd9455cac231127d9d6a1cb88b481ced9d043da4c327691e",
+        "environment.json": "4d458cd3e204c8f2366d4695dc830ab4e8bd5088ca9920fce71e8107516b9a39",
+        "final_checkpoint.pt": "e179a79643131c672268ce5cd99416e081a06d20e86758fe0637ffa1b4bc1e48",
+        "metrics.csv": "c45da74cb9702f86ea5dccf7ac5fd483e6e0dd7029d7b2aac5624fae91969c24",
+        "run_summary.json": "d3667f79d6ce46a15b94f69f46ddd5373f8b14ced162e205cb0112e737ac3bb0",
+        "topology.json": "2b970d6f8b76c11793071c3b490133c8034204590c023691af0aeda3cf30894f",
+        "training_config.json": "8939869848795eadee21a7230f18c25c8d54badb84b204b26004f4d43db2a30a"
+      },
+      "reference_output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed0",
+      "reuse": false,
+      "seed": 0
+    },
+    {
+      "arm": "RR",
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_factorial_dense_m_rr_seed0.json",
+      "name": "ur1_factorial_dense_m_rr_seed0",
+      "output": "experiments/coverage_dlgn/unified_refinement/results/ur1_factorial_dense_m_rr_seed0",
+      "phase": "factorial",
+      "reference_artifacts": {
+        "best_checkpoint.pt": "24c203cf906ceb0ddd9455cac231127d9d6a1cb88b481ced9d043da4c327691e",
+        "environment.json": "4d458cd3e204c8f2366d4695dc830ab4e8bd5088ca9920fce71e8107516b9a39",
+        "final_checkpoint.pt": "e179a79643131c672268ce5cd99416e081a06d20e86758fe0637ffa1b4bc1e48",
+        "metrics.csv": "c45da74cb9702f86ea5dccf7ac5fd483e6e0dd7029d7b2aac5624fae91969c24",
+        "run_summary.json": "d3667f79d6ce46a15b94f69f46ddd5373f8b14ced162e205cb0112e737ac3bb0",
+        "topology.json": "2b970d6f8b76c11793071c3b490133c8034204590c023691af0aeda3cf30894f",
+        "training_config.json": "8939869848795eadee21a7230f18c25c8d54badb84b204b26004f4d43db2a30a"
+      },
+      "reference_output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed0",
+      "reuse": false,
+      "seed": 0
+    },
+    {
+      "arm": "SS",
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_factorial_dense_m_ss_seed1.json",
+      "name": "ur1_factorial_dense_m_ss_seed1",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed1",
+      "phase": "factorial",
+      "reference_artifacts": {
+        "best_checkpoint.pt": "e960df0ead1963a1be2a56d6104d6d2af9269cc0cde499c9684b689f45d2def1",
+        "environment.json": "17467dc8d67e714bf4ff3229f7b19b8a9f4906b4b0bd54704fe45730456d2f0f",
+        "final_checkpoint.pt": "ff732524cd921cfa9f32aa67d0eaa8a5cc151b1f4347f150bb5a890e096385f4",
+        "metrics.csv": "67b9662804929b017acc84139732ca17813b46abc79970c2f083105cdf7c0589",
+        "run_summary.json": "c468d31498ab0eaa4f1e551454a835570a6843a60e7179850c8b2a94e54c381b",
+        "topology.json": "e12b3c797308bbed490ebe841a191a97801ff7a60ecd97d966d2bedf910959c1",
+        "training_config.json": "3dd94f6d6cc7f052a93209d43b82e017ab52c4ac01abc1161fd3dcd91b46d7d0"
+      },
+      "reference_output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed1",
+      "reuse": true,
+      "seed": 1
+    },
+    {
+      "arm": "SR",
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_factorial_dense_m_sr_seed1.json",
+      "name": "ur1_factorial_dense_m_sr_seed1",
+      "output": "experiments/coverage_dlgn/unified_refinement/results/ur1_factorial_dense_m_sr_seed1",
+      "phase": "factorial",
+      "reference_artifacts": {
+        "best_checkpoint.pt": "e960df0ead1963a1be2a56d6104d6d2af9269cc0cde499c9684b689f45d2def1",
+        "environment.json": "17467dc8d67e714bf4ff3229f7b19b8a9f4906b4b0bd54704fe45730456d2f0f",
+        "final_checkpoint.pt": "ff732524cd921cfa9f32aa67d0eaa8a5cc151b1f4347f150bb5a890e096385f4",
+        "metrics.csv": "67b9662804929b017acc84139732ca17813b46abc79970c2f083105cdf7c0589",
+        "run_summary.json": "c468d31498ab0eaa4f1e551454a835570a6843a60e7179850c8b2a94e54c381b",
+        "topology.json": "e12b3c797308bbed490ebe841a191a97801ff7a60ecd97d966d2bedf910959c1",
+        "training_config.json": "3dd94f6d6cc7f052a93209d43b82e017ab52c4ac01abc1161fd3dcd91b46d7d0"
+      },
+      "reference_output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed1",
+      "reuse": false,
+      "seed": 1
+    },
+    {
+      "arm": "RS",
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_factorial_dense_m_rs_seed1.json",
+      "name": "ur1_factorial_dense_m_rs_seed1",
+      "output": "experiments/coverage_dlgn/unified_refinement/results/ur1_factorial_dense_m_rs_seed1",
+      "phase": "factorial",
+      "reference_artifacts": {
+        "best_checkpoint.pt": "e960df0ead1963a1be2a56d6104d6d2af9269cc0cde499c9684b689f45d2def1",
+        "environment.json": "17467dc8d67e714bf4ff3229f7b19b8a9f4906b4b0bd54704fe45730456d2f0f",
+        "final_checkpoint.pt": "ff732524cd921cfa9f32aa67d0eaa8a5cc151b1f4347f150bb5a890e096385f4",
+        "metrics.csv": "67b9662804929b017acc84139732ca17813b46abc79970c2f083105cdf7c0589",
+        "run_summary.json": "c468d31498ab0eaa4f1e551454a835570a6843a60e7179850c8b2a94e54c381b",
+        "topology.json": "e12b3c797308bbed490ebe841a191a97801ff7a60ecd97d966d2bedf910959c1",
+        "training_config.json": "3dd94f6d6cc7f052a93209d43b82e017ab52c4ac01abc1161fd3dcd91b46d7d0"
+      },
+      "reference_output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed1",
+      "reuse": false,
+      "seed": 1
+    },
+    {
+      "arm": "RR",
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_factorial_dense_m_rr_seed1.json",
+      "name": "ur1_factorial_dense_m_rr_seed1",
+      "output": "experiments/coverage_dlgn/unified_refinement/results/ur1_factorial_dense_m_rr_seed1",
+      "phase": "factorial",
+      "reference_artifacts": {
+        "best_checkpoint.pt": "e960df0ead1963a1be2a56d6104d6d2af9269cc0cde499c9684b689f45d2def1",
+        "environment.json": "17467dc8d67e714bf4ff3229f7b19b8a9f4906b4b0bd54704fe45730456d2f0f",
+        "final_checkpoint.pt": "ff732524cd921cfa9f32aa67d0eaa8a5cc151b1f4347f150bb5a890e096385f4",
+        "metrics.csv": "67b9662804929b017acc84139732ca17813b46abc79970c2f083105cdf7c0589",
+        "run_summary.json": "c468d31498ab0eaa4f1e551454a835570a6843a60e7179850c8b2a94e54c381b",
+        "topology.json": "e12b3c797308bbed490ebe841a191a97801ff7a60ecd97d966d2bedf910959c1",
+        "training_config.json": "3dd94f6d6cc7f052a93209d43b82e017ab52c4ac01abc1161fd3dcd91b46d7d0"
+      },
+      "reference_output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed1",
+      "reuse": false,
+      "seed": 1
+    },
+    {
+      "arm": "SS",
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_factorial_dense_m_ss_seed2.json",
+      "name": "ur1_factorial_dense_m_ss_seed2",
+      "output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed2",
+      "phase": "factorial",
+      "reference_artifacts": {
+        "best_checkpoint.pt": "45afed6c00401c16e540eee31e0b2069f48b3778124552fbb6ac1d7a71f10fcb",
+        "environment.json": "d5d35fd3c8de5cca154d052a0afda6ab3a9b8d68dc0c26203dd3f7ab78eae4a5",
+        "final_checkpoint.pt": "052bd672652747292b2d9b63dbd079bd958af9aa14a91b1d98f3c7bf1eca1b9f",
+        "metrics.csv": "8468e637da6b7c3bdf957891dbd7dd3073a0444189dfb50118a2d2022da3bba2",
+        "run_summary.json": "6cbff4cec00275295a5873c84eafdc131ebdcbf6116192a59138052480962d65",
+        "topology.json": "d551228f44c9fbdbb060ff6ebdfa9bd1f31fefca601452243122b2180f1c42d5",
+        "training_config.json": "249f49e30ff19be38d9d945b966873393f8938b47a119356fcd976427e9d6b81"
+      },
+      "reference_output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed2",
+      "reuse": true,
+      "seed": 2
+    },
+    {
+      "arm": "SR",
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_factorial_dense_m_sr_seed2.json",
+      "name": "ur1_factorial_dense_m_sr_seed2",
+      "output": "experiments/coverage_dlgn/unified_refinement/results/ur1_factorial_dense_m_sr_seed2",
+      "phase": "factorial",
+      "reference_artifacts": {
+        "best_checkpoint.pt": "45afed6c00401c16e540eee31e0b2069f48b3778124552fbb6ac1d7a71f10fcb",
+        "environment.json": "d5d35fd3c8de5cca154d052a0afda6ab3a9b8d68dc0c26203dd3f7ab78eae4a5",
+        "final_checkpoint.pt": "052bd672652747292b2d9b63dbd079bd958af9aa14a91b1d98f3c7bf1eca1b9f",
+        "metrics.csv": "8468e637da6b7c3bdf957891dbd7dd3073a0444189dfb50118a2d2022da3bba2",
+        "run_summary.json": "6cbff4cec00275295a5873c84eafdc131ebdcbf6116192a59138052480962d65",
+        "topology.json": "d551228f44c9fbdbb060ff6ebdfa9bd1f31fefca601452243122b2180f1c42d5",
+        "training_config.json": "249f49e30ff19be38d9d945b966873393f8938b47a119356fcd976427e9d6b81"
+      },
+      "reference_output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed2",
+      "reuse": false,
+      "seed": 2
+    },
+    {
+      "arm": "RS",
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_factorial_dense_m_rs_seed2.json",
+      "name": "ur1_factorial_dense_m_rs_seed2",
+      "output": "experiments/coverage_dlgn/unified_refinement/results/ur1_factorial_dense_m_rs_seed2",
+      "phase": "factorial",
+      "reference_artifacts": {
+        "best_checkpoint.pt": "45afed6c00401c16e540eee31e0b2069f48b3778124552fbb6ac1d7a71f10fcb",
+        "environment.json": "d5d35fd3c8de5cca154d052a0afda6ab3a9b8d68dc0c26203dd3f7ab78eae4a5",
+        "final_checkpoint.pt": "052bd672652747292b2d9b63dbd079bd958af9aa14a91b1d98f3c7bf1eca1b9f",
+        "metrics.csv": "8468e637da6b7c3bdf957891dbd7dd3073a0444189dfb50118a2d2022da3bba2",
+        "run_summary.json": "6cbff4cec00275295a5873c84eafdc131ebdcbf6116192a59138052480962d65",
+        "topology.json": "d551228f44c9fbdbb060ff6ebdfa9bd1f31fefca601452243122b2180f1c42d5",
+        "training_config.json": "249f49e30ff19be38d9d945b966873393f8938b47a119356fcd976427e9d6b81"
+      },
+      "reference_output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed2",
+      "reuse": false,
+      "seed": 2
+    },
+    {
+      "arm": "RR",
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_factorial_dense_m_rr_seed2.json",
+      "name": "ur1_factorial_dense_m_rr_seed2",
+      "output": "experiments/coverage_dlgn/unified_refinement/results/ur1_factorial_dense_m_rr_seed2",
+      "phase": "factorial",
+      "reference_artifacts": {
+        "best_checkpoint.pt": "45afed6c00401c16e540eee31e0b2069f48b3778124552fbb6ac1d7a71f10fcb",
+        "environment.json": "d5d35fd3c8de5cca154d052a0afda6ab3a9b8d68dc0c26203dd3f7ab78eae4a5",
+        "final_checkpoint.pt": "052bd672652747292b2d9b63dbd079bd958af9aa14a91b1d98f3c7bf1eca1b9f",
+        "metrics.csv": "8468e637da6b7c3bdf957891dbd7dd3073a0444189dfb50118a2d2022da3bba2",
+        "run_summary.json": "6cbff4cec00275295a5873c84eafdc131ebdcbf6116192a59138052480962d65",
+        "topology.json": "d551228f44c9fbdbb060ff6ebdfa9bd1f31fefca601452243122b2180f1c42d5",
+        "training_config.json": "249f49e30ff19be38d9d945b966873393f8938b47a119356fcd976427e9d6b81"
+      },
+      "reference_output": "experiments/coverage_dlgn/results/fourth_mechanism_dense_m_u2_seed2",
+      "reuse": false,
+      "seed": 2
+    },
+    {
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_full_conv_s_random_seed1.json",
+      "family": "random",
+      "name": "ur1_full_conv_s_random_seed1",
+      "output": "experiments/coverage_dlgn/unified_refinement/results/ur1_full_conv_s_random_seed1",
+      "phase": "full_s",
+      "reference_config_sha256": "333453c311ae7214f711ddae43af6dd966a55128d56945b3bcb115b11f72e5f8",
+      "reference_output": "experiments/coverage_dlgn/results/second_full_conv_cifar10_s_random_seed0",
+      "reuse": false,
+      "seed": 1
+    },
+    {
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_full_conv_s_u2_seed1.json",
+      "family": "u2",
+      "name": "ur1_full_conv_s_u2_seed1",
+      "output": "experiments/coverage_dlgn/unified_refinement/results/ur1_full_conv_s_u2_seed1",
+      "phase": "full_s",
+      "reference_config_sha256": "715da2d22e4685af6fa48396dbb4d8675777ba2b9a34c1d7dfb1155f61dace23",
+      "reference_output": "experiments/coverage_dlgn/results/second_final_u2_conv_cifar10_s_seed0",
+      "reuse": false,
+      "seed": 1
+    },
+    {
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_full_conv_s_random_seed2.json",
+      "family": "random",
+      "name": "ur1_full_conv_s_random_seed2",
+      "output": "experiments/coverage_dlgn/unified_refinement/results/ur1_full_conv_s_random_seed2",
+      "phase": "full_s",
+      "reference_config_sha256": "333453c311ae7214f711ddae43af6dd966a55128d56945b3bcb115b11f72e5f8",
+      "reference_output": "experiments/coverage_dlgn/results/second_full_conv_cifar10_s_random_seed0",
+      "reuse": false,
+      "seed": 2
+    },
+    {
+      "config": "experiments/coverage_dlgn/unified_refinement/configs/ur1_full_conv_s_u2_seed2.json",
+      "family": "u2",
+      "name": "ur1_full_conv_s_u2_seed2",
+      "output": "experiments/coverage_dlgn/unified_refinement/results/ur1_full_conv_s_u2_seed2",
+      "phase": "full_s",
+      "reference_config_sha256": "715da2d22e4685af6fa48396dbb4d8675777ba2b9a34c1d7dfb1155f61dace23",
+      "reference_output": "experiments/coverage_dlgn/results/second_final_u2_conv_cifar10_s_seed0",
+      "reuse": false,
+      "seed": 2
+    }
+  ],
+  "name": "UR1",
+  "protocol_sha256": "4223e9e42a22d9bc180e5a6974615877172ccbbb28fd0ba6b296f08dfe635578",
+  "scope": "validation_training_only_no_test_queries",
+  "stages_3b_4": "deferred_pending_complete_matrix_and_explicit_decision"
+}

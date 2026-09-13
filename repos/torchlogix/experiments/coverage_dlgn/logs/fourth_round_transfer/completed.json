@@ -1,0 +1,7 @@
+{
+  "checkpoint_queries": 10,
+  "completed_at_utc": "2026-09-06T08:05:55.665831+00:00",
+  "recovered_from_saved_predictions": true,
+  "recovery_sha256": "979a904f1510ec68ccef15cc95289079e07f145cd652a524f711f51457536b73",
+  "summary_sha256": "8a5648d8087021d9f5647b2108effb7626e09e88e415ae141d0823983d639509"
+}
