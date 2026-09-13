@@ -1,0 +1,21 @@
+\begin{table*}[t]
+\centering
+\caption{Main evaluation configurations. $b$: thresholds per raw value; K denotes 1,000. Dense widths enumerate gates per layer; convolutional widths enumerate output channels with $k=32/256$ for S/M.}
+\label{tab:protocol}
+\tabfont
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}llrcrr@{}}
+\toprule
+Dataset/model & Layer widths & Gate functions & $b$ & Updates & Batch \\
+\midrule
+MNIST & $5\times1{,}334+1{,}330$ & 8K & 1 & 108K & 100 \\
+Fashion-MNIST & $5\times2{,}666+2{,}670$ & 16K & 3 & 108K & 100 \\
+CIFAR-10 S & $4\times12$K & 48K & 3 & 108K & 100 \\
+CIFAR-10 M & $4\times128$K & 512K & 3 & 108K & 100 \\
+CIFAR-10 L & $5\times256$K & 1,280K & 5 & 108K & 100 \\
+Conv. S/M & $(k,4k,16k,32k)$ & 83,552 / 668,416 & 3 & 350K / 200K & 128 \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\begin{minipage}{\textwidth}\normalsize Dense: Adam, learning rate 0.01, no augmentation. Convolutional: AdamW, learning rate 0.02, decay 0.002, random crops with four-pixel padding and horizontal flips. All use raw gate logits and validation every 2K updates. Convolutional S/M share gate functions across 874,496/6,995,968 spatial gate applications; each classifier uses three dense layers of widths $(1280k,640k,320k)$.\end{minipage}
+\end{table*}

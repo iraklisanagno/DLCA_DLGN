@@ -1,0 +1,19 @@
+paper:
+  title: "Unified Structured Connectivity for Dense and Convolutional Logic Gate Network"
+  total_pages: 6
+  venue: "DATE"
+  latex_template: ""
+  words_per_page: 450
+  section_tolerance: 0.15
+  sections:
+    - 01_introduction
+    - 02_related_work
+    - 03_methodology
+    - 04_experiments
+    - 05_conclusion
+  target_pages:
+    01_introduction: 1.0
+    02_related_work: 1.0
+    03_methodology: 2.0
+    04_experiments: 1.3
+    05_conclusion: 0.7

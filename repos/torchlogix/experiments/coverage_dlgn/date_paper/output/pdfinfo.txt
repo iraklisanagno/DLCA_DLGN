@@ -1,0 +1,18 @@
+Title:           Unified Structured Connectivity for Dense and Convolutional Logic Gate Network
+Creator:         LaTeX with hyperref
+Producer:        xdvipdfmx (0.1)
+CreationDate:    Fri Sep 11 21:41:55 2026 UTC
+Custom Metadata: no
+Metadata Stream: no
+Tagged:          no
+UserProperties:  no
+Suspects:        no
+Form:            none
+JavaScript:      no
+Pages:           6
+Encrypted:       no
+Page size:       595.28 x 841.89 pts (A4)
+Page rot:        0
+File size:       91496 bytes
+Optimized:       no
+PDF version:     1.5

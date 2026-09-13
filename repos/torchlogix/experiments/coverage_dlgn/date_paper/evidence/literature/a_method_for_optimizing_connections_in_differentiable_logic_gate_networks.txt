@@ -1,0 +1,289 @@
+                                                      A Method for Optimizing Connections in
+                                                        Differentiable Logic Gate Networks
+                                                                 Wout Mommen∗† , Lars Keuninckx∗ , Matthias Hartmann∗ , Piet Wambacq†
+                                                                                ∗ Novel Algorithms and Compute Systems (NACS)
+
+                                                                                             imec, Leuven, Belgium
+                                                                                          Email: Wout.Mommen@imec.be
+
+                                                                                       † Electronics and Informatics (ETRO)
+
+                                                                               Vrije Universiteit Brussel (VUB), Brussels, Belgium
+                                                                                          Email: Piet.Wambacq@vub.be
+arXiv:2507.06173v1 [cs.LG] 8 Jul 2025
+
+
+
+
+                                           Abstract—We introduce a novel method for partial opti-             hardware, is possible [11]. These so-called Deep Differentiable
+                                        mization of the connections in Deep Differentiable Logic Gate         Logic Gate Networks (LGNs) are feedforward multi-layered
+                                        Networks (LGNs). Our training method utilizes a probability           networks of logic gates, in which each gate has two
+                                        distribution over a subset of connections per gate input, selecting
+                                        the connection with highest merit, after which the gate-types are     input connections. These networks have fixed random
+                                        selected. We show that the connection-optimized LGNs outper-          connections but trainable gate-types, which are relaxed to 16
+                                        form standard fixed-connection LGNs on the Yin-Yang, MNIST            different differentiable expressions, one for each two-input
+                                        and Fashion-MNIST benchmarks, while requiring only a fraction         Boolean operator, and are trained with backpropagation. A
+                                        of the number of logic gates. When training all connections, we       convolutional approach to LGNs has also been demonstrated
+                                        demonstrate that 8000 simple logic gates are sufficient to achieve
+                                        over 98% on the MNIST data set. Additionally, we show that our        showing state-of-the-art performance in throughput speed,
+                                        network has 24 times fewer gates, while performing better on the      accuracy and number of gates [12]. Additionally, there exist
+                                        MNIST data set compared to standard fully connected LGNs. As          methods that use other digital hardware elements as “neurons”
+                                        such, our work shows a pathway towards fully trainable Boolean        such as monostable multivibrator (MMV) networks [13],
+                                        logic.                                                                lookup table (LUT) networks [14], [15] and networks of
+                                          Index Terms—Artificial intelligence, Backpropagation, Neural        multiplexers (MUXes) [16].
+                                        network hardware, Logic gates, Ultra low power, Neuromorphic
+                                        computing, AI accelerators, Edge AI                                      In this work we propose a method to extend the paradigm
+                                                                                                              of LGNs with trainable connections. Our contributions are the
+                                                                 I. I NTRODUCTION                             following:
+                                           In recent years it has become clear that running AI
+                                        models requires a lot of power [1], [2]. As such, a strong              • We introduce a novel method for learning the connections
+                                        interest has been shown to make these models and their                    in LGNs. Currently, the connections in LGNs are fixed,
+                                        associated hardware more energy efficient, especially on                  hence it is likely not the optimal way of obtaining the
+                                        the inference side [3], [4]. One example is the field of                  smallest network of logic gates for a certain task. In this
+                                        neuromorphic computing that uses bio-inspired Spiking                     work, the number of learnable connections per gate input
+                                        Neural Networks (SNNs) [5], [6] to save a great deal of                   is a hyperparameter that can be chosen.
+                                                                                                                • This method is tested on the Yin-Yang, MNIST and
+                                        energy by considering the inputs to all layers to be binary.
+                                        In that way, the multiply-accumulate (MAC) operations                     Fashion-MNIST benchmarks. It is shown that LGNs with
+                                        that are needed for determining the neuron activations are                trained connections are significantly smaller compared to
+                                        reduced to accumulate-only operations. These SNNs can                     LGNs with fixed connections, while maintaining the same
+                                        be sparsified [7] and their weight values quantized [8] to                state-of-the-art accuracy and throughput.
+                                                                                                                • A first attempt at training all connections in LGNs with
+                                        a low number of bits, again saving energy and using less
+                                        hardware. Clearly, neuromorphic methods such as SNNs                      this method is tried out. Although the increase of accuracy
+                                        have delivered their successes in energy efficiency [9], [10],            is only valid up to two layer deep networks, we show that
+                                        however the question arises if this is the best solution possible.        our fully connected network needs 24 times fewer gates
+                                                                                                                  compared to fixed connection networks, while achieving
+                                          Very recently, it has become clear that directly training               a higher accuracy on the MNIST data set. Even when
+                                        a network of Boolean gates, i.e. the very fabric of digital               comparing our fully connected network to a convolutional
+                                                                                                                  network with fixed connections, we still use 9 times less
+                                          Flanders AI Research                                                    gates.
+                        II. T RAINING METHOD
+A. Standard training method
+   The standard way of training the gates in LGNs is by                                         1.0                                   class 0
+learning a probability distribution (pg )lk,i over all 16 possible                                                                    class 1
+                                                                                                                                      class 2
+2-input Boolean operations fi (e.g. AND, OR, XNOR, ...).                                        0.8                                   class 3
+Here l is the layer number, k is the index of the gate within                                                                         errors
+that layer and i refers to gate operation fi . Each of these 16
+operations is explained in [11]. The output of gate k in layer
+                                                                                                0.6
+
+
+
+
+                                                                                            y
+l is represented in the following way:
+                                                                                                0.4
+        15                           15         (wg )lk,i /Tg
+        X                          X    e
+gkl =      (pg )lk,i ·fi alk , blk =                                  ·fi alk , blk .           0.2
+                                                                                   
+                                        P             (wg )lk,j /Tg
+        i=0                             i=0     je
+                                                              (1)
+   Here alk and blk are the input values to logic gate k of layer                               0.0
+l. The probability distribution (pg )lk,i is given by the output                                      0.0   0.2     0.4       0.6   0.8    1.0
+of a softmax function that contains trainable weights (wg )lk,i ,                                                         x
+such that for each gate in each layer there is an associated                            Fig. 1: The test output of the Yin-Yang data set using a 2-
+weight for each gate operation fi . The temperature Tg is a                             layer network of 500 gates/layer with the number of trainable
+hyperparameter. After training the gates in a network with                              connections per gate input (Nc ) equal to 16. A test accuracy
+non-trainable connections, the gate operation fi matching the                           of 99.22% was observed on these 10 000 data points.
+largest probability is chosen as in [11]. Residual initialization
+is used to initialize weight values of the gates as described in
+[12].                                                                                   converge to an Nc -dimensional one-hot encoded vector. If Nc
+                                                                                        is quite small (e.g. 8 or 16), only indices are used to refer to
+B. Training the connections                                                             inputs of the previous layer, which requires less memory. The
+                                                                                        matrix-vector multiplication is then replaced by the Hadamard
+   We now extend this method of learning the correct
+                                                                                        product. In the next section, we apply our method to three
+gate operation for each gate through a softmax probability
+                                                                                        different common data sets.
+distribution, to learning the connections to the gates. The first
+input a of gate k in layer l is given by
+                                                                                                        III. R ESULTS AND DISCUSSION
+           c −1
+          NX                            c −1
+                                       NX           (wa )lk,i /Tc
+                                                e                                       A. Yin-Yang
+  alk =          (pa )lk,i · gil−1 =           P            l
+                                                   (wa )k,j /Tc
+                                                                      · gil−1 . (2)
+           i=0                         i=0      je                                         The goal of the Yin-Yang data set [17] is to classify points
+   Here Nc are the number of connections that are trained for                           in the xy-plane into four different regions, as given in Figure 1.
+each input of each gate, which is equal to N (l−1) when all                             The (x, y) coordinates are encoded in 12-bit vectors, such
+connections are trained. A weight matrix (wa )lk,i for the first                        that the input dimension of the networks is 24. The train set
+input of gate k in layer l is learned and each of the weight                            consists of 200 000 data points and the test set contains 10 000
+values are normalized by a connection temperature Tc . The                              data points. The accuracy as a function of layer depth can be
+index i refers to the ith gate in the previous layer (l − 1).                           seen in Figure 2a for Nc = 8 and Figure 2b for Nc = 16. A
+The expression for the second input blk is similar, but with                            value of 12 is chosen for Nc for the first layer. All models
+probability (pb )lk,i and weight matrix (wb )lk,i . Similarly to                        are trained with a learning rate of 0.01 for 100 epochs. For
+the gates, the softmax is changed into an argmax distribution,                          the models with trainable connections, Tc is lowered from 1
+selecting the connection with the highest probability. This is                          tot 10−4 from epoch 60 to 80 and Tg is lowered from 1 tot
+done by starting with a high Tc and slowly lowering it to                               10−4 from epoch 80 to 100. From Figure 2a and Figure 2b it
+a chosen minimum value during training. In that way, the                                is clear that training the connections improves the accuracy
+output of the softmax function changes from having a very                               significantly for shallow networks, since all models with
+uniform distribution at the beginning of training, to a very                            trainable connections perform better up to around 3-4 layers.
+peaked one at the end of training. Hence, the softmax function                          For example, a network with trainable connections consisting
+can be seen as a smooth argmax function. Implementation-                                of 200 gates (2 layers of 100 gates/layer) achieves a higher
+wise, if Nc = N (l−1) , a weight matrix is used that contains                           accuracy (96.98%) than a network with fixed connections of
+full precision values at the start of training. A softmax is                            2000 gates (4 layers of 500 gates/layer, 96.08%), resulting in
+calculated for each row of the (wa )lk,i and (wb )lk,i matrices.                        one order of magnitude less hardware. Due to a smaller output
+A matrix-vector multiplication between these matrices and the                           layer size of 100 gates/layer compared to 500 gates/layer, the
+inputs are performed. By slowly lowering Tc , each row will                             population counters will be smaller, again saving hardware.
+                       1.00                                                                  1.00
+                                                                                             0.99
+                       0.95                                                                  0.98
+   Accuracy Yin-Yang
+
+
+
+
+                                                                            Accuracy MNIST
+                       0.90
+                                                                                             0.96
+                       0.85                                                                                                     Nc = 8 (8000)
+                                                         Nc = 8 (500)                        0.94                               Nc = 8 (4000)
+                       0.80
+                                                         Nc = 8 (200)                                                           Nc = 8 (2000)
+                       0.75                              Nc = 8 (100)                        0.92                               Nc = 8 (1000)
+                                                         Fixed (500)                                                            Fixed (8000)
+                       0.70                                                                  0.90
+                              1   2     3         4      5         6                                1   2     3         4        5         6
+                                      Number of layers                                                      Number of layers
+                                        (a)                                                                   (a)
+                       1.00                                                                  1.00
+                                                                                             0.99
+                       0.95                                                                  0.98
+   Accuracy Yin-Yang
+
+
+
+
+                                                                            Accuracy MNIST
+                       0.90
+                                                                                             0.96
+                       0.85                                                                                                    Nc = 16 (8000)
+                                                         Nc = 16 (500)                       0.94                              Nc = 16 (4000)
+                       0.80
+                                                         Nc = 16 (200)                                                         Nc = 16 (2000)
+                       0.75                              Nc = 16 (100)                       0.92                              Nc = 16 (1000)
+                                                         Fixed (500)                                                           Fixed (8000)
+                       0.70                                                                  0.90
+                              1   2     3         4       5          6                              1   2     3         4        5          6
+                                      Number of layers                                                      Number of layers
+                                        (b)                                                                   (b)
+Fig. 2: Accuracy on the Yin-Yang data set as a function of               Fig. 3: Accuracy on the MNIST data set as a function of
+number of layers for (a) Nc = 8 and (b) Nc = 16 compared                 number of layers for (a) Nc = 8 and (b) Nc = 16 compared
+with a network of fixed connections. Here Nc is the number of            with a network of fixed connections. Here Nc is the number of
+trainable connections per input per gate. The number of gates            trainable connections per input per gate. The number of gates
+per layer are given between brackets.                                    per layer are given between brackets.
+
+
+B. MNIST                                                                 C. Fashion-MNIST
+   The MNIST data set [18] consist of 28x28 grayscale images                The Fashion-MNIST data set [19] is similar to the MNIST
+of handwritten digits ranging from 0 until 9. Before inputting           data set, but instead of handwritten digits, there are 10 classes
+these 784 pixel values into the model, a threshold of 0.5 is used        of clothing items. Thresholds of 0.25, 0.5 and 0.75 are used to
+to binarize them. Figure 3a and 3b give the accuracy of the              encoded the data into a binary format such that it can be used
+MNIST data set as a function of layer depth for Nc = 8 and               as input to the models. All models are trained using the same
+Nc = 16 respectively. All models are trained using a learning            settings as for the MNIST data set. The accuracy as a function
+rate of 0.01. The models with fixed or trainable connections             of number of layers can be seen in Figure 4a and Figure 4b
+are trained for 200 or 240 epochs respectively. In the latter            for Nc = 8 and Nc = 16 respectively. Up to 5 layers, the
+case, Tc is lowered from epoch 160 until 200 and Tg is                   networks with trainable connections clearly outperform the
+lowered from epoch 200 until 240, using the same start and end           networks with fixed connections. For example, a network with
+values as mentioned before. Again, the networks with trainable           trainable connections using 2 layers of 4000 gates/layer has
+connections outperform the ones with fixed connections, using            a similar accuracy (87.16%) as a network using 6 layers of
+the same number of gates/layer. The largest improvement is               8000 gates/layer (87.17%) with fixed connections, requiring 6
+found for more shallow networks, i.e. a 3-layer network of               times less gates and connections.
+4000 gates/layer with trainable connections performs better
+(98.14%) than a 6-layer network of 8000 gates/layer (97.92%).            D. Training all connections
+This is an improvement by a factor of 4 with respect to the                We attempt to train all connections of LGNs on the MNIST
+number of gates and connections. Another example is the 1-               data set. An accuracy increase up to two layer deep networks
+layer network of 1000 gates with Nc = 16, which performs                 was achieved, but for deeper networks the accuracy slightly
+better (92.83%) than a 1-layer network with fixed connections            decreased. Using a network of 1x8000 and 2x8000 gates,
+(91.16%), while having 8 times less gates and connections.               accuracies of 98.19% and 98.68% were observed respectively,
+Again, it is expected that less logic is needed for the population       showcasing that 8000 simple logic gates are all you need to
+counts.                                                                  obtain more than 98% on MNIST. According to [12], 384 000
+                            0.90                                                                            ACKNOWLEDGMENT
+   Accuracy Fashion-MNIST                                                            This work has received funding from the Flemish Gov-
+                            0.88
+                                                                                   ernment under “Onderzoeksprogramma Artificiële Intelligentie
+                            0.86                                                   Vlaanderen” (Flanders AI Research).
+
+                            0.84                                                                                 R EFERENCES
+                                                                   Nc = 8 (8000)
+                                                                   Nc = 8 (4000)    [1]   J. Sevilla, L. Heim, A. Ho, T. Besiroglu, M. Hobbhahn, and P.
+                            0.82                                   Nc = 8 (2000)          Villalobos, “Compute Trends Across Three Eras of Machine Learning,”
+                                                                                          in 2022 International Joint Conference on Neural Networks (IJCNN),
+                                                                   Fixed (8000)           Jul. 2022, pp. 1–8.
+                            0.80
+                                   1   2         3         4        5         6     [2]   R. Desislavov, F. Martı́nez-Plumed, and J. Hernández-Orallo, “Trends
+                                               Number of layers                           in AI inference energy consumption: Beyond the performance-vs-
+                                                                                          parameter laws of deep learning,” Sustainable Computing: Informatics
+                                                 (a)                                      and Systems, vol. 38, p. 100 857, Apr. 2023.
+                                                                                    [3]   M. Rastegari, V. Ordonez, J. Redmon, and A. Farhadi, “XNOR-
+                            0.90                                                          Net: ImageNet Classification Using Binary Convolutional Neural Net-
+                                                                                          works,” en, in Computer Vision – ECCV 2016, B. Leibe, J. Matas, N.
+   Accuracy Fashion-MNIST
+
+
+
+
+                            0.88                                                          Sebe, and M. Welling, Eds., Cham: Springer International Publishing,
+                                                                                          2016, pp. 525–542.
+                            0.86                                                    [4]   I. Hubara, M. Courbariaux, D. Soudry, R. El-Yaniv, and Y. Bengio,
+                                                                                          “Quantized Neural Networks: Training Neural Networks with Low
+                            0.84                                  Nc = 16 (8000)          Precision Weights and Activations,” Journal of Machine Learning
+                                                                                          Research, vol. 18, no. 187, pp. 1–30, 2018.
+                                                                  Nc = 16 (4000)    [5]   C. D. Schuman, S. R. Kulkarni, M. Parsa, J. P. Mitchell, P. Date, and
+                            0.82                                  Nc = 16 (2000)          B. Kay, “Opportunities for neuromorphic computing algorithms and
+                                                                  Fixed (8000)            applications,” Nature Computational Science, vol. 2, no. 1, pp. 10–19,
+                            0.80
+                                   1   2         3         4        5          6          Jan. 2022.
+                                               Number of layers                     [6]   J. K. Eshraghian, M. Ward, E. O. Neftci, et al., “Training Spiking
+                                                                                          Neural Networks Using Lessons From Deep Learning,” Proceedings
+                                                 (b)                                      of the IEEE, vol. 111, no. 9, pp. 1016–1054, Sep. 2023.
+                                                                                    [7]   N. Rathi, P. Panda, and K. Roy, “STDP-Based Pruning of Connections
+Fig. 4: Accuracy on the Fashion-MNIST data set as a function                              and Weight Quantization in Spiking Neural Networks for Energy-
+                                                                                          Efficient Recognition,” IEEE Transactions on Computer-Aided Design
+of number of layers for (a) Nc = 8 and (b) Nc = 16 compared                               of Integrated Circuits and Systems, vol. 38, no. 4, pp. 668–677, Apr.
+with a network of fixed connections. Here Nc is the number of                             2019.
+trainable connections per input per gate. The number of gates                       [8]   R. V. W. Putra and M. Shafique, “Q-SpiNN: A Framework for
+                                                                                          Quantizing Spiking Neural Networks,” in 2021 International Joint
+per layer are given between brackets.                                                     Conference on Neural Networks (IJCNN), Jul. 2021, pp. 1–8.
+                                                                                    [9]   P. U. Diehl, B. U. Pedroni, A. Cassidy, P. Merolla, E. Neftci, and
+                                                                                          G. Zarrella, “TrueHappiness: Neuromorphic emotion recognition on
+                                                                                          TrueNorth,” in 2016 International Joint Conference on Neural Net-
+gates (fully connected) and 147 000 gates (convolutional) are                             works (IJCNN), Jul. 2016, pp. 4278–4285.
+needed to obtain accuracies of 98.47% and 98.46% respec-                           [10]   S. Kim, S. Park, B. Na, and S. Yoon, “Spiking-YOLO: Spiking Neural
+tively. This means that our fully connected network achieves                              Network for Energy-Efficient Object Detection,” en, Proceedings of the
+                                                                                          AAAI Conference on Artificial Intelligence, vol. 34, no. 07, pp. 11 270–
+a higher accuracy (98.68%), while having a factor of 24 (fully                            11 277, Apr. 2020.
+connected) and 9 (convolutional) fewer gates.                                      [11]   F. Petersen, C. Borgelt, H. Kuehne, and O. Deussen, “Deep Differ-
+                                                                                          entiable Logic Gate Networks,” en, Advances in Neural Information
+                                           IV. C ONCLUSION                                Processing Systems, vol. 35, pp. 2006–2018, Dec. 2022.
+                                                                                   [12]   F. Petersen, H. Kuehne, C. Borgelt, J. Welzel, and S. Ermon, “Convo-
+   Partially training the connections in LGNs leads to a better                           lutional Differentiable Logic Gate Networks,” en, Advances in Neural
+                                                                                          Information Processing Systems, vol. 37, pp. 121 185–121 203, Dec.
+performance using significantly smaller networks, especially                              2024.
+for shallow networks. It was observed that the networks                            [13]   L. Keuninckx, M. Hartmann, P. Detterer, A. Safa, and I. Ocket, Not
+trained on the Yin-Yang, MNIST and Fashion-MNIST data                                     Biologically Inspired: On Training Networks of Monostable Multivi-
+                                                                                          brator Timer Neurons, en, Apr. 2023.
+sets needed 10, 8 and 6 times fewer gates and connections                          [14]   E. Wang, J. J. Davis, P. Y. K. Cheung, and G. A. Constantinides,
+respectively, while having an equivalent or higher accuracy.                              LUTNet: Rethinking Inference in FPGA Soft Logic, Apr. 2019.
+When training all connections of a fully connected network,                        [15]   E. Wang, J. J. Davis, P. Y. K. Cheung, and G. A. Constantinides,
+                                                                                          LUTNet: Learning FPGA Configurations for Highly Efficient Neural
+this factor was equal to 24 (fully connected with fixed connec-                           Network Inference, Mar. 2020.
+tions) or 9 (convolutional with fixed connections). In future                      [16]   Y. Y. Lee, Z. A. Halim, M. N. A. Wahab, and T. A. Almohamad,
+work we will focus on further improving the algorithm to                                  “Stochastic Computing Convolutional Neural Network Architecture
+                                                                                          Reinvented for Highly Efficient Artificial Intelligence Workload on
+deeper networks and applying it to Convolutional Differen-                                Field-Programmable Gate Array,” Research, vol. 7, p. 0307, Mar. 2024.
+tiable LGNs. Only training a low number of connections can                         [17]   L. Kriener, J. Göltz, and M. A. Petrovici, The Yin-Yang dataset, Jan.
+already be useful for fully training the convolutional filters                            2022.
+                                                                                   [18]   Y. LeCun, C. Cortes, and C. J.C. Burges, MNIST database of hand-
+in these types of networks. The classification part is usually                            written digits, 1998. [Online]. Available: http://yann.lecun.com/exdb/
+quite shallow and could be trained fully. Ultimately, this leads                          mnist/.
+to more efficient scaling for larger networks, broadening the                      [19]   H. Xiao, K. Rasul, and R. Vollgraf, Fashion-MNIST: A Novel Image
+                                                                                          Dataset for Benchmarking Machine Learning Algorithms, Sep. 2017.
+range of applications of LGNs.
+

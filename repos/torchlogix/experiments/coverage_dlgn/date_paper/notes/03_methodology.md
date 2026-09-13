@@ -1,0 +1,12 @@
+# Methodology brief
+
+- Define a layered rank-2 Boolean graph, fixed predecessor matrix, softmax mixture over 16 functions, hard argmax gate selection, and class-group summation.
+- Represent dense input bits by channel, row, column, and threshold. Structural source ancestry collapses thresholds belonging to one raw pixel/channel. Ancestry is not learned dependence.
+- First layer: semantic candidate stages alternate spatial strides, channels, and threshold-plus-spatial shifts. Skip same-source pairs. Round-robin stages use a 64-candidate look-ahead and lexicographic endpoint usage ordering; repeated pairs become eligible after exhaustion. This builder is distinct from the deeper perfect-matching builder.
+- Deeper layers: ceil(log2 n) scales; XOR matchings for power-of-two widths; coprime affine order and adjacent pairing otherwise; odd widths have one rotating unmatched node. Deterministic pair permutations depend on seed, layer, stage, and cycle.
+- Stage selection minimizes prospective fan-out spread, then maximizes mean normalized ancestry novelty, then breaks ties by cyclic nominal stage order. Stages cannot repeat within a cycle. Score novelty on the complete candidate stage, with at most 2,048 uniformly indexed pairs; truncate a partial stage by endpoint usage before evaluating prospective degree spread.
+- State the even-width degree property narrowly: completed matchings increment every predecessor once; a final subset increments each selected predecessor at most once. No global optimality claim for arbitrary-width semantic pairing.
+- Convolution: channel grouping size two and rank two, first-layer channel/threshold semantics, shared spatial receptive-field sampling, inherited channel ancestry, and dense classifier integration. Channel ancestry is a channel-support abstraction, not full pixel dependence.
+- Export only fixed indices and selected functions. Ancestry bitsets are offline state. Explain offline cost and the distinction from synthesized area, timing, and energy.
+
+Implementation inspected (paths relative to the TorchLogix root): `src/torchlogix/topology.py` (`_semantic_butterfly_indices`, `_regular_butterfly_stage`, `_multiscale_saturation_balanced_indices`, `_normalized_pair_novelty`), `src/torchlogix/connections.py`, dense and convolutional models. Include a pipeline diagram, a compact algorithm, and a worked example illustrating matching stages.

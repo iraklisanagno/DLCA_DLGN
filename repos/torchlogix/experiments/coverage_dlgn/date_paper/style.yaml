@@ -1,0 +1,35 @@
+writing_mode: "technical_research"
+clarity_priority: true
+forbid_em_dash: true
+avoid_ai_scaffolding: true
+preserve_user_wording: true
+prefer_precise_claims: true
+voice_profile: "voice_profile.yaml"
+tone:
+  formality: "high"
+  assertiveness: "evidence-bounded"
+  perspective: "we"
+connectives: ["however", "therefore", "specifically", "for example", "to this end", "next"]
+avg_sentence_len_range:
+  min: 18
+  max: 24
+paragraph_sentences_target: [3, 5]
+general_instructions:
+  - "Define the graph, quantities, and baseline before interpreting a comparison."
+  - "Use the input-operation-output pattern for method components."
+  - "Each paragraph must inherit a named concept from the preceding argument."
+  - "Give accuracy, cost, provenance, and uncertainty together where applicable."
+  - "Retain a losing coordinate and distinguish observation from causal inference."
+  - "The voice profile overrides the bundled style's longer paragraph target."
+submission:
+  anonymous: true
+  author_names: false
+  acknowledgments: false
+  page_numbers: false
+  copyright_notice: false
+  body_font_pt: 10
+  source: "https://www.date-conference.com/call-for-papers"
+  verified_on: "2026-09-11"
+  content_page_limit: 6
+  optional_references_only_pages: 1
+  project_target_total_pages: 6

@@ -1,0 +1,42 @@
+{
+  "deep_differentiable_logic_gate_networks": {
+    "source": "pdfs/deep_differentiable_logic_gate_networks.pdf",
+    "sha256": "fa0722f9e70759ee036167471bc0f5ee6e942feb3f2cef40aa9c8650501d77ab",
+    "bytes": 705616
+  },
+  "convolutional_differentiable_logic_gate_networks": {
+    "source": "pdfs/convolutional_differentiable_logic_gate_networks.pdf",
+    "sha256": "cf02235547bec3c555ccf50056610426b7d72424b15e7e335418178fca122357",
+    "bytes": 1346193
+  },
+  "a_method_for_optimizing_connections_in_differentiable_logic_gate_networks": {
+    "source": "pdfs/a_method_for_optimizing_connections_in_differentiable_logic_gate_networks.pdf",
+    "sha256": "52bf52f1de4cc77a191cec207c33b68d0a128d1a80864238413adf5fba993c31",
+    "bytes": 510424
+  },
+  "lilogic_net_compact_logic_gate_networks_with_learnable_connectivity_for_efficient_hardware_deployment": {
+    "source": "pdfs/lilogic_net_compact_logic_gate_networks_with_learnable_connectivity_for_efficient_hardware_deployment.pdf",
+    "sha256": "0afa49fdcee8683a1ff28aea9dd94167fcffacfa525ec1d99387541fd15775e1",
+    "bytes": 1022039
+  },
+  "warp_logic_neural_networks": {
+    "source": "pdfs/warp_logic_neural_networks.pdf",
+    "sha256": "b6904d5323ae58cd376174bf916465f802ad31ca9e9f3b2857f563c5d6ef21dd",
+    "bytes": 939522
+  },
+  "light_differentiable_logic_gate_networks": {
+    "source": "pdfs/light_differentiable_logic_gate_networks.pdf",
+    "sha256": "e3285f0a2404edb87b6f66f4d3b5053a7e81609b19122e9d1640a6360ddb90bd",
+    "bytes": 1995192
+  },
+  "bitlogic_a_framework_for_gradient_based_lut_native_neural_networks": {
+    "source": "pdfs/bitlogic_a_framework_for_gradient_based_lut_native_neural_networks.pdf",
+    "sha256": "56fa49d15ce11976782dab1a72c4c2a7627e6a8ef0c621829e7dcc407de4590b",
+    "bytes": 697891
+  },
+  "two-stage_unit_tying_for_simplifying_differentiable_logic_gate_networks": {
+    "source": "pdfs/two-stage_unit_tying_for_simplifying_differentiable_logic_gate_networks.pdf",
+    "sha256": "67848458965d9e3aca207a4cab89e4d9728b8fe39529f8ba38c7bb7fe1ea4056",
+    "bytes": 609191
+  }
+}

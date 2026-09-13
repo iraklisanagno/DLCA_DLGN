@@ -1,0 +1,942 @@
+                                              LILogic Net: Compact Logic Gate Networks with Learnable Connectivity
+                                                              for Efficient Hardware Deployment
+
+                                                                  Katarzyna Fojcik1 Renaldas Zioma2 Jogundas Armaitis2
+                                                           1
+                                                               Wroclaw University of Science and Technology 2 Transcendent Logic
+                                                katarzyna.fojcik@pwr.edu.pl              rz@TranscendentLogic.com                             ja@TranscendentLogic.com
+arXiv:2511.12340v2 [cs.LG] 26 Apr 2026
+
+
+
+
+                                                                  Abstract                                                                                                    LogicTreeNet-L
+                                                                                                                        99.25
+                                                                                                                                                                      LogicTreeNet-M
+                                                                                                                        99.00                   LILogic Net-L
+                                            Efficient machine learning deployment requires models
+                                         that account for hardware constraints. Because binary logic                    98.75
+
+
+
+
+                                                                                                             Accuracy [%]
+                                         gates are the fundamental primitives of digital hardware,                      98.50       LILogic Net-M                  DiffLogic Net
+                                                                                                                                                                                             FINN LFC
+                                                                                                                                                          LogicTreeNet-S
+                                         models built directly from logic operations offer a promising                  98.25                                   TTNet-L
+                                         path toward highly energy-efficient computation. Recent
+                                                                                                                        98.00 LILogic Net-S                                         FINN
+                                         work has shown that networks of binary logic gates can                                                                                     DiffLogic Net
+                                                                                                                        97.75                   DiffLogic Net-S                     TTNet
+                                         be trained with gradient-based optimization and that their                                                                                 LogicTreeNet
+                                         wiring can be learned. However, existing approaches remain                     97.50                   TTNet-S                             LILogic Net (Ours)
+                                         limited in scalability and training efficiency. We address                                     104                 105                    106
+                                         these challenges by treating the network connectome as a                                               Number of Gates (log scale)
+                                         differentiable object and introducing a Top-K connectivity          Figure 1. Gate count vs. accuracy on the MNIST dataset. Our
+                                         mechanism that enforces structured sparsity during train-           models LILogic Nets achieve significantly higher accuracy for a
+                                         ing. Our resulting architecture, LILogicNet, substantially          given gate budget compared to state-of-the-art baselines, lying well
+                                         improves the efficiency of logic-gate networks. A model with        above the Pareto front.
+                                         only 8,000 gates trains on MNIST in under five minutes while
+                                         achieving 98.45% test accuracy, matching the performance
+                                         of state-of-the-art logic-gate models that require two orders       tings [4]. Modern machine learning models largely rely on
+                                         of magnitude more gates. At larger scales, a 256,000-gate           matrix multiplication operations, efficiently supported by
+                                         model achieves 60.98% test accuracy on CIFAR-10, sur-               high-level APIs and massively parallel hardware such as
+                                         passing prior approaches with comparable gate budgets.              GPUs [7, 33]. Computational hardware fundamentally op-
+                                         Because the final model is fully binarized and composed             erates on binary logical gate operations, which are directly
+                                         entirely of logic operations, inference incurs minimal com-         available across ASICs, FPGAs [18, 23], CPUs, and mi-
+                                         pute overhead and maps naturally to a wide range of digital         crocontrollers [5, 22, 30]. Designing models that natively
+                                         hardware platforms, enabling efficient deployment across            operate on binary signals and logical gates, therefore, repre-
+                                         diverse computing systems.                                          sents a promising direction for hardware-efficient AI.
+                                                                                                                One approach is to replace components of state-of-the-art
+                                                                                                             architectures, such as multilayer perceptrons (MLPs) [9] and
+                                         1. Introduction                                                     convolution layers [19, 46], with logical counterparts. Log-
+                                                                                                             ical Gate Networks (LGNs), composed of randomly wired
+                                         In recent years, scaling up machine learning models has             layers of trainable two-input logical gates, have shown that
+                                         driven major advances across real-world applications, en-           purely logical architectures can be trained end-to-end us-
+                                         abled by specialized datacenter hardware [14]. In such en-          ing gradient descent [24]. On benchmarks such as MNIST
+                                         vironments, hardware cost and energy consumption are typ-           and CIFAR-10, these models achieved competitive accuracy,
+                                         ically secondary concerns. As machine learning matures,             though typically with large gate budgets and fixed connec-
+                                         however, there is growing interest in deploying models on           tomes. Subsequent work demonstrated that wiring itself can
+                                         low-power, cost-sensitive edge devices [10], demanding              be learned. In particular, Bacellar et al. [3] introduced Differ-
+                                         tighter co-design between model architecture and hardware           entiable Wiring Networks (DWN), where discrete intercon-
+                                         capabilities to extend AI beyond traditional datacenter set-        nections between lookup tables are optimized via softmax re-
+
+
+                                                                                                         1
+laxation and discretized at inference. Other studies explored        conventional neural layers onto hardware post hoc, these ap-
+learnable connectomes primarily in tabular settings and from         proaches restructure computation to better match the native
+an interpretability perspective [43, 44], but were limited to        logic fabric. LUTNet [37] was an early example, using
+relatively small networks—up to 2,000 gates—citing train-            learnable K-input lookup tables to improve logic utilization
+ing slowdowns due to computational burden.                           and enable structured pruning aligned with FPGA resources.
+    If LGNs are to serve as practical replacements for MLP           LogicNets [35] pushed this further and increased through-
+components, it is crucial not only to learn connectivity but         put by constraining neuron fan-in so that each unit could
+also to do so efficiently and at scale. In this work, we treat       be realized directly as a truth table. More recent develop-
+the connectome as a differentiable object and explicitly tar-        ments extend this idea beyond binarized weight abstractions.
+get scalability and structured sparsity. We introduce a Top-K        DWNs [3] revisit classical weightless models and introduce
+connectivity mechanism that enforces sparsity during train-          learnable address mappings and aggregation mechanisms
+ing rather than through post-hoc pruning, improving opti-            over symbolic inputs, combining gradient-based training
+mization stability and reducing memory footprint. Further-           with combinatorial components.
+more, we propose a Basis Projection (BasisProj) method for              A related direction is differentiable logic-based neural ar-
+efficient gradient-based computation of logic gate outputs.          chitectures, which replace weighted connections with learn-
+    We introduce LILogic Net (Learnable Interconnect Logic           able logic gates. Logic Gate Networks (LGNs), introduced
+Network), a compact and scalable LGN architecture achiev-            by Petersen et al. [24], showed that such structures can be
+ing 98.95% accuracy on MNIST using only 8,000 logic gates            relaxed and trained with gradient descent. Even early LGNs
+and 60.98% on CIFAR-10 at larger gate budgets. Compared              offered advantages over BNNs in simplicity, interpretability,
+to prior LGN approaches, LILogic Net achieves improved               and hardware alignment. Later work explored their theoret-
+accuracy at comparable or smaller gate counts, demonstrat-           ical and practical aspects, including interpretability meth-
+ing that (sparse) connectome learning yields measurable              ods [43, 44], though these models remained limited in scale
+end-to-end gains. Code will be made publicly available at            and performance.
+https://github.com/jogundas/LILogicNet.                                 Recent advances have addressed these limitations.
+    We summarize our contributions as follows:                       Yousefi et al. [41] improved training stability and gate utiliza-
+• Top-K connectivity: A mechanism that enforces spar-                tion by mitigating the discretization gap using Gumbel noise
+  sity during training by selecting the strongest connection         and Hessian regularization. Petersen et al. [25] proposed
+  among K random candidates per gate.                                TreeLogicNet, incorporating logic gates into convolutional
+• Basis Projection (BasisProj): Efficiently computes gate            windows with logical OR pooling, achieving 99.35% accu-
+  outputs via a fixed projection, yielding up to 4× training         racy on MNIST and 86.29% on CIFAR-10—but using 2–4
+  speedup.                                                           orders of magnitude more gates than our method. Although
+• LILogicNet architecture: Compact logical gate networks             based on logical operations, TreeLogicNet retains CNN-like
+  that achieve competitive or better accuracy on MNIST,              receptive fields and parameter sharing, resulting in higher
+  FashionMNIST, and CIFAR-10 with up to two orders of                gate and operation counts. Other contributions include the
+  magnitude fewer gates than prior models.                           eXpLogic framework [39], which enhances interpretabil-
+                                                                     ity through saliency maps and gate pruning with minimal
+2. Related Work                                                      accuracy drop. Kresse et al. [16] showed that LGNs are
+                                                                     inherently suitable for formal verification using SAT solvers,
+Several key trends have emerged in binarized and
+                                                                     enabling proofs of fairness and robustness, and Clester [6]
+hardware-efficient neural models. Binary Neural Networks
+                                                                     explored LGNs for generative applications such as music
+(BNNs) [42], such as XNOR-Net [27] and BinaryNet [11],
+                                                                     synthesis. On the hardware side, Wang et al. [38] introduced
+showed that binary weights and activations can significantly
+                                                                     four custom RISC-V instructions to accelerate LGN infer-
+reduce memory and computation costs with minimal ac-
+                                                                     ence, achieving 95.8% accuracy on MNIST with a compact
+curacy loss. In parallel, Quantized Neural Networks [12]
+                                                                     18 K logic gate network and reduced runtime by over 87%
+reinforced the promise of low-precision optimization. IR-
+                                                                     compared to a standard RV32IM core.
+Net [26] addressed information loss in binary training via
+forward–backward techniques like Libra Parameter Bina-
+rization and Error Decay Estimators, while ReActNet [21]             3. Method
+improved binary model accuracy through generalized activa-
+                                                                     3.1. Differentiable Logical Gate Networks
+tions. From a deployment perspective, FINN [34] introduced
+a scalable FPGA framework for real-time BNN inference.               Traditional Logic Gate Networks (LGNs) are sparse, weight-
+    A parallel line of research investigates neural architec-        less models built from binary logic gates (e.g., AND, XOR).
+tures designed explicitly around FPGA lookup tables (LUTs)           While highly efficient for inference, their discrete nature
+as the primary computational primitive. Rather than mapping          prevents gradient-based training, thus limiting scalability.
+
+
+                                                                 2
+          (a) Fixed Connectome                      (b) Fully Learnable Dense Connectome            (c) Top-K Sparse Connectome (here K=2)
+Figure 2. Overview of training-time interconnect strategies. Each node learns a distribution over the 16 Boolean functions. Input connections
+are either fixed or modeled as learnable distributions, depending on the connectome design.
+
+
+                                                                           as a baseline, typically requiring deeper or wider layers to
+                                                                           match accuracy.
+                                                                         • (L) Fully learnable dense connectome: For each node,
+                                                                           both of its two inputs are connected to all outputs of the
+                                                                           previous layer (or to the input vector for the first layer).
+                                                                           The connection weights for each input are parameterized
+Figure 3. Inference pipeline: all logic gates and connections are          separately via a differentiable softmax.
+fully binarized, yielding a compact, deterministic circuit.              • (Top-K) Sparse connectome: For each node, both of
+                                                                           its two inputs independently select K random candidate
+                                                                           connections from the previous layer (or the input vector
+The Differentiable LGN framework introduced by Petersen                    for the first layer) at initialization, with each candidate
+et al. [24] solves this by: (i) relaxing binary inputs to contin-          assigned a learnable logit sampled from a standard normal
+uous values in [0, 1], (ii) using probabilistic interpretations            distribution. During training, a softmax over the K candi-
+of logic gates (e.g., A ∧ B ≈ A · B [36, 45]), and (iii) repre-            dates produces a weighted combination for each input. We
+senting each node as a soft combination over all 16 2-input                experiment with K ∈ {2, 4, 8, 16, 32, 64, 128} to trade off
+Boolean functions, enabling learning via gradient descent.                 sparsity and expressiveness.
+    This makes LGNs trainable with standard optimizers (e.g.,            After training, all models are fully binarized. Each gate
+Adam [15]), and—after training—easily discretizable to ef-               selects its most probable logic gate and inputs (for L and
+ficient, purely combinatorial LGNs, which means that they                Top-K connectomes), yielding a fixed-size, deterministic
+have no ”memory” or ”state”.                                             binary circuit suitable for efficient inference (Figure 3).
+    We design an LGN architecture that jointly learns the
+logic gate behavior and the structure of connections between             3.3. Dataset and Preprocessing
+them (the connectome), enabling both efficient training and              We evaluated our models on the MNIST, FashionMNIST,
+inference. Our key methodological contributions are twofold:             and CIFAR-10 datasets. The MNIST dataset consists of
+(i) a more GPU-efficient gate representation, and (ii) a sys-            60,000 training and 10,000 test images of handwritten dig-
+tematic comparison of several strategies for interconnect                its [20]. Each grayscale image of size 28 × 28 was flattened
+optimization.                                                            into a 784-dimensional input vector and binarized using a
+3.2. Model Architecture                                                  fixed intensity threshold of 0.25. The FashionMNIST dataset
+                                                                         contains 60,000 training and 10,000 test grayscale images
+Our models have 1–4 logic gate layers, each con-                         of fashion items across ten categories [40]. Each 28 × 28
+taining a fixed number of gates selected from                            image was flattened and binarized using fixed thresholds
+{2K, 4K, 8K, 16K, 32K, 64K, 128K}.         Each node re-                 [0.125, , 0.25, , 0.375, , 0.5, , 0.625, , 0.75, , 0.875], resulting
+ceives two relaxed binary inputs and implements one of the               in an effective input dimensionality of 5,488. The CIFAR-10
+16 Boolean functions [28]. All layers share the same width               dataset contains 50,000 training and 10,000 test color im-
+and interconnect strategy. We consider three strategies for              ages of 32 × 32 pixels across ten object categories [17].
+wiring between layers (Figure 2):                                        For CIFAR-10, each RGB channel was processed in-
+• (F) Fixed connectome: Each gate receives inputs from a                 dependently and binarized using the same thresholds
+  random subset of the previous layer. This mirrors the orig-            [0.125, , 0.25, , 0.375, , 0.5, , 0.625, , 0.75, , 0.875]. The re-
+  inal Differentiable LGN (DiffLogicNet) [24] and serves                 sulting binary maps from all channels were concatenated
+
+
+                                                                     3
+into a single flattened vector, yielding an effective input           that can be trained end-to-end using standard backpropaga-
+dimensionality of 21,504.                                             tion. Instead of evaluating each of the 16 gates individually
+    Learning interconnections increases model capacity,               (FullEval e.g., A · B for A ∧ B), we project this softmax-
+which can lead to overfitting in low-data regimes without             normalized gate distribution into a lower-dimensional func-
+augmentation. We applied dataset-specific transformations             tional basis space (BasisProj), enabling more efficient com-
+to improve generalization [31]. For MNIST, we used the                putation and improved interpretability. Specifically, the
+torchvision.transforms.v2 interface to apply ran-                     vector p is linearly projected via a fixed matrix W16→4 ∈
+dom rotation (±10◦ ), shear (up to 10◦ ), scaling (by ±10%),          R4×16 , yielding:
+and elastic deformations with α = 64 and σ = 6. Each
+augmented transformation was applied independently to gen-                  c = W16→4 · p,     where    c = [c1 , c2 , c3 , c4 ]⊤   (2)
+erate 10 distinct copies of the training dataset, leading to a        are the coefficients for the basis {1, A, B, A · B}.
+10× expanded training set. For FashionMNIST, no augmen-                  The gate’s continuous output is then computed as:
+tations were applied. For CIFAR-10, we applied standard
+natural image augmentations [29], including random crop-                       outputg = c1 + c2 A + c3 B + c4 (A · B).             (3)
+ping to 32 × 32 with 4-pixel reflection padding and random
+horizontal flips with 50% probability, expanding the training            The fixed projection matrix W16→4 is given by:
+set 8×. We note that the original DiffLogicNet baseline [24]
+does not use augmentations. To enable a fair comparison                            
+                                                                                   Operator         1    A B A·B
+                                                                                                                 
+and isolate the effect of learnable connectivity, we addition-                       False         0    0  0  0 
+ally perform evaluations of our models against versions with
+                                                                                                                
+                                                                                    A∧B            0    0  0  1 
+fixed connectomes under the same augmentation settings.
+                                                                                                                
+                                                                                ¬(A ⇒ B)           0    1  0 −1 
+    The validation set was constructed by applying only re-
+                                                                                                                
+                                                                                        A          0    1  0  0 
+sizing and binarization (i.e., no augmentation) to the original
+                                                                                                                
+                                                                                ¬(A ⇐ B)           0    0  1 −1 
+training images, and the same preprocessing was used for
+                                                                                                                
+                                                                                        B          0    0  1  0 
+the test set. A fixed random seed ensured reproducibility of
+                                                                                                                
+                                                                                   A⊕B             0    1  1 −2 
+the dataset splits and augmentation pipeline.                            ⊤
+                                                                                                                
+                                                                        W16→4 =
+                                                                                    A∨B            0    1  1 −1 
+                                                                                                                  (4)
+                                                                                ¬(A ∨ B)           1   −1 −1  1 
+3.4. Training and Inference                                                    
+                                                                                ¬(A ⊕ B)
+                                                                                                                 
+                                                                                                    1   −1 −1  2 
+All models were trained for 200 epochs using the Adam opti-
+                                                                                                                
+                                                                                      ¬B           1    0 −1  0 
+mizer [15] with a learning rate of 0.075, a batch size of 256,
+                                                                                                                
+                                                                                   A⇐B             1    0 −1  1 
+and no additional regularization such as dropout or weight
+                                                                                                                
+                                                                                      ¬A           1   −1  0  0 
+decay. Our experiments focus purely on the architectural
+                                                                                                                
+                                                                                   A ⇒  B          1   −1  0  1 
+and interconnect design choices, especially different sparsity
+                                                                                                                
+                                                                                ¬(A ∧ B)           1    0  0 −1 
+regimes, and aim to isolate their effect without the influence                        True          1    0  0  0
+of external regularizers. Top-K interconnect variants act
+implicitly as a form of regularization by constraining the               This formulation offers several advantages. First, it al-
+connectivity space.                                                   lows efficient parallel computation using dense matrix oper-
+                                                                      ations, leveraging GPU acceleration. Implementation does
+3.4.1. Differentiable Relaxation                                      not require platform specific (CUDA) code thus it is more
+To enable gradient-based training of logic gate selection,            portable. Second, it avoids evaluating 16 separate Boolean
+each node is parameterized by a vector of 16 real-valued              functions for each gate, improving training speed and re-
+weights, w ∈ R16 , representing logits over the space of all          ducing memory usage. Third, the decomposition into basis
+16 possible binary logic gates. These logits are transformed          functions enhances interpretability by exposing the contribu-
+into a probability distribution via the softmax function, pos-        tion of each term (e.g., A vs. A · B). Finally, it provides a
+sibly scaled by a temperature parameter τg [1], which we              flexible foundation for extending the logical expressivity to
+kept fixed at τg = 1 in all our experiments:                          higher-order gates in future work.
+                                     exp(τg · wi )                    3.4.2. Learnable Interconnections
+     p = softmax(τg · w),      pi = P                .     (1)
+                                     j exp(τg · wj )
+                                                                      For the learnable interconnect strategies (Top-K and L), we
+                                                                      similarly employ a softmax distribution over input weights
+   The resulting probability vector p ∈ ∆15 lies in the 15-           to determine input pairings for each gate. For Top-K, a
+dimensional probability simplex,  P16meaning that all entries         fixed number of candidates K are preselected per gate at
+are non-negative and sum to 1: i=1 pi = 1, pi ≥ 0. This               initialization, and only the softmax weights over those con-
+formulation treats gate selection as a categorical distribution       nections are trained. For the Fully Learnable strategy, the
+
+
+                                                                  4
+softmax is applied across all possible inputs, resulting in          Table 1. Full training time (in minutes) and speed-up using basis
+higher memory and computation costs.                                 projection over full gate evaluation. Results are shown for the
+                                                                     MNIST dataset and averaged over 10 runs with ≤ 0.1 min variabil-
+3.4.3. Binarization                                                  ity.
+After training, we convert the network into a discrete,
+                                                                        Width     Type     FullEval     BasisProj      Speed-Up
+inference-efficient form by binarizing both gate selection and
+interconnections. This is done by selecting the maximum                             1F        2.13          1.13         1.89×
+probability option (the mode) from the softmax distributions.           8,000       2F        4.75          1.60         2.96×
+In practice, this means that each logic gate uses a fixed pair                      3F        7.47          2.21         3.38×
+of binary inputs and computes a single Boolean function.                            1F        9.97          2.92         3.41×
+Regardless of the training strategy, every node uses exactly           32,000       2F       20.78          5.44         3.82×
+two binary inputs at inference time, allowing the model to                          3F       31.63          7.99         3.96×
+operate entirely in Boolean logic without any floating-point
+computation.
+3.4.4. Classification Strategy                                       matrix-vector multiplication—an operation highly optimized
+We adopt a probabilistic majority-voting scheme for classi-          for modern accelerators.
+fication. The output layer consists of n binary logic gates
+(e.g., 1,000), evenly divided into k groups corresponding            4.2. Interconnect Strategy Analysis
+to the k output classes (e.g., 10). During inference, each
+                                                                     We performed extensive experiments on the MNIST dataset
+group counts the number of ‘1’ activations, and the predicted
+                                                                     using architectures with 1–4 layers and widths ranging from
+class is the one with the highest count. During training, soft
+                                                                     2K to 32K, exploring various connectome variants. MNIST’s
+outputs are aggregated per group, and the model is optimized
+                                                                     low computational cost allowed us to thoroughly analyze
+using softmax cross-entropy loss. The sharpness of the soft
+                                                                     these designs, providing insights that informed the selection
+logic activations is controlled by a global temperature pa-
+                                                                     of a reduced set of architectures for FashionMNIST and
+rameter τ , which was empirically tuned for each layer width.
+                                                                     CIFAR-10 experiments. Test accuracy was measured at
+The parameter τ affects both convergence and final accuracy
+                                                                     binarized inference, averaged over at least 5 runs.
+and was selected based on the results of a parameter sweep
+(see Sec. 4.2.4). We use classification accuracy as the evalu-       4.2.1. Empirical Comparison Across Layer Widths and
+ation metric, as all tested datasets are balanced and accuracy               Depths on MNIST
+effectively captures model performance.
+                                                                     As shown in Table 2, random and non-trainable F intercon-
+4. Experiments                                                       nects consistently perform the worst. Their inflexibility re-
+                                                                     quires significantly wider or deeper networks to achieve mod-
+4.1. Full Gate Evaluation vs. Basis Projection                       erate accuracy, illustrating the limitations of static wiring.
+To assess the computational benefits of the proposed                 Top-K sparse interconnects, on the other hand, deliver strong
+projection-based gate evaluation, we compare the total train-        results across nearly all configurations. Even under extreme
+ing time on the MNIST dataset (for an NVIDIA A4000                   sparsity (e.g., Top8), models reach over 98.6% accuracy
+GPU) between two strategies:                                         when wide or deep enough, outperforming L interconnects
+• Full Gate Evaluation (FullEval): Each of the 16 logic              in many regimes. The best-performing configuration over-
+   gates is evaluated individually per node.                         all—a Top32 model with two 16K-wide layers (2Top32-
+• Basis Projection (BasisProj): A single projection into             16K)—achieves 98.95% accuracy. Figure 4 illustrates how
+   the {1, A, B, A · B} basis using a fixed matrix W16→4             test accuracy scales with depth for different interconnect
+   replaces per-gate evaluation.                                     strategies and layer widths.
+    We evaluate six configurations, defined by the number of
+fixed connectome layers (1F, 2F, 3F) and layer width (8,000          4.2.2. Convergence of Top-K to Dense Connectivity
+and 32,000 nodes). As shown in Table 1, using basis pro-             Figure 5 presents a representative case on the MNIST dataset
+jection significantly reduces total training time across all         of a 1-layer model with 2K gates, illustrating how Top-K
+tested configurations. The benefit becomes increasingly pro-         sparse interconnect performance improves with K, approach-
+nounced with deeper and wider architectures. For instance,           ing that of the fully learnable (L) connectome. Accuracy
+in the 32,000 / 3F configuration, the projection-based ap-           rises quickly for small K and saturates as K increases; a lo-
+proach completes training nearly 4× faster than the full gate        gistic fit in log2 (K) space captures this trend. For K ≥ 128,
+evaluation. This speed-up stems from avoiding 16 separate            performance nearly reaches the fully learnable ceiling, re-
+logic gate computations per node in favor of a single dense          flecting the general trade-off between sparsity and accuracy.
+
+
+                                                                 5
+Table 2. Test accuracy results on MNIST across different layer
+widths and number of layers for various connectome methods. The                               98
+results are averaged over at least 5 runs, all with ≤ 0.1% variation.                         96
+
+
+
+
+                                                                               Accuracy [%]
+Bolded values indicate the best performance per block.
+                                                                                              94                                  Logistic Fit (log2(K))
+                                                                                                                                  2K-width F
+               Layer     Layer                                                                92                                  2K-width L
+                                       1      2          3        4
+               Width     Type                                                                                                     2K-width TopK
+                                                                                              90
+                         F        87.09     90.82       93.69   95.38
+                                                                                              88
+                         Top8     94.29     96.97       97.47   97.59
+               2,000     Top32    96.38     97.50       97.83   97.71                         86
+                                                                                                   21   22     23       24        25          26     27
+                         Top128   97.02     97.66       97.67   96.92                                         K value (log2 scale)
+                         L        97.25     97.37       96.13   92.00
+                         F        90.16     93.28       95.77   96.90         Figure 5. Convergence of 2K-width Top-K test accuracy to L-type
+                                                                              connectivity as K increases.
+                         Top8     96.27     97.91       98.13   98.22
+               4,000     Top32    97.54     98.17       98.38   98.29
+                         Top128   97.94     98.28       98.30   97.56                        98
+                         L        97.96     98.11       97.02   94.41                        96
+                         F        91.48     94.83       96.83   97.69                        94
+
+
+                                                                              Accuracy [%]
+                         Top8     97.17     98.43       98.60   98.63                        92
+               8,000                                                                         90
+                         Top32    98.15     98.63       98.77   98.72
+                         Top128   98.39     98.67       98.72   97.94                        88
+                         L        98.45     98.62       97.87   96.81                        86
+                                                                                             84              1Top8           1L           2F
+                         F        93.16     96.43       97.82   98.34                        82              1Top32          1F           3F
+                         Top8     98.15     98.74       98.80   98.87                        80
+               16,000    Top32    98.50     98.95       98.86   98.73                              2     3          4        5            6           7
+                                                                                                                        τ
+                         Top128   98.55     98.89       98.84   98.23
+                         L        98.58     98.82         -       -           Figure 6. Test accuracy as a function of τ for 2K-width models.
+                         F        94.74     97.41       98.27   98.52         Used as a reference for choosing temperature value.
+                         Top8     98.41     98.75       98.78   98.76
+               32,000    Top32    98.58     98.83       98.84   98.89
+                         Top128   98.51     98.91       98.83   97.77         layers expands the effective receptive field. In principle, an
+                         L        98.52       -           -       -           N -layer Top-K network can access up to K N input paths—
+                                                                              an upper bound that reflects the combinatorial breadth in-
+               100                                                            troduced by depth, even though each gate receives only two
+                99                                                            inputs at inference. Thus, depth enables sparse LGNs to
+                98                                                            recover some of the flexibility of denser interconnects at
+                97
+Accuracy [%]
+
+
+
+
+                                                                              much lower cost. For example, two Top8 layers can, in the
+                96                                                            best case, reach up to 64 input paths, though the learned
+                95                                        8K-width F          wiring may cover only part of this space. Depth therefore
+                94                                        8K-width Top8       serves as an effective way to capture richer dependencies
+                93                                        4K-width Top8
+                92                                                            while maintaining hardware-efficient sparse connectivity.
+                                                          2K-width Top8
+                91                                        8K-width L
+                90
+                     1             2                3                 4       4.2.4. Sensitivity to Temperature Parameters
+                                  Number of Layers
+                                                                              We observe that the global softmax temperature τ should
+           Figure 4. Test accuracy vs. depth for various interconnects.       scale with layer width and dataset complexity (Table 3). For
+                                                                              example, based on trends in Figure 6 for 2K-width MNIST
+                                                                              architectures, we set τ = 4. It is selected empirically to
+ 4.2.3. Sparse Interconnects as Compositional Depth                           balance gradient flow during training and confident gate
+Sparse interconnect strategies restrict each logic gate to op-                assignments after binarization: lower τ led to overly sharp
+erate on only a small subset of input pairs (e.g., 8 for Top8).               distributions and vanishing gradients, while higher τ caused
+While this limits the expressivity of a single layer, stacking                unstable training due to excessively flat distributions.
+
+
+                                                                          6
+           Table 3. LILogicNet experimental results for different datasets and best performing architectures at given gate budgets.
+
+                         Gate                                      Memory         Train Time      Test Accuracy     LUT-6s     LUT-6s (LGN
+  Dataset                            Architecture           τ
+                         Count                                      [KB]            [min]              [%]          (LGN)       +popcount)
+                             4K      1L-4K                   5            11.7       2.5 ± 0.0     97.96 ± 0.11       1,791             7,103
+  MNIST                      8K      1L-8K                  10            23.4       4.3 ± 0.1     98.45 ± 0.07       3,491            14,076
+                            32K      2Top32-16K             10            62.5      57.1 ± 0.2     98.95 ± 0.09      11,833            37,373
+                             8K      1L-8K                  15           29.3       24.9 ± 0.2     89.95 ± 0.06       3,736            14,321
+  FashionMNIST              64K      2Top32-32K             25          250.0      167.2 ± 2.7     90.26 ± 0.11      22,308            73,938
+                           128K      2Top32-64K             30          515.6      217.5 ± 3.4     90.61 ± 0.09      39,769           143,226
+                             8K      1L-8K                 20           33.2         8.7 ± 0.1     55.11 ± 0.17       3,830            14,415
+  CIFAR10                   64K      1L-64K                90          266.0        62.9 ± 0.2     57.66 ± 0.17      27.070           104,853
+                           256K      2Top32-128K           100       1,121.0       107.7 ± 0.1     60.98 ± 0.19      92,353           293,285
+
+
+Table 4. Comparison of LGN models: FashionMNIST accuracy,                         at inference time with compact bit-packed storage of gate
+FPGA resources, and latency (XC7A200T; XC7Z045 for DWN)                           types and input indices. Each node stores its input connec-
+                                             LUT-6s          Latency              tions and gate type, resulting in a memory cost proportional
+  Model                    Acc [%]                                                to the number of nodes and their fan-in.
+                                             [×103 ]          [ns]
+                                                                                      We also report the number of LUT6 units required on
+  DiffLogicNet-S*            89.85         22.7 (10.4)                -           Xilinx XC7A200T FPGA. We distinguish between the LUT
+  DiffLogicNet*              90.24        172.8 (72.8)                -           usage for the LGN layers themselves and the total LUT us-
+  DWN (n=6)                  89.01                 7.6              235           age including the final population count (popcount) stage.
+  LILogicNet-S               89.95          14.3 (3.7)               30           In practice, the popcount adders account for more than two-
+  LILogicNet-M               90.26         73.9 (22.3)               43           thirds of the total LUT consumption. To further improve
+  LILogicNet-L               90.61        143.2 (39.8)                -           FPGA efficiency, techniques such as the Learnable Reduc-
+* Results not reported in the original work; we reproduced the architecture       tion method proposed in DWN [3] could be employed to
+using our framework with the same training setup and training time;               significantly reduce this overhead.
+Values in parentheses correspond to the LGN part excluding the popcount;
+- Could not fit on FPGA.                                                          4.3.1. LILogicNet on FPGA
+                                                                                  Table 4 compares FPGA resource usage and latency of LGN
+                                                                                  models on FashionMNIST. For comparable accuracy, LILog-
+4.3. LILogic Net: Accuracy-Efficiency Pareto Front
+                                                                                  icNet requires substantially fewer LUT6 units than DiffLog-
+Based on accuracy, gate count, and training time, we identify                     icNet, though more than DWN due to the cost of the pop-
+three efficient design points for each dataset (Tab. 3). These                    count stage. Despite not being optimized specifically for
+configurations provide strong predictive performance while                        FPGA deployment, LILogicNet achieves low inference la-
+maintaining low hardware cost and moderate training time,                         tency, demonstrating its practical hardware efficiency.
+making them suitable for practical deployment. MNIST and                          4.3.2. LILogicNet on ASIC
+FashionMNIST experiments were conducted on an NVIDIA
+A4000 GPU, while CIFAR-10 was trained on an NVIDIA                                We taped out 6K-gate LILogicNet-S MNIST variant in
+H200 GPU to accommodate larger memory requirements                                SKY130 (SkyWater Technology 130 nm) and SG13 (IHP
+for wider architectures. At smaller model scales, increasing                      BiCMOS 130 nm) [49, 50], followed by an 8K-gate
+layer width yields larger gains than increasing depth, while                      LILogicNet-S FashionMNIST variant in GF180 (Global-
+dense optimization utilizes limited capacity more effectively.                    Foundries 180 nm) [47, 48]. The designs were implemented
+However, as the gate budget increases, Top-K models begin                         using the open-source OpenROAD [2] flow with the respec-
+to outperform dense alternatives.                                                 tive open PDKs [8, 13, 32].
+   Reported training times include the full training proce-                       4.3.3. Multi-Platform Hardware Throughput
+dure with validation but exclude initial data loading and on-                     Table 5 reports inference throughput on the GPU (NVIDIA
+line data augmentation. After enabling torch.compile,                             A4000), CPU (Xeon Gold 6150, single thread), and FPGA
+dense L-type models often train faster than sparse Top-K                          (XC7A200T). The results show that LILogicNet maintains
+variants, likely due to better GPU support for dense matrix                       high inference throughput across diverse hardware platforms,
+operations compared to index-heavy sparse computations.                           reaching hundreds of thousands of FPS on GPU/CPU and
+   Parameter memory is reported assuming binarized LGNs                           tens of millions of FPS on FPGA for compact variants.
+
+
+                                                                              7
+Table 5. Inference throughput (t.) measured in frames per second                  Table 6. Accuracy vs. gate count and FPGA throughput comparison
+(FPS) for FashionMNIST across different hardware platforms.                       for LGN models on MNIST, CIFAR-10, and FashionMNIST.
+
+    Model                      GPU t.      CPU t.          FPGA t.                                                                 Gate         FPGA t.
+                                                                                    Model                           Acc [%]
+                                                                                                                                   Count         [FPS]
+    DiffLogicNet-S*          145,472           812              -
+    DiffLogicNet*             16,063           100              -                                                 MNIST
+    LILogicNet-S             826,410         4,827     32,890,000
+                                                                                    LogicTreeNet-S [25]             98.46           147 K       250.0 M
+    LILogicNet-M             105,187           612     23,020,000
+                                                                                    LogicTreeNet-M [25]             99.23           566 K       200.0 M
+    LILogicNet-L              51,101           302              -
+                                                                                    LogicTreeNet-L [25]             99.35          1.27 M              -
+* Results not reported in the original work; we reproduced the architecture
+using our framework with the same training setup and training time.                 DiffLogicNet-S [24]             97.69            48 K               -
+- Could not fit on FPGA.                                                            DiffLogicNet [24]               98.47           384 K               -
+                                                                                    RV-LGN [38]                     95.80            18 K               -
+                                                                                    eXpLogic [39]                   91.20             5K                -
+4.4. Comparison with previous work
+                                                                                    DWN(n=6) [3]                    98.77                -        22.2 M
+Table 6 compares LILogicNet with prior logic-based mod-                             LILogicNet-S (ours)             97.96             4K          40.1 M
+els in terms of accuracy, gate count, and FPGA throughput                           LILogicNet-M (ours)             98.45             8K          32.9 M
+across MNIST, FashionMNIST, and CIFAR-10. Overall,                                  LILogicNet-L (ours)             98.95            32 K         29.7 M
+LILogicNet achieves competitive accuracy while requiring
+                                                                                                             FashionMNIST
+substantially fewer gates than prior LGN architectures. For
+example, on MNIST, LILogicNet-M achieves 98.45% ac-                                 DiffLogicNet-S* [24]            89.85            48 K               -
+curacy with only 8K gates, compared to 384K gates for                               DiffLogicNet* [24]              90.24           384 K               -
+DiffLogicNet with similar accuracy. Similar trends hold                             DWN(n=2) [3]                    89.12                -        10.0 M
+on FashionMNIST, where LILogicNet slightly improves ac-                             DWN(n=6) [3]                    89.01                -        10.0 M
+curacy over DiffLogicNet while using significantly smaller                          LILogicNet-S (ours)             89.95             8K          32.9 M
+models. On CIFAR-10, LILogicNet consistently outper-                                LILogicNet-M (ours)             90.26            64 K         23.0 M
+forms DiffLogicNet variants under comparable gate budgets.                          LILogicNet-L (ours)             90.61           128 K               -
+In addition, LILogicNet achieves higher FPGA throughput                                                         CIFAR-10
+than DWN despite being evaluated on a smaller FPGA and
+without hardware-specific optimization, indicating strong                           LogicTreeNet-S [25]             60.38           400 K       111.1 M
+potential for efficient deployment.                                                 LogicTreeNet-G [25]             86.21            61 M              -
+    LogicTreeNet differs from the remaining approaches as                           DiffLogicNet-S [24]             51.27            48 K               -
+it adopts a CNN-like architecture, while the rest LGN mod-                          DiffLogicNet-M [24]             57.39           512 K               -
+els follow a feed-forward design. As a result, its larger                           DiffLogicNet-L [24]             60.78          1.28 M               -
+variants achieve substantially higher accuracy but require                          DiffLogicNet-XL [24]            62.14          5.12 M               -
+significantly larger gate budgets. In this work, we limited our                     RV-LGN [38]                     51.30            36 K               -
+exploration to models up to 256K gates, where LILogicNet                            DWN(n=2) [3]                    57.51                -         468 K
+achieves competitive or better accuracy than the smallest                           DWN(n=6) [3]                    57.42                -         468 K
+LogicTreeNet models with fewer gates. Scaling learnable                             LILogicNet-S (ours)             55.11             8K          31.2 M
+connectomes to larger architectures remains challenging due                         LILogicNet-M (ours)             57.66            64 K               -
+to the combinatorial growth of possible logic configurations,                       LILogicNet-L (ours)             60.98           256 K               -
+and will be investigated in future work.                                          * Results not reported in the original work; we reproduced the architecture
+                                                                                  using our framework and the same training setup and training time.
+                                                                                  - Value not reported or could not fit on FPGA.
+5. Conclusion
+We introduced LILogicNet, a compact logic gate network
+that jointly learns gate functions and their interconnections.                    tens of millions of FPS, and its performance could be fur-
+Top-K connectivity enables the model to focus on the most                         ther improved by hardware-specific optimizations. Future
+informative connections, improving accuracy and efficiency                        work will explore regularization and architectural reductions
+compared to fixed or dense designs. Basis Projection fur-                         (e.g., gates or adders) to scale to larger models and more
+ther speeds up training by up to 4× by efficiently computing                      complex datasets. Overall, LILogicNet provides an efficient,
+gate outputs via a fixed projection. LILogicNet maintains                         interpretable, and hardware-friendly framework for learnable
+high inference throughput across GPU, CPU, and FPGA,                              logic networks, with potential for further improvements in
+with compact variants delivering hundreds of thousands to                         performance, efficiency, and scalability.
+
+
+                                                                              8
+Acknowledgments. This work was supported by the Depart-                   [15] Diederik P. Kingma and Jimmy Ba. Adam: A method for
+ment of Artificial Intelligence at the Wrocław University of                   stochastic optimization. International Conference on Learn-
+Science and Technology.                                                        ing Representations (ICLR), 2015. 3, 4
+                                                                          [16] Fabian Kresse, Emily Yu, Christoph H Lampert, and
+References                                                                     Thomas A Henzinger. Logic gate neural networks are good
+                                                                               for verification. arXiv preprint arXiv:2505.19932, 2025. 2
+ [1] Atish Agarwala, Jeffrey Pennington, Yann Dauphin, and Sam            [17] Alex Krizhevsky and Geoffrey Hinton. Learning multiple lay-
+     Schoenholz. Temperature check: theory and practice for                    ers of features from tiny images. Master’s thesis, Department
+     training models with softmax-cross-entropy losses. arXiv                  of Computer Science, University of Toronto, 2009. 3
+     preprint arXiv:2010.07344, 2020. 4                                   [18] Ian Kuon, Russell Tessier, and Jonathan Rose. Fpga archi-
+ [2] Tutu Ajayi and David Blaauw. Openroad: Toward a self-                     tecture: Survey and challenges. Foundations and Trends in
+     driving, open-source digital layout implementation tool chain.            Electronic Design Automation, 2(2):135–253, 2007. 1
+     In Proceedings of Government Microcircuit Applications and           [19] Yann LeCun, Léon Bottou, Yoshua Bengio, and Patrick
+     Critical Technology Conference, 2019. 7                                   Haffner. Gradient-based learning applied to document recog-
+ [3] Alan TL Bacellar, Zachary Susskind, Mauricio Breternitz Jr,               nition. Proceedings of the IEEE, 86(11):2278–2324, 1998.
+     Eugene John, Lizy K John, Priscila Lima, and Felipe MG                    1
+     França. Differentiable weightless neural networks. arXiv            [20] Yann LeCun, Corinna Cortes, and Christopher J.C. Burges.
+     preprint arXiv:2410.11112, 2024. 1, 2, 7, 8                               MNIST handwritten digit database. http : / / yann .
+ [4] Colby Banbury, Vijay Janapa Reddi, Paul Torelli, et al. Mlperf            lecun.com/exdb/mnist/, 1998. Accessed: 2025-05-
+     tiny benchmark. In Proceedings of the Neural Information                  31. 3
+     Processing Systems Track on Datasets and Benchmarks, 2021.           [21] Zechun Liu, Zhiqiang Shen, Marios Savvides, and Kwang-
+     1                                                                         Ting Cheng. Reactnet: Towards precise binary neural network
+ [5] M. Champs and B. Baldi. An updated survey of efficient                    with generalized activation functions. In European conference
+     hardware architectures for accelerating deep convolutional                on computer vision, pages 143–159. Springer, 2020. 2
+     neural networks. Future Internet, 12(7):113, 2023. 1                 [22] Xiangzhong Luo, Di Liu, Hao Kong, Shuo Huai, Hui Chen,
+ [6] Ian Clester. Synthesizing music with logic gate networks. In              et al. Efficient deep learning infrastructures for embedded
+     Proceedings of the International Conference on New Inter-                 computing systems: A comprehensive survey and future envi-
+     faces for Musical Expression, pages 618–622, 2025. 2                      sion. arXiv preprint arXiv:2411.01431, 2024. 1
+ [7] Xue Geng, Zhe Wang, Chunyun Chen, Qing Xu, Kaixin Xu,                [23] Diksha Moolchandani et al. Review of asic accelerators for
+     Chao Jin, et al. From algorithm to hardware: A survey on                  deep neural network. Microprocessors & Microsystems, 89,
+     efficient and safe deployment of deep neural networks. arXiv              2022. 1
+     preprint arXiv:2405.06038, 2024. 1                                   [24] Felix Petersen, Christian Borgelt, Hilde Kuehne, and Oliver
+ [8] GlobalFoundries and Google. Globalfoundries gf180mcu                      Deussen. Deep differentiable logic gate networks. Advances
+     open pdk.         https : / / github . com / google /                     in Neural Information Processing Systems, 35:2006–2018,
+     gf180mcu-pdk, 2022. Accessed: 2026-03-07. 7                               2022. 1, 2, 3, 4, 8
+ [9] Ian Goodfellow, Yoshua Bengio, and Aaron Courville. Deep             [25] Felix Petersen, Hilde Kuehne, Christian Borgelt, Julian
+     Learning. MIT Press, 2016. 1                                              Welzel, and Stefano Ermon. Convolutional differentiable
+[10] Song Han, Huizi Mao, and William J. Dally. Deep com-                      logic gate networks. Advances in Neural Information Pro-
+     pression: Compressing deep neural networks with pruning,                  cessing Systems, 37:121185–121203, 2024. 2, 8
+     trained quantization and huffman coding. arXiv preprint              [26] Haotong Qin, Ruihao Gong, Xianglong Liu, Mingzhu Shen,
+     arXiv:1510.00149, 2015. 1                                                 Ziran Wei, Fengwei Yu, and Jingkuan Song. Forward and
+[11] Itay Hubara, Matthieu Courbariaux, Daniel Soudry, Ran El-                 backward information retention for accurate binary neural
+     Yaniv, and Yoshua Bengio. Binarized neural networks. Ad-                  networks. In Proceedings of the IEEE/CVF conference on
+     vances in neural information processing systems, 29, 2016.                computer vision and pattern recognition, pages 2250–2259,
+     2                                                                         2020. 2
+[12] Itay Hubara, Matthieu Courbariaux, Daniel Soudry, Ran El-            [27] Mohammad Rastegari, Vicente Ordonez, Joseph Redmon, and
+     Yaniv, and Yoshua Bengio. Quantized neural networks: Train-               Ali Farhadi. Xnor-net: Imagenet classification using binary
+     ing neural networks with low precision weights and activa-                convolutional neural networks. In European conference on
+     tions. journal of machine learning research, 18(187):1–30,                computer vision, pages 525–542. Springer, 2016. 2
+     2018. 2                                                              [28] Charles H Roth Jr and Larry L Kinney. Fundamentals of
+[13] IHP – Leibniz Institute for High Performance Microelectron-               Logic Design. Cengage Learning, 2004. 3
+     ics. Ihp sg13g2 open source pdk. https://github.                     [29] Connor Shorten and Taghi M Khoshgoftaar. A survey on
+     com/IHP- GmbH/IHP- Open- PDK, 2023. Accessed:                             image data augmentation for deep learning. Journal of big
+     2026-03-07. 7                                                             data, 6(1):1–48, 2019. 4
+[14] Norman P. Jouppi, Cliff Young, Nishant Patil, et al. In-             [30] Cristina Silvano, Daniele Ielmini, Fabrizio Ferrandi, Lean-
+     datacenter performance analysis of a tensor processing unit.              dro Fiorin, et al. A survey on deep learning hardware ac-
+     In Proceedings of the 44th Annual International Symposium                 celerators for heterogeneous hpc platforms. arXiv preprint
+     on Computer Architecture, pages 1–12. ACM, 2017. 1                        arXiv:2306.15552, 2023. 1
+
+
+                                                                      9
+[31] Patrice Y Simard, David Steinkraus, John C Platt, et al. Best          [46] Xia Zhao, Limin Wang, Yufei Zhang, Xuming Han, Muham-
+     practices for convolutional neural networks applied to visual               met Deveci, and Milan Parmar. A review of convolutional
+     document analysis. In Icdar. Edinburgh, 2003. 4                             neural networks in computer vision. Artificial Intelligence
+[32] SkyWater Technology and Google. Skywater sky130 open                        Review, 57(4):99, 2024. 1
+     pdk. https://github.com/google/skywater-                               [47] Renaldas Zioma. Lgn fashionmnist implementation (source
+     pdk, 2020. Accessed: 2026-03-07. 7                                          code). https://github.com/rejunity/ws0-lgn-
+[33] Vivienne Sze, Yu-Hsin Chen, Tien-Ju Yang, and Joel S Emer.                  fxnist/, 2025. Accessed: 2026-04-10. 7
+     Efficient processing of deep neural networks: A tutorial and           [48] Renaldas Zioma. Lgn fashionmnist chip tape-out (gf180mcu
+     survey. Proceedings of the IEEE, 105(12):2295–2329, 2017.                   gds). https://gitlab.com/rejunity/ws0-lgn-
+     1                                                                           fxnist-gf180mcu-tapeout/, 2025. Accessed: 2026-
+[34] Yaman Umuroglu, Nicholas J Fraser, Giulio Gambardella,                      04-10. 7
+     Michaela Blott, Philip Leong, Magnus Jahre, and Kees Vis-              [49] Renaldas Zioma and Jogundas Armaitis. Lgn mnist imple-
+     sers. Finn: A framework for fast, scalable binarized neural                 mentation (tinytapeout project). https://github.com/
+     network inference. In Proceedings of the 2017 ACM/SIGDA                     rejunity/tt10-lgn-mnist, 2025. Accessed: 2026-
+     international symposium on field-programmable gate arrays,                  04-10. 7
+     pages 65–74, 2017. 2                                                   [50] Renaldas Zioma and Jogundas Armaitis. Lgn mnist chip on
+[35] Yaman Umuroglu, Yash Akhauri, Nicholas James Fraser, and                    tinytapeout (ttsky25a). https://tinytapeout.com/
+     Michaela Blott. Logicnets: Co-designed neural networks and                  chips/ttsky25a/tt_um_rejunity_lgn_mnist/,
+     circuits for extreme-throughput applications. In 2020 30th                  2025. Accessed: 2026-04-10. 7
+     International Conference on Field-Programmable Logic and
+     Applications (FPL), pages 291–297. IEEE, 2020. 2
+[36] Emile Van Krieken, Erman Acar, and Frank Van Harmelen.
+     Analyzing differentiable fuzzy logic operators. Artificial In-
+     telligence, 302:103602, 2022. 3
+[37] Erwei Wang, James J Davis, Peter YK Cheung, and George A
+     Constantinides. Lutnet: Rethinking inference in fpga soft
+     logic. In 2019 IEEE 27th Annual International Symposium on
+     Field-Programmable Custom Computing Machines (FCCM),
+     pages 26–34. IEEE, 2019. 2
+[38] Xingbo Wang, Chenxi Feng, Xinyu Kang, Yuru Li, Yucong
+     Huang, and Terry Tao Ye. Logic gate network inference
+     acceleration with risc-v custom instruction set. In Proceedings
+     of the 22nd ACM International Conference on Computing
+     Frontiers, pages 205–211, 2025. 2, 8
+[39] Stephen Wormald, David Koblah, Matheus Kunzler Mal-
+     daner, Domenic Forte, and Damon L Woodard. explogic:
+     Explaining logic types and patterns in difflogic networks. In
+     International Conference on Information Technology-New
+     Generations, pages 282–292. Springer, 2025. 2, 8
+[40] Han Xiao, Kashif Rasul, and Roland Vollgraf. Fashion-mnist:
+     a novel image dataset for benchmarking machine learning
+     algorithms. arXiv preprint arXiv:1708.07747, 2017. 3
+[41] Shakir Yousefi, Andreas Plesner, Till Aczel, and Roger
+     Wattenhofer. Mind the gap: Removing the discretization
+     gap in differentiable logic gate networks. arXiv preprint
+     arXiv:2506.07500, 2025. 2
+[42] Chunyu Yuan and Sos S Agaian. A comprehensive review of
+     binary neural network. Artificial Intelligence Review, 56(11):
+     12949–13013, 2023. 2
+[43] Chang Yue and Niraj K Jha. Learning interpretable differ-
+     entiable logic networks. IEEE Transactions on Circuits and
+     Systems for Artificial Intelligence, 2024. 2
+[44] Chang Yue and Niraj K Jha. Learning interpretable differen-
+     tiable logic networks for tabular regression. arXiv preprint
+     arXiv:2505.23615, 2025. 2
+[45] Lotfi A Zadeh. Fuzzy sets. Information and Control, 8(3):
+     338–353, 1965. 3
+
+
+                                                                       10
+     LILogic Net: Compact Logic Gate Networks with Learnable Connectivity
+                     for Efficient Hardware Deployment
+                                               Supplementary Material
+6. Full Experimental Results on MNIST                                 gates have access to more inputs, very deep architectures
+                                                                      may lead to overfitting or diminishing returns in this setting.
+Table 7 presents the complete set of results from our exper-
+iments on the MNIST dataset, expanding on the summary                 Top-K offers an efficient trade-off between accuracy and
+shown in the main paper.                                              computational cost. Top-K connectivity sparsifies each
+    We systematically varied the layer width, network depth           gate’s inputs, significantly reducing the number of active
+(1 to 4 layers), and logical connectivity strategy, including:        computations during both training and inference, while re-
+• F: Fixed, non-learnable connectome,                                 taining high accuracy. For instance, at 8K width and 2 lay-
+• Top-K: Top-K sparse, learnable connectome with K ∈                  ers, a Top-16 model achieves 98.66% accuracy — slightly
+  {2, 4, 8, 16, 32, 64, 128},                                         exceeding fully learnable (L) models — while using fewer
+• L: Dense, fully learnable connectome.                               connections and benefiting from reduced computational com-
+For each architecture, we report:                                     plexity. This makes Top-K particularly attractive for effi-
+• Test accuracy (mean ± std. deviation - in %),                       cient, scalable architectures in resource-constrained settings.
+• Training time (mean ± std. deviation - in minutes).                 Comparison of fully learned (L) and Top-K connectivity
+                                                                      within the same width and depth. At shallow depths (e.g.,
+6.1. Experimental Setup
+                                                                      1 layer), learned connectivity (L) consistently achieves the
+• Each configuration was run 10 times for 1- and 2-layer              highest accuracy, outperforming both fixed random (F) and
+  models, and 5 times for 3- and 4-layer networks.                    Top-K sparsity patterns. However, as the network depth in-
+• Training time was measured on a single NVIDIA A4000                 creases, Top-K connectivity increasingly surpasses learned
+  GPU and includes model validation every 25 epochs (200              connectivity, demonstrating stronger scalability and better
+  in total).                                                          generalization in deeper models. Interestingly, for deeper
+• Entries with “–” indicate configurations that were infeasi-         architectures, smaller values of K in Top-K (e.g., Top-8,
+  ble due to memory constraints.                                      Top-16) tend to yield the best accuracy, suggesting that mod-
+                                                                      erate sparse wiring is sufficient for effective information
+6.2. Key Observations                                                 integration while controlling complexity and overfitting.
+Learned sparse Top-K connectivity consistently outper-                At fixed gate budgets, shallow and wide architectures
+forms fixed random connectivity, especially at smaller                often outperform deeper ones — until a certain scale is
+model widths, with the performance gap narrowing as                   reached. As discussed in Section 4.3, under constrained
+the width increases. At lower widths (e.g., 2K), the accu-            gate budgets (2K–8K), shallow fully learnable (L) models
+racy difference between Top-16 and fixed random (F) con-              achieve surprisingly strong performance. For instance, a
+nectivity is more pronounced (over 2% points difference at            1-layer 4K-width model (1L–4K) reaches 97.96% accuracy,
+4 layers). As width increases to 32K, both methods achieve            outperforming deeper or sparse Top-K models of similar
+high accuracy, with Top-K maintaining a modest advantage              budget (e.g., 2Top128–2K with 97.66%). This suggests that
+(around 0.3–0.4% point). This indicates that while fixed              when capacity is limited, wider layers and dense training pro-
+random wiring can suffice at large scales, learned sparse             vide more effective use of resources than depth or sparsity.
+wiring helps especially in smaller or medium-width models             However, at higher budgets (e.g., 8K+), Top-K architectures
+by optimizing logical connections more effectively.                   begin to outperform learned ones. For example, 2Top64–8K
+                                                                      reaches 98.69%, exceeding 1L–16K (98.58%). Depth be-
+Sparse Top-K connectivity improves accuracy across
+                                                                      comes beneficial beyond a threshold, but results show that
+widths, with depth effects depending on K. Increasing the
+                                                                      2-layer configurations often outperform their 4-layer coun-
+number of inputs K per gate generally improves accuracy
+                                                                      terparts (e.g., 2Top64–8K vs. 4Top16–4K), indicating dimin-
+across all widths (2K to 32K). For smaller K values (e.g.,
+                                                                      ishing returns from excessive depth once sparsity and width
+Top-2, Top-4), increasing the number of layers consistently
+                                                                      are well-balanced.
+enhances performance, reflecting the benefit of deeper fea-
+ture integration. However, for larger K values (e.g., Top-64,         Training time scales non-uniformly with width and K,
+Top-128), the best accuracy is often achieved at 2 or 3 layers,       but grows roughly linearly with depth. Training time in-
+with 4-layer models showing little or no further improve-             creases with model width, but the scaling is non-monotonic:
+ment—or even slight degradation. This suggests that when              from 2K to 8K gates, the time increase is modest, likely
+
+
+                                                                  1
+Width    Type                 1 Layer                      2 Layers                      3 Layers                      4 Layers
+                        Test          Train           Test          Train           Test          Train           Test           Train
+                      Acc. [%]      Time [min]      Acc. [%]      Time [min]      Acc. [%]      Time [min]      Acc. [%]       Time [min]
+         F          87.09 ± 0.28     3.3 ± 0.3    90.82 ± 0.40      5.5 ± 0.6   93.69 ± 0.29      7.4 ± 0.4    95.38 ± 0.20     8.9 ± 0.7
+         Top2       90.05 ± 0.18     4.3 ± 0.2    94.58 ± 0.21      1.9 ± 0.0   96.25 ± 0.12      2.5 ± 0.0    96.73 ± 0.12     3.1 ± 0.0
+         Top4       92.41 ± 0.23     4.6 ± 0.3    96.39 ± 0.15      2.0 ± 0.0   97.19 ± 0.12      2.7 ± 0.1    97.38 ± 0.14     3.3 ± 0.1
+         Top8       94.29 ± 0.12     4.4 ± 0.3    96.97 ± 0.12      2.0 ± 0.0   97.47 ± 0.16      2.7 ± 0.0    97.59 ± 0.24     3.4 ± 0.0
+2,000    Top16      95.63 ± 0.19     4.6 ± 0.3    97.35 ± 0.08      2.6 ± 0.0   97.72 ± 0.12      4.0 ± 0.0    97.75 ± 0.12     5.3 ± 0.0
+         Top32      96.38 ± 0.15     4.6 ± 0.2    97.50 ± 0.13      4.8 ± 0.0   97.83 ± 0.15      7.8 ± 0.0    97.71 ± 0.12    10.8 ± 0.0
+         Top64      96.86 ± 0.18     5.1 ± 0.3    97.65 ± 0.05      8.9 ± 0.0   97.89 ± 0.06     15.1 ± 0.0    97.45 ± 0.31    21.3 ± 0.0
+         Top128     97.02 ± 0.12     5.6 ± 0.1    97.66 ± 0.06     17.6 ± 0.0   97.67 ± 0.17     23.3 ± 0.0    96.92 ± 0.14    37.5 ± 6.5
+         L          97.25 ± 0.13     5.0 ± 0.4    97.37 ± 0.08      4.1 ± 0.0   96.13 ± 0.52      6.4 ± 0.0    92.00 ± 1.54     8.5 ± 0.1
+         F          90.16 ± 0.24     1.4 ± 0.6    93.28 ± 0.21      1.9 ± 0.7   95.77 ± 0.18      2.4 ± 1.0    96.90 ± 0.11     2.7 ± 0.0
+         Top2       92.37 ± 0.14     1.5 ± 0.4    96.50 ± 0.15      2.0 ± 0.1   97.56 ± 0.13      2.6 ± 0.1    97.84 ± 0.15     3.2 ± 0.0
+         Top4       94.66 ± 0.26     1.5 ± 0.0    97.61 ± 0.10      2.2 ± 0.1   97.99 ± 0.10      2.9 ± 0.0    98.04 ± 0.21     3.7 ± 0.0
+         Top8       96.27 ± 0.11     1.5 ± 0.0    97.91 ± 0.09      2.8 ± 0.0   98.13 ± 0.07      4.2 ± 0.0    98.22 ± 0.11     5.7 ± 0.0
+4,000    Top16      97.17 ± 0.10     1.9 ± 0.0    98.14 ± 0.15      4.6 ± 0.1   98.33 ± 0.09      7.3 ± 0.0    98.37 ± 0.09    10.1 ± 0.0
+         Top32      97.54 ± 0.16     3.1 ± 0.9    98.17 ± 0.16      8.3 ± 0.1   98.38 ± 0.05     13.8 ± 0.0    98.29 ± 0.12    19.4 ± 0.1
+         Top64      97.76 ± 0.09     6.3 ± 0.0    98.25 ± 0.07     19.0 ± 0.0   98.31 ± 0.09     31.5 ± 0.1    98.06 ± 0.18    44.1 ± 0.0
+         Top128     97.94 ± 0.07     8.0 ± 0.0    98.28 ± 0.08     33.1 ± 0.2   98.30 ± 0.07     58.8 ± 0.0    97.56 ± 0.16    83.6 ± 0.1
+         L          97.96 ± 0.11     2.5 ± 0.0    98.11 ± 0.06     10.8 ± 0.0   97.02 ± 0.53     19.2 ± 0.1    94.41 ± 1.49    27.4 ± 0.3
+         F          91.48 ± 0.18     1.1 ± 0.0    94.83 ± 0.12      1.6 ± 0.0   96.83 ± 0.11      2.2 ± 0.0    97.69 ± 0.12     2.8 ± 0.0
+         Top2       93.72 ± 0.09     1.2 ± 0.0    97.41 ± 0.07      2.7 ± 0.0   98.20 ± 0.11      4.0 ± 0.0    98.28 ± 0.14     5.3 ± 0.0
+         Top4       95.70 ± 0.12     1.4 ± 0.0    98.24 ± 0.08      3.4 ± 0.0   98.50 ± 0.04      5.4 ± 0.0    98.56 ± 0.05     7.3 ± 0.0
+         Top8       97.17 ± 0.07     1.8 ± 0.0    98.43 ± 0.07      5.7 ± 0.0   98.60 ± 0.06      9.4 ± 0.0    98.63 ± 0.09     13.1 ± 0.0
+8,000    Top16      97.85 ± 0.08     2.8 ± 0.0    98.66 ± 0.06     10.3 ± 0.0   98.69 ± 0.04     17.6 ± 0.1    98.79 ± 0.07    24.9 ± 0.1
+         Top32      98.15 ± 0.02     6.3 ± 0.0    98.63 ± 0.08     22.8 ± 0.1   98.77 ± 0.13    39.2 ± 0.1     98.72 ± 0.05    55.5 ± 0.2
+         Top64      98.36 ± 0.07    11.6 ± 0.0    98.69 ± 0.06     45.3 ± 0.2   98.74 ± 0.09    78.5 ± 0.3     98.44 ± 0.10    111.5 ± 0.4
+         Top128     98.39 ± 0.07    16.2 ± 0.1    98.67 ± 0.06     82.4 ± 0.4   98.72 ± 0.11    148.1 ± 0.3    97.94 ± 0.28    213.8 ± 0.6
+         L          98.45 ± 0.07     4.3 ± 0.1    98.62 ± 0.12      4.4 ± 0.1   97.87 ± 0.22     69.2 ± 0.2    96.81 ± 0.77    101.4 ± 0.2
+         F          93.16 ± 0.16     1.3 ± 0.0    96.43 ± 0.12      2.6 ± 0.0   97.82 ± 0.13      3.8 ± 0.0    98.34 ± 0.08     5.1 ± 0.0
+         Top2       95.52 ± 0.16     1.8 ± 0.0    98.15 ± 0.09      6.0 ± 0.1   98.53 ± 0.03     10.0 ± 0.0    98.64 ± 0.09     14.0 ± 0.0
+         Top4       97.24 ± 0.09     2.2 ± 0.0    98.59 ± 0.08      8.8 ± 0.0   98.68 ± 0.06     15.3 ± 0.0    98.77 ± 0.06     21.8 ± 0.1
+         Top8       98.15 ± 0.04     3.1 ± 0.0    98.74 ± 0.10     14.7 ± 0.1   98.80 ± 0.08     25.9 ± 0.1    98.87 ± 0.08     37.3 ± 0.4
+16,000   Top16      98.48 ± 0.10     6.9 ± 0.0    98.80 ± 0.05     30.2 ± 0.1   98.79 ± 0.08     53.4 ± 0.2    98.83 ± 0.10     76.7 ± 0.5
+         Top32      98.50 ± 0.07    12.2 ± 0.0    98.95 ± 0.09    57.1 ± 0.2    98.86 ± 0.07    101.6 ± 0.3    98.73 ± 0.05    146.2 ± 0.5
+         Top64      98.53 ± 0.11    22.5 ± 0.0    98.88 ± 0.06    111.9 ± 0.3   98.85 ± 0.10    200.7 ± 0.4    98.71 ± 0.04    289.1 ± 0.3
+         Top128     98.55 ± 0.03    42.3 ± 0.0    98.89 ± 0.11    219.4 ± 0.3   98.84 ± 0.09    396.5 ± 0.3    98.23 ± 0.12    475.6 ± 0.5
+         L          98.58 ± 0.07     7.8 ± 0.0    98.82 ± 0.10    154.9 ± 0.1        –                –             –               –
+         F          94.74 ± 0.07     2.9 ± 0.0    97.41 ± 0.13      5.4 ± 0.0   98.27 ± 0.10      8.0 ± 0.1    98.52 ± 0.09     10.4 ± 0.2
+         Top2       96.85 ± 0.06     3.1 ± 0.0    98.41 ± 0.12     15.8 ± 0.1   98.64 ± 0.11     28.7 ± 0.2    98.58 ± 0.06     41.0 ± 0.7
+         Top4       98.05 ± 0.11     4.0 ± 0.0    98.67 ± 0.05     23.0 ± 0.1   98.81 ± 0.04     43.6 ± 0.3    98.79 ± 0.08     61.4 ± 0.6
+         Top8       98.41 ± 0.11     7.7 ± 0.0    98.75 ± 0.07     40.5 ± 0.1   98.78 ± 0.01     69.1 ± 0.3    98.76 ± 0.06    105.5 ± 0.3
+32,000   Top16      98.56 ± 0.07    13.4 ± 0.1    98.83 ± 0.04     57.9 ± 1.0   98.83 ± 0.05    103.0 ± 0.5    98.81 ± 0.05    149.5 ± 0.5
+         Top32      98.58 ± 0.07    24.2 ± 0.1    98.83 ± 0.09    134.3 ± 0.1   98.84 ± 0.10    240.7 ± 1.2    98.89 ± 0.06    348.4 ± 0.7
+         Top64      98.55 ± 0.10    45.5 ± 0.1    98.87 ± 0.07    268.0 ± 0.8   98.87 ± 0.05    490.2 ± 6.6    97.04 ± 0.04    723.0 ± 1.2
+         Top128     98.51 ± 0.08    84.0 ± 0.1    98.91 ± 0.05    524.1 ± 0.2   98.83 ± 0.04    884.5 ± 4.2    97.77 ± 0.20   1326.6 ± 5.1
+         L          98.52 ± 0.09    15.0 ± 0.1         –                –            –                –             –               –
+
+Table 7. Test accuracy and training time on MNIST for different logic gate networks, layer widths, and depths. Each cell shows the mean ±
+standard deviation over multiple runs (10 runs for 1-2 layers, 5 runs for 3-4 layers). Dashes indicate inapplicable configurations. Bolded
+values indicate the best performance per block.
+
+
+
+
+                                                                    2
+due to better GPU utilization. However, for larger widths            7.1. Experimental Setup
+(16K–32K), the increase becomes steeper, suggesting that             • Each configuration was run 5 times, and results are aver-
+memory or computational bottlenecks begin to dominate.                 aged.
+The relationship between training time and the number of             • Training time was measured on a single NVIDIA H200
+gate inputs K is not strictly linear: while larger K generally
+                                                                       GPU and includes model validation every 25 epochs (200
+increases cost, the overhead is influenced by implementation
+                                                                       in total).
+details, such as sparse gather operations and input aggrega-         • The entire training dataset was loaded at the beginning
+tion. Top-128 models are much slower than Top-16, but the              instead of subsequent batch loading.
+scaling trend is irregular. In contrast, training time grows         • Entries with “–” indicate configurations that were infeasi-
+approximately linearly with depth — adding layers increases            ble due to memory constraints.
+computation in a predictable way. Notably, fully learnable
+connectivity (L) often trains faster than Top-K models de-
+spite involving weight optimization. This is likely due to
+GPU-accelerated dense matrix operations (matmul) being               7.2. Key Observations
+more efficient than sparse input selection used in Top-K.
+Several anomalies are observed: (i) For width 2K, 1-layer            Most of the observations reported for MNIST also apply
+model, training times are longer than for 4K or 8K models.           to CIFAR-10. Therefore, here we focus only on additional
+This may stem from poor GPU utilization, kernel launch               aspects specific to this dataset.
+overhead, or small matrix sizes being inefficiently handled.
+(ii) Fixed connectivity (F) also shows unexpectedly long             Threshold count has limited effect. The difference between
+training times at low widths (e.g., 2K), possibly due to inef-       using 4 or 7 thresholds is small, though the 7-threshold
+ficient memory access or unoptimized computation of fixed            configuration shows a slight advantage in most cases.
+connections.
+                                                                     Training time is largest for L-type architectures. For
+Low variance in results confirms robustness. Across all              MNIST, L-type layers often trained faster than Top-K mod-
+settings, standard deviation in test accuracy remains un-            els, likely because GPU-accelerated dense matrix operations
+der 0.2%, indicating stable convergence and reproducibility,         (matmul) are more efficient than sparse input selection
+even for models with high structural sparsity.                       used in Top-K. In CIFAR-10, however, L-type layers have
+                                                                     the longest training times due to the much larger input size,
+7. Full Experimental Results on CIFAR-10                             which increases the number of connections in the first layer.
+                                                                     Additionally, training time differences between the 4- and
+Table 8 presents the complete set of results from our experi-        7-threshold modes appear only for L-type architectures for
+ments on the CIFAR-10 dataset, expanding on the summary              the same reason; Top-K and F architectures are unaffected,
+shown in the main paper.                                             as their number of connections does not depend on input
+    Building on insights from MNIST, we focused on 1-layer           size.
+variants for smaller architectures (8K gates) and 1–2-layer
+variants for wider layers. We evaluated the following logical        Accuracy standard deviation is larger than for MNIST.
+connectivity strategies:                                             Accuracy across 5 runs varies more than for MNIST, with
+• F: Fixed, non-learnable connectome,                                standard deviations reaching up to 0.3%. This is largely due
+• Top-K: Top-K sparse, learnable connectome with K =                 to binarizing separate RGB channels with multiple thresh-
+   32, chosen based on MNIST experiments as a good trade-            olds, which increases variability in the input representation.
+   off between accuracy and training time,                           Although CIFAR-10 has the same number of classes and
+• L: Dense, fully learnable connectome.                              slightly larger images than MNIST, this multi-threshold bi-
+    We also experimented with two sets of fixed thresholds           narization amplifies sensitivity to initialization, data order,
+to binarize each RGB channel:                                        and training dynamics. Noise, labeling inconsistencies, and
+                                                                     the small number of runs also contribute, whereas MNIST’s
+• [0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875],
+                                                                     simple grayscale images with a single threshold yield highly
+• [0.2, 0.4, 0.6, 0.8],
+                                                                     stable results.
+resulting in input vector sizes of 21,504 and 12,288, respec-
+tively.                                                              Best-performing architectures. Across all settings, 1-layer
+    For each architecture, we report:                                L-type variants achieved the highest accuracy. For the largest
+• τ value,                                                           budget architectures (e.g., 256K gates), memory constraints
+• Test accuracy (mean ± std. deviation in                            prevented evaluating L-type networks; in these cases, the
+• Training time (mean ± std. deviation in minutes).                  best results were obtained using 2-layer Top-32 networks.
+
+
+                                                                 3
+                                                                    7 thresholds                       4 thresholds
+                                        Layer                 Test Acc.       Train Time         Test Acc.       Train Time
+               #gates      Model                       τ
+                                        Width                   [%]              [min]             [%]              [min]
+                           1F             8,000       20    44.08 ± 0.12         2.5 ± 0.0     44.18 ± 0.27         1.3 ± 0.0
+               8,000       1Top32         8,000       20    52.27 ± 0.20         2.6 ± 0.0     51.86 ± 0.26         2.5 ± 0.0
+                           1L             8,000       20    55.11 ± 0.17        45.4 ± 0.1     54.51 ± 0.25        26.1 ± 0.0
+                           1F            64,000       90    49.17 ± 0.14         2.9 ± 0.0     49.06 ± 0.25         2.0 ± 0.1
+                           1Top32        64,000       90    57.28 ± 0.30        15.3 ± 0.0     56.81 ± 0.19        16.9 ± 0.3
+               64,000      1L            64,000       90    57.66 ± 0.17       139.7 ± 0.1     57.64 ± 0.23        80.9 ± 0.1
+                           2Top32        32,000       70    57.12 ± 0.11        72.9 ± 0.0     56.40 ± 0.17        72.7 ± 0.1
+                           2L            32,000       70    55.75 ± 0.18       224.1 ± 0.1     55.58 ± 0.42       188.3 ± 0.4
+                           1F          128,000      100     50.92 ± 0.24         3.8 ± 0.0     50.87 ± 0.30         3.7 ± 0.1
+                           1Top32      128,000      100     59.43 ± 0.22        29.3 ± 0.0     58.95 ± 0.14        30.7 ± 0.1
+               128,000
+                           1L          128,000      100                –                 –     60.13 ± 0.14       157.3 ± 0.3
+                           2Top32       64,000       90     58.88 ± 0.26       146.7 ± 0.0     58.36 ± 0.22       146.5 ± 0.0
+                           1F          256,000      110     52.48 ± 0.28         5.0 ± 0.0     52.05 ± 0.09         5.3 ± 0.0
+               256,000     2F          128,000      100     54.76 ± 0.27        16.3 ± 0.0     54.18 ± 0.24        16.1 ± 0.0
+                           2Top32      128,000      100     60.98 ± 0.19       297.2 ± 6.6     59.86 ± 0.23       298.7 ± 0.3
+Table 8. Test accuracy and training time on CIFAR-10 for different logic gate networks, layer widths, depths and input binarization thresholds.
+Each cell shows the mean ± standard deviation over 5 runs. Dashes indicate inapplicable configurations. Bolded values indicate the chosen
+models (LILogic Net-S, -M, -L) with best performance.
+
+
+8. Training Accuracy and Effect of Discretiza-
+    tion
+We analyze the influence of discretization on network per-
+formance by measuring the difference between the accuracy
+in inference mode and the accuracy during differentiable
+training. Early in training, this binarization effect can no-
+ticeably affect accuracy as the network starts by learning a
+probabilistic, differentiable LGN, with high uncertainty in
+the selection of individual logic gates. The discretization
+step—selecting the most probable gate for inference—can
+therefore produce substantial changes in network behavior
+                                                                          Figure 7. MNIST LILogic Net-S training and validation accuracy
+during this phase.
+                                                                          curves before (VAL acc) and after (BIN VAL acc) discretization.
+   As training progresses, the gate selection probabilities
+                                                                          The discretization error is very small during late training.
+become more confident, and the effect of discretization on
+accuracy diminishes (e.g. Fig. 7). By the end of training,
+the difference between inference-mode and training-mode                   for generic and target devices.
+accuracy is negligible, with a final binarization error below                Tables 9 and 10 summarize the hardware characteristics
+0.1 percentage points.                                                    of various LGN configurations across MNIST, FashionM-
+   This pattern demonstrates that the network first explores              NIST, and CIFAR-10 datasets. Table 9 reports accuracy and
+a smooth, probabilistic logic representation and gradually                FPGA resource utilization (LUT usage for generic and Xil-
+converges to stable discrete logic choices, with minimal                  inx devices), while Table 10 reports Xilinx frequency and
+impact on final performance.                                              logic/routing latency. Architectures marked with ∗ corre-
+                                                                          spond to DiffLogicNet variants. Dashes (-) indicate missing
+9. LGN Model FPGA Resource Usage                                          or not applicable data.
+Table 9 summarizes the accuracy and FPGA resource utiliza-
+tion of different LGN configurations across MNIST, Fash-
+ionMNIST, and CIFAR-10 datasets, including LUT usage
+
+
+                                                                      4
+Table 9. Accuracy of single runs and FPGA resources per dataset. Most of the achitectures are binarized LILogicNet-S,-M,-L.
+∗ Architectures of DiffLogicNet-S and DiffLogiCNet reported for MNIST. Given two values of LUTs means total LUTS and LUTs without
+population count (popcount) part.
+
+     Dataset       Architecture     Acc [%]       Generic LUT4        ICE40 LUT4          Generic LUT6         Xilinx LUT6
+                      1x4000          97.63        11987 / 3637            11188            8760 / 3637          7103 / 1791
+                      1x8000          98.47        21677 / 7047            20696           16811 / 7047         14076 / 3491
+     MNIST
+                     2x16000          98.94       47869 / 14940            46379          41258 / 14940        37373 / 11833
+                      4x8000          98.79        24676 / 8681            23697           20806 / 8065         16004 / 4637
+                     1x8000           90.03        32436 / 7695            27163                 -              14321 / 3736
+                    2x16000           90.03       51311 / 14891            50893                 -             37075 / 11535
+     FMNIST
+                    2x32000           90.39       95342 / 29111            93926                 -             73938 / 22308
+                    2x64000           90.66      176882 / 55302           172196                 -            143226 / 39769
+                    6x8000*           88.56       39347 / 17562            39417                 -             22710 / 10377
+                    6x64000*          90.27      264873 / 131992          264982                 -            172787 / 72807
+                     1x8000           54.89       43237 / 7834               -            38225 / 7834         14415 / 3830
+     CIFAR10        1x64000           58.06      186010 / 57329           187468                -             104853 / 27070
+                    2x128000          60.76      387156 / 117164             -           339376 / 117164      293285 / 92353
+
+
+
+
+Table 10. Xilinx XC7A200T frequency and latency per dataset and model architecture. Most of the achitectures are binarized LILogicNet-
+S,-M,-L. ∗ Architectures of DiffLogicNet-S and DiffLogicNet reported for MNIST. Dashes (-) indicate missing or not applicable data.
+
+                    Dataset         LGN        Xilinx Freq      Logic Latency (ns)      Routing Latency (ns)
+                                  1x4000        40.15 MHz                5.1                      19.8
+                                  1x8000        32.89 MHz                6.0                      24.4
+                    MNIST
+                                  2x16000       29.71 MHz                6.2                      27.4
+                                  4x8000        26.69 MHz                5.0                      32.4
+                                   1x8000       33.76 MHz                5.9                      23.8
+                                   2x16000      20.13 MHz                6.1                      43.6
+                                   2x32000      18.16 MHz                 -                        -
+                    FMNIST
+                                   2x64000           -                    -                        -
+                                   6x8000*      19.11 MHz                 -                        -
+                                  6x64000*           -                    -                        -
+                                   1x8000       31.18 MHz                5.8                      26.2
+                    CIFAR10        1x64000           -                    -                        -
+                                  2x128000           -                    -                        -
+
+
+
+
+                                                                  5
+

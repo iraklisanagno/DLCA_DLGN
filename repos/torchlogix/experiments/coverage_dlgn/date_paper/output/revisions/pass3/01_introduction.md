@@ -1,0 +1,17 @@
+# Introduction
+
+In a logic gate network (LGN), each two-input gate combines only the signals delivered by its two predecessors. These connections therefore determine which input combinations the model can represent within a fixed depth and gate budget. Differentiable training selects gate functions but cannot recover a missing connection in a fixed graph, making connectivity a design opportunity before gate-function optimization begins.
+
+Existing LGNs expose two ways to make this choice. Random fixed connections require no routing optimization and produce ordinary Boolean circuits after training [@petersen2022]. Learned connections search over candidate predecessors and can achieve higher accuracy with compact networks [@mommen2025; fojcik2026]. However, training the connections requires additional routing state and candidate-signal processing, increasing the demand on limited GPU memory. A designer facing this constraint needs to understand the accuracy available from a structured fixed graph before accepting that additional cost.
+
+This choice becomes more involved when the same design principle must support dense and convolutional LGNs. A dense input contains spatial coordinates, channels, and potentially several thermometer thresholds per raw value. A convolutional network instead shares logic trees across spatial positions and selects channels within each receptive field [@petersen2024]. A unified method must preserve these architectural semantics while organizing the predecessors accessible to each gate throughout the network.
+
+We address this problem with U2, an offline construction that pairs semantically related inputs and organizes deeper connections through deterministic matching stages. Stage selection first minimizes predecessor fan-out spread, then uses ancestry overlap to choose among equally balanced candidates. The same construction operates on dense predecessors and convolutional channel groups, while retaining the established convolutional spatial sampler. Only the resulting connection indices enter the trained and deployed model.
+
+Our contributions are threefold:
+
+- We formulate a shared connectivity construction for dense layers, convolutional channel groups, and the convolutional classifier. The method preserves the gate budget and introduces no trainable routing parameters or additional inference operators.
+- We evaluate hardened accuracy and training resources using paired random-connectivity controls and explicit learned-routing comparisons. Dense CIFAR-10 improvements are consistent across three model sizes; convolutional results expose a more variable benefit that we report separately.
+- We isolate first-layer and deeper-layer structure using randomizations that preserve each predecessor's degree in each input slot. The resulting dense ablation identifies a strong first-layer contribution, while leaving the incremental deeper-layer benefit uncertain.
+
+These experiments support structured connectivity as an architectural option, with comparisons against the stronger dense specialization V3 and configurations where learned routing remains more accurate. To make that distinction precise, the following section separates connectivity design from gate parameterization and circuit simplification before presenting the unified construction.

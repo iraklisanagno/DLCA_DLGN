@@ -1,0 +1,1146 @@
+                                                                                 WARP Logic Neural Networks
+
+
+                                                          Lino Gerlach * 1 Thore Gerlach * 2 Liv Våge 1 Elliott Kauffman 1 Isobel Ojalvo 1
+
+
+                                                                  Abstract                                      Prominent among such efforts are model compression tech-
+                                                                                                                niques, which encompass approaches for inducing spar-
+                                             Fast and efficient AI inference is increasingly                    sity (Sung et al., 2021; Hoefler et al., 2021), pruning (Lin
+                                             important, and recent models that directly learn                   et al., 2018; Liu et al., 2022), and reducing numerical pre-
+                                             low-level logic operations have achieved state-                    cision via weight quantization (Sun et al., 2024; Gholami
+arXiv:2602.03527v1 [cs.LG] 3 Feb 2026
+
+
+
+
+                                             of-the-art performance. However, existing logic                    et al., 2022; Chmiel et al., 2021).
+                                             neural networks incur high training costs, intro-
+                                             duce redundancy or rely on approximate gradi-                      Nevertheless, such approaches do not directly address the
+                                             ents, which limits scalability. To overcome these                  intrinsic computational cost of numerical multiplication.
+                                             limitations, we introduce WAlsh Relaxation for                     To overcome this limitation, multiplication-free architec-
+                                             Probabilistic (WARP) logic neural networks—a                       tures have been proposed, including binary neural net-
+                                             novel gradient-based framework that efficiently                    works (Hubara et al., 2016; Qin et al., 2020) and other bit-
+                                             learns combinations of hardware-native logic                       level summation models (Chen et al., 2020; Elhoushi et al.,
+                                             blocks. We show that WARP yields the most                          2021; Nguyen et al., 2024). However, efficient inference
+                                             parameter-efficient representation for exactly                     on digital hardware requires mapping abstract computations
+                                             learning Boolean functions and that several prior                  into executable logic, which incurs significant overhead.
+                                             approaches arise as restricted special cases. Train-               Within the domain of multiplication-free models, Logic Neu-
+                                             ing is improved by introducing learnable thresh-                   ral Networks (LNNs), also denoted as Weightless Neural
+                                             olding and residual initialization, while we bridge                Networks (WNNs) (Aleksander et al., 2009), represent a
+                                             the gap between relaxed training and discrete                      distinct class that overcomes this limitation. Instead of
+                                             logic inference through stochastic smoothing. Ex-                  relying on weighted connections, LNNs employ binary
+                                             periments demonstrate faster convergence than                      look-up tables (LUTs) or logic gates to drive neural ac-
+                                             state-of-the-art baselines, while scaling effectively              tivity during inference, allowing them to capture highly
+                                             to deeper architectures and logic functions with                   nonlinear behaviors while avoiding arithmetic operations
+                                             higher input arity.                                                altogether. Although state-of-the-art models achieve re-
+                                                                                                                markable performance on small-scale tasks, their scalability
+                                                                                                                remains constrained—whether due to limited expressive-
+                                        1. Introduction                                                         ness (Susskind et al., 2023; Andronic & Constantinides,
+                                                                                                                2023), reliance on gradient approximations (Bacellar et al.,
+                                        Deep learning (LeCun et al., 2015) has become the stan-
+                                                                                                                2024), double-exponential growth in parameter require-
+                                        dard for a wide range of tasks in science, but its success
+                                                                                                                ments (Petersen et al., 2022; 2024), or large discretization
+                                        comes with heavy computational costs in both training and
+                                                                                                                gaps (Kim, 2023; Yousefi et al., 2025), describing an accu-
+                                        inference. This restricts deployability in many real-world
+                                                                                                                racy mismatch between the training using relaxations and
+                                        settings—particularly in domains where ultra-fast inference
+                                                                                                                discrete inference. We overcome these issues by propos-
+                                        is critical, such as healthcare (Bacellar et al., 2025), particle
+                                                                                                                ing WAlsh Relaxation for Probabilistic (WARP) LNNs,
+                                        physics (Aarrestad et al., 2021), gravitational wave astron-
+                                                                                                                based on differentiable relaxation, similar to Differentiable
+                                        omy (Martins et al., 2025), and quantum computing (Bhat
+                                                                                                                Logic Gate Networks (DLGN) (Petersen et al., 2022). We
+                                        et al., 2025). These constraints have motivated substantial
+                                                                                                                propose representing Boolean functions with the Walsh–
+                                        research into the development of models that maintain pre-
+                                                                                                                Hadamard (WH) transform (Kunz, 1979), providing a com-
+                                        dictive accuracy while improving computational efficiency.
+                                                                                                                pact and differentiable parameterization of a deep LNN
+                                           *
+                                             Equal contribution  1
+                                                                   Princeton University 2 European              enabling an exponential reduction in the number of parame-
+                                        Space Agency, Advanced Concepts Team. Correspondence                    ters compared to DLGNs. Publishing our code will bridge
+                                        to: Lino Gerlach <lg0508@princeton.edu>, Thore Gerlach                  the gap created by the lack of publicly available convolu-
+                                        <thore.gerlach@esa.int>.                                                tional DLGN implementations for the community. Our key
+                                        Preprint. Under review. February 4, 2026.                               contributions, depicted in Fig. 1, are summarized as follows:
+
+                                                                                                            1
+                                                       WARP Logic Neural Networks
+
+                         (a) Learnable thresholding.         (b) WARP parametrization.                        (c) Generality.
+
+        Training                                                             sssssdsdsd
+                                                       0.08
+                                                          xi > Ωij
+                                                       0.42
+                                                                                                                 Efficient
+                                                       0.86
+                                                       0.99
+                                                       0.89
+                                                       0.50
+
+                                                                         P          
+                    σ(xi − Ωij )                                     σ   i θi ϕi (x)
+                                                                     P
+                    xi > Ωij                                         i θi ϕi (x) > 0
+
+                                                        1                                                       WARP
+                                                        0
+    Inference                                           0
+                                                                                             Expressive
+                                                        1                                                                          Exact
+                                                        1
+                                                        0
+
+
+
+  Gate
+
+   θ̂
+
+∥θ − θ̂∥                                                                                                      Prior methods
+
+Figure 1. Overview of proposed WARP LNNs enabling differentiable learning of Boolean functions. During training, single neurons are
+continuously relaxed, while being replaced by a logic function to enable fast and efficient inference. (a) We propose learnable thresholding
+with relaxing input binarization, which leads to improved performance. (b) For parameterizing neurons, we introduce WARP which is
+based on the Walsh-Hadamard transform. This leads to exponentially less parameters (16 to 4 for n = 2) and deployable logic structures
+are obtained by optimal thresholding. (c) WARP is maximally parameter-efficient, does not rely on approximate gradients (exact) and is
+fully expressive, describing the ability to represent any Boolean function (see Theorem 4.1). While previous methods mostly satisfy only
+two of these properties (parameter inefficient (Petersen et al., 2022), inexact through approximations (Bacellar et al., 2024) or not fully
+expressive (Hoang et al., 2025; Andronic & Constantinides, 2025)), they can be deduced from WARP as special cases.
+
+
+• WARP Parametrization: We propose WARP-LNNs,                                  2. Related Work
+  utilizing a new differentiable relaxation of higher-input
+  Boolean functions. This does not only increases expres-                      TreeLUT (Khataei & Bazargan, 2025) combines gradient-
+  siveness over DLGNs, but also reduces the number of                          boosted trees with LUT mappings for efficient inference.
+  parameters exponentially. Through residual initialization                    For the reminder of this section, however, we will focus on
+  and stochastic smoothing, we enable fast convergence,                        depth-scalable LNNs.
+  stable gradients and improve discrete inference accuracy.
+                                                                               Function Approximation Early work on LNNs explored
+• Representation Generality: We show that WARP is the                          single-layered perceptrons for approximating LUTs, en-
+  most general and efficient parametrization for represent-                    abling extremely efficient inference (Susskind et al., 2022;
+  ing Boolean functions maintaining full expressiveness.                       2023). However, an n-input LUT has a known VC-
+  We shed light on the interconnections between state-of-                      dimension of 2n (Carneiro et al., 2019), while a single-
+  the-art models from the literature and show that they are                    layered perceptron with n inputs has a VC-dimension
+  deduced by basis changes, weight restrictions, approxi-                      of n + 1, limiting expressiveness. Although extensions
+  mative gradients or non-invertable input mappings.                           to higher-degree polynomial basis (Andronic & Constan-
+                                                                               tinides, 2023) and multi-layer perceptrons (Andronic & Con-
+• Learnable Thresholding: For LNNs, data has to be                             stantinides, 2024; 2025; Weng et al., 2025; Hoang et al.,
+  binarized in inference. While previous methods use data-                     2025) have been proposed, these models fall short on expres-
+  based binarization, we propose to a differentiable relax-                    sivity and are faced with exponential training complexity.
+  ation to enable learning the thresholds during training.
+
+• Experimental Effectiveness: We demonstrate versatility                       Linear Combination To address these limitations,
+  across diverse settings: WARP reliably learns higher-                        DLGNs utilize differentiable relaxations of logic gates,
+  input LUTs in deep architectures where prior SOTA                            enabling gradient-based training of multi-layer architec-
+  methods struggle, integrates seamlessly with existing ap-                    tures (Petersen et al., 2022; 2024). Advances in connection
+  proaches to reduce the number of operations in convo-                        learning (Mommen et al., 2025; Yue & Jha, 2024; Kresse
+  lutions, and leverages learnable thresholding to substan-                    et al., 2025) have improved flexibility, but training DLGNs
+  tially lower the required bit precision at inference time.                   introduces a discretization gap between training and discrete
+
+                                                                         2
+                                                 WARP Logic Neural Networks
+
+inference. Recent work has sought to bridge this gap by               Boolean functions:
+stochastic relaxation (Kim, 2023; Yousefi et al., 2025).                              X                         X
+                                                                        fDLGN (x) =      αi ϕDLGN
+                                                                                             i    (x),                    αi = 1,   (1)
+                                                                                      i∈[22n ]                 i∈[22n ]
+Direct Parametrization DLGNs remain restricted to two-
+                                                                      with αi ≥ 0 and ϕDLGN
+                                                                                          i     : Rn → [0, 1] being a probabilistic
+input gates and suffer from double-exponential parameter
+                                                                      surrogate of the corresponding Boolean function in form of
+growth, limiting scalability. To account for higher-degree
+                                                                      a multilinear polynomial (see Tab. 3 for the example n = 2).
+LUTs, the authors of (Bacellar et al., 2024) propose Dif-
+                                                                      A surrogate formulation is required to accommodate real-
+ferentiable WNNs (DWNs) to directly parametrize LUTs,
+                                                                      valued inputs during training, as the underlying discrete
+leading to a logarithmic parameter reduction compared to
+                                                                      functions are not defined in this domain. To ensure staying
+DLGNs. For obtaining differentiability, the addressing func-
+                                                                      in the probability simplex, a softmax distribution is used for
+tion is relaxed to continuous values and gradients are ap-
+                                                                      the weights in Eq. (1), i.e., αi = σ(αi′ )/ j σ(αj′ ), αi′ ∈ R.
+                                                                                                                 P
+proximated, degrading performance for deep models.
+                                                                      Limitations Originally developed for two-input logic
+Basis Parametrization Recently, alternative parametriza-              gates, this approach can be extended to n-ary Boolean func-
+tion schemes for representing Boolean functions have been             tions. However, a fundamental limitation of this approach
+developed (Rüttgers et al., 2025; Ramı́rez et al., 2025).            lies in the double-exponential growth of complexity with
+While overcoming the restrictions of double-exponentially             increasing neuron arity: a single 6-input Boolean function,
+                                                                                                    6
+many parameters from DLGNs and approximative gradients                for example, would require 22 = 1.8447 · 1019 parameters,
+of DWNs, these methods still suffer from large discretiza-            making the architecture computationally intractable. Con-
+tion errors. This leads to instability in weight initialization       sequently, DLGNs are effectively constrained to learning
+and vanishing gradients.                                              logic gates with very few inputs, as handling parameters per
+                                                                      gate becomes rapidly infeasible as n increases.
+3. Background                                                         During inference, all softmax operations are replaced by
+                                                                      argmax selections, effectively rounding each neuron to the
+Before we propose our reparametrization scheme for
+                                                                      binary gate associated with the largest weight. The resulting
+Boolean functions in Sec. 4, we begin by reviewing fully
+                                                                      logic gate circuit can be directly embedded in hardware such
+expressive LNN approaches from the literature and high-
+                                                                      as FPGAs or ASICs for highly efficient execution. A key
+light their limitations. For the reminder of this paper, we
+                                                                      limitation of DLGNs is the misalignment between training
+fix the following notation. Matrices/vectors are denoted
+                                                                      and inference. Furthermore, the presence of redundancy
+by upper/lower case letters, e.g., A/a, and we denote the
+                                                                      introduces ambiguity (Rüttgers et al., 2025).
+binary representation of integer i with b(i) ∈ {0, 1}n start-
+ing with the least significant bit, n = ⌈log2 i⌉. Further,
+                                                                      3.2. Differentiable Weightless Neural Networks
+let [n] = {1, . . . , n}, σ(·) represent the sigmoid func-
+                                                      n
+tion, 1 the indicator function, and t(f ) ∈ {0, 1}2 the               To overcome the limitation of having double-exponentially
+LUT of a function f : {0, 1}n → {0, 1}. Finally, let                  many parameters per neuron, the authors of (Bacellar et al.,
+φ : {0, 1} → {−1, 1} denote the bijection φ(x) = 1 − 2x.              2024) propose Differentiable WNNs (DWNs) by
+                                                                                      X
+                                                                                           βi 1b(i) φ−1 (sgn(x)) = βj , (2)
+                                                                                                                  
+3.1. Differentiable Logic Gate Networks                                   fDWN (x) =
+                                                                                       i∈[2n ]
+Networks composed of logical operations offer a discrete
+                                                                      where j corresponds to the index where the argument of
+and interpretable framework for computation, but directly
+                                                                      φ−1 (sgn(x)) = b(j) . Notably, DWNs have no restrictions
+optimizing their combinational structure is computation-                                          n
+                                                                      on the weights, i.e., β ∈ R2 , and thus propagate arbitrary
+ally intractable due to the exponential search space. To
+                                                                      real vectors x ∈ Rn through the network.
+enable efficient gradient-based optimization, prior work in-
+troduces Differentiable Logic Gate Networks (DLGNs) by
+                                                                      Limitations DWNs have the problem of a non-
+relaxing discrete gate assignments into a continuous, train-
+                                                                      differentiable parametrization, since the input of the previ-
+able parametrization (Petersen et al., 2022; 2024).
+                                                                      ous layer is discretized to the nearest address for accessing
+                                                                      the LUT parameters βi . This issue is approached by using
+Parametrization DLGNs find the ideal combination of                   an extended finite difference method which accounts for
+gates by calculating a weighted sum over all possible gates           variations in the addressed position. However, this is an
+at each node of the computational graph and calculating               inaccurate approximation and leads to training instabilities
+a gradient w.r.t. these weights. The approach involves                for deep models (see Sec. 5). For discrete inference, the
+                                                                                               (f   )
+continuously relaxing onto the simplex spanning all possible          LUTs are obtained by ti DWN = φ−1 (sgn(βi )).
+
+                                                                  3
+                                                         WARP Logic Neural Networks
+
+                            ew1
+               0           P
+                             ewi
+                                                                  1−a                                                     1            w1
+
+                            ew2                              10
+               a
+                             ewi
+                           P
+ a ϕ                                       Σ      a ϕ                                          Σ           a ϕ                                     Σ
+                            ew3                              11
+            1−a            P
+                             ewi
+                                                                    a                                                   1 − 2a         w2
+                            ew4
+               1
+                             ewi
+                           P
+
+
+    (a) DLGN (Petersen et al., 2022).                    (b) LLNN (Rüttgers et al., 2025).                             (c) WARP (ours).
+Figure 2. Our parametrization compared to methods from the literature for n = 1. The S-shaped curve indicates the sigmoid function.
+
+
+3.3. Light Logic Neural Networks                                              symmetrical hypercube {−1, 1}n as domain instead, that is
+                                                                              functions of the form g : {−1, 1}n → {−1, 1}.
+To overcome non-differentiability, the authors of (Rüttgers
+et al., 2025) and (Ramı́rez et al., 2025) independently devel-
+                                                                              4.1. Walsh–Hadamard Transform
+oped similar parametrizations. While (Ramı́rez et al., 2025)
+denote their approach as LUT LNNs (LLNNs), (Rüttgers                         A helpful tool for the analysis is the Fourier expansion
+et al., 2025) uses the term Light DLGNs (LIGHT). It uses
+                                                                                                                                             (i)
+                                                                                                                                            b
+                                                                                                X                                   Y
+that every n-ary Boolean function can be written as                                  g(s) =              θ i ϕW
+                                                                                                              i (s) ,   ϕW
+                                                                                                                         i (s) =           skk .    (5)
+                        X                                                                      i∈[2n ]                             k∈[n]
+          fLLNN (x) =        γi ϕ1i (x), γi ∈ [0, 1],      (3)
+                         i∈[2n ]                                              The functions ϕW
+                                                                                             i form an orthonormal basis for all func-
+                                                                              tions over {−1, 1}n . This is also known as the Walsh–
+where ϕ1i are indicator polynomials of the form                               Hadamard (WH) transform and θi can be written as
+                          Y         b
+                                     (i)           (i)                                  1 X                1 X             (g)
+             ϕ1i (x) =             xkk (1 − xk )1−bk .              (4)           θi = √     g(s)ϕW
+                                                                                                  i (s) = √           Hij tj ,                      (6)
+                                                                                          n
+                                                                                         2 s                 n
+                                                                                                            2 j∈[2n ]
+                         k∈[n]
+
+
+Since ϕ1i (x) = 1b(i) (x) for x ∈ {0, 1}n , the Boolean                       where H denotes the n-Hadamard matrix (Hedayat & Wal-
+functions are obtained at the corner points of the hypercube                  lis, 1978). The spectral regularization for DWNs exactly
+γ ∈ {0, 1}n . γi ∈ [0, 1] is enforced by using the sigmoid                    corresponds to L2 -regularization of the parameters θ.
+function on arbitrary real weights, i.e., γi = σ(γi′ ), γi′ ∈ R.              Intuitively, this expansion uses simple polynomial basis
+                                                                              functions—individual variables, pairwise products, and
+Limitations Even though this reparametrization greatly                        higher-order interactions—to capture the structure of the
+reduces the number of parameters per neuron, the weight                       Boolean function. Hence the WH representation provides
+parameters in Eq. (3) are restricted to the interval [0, 1]. This             a compressed and structured parametrization of Boolean
+                                                                                                       n
+leads to undesirable effects in the optimization landscape,                   functions, where the 22 Boolean functions are in bijection
+resulting in vanishing gradients (Rüttgers et al., 2025).                    with a finite subset of the 2n -dimensional lattice.
+After training, LLNNs discretize neurons into LUTs by
+ (f    )                                                                      Example In the special case of two inputs s = (u, v) ∈
+ti LLNN = φ−1 (sgn(φ(βi ))) . Small perturbations in the
+                                                                              {−1, 1}2 , every function g : {−1, 1}2 → {−1, 1} admits a
+parameter space—especially in sharp loss landscapes—can
+                                                                              decomposition with only four coefficients:
+cause significant shifts in behavior, as the selected LUT
+may not reflect the neuron’s actual functional output. This                           g(u, v) = sgn (θ1 + θ2 u + θ3 v + θ4 (u · v)) ,
+can lead to a large discretization gap, heavily degrading
+inference performance after training.                                         where θ1 encodes the constant bias (tendency toward +1 or
+                                                                              −1), θ2 and θ3 encode dependence on the individual inputs,
+4. WARP Logic Neural Networks                                                 and θ4 encodes the interaction term between the inputs.
+                                                                              For example, the coefficients (θ1 , θ2 , θ3 , θ4 ) = (0, 0, 0, 1)
+For the analysis of Boolean functions—such as investigat-                     correspond to the XOR gate, while the AND gate can be
+ing spectral concentration (O’Donnell, 2014) and learnabil-                   expressed as (θ1 , θ2 , θ3 , θ4 ) = (− 12 , 12 , 21 , 12 ) (see Tab. 3 for
+ity (Hellerstein & Servedio, 2007)—one often considers the                    the full list of gates and coefficients for n = 2).
+
+                                                                          4
+                                                 WARP Logic Neural Networks
+
+4.2. Parametrization                                                   reparameterization, a binary variant of the Gumbel–Softmax
+                                                                       (Concrete) distribution, enabling gradient-based training
+Instead of being restricted to the binary domain {−1, 1}n ,
+                                                                       with discrete variables (Maddison et al., 2017; Jang et al.,
+the WH transform in Eq. (5) decomposes an arbitrary input
+                                                                       2017). Differentiable samples z(x) ∼ Ber(fWARP (x)) are
+vector into a superposition of basis functions. This provides
+                                                                       obtained by sampling G1 , G2 ∼ Gumbel(0, 1)
+a differentiable relaxation for Boolean functions
+                                                                                                                        
+                                                
+                                                                                       1   X
+                            1  X                                           z(x) = σ            θ i ϕW
+                                                                                                     i (φ(x)) + G1 − G2
+                                                                                                                          , (9)
+         fWARP (x) = σ             θ i ϕW
+                                         i (φ(x)) .
+                                                         (7)                          τ
+                            τ    n
+                                                                                              n
+                                                                                           i∈[2 ]
+                              i∈[2 ]
+
+                                                                       with temperature parameter τ . Lower values of τ yield
+Theorem 4.1. The WARP parametrization is the most
+                                                                       a tighter relaxation towards the discrete domain {0, 1},
+parameter-efficient representation of any boolean function
+                                                                       thereby reducing the discretization gap. However, choos-
+and previous approaches are special cases that either intro-
+                                                                       ing τ too small can lead to numerical instabilities such as
+duce redundancy (DLGN), errors through approximation
+                                                                       exploding gradients. In our experiments, we evaluate the per-
+(DWN) or restrictions on parameters (LLNN and LIGHT).
+                                                                       formance of using discretization already during training in
+The proof can be found in Sec. A. The decomposition                    the forward pass as a straight-through estimator (see Sec. 5).
+in Eq. (7) provides a compact and differentiable parameteri-
+zation with 2n parameters, while still allowing to collapse            Residual Initialization To avoid vanishing gradients and
+                        n
+back into one of the 22 exact Boolean functions at infer-              achieving a reduced discretization gap, the authors of (Pe-
+ence time by choosing the closest LUT:                                 tersen et al., 2024) propose to use residual initialization (RI).
+                              X                                    Inspired by residual connections (He et al., 2016), a large
+            (f    )                                                    initial probability is assigned to the pass-through function
+           ti WARP = φ−1 sgn          Hij θj .           (8)
+                                       j                               of a single input variable, e.g., f (x) = xn . Similarly to
+Exploiting the recursive structure of H, the WH transform              DLGNs, this initialization is straight-forward for WARP for
+in Eq. (8) is efficiently computable in O(n2n ) (Fino &                a chosen probability p to the pass-through function.
+Algazi, 1976). Further, this discretization is also optimal.
+                                                                           θ2n−1 +1 = τ σ −1 (p), θi = 0, ∀i ̸= 2n−1 + 1.          (10)
+Theorem 4.2. Under the WARP parametrization, the dis-
+cretization that minimizes the error in any Lp -norm is                A proof can be found in Sec. C in the appendix.
+achieved by applying (8), or equivalently by choosing the
+LUT whose Walsh–Hadamard coefficients are closest to θ.                4.3. Learnable Thresholding
+
+The proof can be found in Sec. B. Note that our parametriza-           Since we learn a Boolean function for inference, data has to
+tion in Eq. (7) has three key differences compared to LIGHT            be binarized for compatibility, usually done by thermometer
+in Eq. (3): (i) The removal of weight constraints prevents             thresholding. Given a threshold matrix Ω ∈ Rl×d , a data
+instability during initialization and can exacerbate vanishing         point x ∈ Rd is binarized by checking ωij ≤ xj . State-of-
+gradient phenomena, (ii) nonlinearities are introduced ex-             the-art examples include uniform (Petersen et al., 2024) and
+plicitly through the sigmoid activation in contrast to LIGHT,          distributive (Bacellar et al., 2024) thresholding.
+where nonlinear dependence on the input is encoded implic-             Instead of only including data-specific information, we pro-
+itly by polynomial basis expansions, and (iii) a continuous,           pose to include information on the given task by learning the
+hyperparameter τ is incorporated, enabling additional flexi-           matrix Ω simultaneously with the network parameters. For
+bility in shaping the representation. Morever, we introduce            thermometer thresholding, the row entries have to be mono-
+stochastic smoothing and residual initialization for stabiliz-         tonically increasing, i.e., Ωij ≤ Ωik for j ≤ k. We follow
+ing continuous training and improving discrete inference.              the approach of learning the first-order differences ∆ij be-
+                                                                       tween subsequent thresholds, by using softplus for smoothly
+Stochastic Smoothing Using the discretization in Eq. (8),              enforcing positivity (softplus(∆ij ) = Ωij+1 − Ωij )
+we face the same issues as for LLNN. In sharp loss regions,                     X
+small parameter changes misalign LUT selections, leading                Ωij =       softplus(∆ij ), softplus(x) = log(1 + ex ).
+to a large discretization gap and poor inference performance.                  k≤j
+
+For mitigating this effect, we note that the sigmoid function          Differentiable thresholding is obtained by using 1{Ωij ≤
+characterizes a Bernoulli distribution, representing the prob-         xj } ≈ σ ((xj − Ωij )/ρ), where ρ ≥ 0 is a temperature
+ability of an input vector being discretized to a binary output,       parameter controlling smoothness. Similar to Eq. (9), we
+         (f    )
+i.e., P(ti WARP = 1) = fWARP (b(i) ). To introduce stochas-            can introduce Gumbel noise to stabilize the training process,
+ticity into the training process, we adopt Gumbel–Sigmoid              since hard thresholds are computed during inference.
+
+                                                                   5
+                                                            WARP Logic Neural Networks
+
+                                               Soft          Gumbel Soft            STE            Gumbel STE
+Disc. Val. Accuracy
+
+
+                      0.4
+
+                      0.3
+
+                      0.2
+
+                      0.2
+Disc. Gap
+
+
+
+
+                      0.1
+
+                      0.0
+
+                            0   20   50   75          100    0       20        50       75      100     0       20       50      75       100
+                                                                 Training Step [x10³]
+     Figure 3. Discrete validation accuracy (top) and discretization gap (bottom) for WARP on CIFAR-10 comparing different parametrization
+     methods and varying LUT sizes, n = 2 (left), n = 4 (middle) and n = 6 (right).
+
+
+      5. Experiments                                                           of 2× for n = 4 and 3× for n = 6. This leads to the same
+                                                                               number of total connections, hinting towards possible de-
+     We conduct three sets of experiments. First, we highlight the             ployment advantages for larger LUT sizes on logic-based
+     training dynamics of WARP LNNs and show the improving                     hardware. Further hyperparameters can be found in Sec. D.
+     effect of our proposed residual initialization and stochas-
+     tic smoothing. Secondly, we show the effect of learnable                  The upper plot panel shows the discrete validation accuracy
+     thresholding and that it is not restricted to WARP, but is                during training, indicating that different LUT sizes show
+     usable for other LNNs benefiting from continuous inputs.                  similar performance. Even though the accuracy is slightly
+     Lastly, the performance of WARP is assessed in comparison                 lower for n = 6, we stress that we do not aim to obtain
+     to state-of-the-art methods from the literature.                          optimal performance in this experiment. Rather than fine-
+                                                                               tuning the temperature parameter τ , we emphasize that this
+      5.1. Training Dynamics                                                   result already demonstrates that WARP can be scaled to
+                                                                               logic blocks with more than two inputs.
+   We aim to analyze the training and inference performance
+   of WARP with using different input-arities for every single                 As is evident from the bottom plot panel, stochastic smooth-
+   neuron. For this, we evaluate model performance on the                      ing by injecting Gumbel noise reduces the discretization gap,
+   CIFAR-10 dataset following standard pre-processing and an                   defined as the difference of the relaxed validation accuracy
+   80/20 split in training / validation data. The architectures                and the discrete validation accuracy. While it is constantly
+   of the models used are shown in Tab. 1. We adopt the                        0 for the STEs, Gumbel Soft is able to reduce the gap by
+   “small” model architecture introduced in the original DLGN                  smoothing the optimization landscape. Even though Soft
+   paper (Petersen et al., 2022) as the baseline and initialize                has the best relaxed validation accuracy performance, the
+   the connections between neurons randomly. Training is                       discretization gap starts to increase with more training steps,
+   done with residual weight initialization and averaged over 5                especially for larger LUT sizes. Similar effects are observed
+   different seeds with indicating 95% confidence intervals.                   for different datasets, architectures and hyperparameter con-
+                                                                               figurations, as is evident from Sec. D.
+      In Fig. 3, we compare LUT sizes of n = 2, 4, 6 (from left to
+      right) while varying four different methods for training pro-            5.2. Learnable Thresholding
+      cess. Soft refers to the proposed vanilla neuron parametriza-
+      tion in Eq. (7), while Gumbel Soft introduces stochastic                 Next, we investigate the effect of learnable thresholding.
+      smoothing via Eq. (9). Further, we also compare corre-                   This is particularly relevant for datasets with heterogeneous
+      sponding straight-through estimators (STE) by discretizing               feature distributions, where fixed binarization schemes may
+      the inputs and relaxed parametrizations in the forward pass.             be suboptimal. To this end, we evaluate different threshold-
+      Moreover, to obtain intercomparability between different                 ing strategies on the JSC dataset, which exhibits features
+      LUT sizes, we reduce the number of neurons for increasing                with varying value ranges and densities.
+      LUT size proportional to their fraction, that is a reduction             We adopt the sm architecture proposed in (Bacellar et al.,
+
+
+                                                                           6
+                                                          WARP Logic Neural Networks
+
+                                                                                                          0.70
+Validation Accuracy
+
+
+
+
+                                                                               Best Validation Accuracy
+                      0.65
+                                              Binarization Method                                         0.65
+                      0.60
+                                                 Fixed (Uniform)                                          0.60
+                      0.55                       Fixed (Distributive)                                                                 Binarization Method
+                                                 Learnable                                                0.55                            Fixed Uniform
+                      0.50                                                                                                                Fixed Distributive
+                             0   10        20      30      40       50                                    0.50                            Learnable
+                                      Training Step [x10³]
+                                                                                                                     1   2 5 10 20 50 100 200
+      Figure 4. Validation accuracy on CIFAR-10 for different binariza-
+      tion methods. The model architecture resembles LogicTreeNet-M,
+                                                                                                                          Number of Binarization Bits
+      and the DLGN parametrization according to Eq. (1). Each learning                 Figure 5. Validation accuracy on JSC for different binarization
+      curve consists of three runs with different random seeds.                        methods vs the number of bits for the binarization of each feature.
+                                                                                       The models’ architectures resemble DWN(n=6, sm) with learnable
+                                                                                       connections in the first layer. Each configuration was run with ten
+                                                                                       different random seeds.
+       2024), consisting of two layers with 6-input LUTs, with
+       learnable connections between the input features and the
+                                                                                                          0.5
+       first layer. We compare three different thresholding schemes:                                                                                  0.15
+                                                                               Validation Accuracy
+
+
+
+
+                                                                                                                                                         Discretization Gap
+       (i) fixed uniform thresholds, (ii) fixed distributive thresholds,
+       and (iii) learnable thresholds, which are optimized jointly                                        0.4                 Parametrization
+       with the model parameters during training.                                                                             DLGN (Soft)             0.10
+                                                                                                                              WARP (Soft)
+       The fixed uniform thresholds are placed at equidistant in-                                         0.3                 WARP (Gumbel Soft)
+       tervals between the minimum and maximum value of each                                                                                          0.05
+       feature. In contrast, distributive thresholding follows the
+       approach of DWN (Bacellar et al., 2024), where thresholds                                          0.2
+       are chosen according to the empirical feature distributions.                                                                                   0.00
+       Learnable thresholding initializes thresholds in the same                                                 0       5       10       15     20
+       way, but allows them to adapt during training via gradient-                                                       Training Step [x10³]
+       based optimization.
+                                                                                       Figure 6. Validation accuracy on CIFAR-10 for a small model
+      Fig. 5 shows the best validation accuracy on the JSC dataset                     with a single convolutional layer. The convolution kernels are
+      over 10 training runs with different random seeds, plotted as                    implemented as binary trees of depth four and four-input trees of
+                                                                                       depth two for DLGN, and WARP, respectively.
+      a function of the number of bits per feature after binarization.
+      We observe that distributive thresholding already provides a
+      substantial performance improvement over uniform thresh-                          three runs for all three thresholding strategies. Once again,
+      olding, which also exhibits the highest variance across runs.                     learnable thresholding yields a significant improvement in
+      Learnable thresholding further improves performance, con-                         final accuracy, albeit with slightly reduced training stability
+      sistently outperforming distributive thresholding in the low                      compared to fixed schemes.
+      bit-width regime. While distributive thresholding requires
+      approximately 20 bits per feature to reach peak performance,                     In this setting, the two thresholds are learned globally, i.e.,
+      learnable thresholding achieves a comparable accuracy of                         shared across all pixels and channels. We also experimented
+      roughly 70% with only 5 bits. Note that (Bacellar et al.,                        with channel-wise and pixel-wise learnable thresholds but
+      2024) deploys a 200 bit binarization scheme.                                     found the increased hyperparameter sensitivity and reduced
+                                                                                       training stability to outweigh the potential performance
+      We found the impact of learnable thresholding in the absence                     gains. A complete list of hyperparameters and training
+      of learnable input connections less pronounced, but still sig-                   settings is provided in Tab. 4.
+      nificant. Although learnable thresholding is best suited for
+      datasets with strongly varying feature statistics, we addition-
+                                                                                        5.3. Higher-Rank LUTs in Convolutional Kernels
+      ally evaluate its effect on image data from CIFAR-10. For
+      this experiment, we employ the LogicTreeNet-M architec-                          We investigate the effect of employing higher-rank LUTs
+      ture and the corresponding parametrization from DLGN (Pe-                        within convolutional kernels using WARP. Recall that in
+      tersen et al., 2024). In the original work, each pixel is en-                    DLGN, convolutional kernels with 2d inputs are imple-
+      coded as two bits per color channel, using the fixed uniform                     mented as binary trees of depth d, which cannot represent
+      thresholding. Fig. 4 depicts the average training curves over                    all Boolean functions over its 2d inputs.
+
+                                                                           7
+                                                         WARP Logic Neural Networks
+
+                      0.5
+Disc. Val. Accuracy
+
+                      0.4                                                                                              LIGHT
+                                                                                                                       DWN
+                      0.3                                                                                              LLNN
+                      0.2                                                                                              WARP (ours)
+                      0.1
+                            0   20   50   75      100      0       20        50       75      100      0        20       50       75       100
+                                                               Training Step [x10³]
+     Figure 7. Discrete validation accuracy (top) for DWN (Bacellar et al., 2024), LLNN (Ramı́rez et al., 2025), LIGHT (Rüttgers et al., 2025)
+     and WARP (ours) on CIFAR-10 with a deep architecture comparing varying LUT sizes, n = 2 (left), n = 4 (middle) and n = 6 (right).
+
+
+      Using WARP, we instead construct convolutional kernels                 2025) by considering a deep version of the medium-sized
+      from higher-input LUTs. Specifically, we implement kernels             model architecture from (Petersen et al., 2022) for CIFAR-
+      composed of 4-input LUTs arranged in a tree of depth d = 2,            10. Following (Rüttgers et al., 2025), we introduce a depth
+      resulting in an effective receptive field of 42 inputs. We             factor D that scales the number of layers in the network.
+      compare this configuration to a DLGN kernel with a binary
+                                                                             In Fig. 7, we plot the learning curves with respect to the
+      tree depth of d = 4, which aggregates 24 inputs per kernel.
+                                                                             discrete validation accuracy for n=2,4,6 (left to right) and
+     Despite having the same number of inputs, the two ap-                   D = 3. We observe that DWN still performs well for n = 2
+     proaches differ in parameter count: A DLGN kernel                       but its performance strongly degrades for higher LUT ranks.
+     with depth 4 requires 16·(8+4+2+1) trainable parameters,                This is due to the usage of approximate gradients hindering
+     whereas the corresponding WARP kernel requires only                     scalability to larger architectures. Unfortunately, the code
+     16·(4+1) parameters. Moreover, the evaluation of trees is               for LIGHT is not available. Since results are only reported
+     fundamentally sequential and cannot be parallelized, hence              for n = 2, we fall back on reporting approximate numbers
+     the shallower WARP tree reduces the number of required se-              stated in the paper. We observe that WARP strongly outper-
+     quential operations. As a result, WARP kernels provide                  forms LIGHT, with reaching a higher accuracy. Comparing
+     higher expressive power with fewer parameters and im-                   to LLNN, we can see that WARP exhibits better conver-
+     proved parallelism.                                                     gence due to the proposed residual initialization for n = 2,
+                                                                             while LLNN completely fails to learn for n=4,6.
+     Fig. 6 compares these two kernel implementations on
+     CIFAR-10. We employ a small model consisting of a single
+     convolutional layer with a skip connection, which combines              6. Conclusion
+     its output with the previous layer using a relaxed OR oper-
+                                                                             We introduced WARP, a differentiable and parameter-
+     ation. All remaining dense connections in the network are
+                                                                             efficient framework for learning logic neural networks based
+     implemented using logic gates, such that only the convolu-
+                                                                             on the Walsh–Hadamard transform. WARP provides a
+     tional kernel construction differs between the two models.
+                                                                             fully expressive parametrization of Boolean functions while
+     The architecture is described in more detail in Tab. 2.
+                                                                             avoiding the redundancy, approximation errors, and scala-
+     The results show that WARP kernels with higher-input                    bility limitations of prior approaches. Through learnable
+     LUTs achieve slightly higher final discrete accuracy than               thresholding, residual initialization, and stochastic smooth-
+     the DLGN baseline. However, this improvement comes at                   ing, WARP enables stable training and significantly faster
+     the cost of slower convergence during training, indicating a            convergence, while narrowing the gap between relaxed train-
+     trade-off between expressivity and optimization difficulty              ing and discrete logic inference. Our experiments demon-
+     when increasing LUT-arity in convolutional settings. We at-             strate that WARP scales effectively to deeper architectures
+     tribute the slower convergence to the increased discretization          and higher-arity logic blocks, making it a promising founda-
+     gap, which currently prevents this approach from efficiently            tion for efficient, hardware-native inference.
+     scaling to deeper architectures such those in Fig. 4.
+                                                                             While we do not report results on hardware deployment, we
+                                                                             expect performance at least on par with existing methods,
+      5.4. Comparison to n-LUT State-of-the-Art                              since WARP learns equivalent logic structures. In future
+     We show the advantages of WARP over other fully ex-                     work, we plan to evaluate WARP on hardware targets to
+     pressive LNNs from the literature. For comparison, we                   quantify inference latency and resource utilization, and to
+     analyze the scalability of DWNs (Bacellar et al., 2024),                benchmark performance on larger-scale datasets.
+     LLNNs (Ramı́rez et al., 2025) and LIGHT (Rüttgers et al.,
+
+
+                                                                         8
+                                                WARP Logic Neural Networks
+
+Impact Statement                                                     Bacellar, A. T., Jadhao, M. P., Nag, S., Lima, P., Franca,
+                                                                       F. M., and John, L. K. nanoml for human activity recog-
+This paper presents work whose goal is to advance the field            nition. arXiv preprint arXiv:2502.12173, 2025.
+of Machine Learning. There are many potential societal
+consequences of our work, none which we feel must be                 Bhat, M. N., Russo, M., Carloni, L. P., Di Guglielmo, G.,
+specifically highlighted here.                                         Fahim, F., Li, A. C., and Perdue, G. N. Machine learn-
+                                                                       ing for arbitrary single-qubit rotations on an embedded
+Acknowledgments                                                        device. Quantum Machine Intelligence, 7(1):8, 2025.
+
+This work was supported by the National Science Founda-              Carneiro, H. C., Pedreira, C. E., França, F. M., and Lima,
+tion under Cooperative Agreement PHY-2323298.                          P. M. The exact vc dimension of the wisard n-tuple
+                                                                       classifier. Neural computation, 31(1):176–207, 2019.
+References
+                                                                     Chen, H., Wang, Y., Xu, C., Shi, B., Xu, C., Tian, Q., and
+Aarrestad, T., Loncar, V., Ghielmetti, N., Pierini, M., Sum-           Xu, C. Addernet: Do we really need multiplications in
+  mers, S., Ngadiuba, J., Petersson, C., Linander, H.,                 deep learning? In Proceedings of the 2020 IEEE/CVF
+  Iiyama, Y., Di Guglielmo, G., Duarte, J., Harris, P.,                Conference on Computer Vision and Pattern Recognition
+  Rankin, D., Jindariani, S., Pedro, K., Tran, N., Liu,               (CVPR), pp. 1468–1477, 2020.
+  M., Kreinar, E., Wu, Z., and Hoang, D. Fast convo-
+  lutional neural networks on fpgas with hls4ml. Ma-                 Chmiel, B., Ben-Uri, L., Shkolnik, M., Hoffer, E., Banner,
+  chine Learning: Science and Technology, 2(4):045015,                 R., and Soudry, D. Neural gradients are near-lognormal:
+  July 2021. ISSN 2632-2153. doi: 10.1088/2632-2153/                   improved quantized and sparse training. In Proceedings
+  ac0ea1. URL http://dx.doi.org/10.1088/                               of the 9th International Conference on Learning Repre-
+  2632-2153/ac0ea1.                                                    sentations (ICLR), 2021.
+
+Aleksander, I., De Gregorio, M., França, F. M. G., Lima, P.         Elhoushi, M., Chen, Z., Shafiq, F., Tian, Y. H., and Li, J. Y.
+  M. V., and Morton, H. A brief introduction to weightless             Deepshift: Towards multiplication-less neural networks.
+  neural systems. In Proceedings of the 17th European                  In Proceedings of the 2021 IEEE/CVF Conference on
+  Symposium on Artificial Neural Networks (ESANN), pp.                 Computer Vision and Pattern Recognition (CVPR), pp.
+  299–305, 2009.                                                       2359–2368, 2021.
+
+Andronic, M. and Constantinides, G. A. Polylut: learn-               Fino and Algazi. Unified matrix treatment of the fast walsh-
+  ing piecewise polynomials for ultra-low latency fpga lut-            hadamard transform. IEEE Transactions on Computers,
+  based inference. In Proceedings of the 2023 International            100(11):1142–1146, 1976.
+ Conference on Field Programmable Technology (ICFPT),
+                                                                     Gholami, A., Kim, S., Dong, Z., Yao, Z., Mahoney, M. W.,
+  pp. 60–68. IEEE, 2023.
+                                                                       and Keutzer, K. A survey of quantization methods for effi-
+                                                                       cient neural network inference. In Low-Power Computer
+Andronic, M. and Constantinides, G. A. Neuralut: Hiding
+                                                                      Vision, pp. 291–326. Chapman and Hall/CRC, 2022.
+  neural network density in boolean synthesizable functions.
+  In Proceedings of the 34th International Conference on             He, K., Zhang, X., Ren, S., and Sun, J. Deep residual learn-
+ Field-Programmable Logic and Applications (FPL), pp.                  ing for image recognition. In Proceedings of the IEEE
+ 140–148. IEEE, 2024.                                                  conference on computer vision and pattern recognition,
+                                                                       pp. 770–778, 2016.
+Andronic, M. and Constantinides, G. A. Neuralut-assemble:
+  Hardware-aware assembling of sub-neural networks for               Hedayat, A. and Wallis, W. D. Hadamard matrices and their
+  efficient lut inference. In Proceedings of the 33rd IEEE             applications. The annals of statistics, pp. 1184–1238,
+ Annual International Symposium on Field-Programmable                 1978.
+  Custom Computing Machines (FCCM), pp. 208–216.
+  IEEE, 2025.                                                        Hellerstein, L. and Servedio, R. A. On pac learning al-
+                                                                       gorithms for rich boolean function classes. Theoretical
+Bacellar, A. T., Susskind, Z., Breternitz, M., John, E., John,         Computer Science, 384(1):66–76, 2007.
+  L. K., Lima, P. M., França, F. M., et al. Differentiable
+  weightless neural networks. In Proceedings of the 41st             Hoang, D., Gupta, A., and Harris, P. Kanel\’e: Kolmogorov-
+  International Conference on Machine Learning, PMLR,                  arnold networks for efficient lut-based evaluation. arXiv
+  volume 235, pp. 2277–2295, 2024.                                     preprint arXiv:2512.12850, 2025.
+
+                                                                 9
+                                                WARP Logic Neural Networks
+
+Hoefler, T., Alistarh, D., Ben-Nun, T., Dryden, N., and                 using cnns and fpgas. Machine Learning: Science and
+  Peste, A. Sparsity in deep learning: Pruning and growth               Technology, 6(1):015072, 2025.
+  for efficient inference and training in neural networks.
+ Journal of Machine Learning Research, 22(241):1–124,                 Mommen, W., Keuninckx, L., Hartmann, M., and Wambacq,
+  2021.                                                                P. A method for optimizing connections in differentiable
+                                                                       logic gate networks. arXiv preprint arXiv:2507.06173,
+Hubara, I., Courbariaux, M., Soudry, D., El-Yaniv, R., and             2025.
+  Bengio, Y. Binarized neural networks. Advances in
+  neural information processing systems, 29, 2016.                    Nguyen, V. M., Ocampo-Blandon, C., Askri, A., Leconte,
+                                                                        L., and Tran, B.-H. Bold: Boolean logic deep learning.
+Jang, E., Gu, S., and Poole, B. Categorical reparameteri-              Advances in Neural Information Processing Systems, 37:
+  zation with gumbel-softmax. In Proceedings of the 5th                 61912–61962, 2024.
+  International Conference on Learning Representations
+  (ICLR), 2017.                                                       O’Donnell, R. Analysis of boolean functions. Cambridge
+                                                                        University Press, 2014.
+Khataei, A. and Bazargan, K. Treelut: An efficient alterna-
+  tive to deep neural networks for inference acceleration             Petersen, F., Borgelt, C., Kuehne, H., and Deussen, O. Deep
+  using gradient boosted decision trees. In Proceedings of              differentiable logic gate networks. Advances in Neural
+  the 2025 ACM/SIGDA International Symposium on Field                   Information Processing Systems, 35:2006–2018, 2022.
+ Programmable Gate Arrays (FPGA), pp. 14–24, 2025.
+                                                                      Petersen, F., Kuehne, H., Borgelt, C., Welzel, J., and Er-
+Kim, Y. Deep stochastic logic gate networks. IEEE Access,               mon, S. Convolutional differentiable logic gate networks.
+  11:122488–122501, 2023.                                               Advances in Neural Information Processing Systems, 37:
+                                                                        121185–121203, 2024.
+Kresse, F., Yu, E., and Lampert, C. H. Scalable inter-
+  connect learning in boolean networks. arXiv preprint                Qin, H., Gong, R., Liu, X., Bai, X., Song, J., and Sebe, N.
+  arXiv:2507.02585, 2025.                                               Binary neural networks: A survey. Pattern Recognition,
+Kunz. On the equivalence between one-dimensional discrete               105:107281, 2020.
+  walsh-hadamard and multidimensional discrete fourier
+                                                                      Ramı́rez, I., Garcia-Espinosa, F. J., Concha, D., Aranda,
+  transforms. IEEE Transactions on Computers, 100(3):
+                                                                        L. A., and Schiavi, E. Llnn: A scalable lut-based logic
+  267–268, 1979.
+                                                                        neural network architecture for fpgas. IEEE Transactions
+LeCun, Y., Bengio, Y., and Hinton, G. Deep learning. Na-                on Circuits and Systems I: Regular Papers, 2025.
+  ture, 521(7553):436–444, 2015.
+                                                                      Rüttgers, L., Aczel, T., Plesner, A., and Wattenhofer, R.
+Lin, S., Ji, R., Li, Y., Wu, Y., Huang, F., and Zhang, B. Ac-           Light differentiable logic gate networks. arXiv preprint
+  celerating convolutional networks via global & dynamic                arXiv:2510.03250, 2025.
+  filter pruning. In Proceedings of the 27th International
+  Joint Conference on Artificial Intelligence (IJCAI), vol-           Sun, C., Årrestad, T. K., Loncar, V., Ngadiuba, J., and
+  ume 2, pp. 8. Stockholm, 2018.                                        Spiropulu, M. Gradient-based automatic mixed precision
+                                                                        quantization for neural networks on-chip. arXiv preprint
+Liu, S., Chen, T., Chen, X., Shen, L., Mocanu, D. C., Wang,             arXiv:2405.00645, 2024.
+  Z., and Pechenizkiy, M. The unreasonable effectiveness
+  of random pruning: Return of the most naive baseline                Sung, Y.-L., Nair, V., and Raffel, C. A. Training neural
+  for sparse training. In Proceedings of the 10th Interna-              networks with fixed sparse masks. Advances in Neural
+  tional Conference on Learning Representations (ICLR).                 Information Processing Systems, 34:24193–24205, 2021.
+  OpenReview, 2022.
+                                                                      Susskind, Z., Arora, A., Miranda, I. D., Villon, L. A.,
+Maddison, C., Mnih, A., and Teh, Y. The concrete dis-                   Katopodis, R. F., De Araújo, L. S., Dutra, D. L., Lima,
+ tribution: A continuous relaxation of discrete random                  P. M., França, F. M., Breternitz Jr, M., et al. Weightless
+ variables. In Proceedings of the 5th International Confer-             neural networks for efficient edge inference. In Proceed-
+ ence on Learning Representations (ICLR). International                 ings of the 31st International Conference on Parallel
+ Conference on Learning Representations, 2017.                          Architectures and Compilation Techniques (PACT), pp.
+                                                                        279–290, 2022.
+Martins, A., Lopez, M., Baltus, G., Meijer, Q., van der Sluys,
+ M., Van Den Broeck, C., and Caudill, S. Improving early              Susskind, Z., Arora, A., Miranda, I. D., Bacellar, A. T., Vil-
+ detection of gravitational waves from binary neutron stars             lon, L. A., Katopodis, R. F., De Araújo, L. S., Dutra, D. L.,
+
+                                                                 10
+                                               WARP Logic Neural Networks
+
+  Lima, P. M., França, F. M., et al. Uleen: A novel archi-
+  tecture for ultra-low-energy edge neural networks. Trans-
+  actions on Architecture and Code Optimization (TACO),
+  20(4):1–24, 2023.
+Weng, O., Andronic, M., Zuberi, D., Chen, J., Geniesse,
+ C., Constantinides, G. A., Tran, N., Fraser, N. J., Duarte,
+ J. M., and Kastner, R. Greater than the sum of its luts:
+ Scaling up lut-based neural networks with amigolut. In
+ Proceedings of the 2025 ACM/SIGDA International Sym-
+ posium on Field Programmable Gate Arrays, pp. 25–35,
+ 2025.
+Yousefi, S., Plesner, A., Aczel, T., and Wattenhofer, R. Mind
+  the gap: Removing the discretization gap in differentiable
+  logic gate networks. arXiv preprint arXiv:2506.07500,
+  2025.
+Yue, C. and Jha, N. K. Learning interpretable differen-
+  tiable logic networks. IEEE Transactions on Circuits and
+  Systems for Artificial Intelligence, 2024.
+
+
+
+
+                                                                11
+                                                           WARP Logic Neural Networks
+
+                     Table 1. Densely conncted architectures for JSC, MNIST, FashionMNIST and CIFAR-10 datasets.
+
+                          Dataset             Model         Layers        Neurons/layer      #Parameters       GroupSum temp
+                          JSC                     sm            1              50               3200                     1/0.3
+                          MNIST                  small          6             6000             48000                     1/0.1
+                          FashionMNIST           small          6             6000             48000                     1/0.1
+                          CIFAR-10            small             4            12000             48000                     1/0.01
+                                             medium             4            128000            512000                    1/0.01
+
+                                Table 2. Architecture of the CLGN CIFAR-10 Res model (knum = 32, nbits = 3).
+
+         Layer                              Input dimension             Output dimension                            Description
+         ResidualLogicBlock (DLGN)          3nbits × 32 × 32             2knum × 16 × 16       Depth = 4, receptive field 3 × 3, padding 1
+         ResidualLogicBlock (WARP)          3nbits × 32 × 32             2knum × 16 × 16       Depth = 2, receptive field 3 × 3, padding 1
+         Flatten                            2knum × 16 × 16                256 × 2knum           Spatial flattening of logic feature maps
+         LogicDense1                          256 × 2knum                    512knum                   Fully connected logic layer
+         LogicDense2                            512knum                      256knum                   Fully connected logic layer
+         LogicDense3                            256knum                      320knum                   Fully connected logic layer
+         GroupSum                               320knum                        10             Grouped logic aggregation with temperature τ
+
+Table 3. The 16 Boolean functions of two inputs, sorted lexicographically by their truth tables (ordered as 00, 01, 10, 11), with probabilistic
+surrogates, WH coefficients (γ1 , γ2 , γ3 , γ4 ) and indicator coefficients (β1 , β2 , β3 , β4 ).
+
+     #            Gate           Formula    00      01     10       11        Surrogate                   WH                      Indicator     Icon
+
+     1           CONST0              0       0         0    0       0               0               (1, 0, 0, 0)                 (0, 0, 0, 0)
+                                                                                                    1 1 1
+                                                                                                      , , , − 12
+                                                                                                                         
+     2            AND             a∧b        0         0    0       1             ab                2 2 2
+                                                                                                                                 (0, 0, 0, 1)
+                                                                                                    1
+                                                                                                      , − 21 , 12 , 21
+                                                                                                                       
+     3           a ∧ ¬b          a ∧ ¬b      0         0    1       0          a(1 − b)             2
+                                                                                                                                 (0, 0, 1, 0)
+     4            ID(a)             a        0         0    1       1               a               (0, 0, 1, 0)                 (0, 0, 1, 1)
+                                                                                                    1 1
+                                                                                                     , , − 12 , 21
+                                                                                                                         
+     5           ¬a ∧ b          ¬a ∧ b      0         1    0       0          (1 − a)b             2 2
+                                                                                                                                 (0, 1, 0, 0)
+     6            ID(b)              b       0         1    0       1               b               (0, 1, 0, 0)                 (0, 1, 0, 1)
+     7            XOR             a⊕b        0         1    1       0        a + b − 2ab            (0, 0, 0, 1)                 (0, 1, 1, 0)
+                                                                                                   − 12 , 21 , 12 , 21
+                                                                                                                         
+     8             OR             a∨b        0         1    1       1         a + b − ab                                         (0, 1, 1, 1)
+                                                                                                 1
+                                                                                                   , − 12 , − 12 , − 21
+                                                                                                                             
+     9            NOR           ¬(a ∨ b)     1         0    0       0       1 − a − b + ab       2
+                                                                                                                                 (1, 0, 0, 0)
+     10          XNOR           ¬(a ⊕ b)     1         0    0       1      1 − a − b + 2ab         (0, 0, 0, −1)                 (1, 0, 0, 1)
+     11          NOT(b)             ¬b       1         0    1       0             1−b              (0, −1, 0, 0)                 (1, 0, 1, 0)
+                                                                                                 − 21 , − 21 , 12 , − 21
+                                                                                                                             
+     12     IMP (b → a)          ¬b ∨ a      1         0    1       1         1 − b + ab                                         (1, 0, 1, 1)
+     13          NOT(a)             ¬a       1         1    0       0             1−a              (0, 0, −1, 0)                 (1, 1, 0, 0)
+                                                                                                 − 21 , 12 , − 12 , − 21
+                                                                                                                             
+     14     IMP (a → b)          ¬a ∨ b      1         1    0       1         1 − a + ab                                         (1, 1, 0, 1)
+                                                                                                 − 21 , − 21 , − 12 , 12
+                                                                                                                         
+     15          NAND           ¬(a ∧ b)     1         1    1       0           1 − ab                                           (1, 1, 1, 0)
+     16          CONST1              1       1         1    1       1               1              (−1, 0, 0, 0)                 (1, 1, 1, 1)
+
+
+
+A. Generality of WARP
+Proof. We proof Theorem 4.1.
+
+                                                                                                               n
+WARP is Most Parameter Efficient First, we remark that ϕW
+                                                        i is an orthonormal basis for all functions g : {−1, 1} →
+{−1, 1}
+                     X                              X                       X
+              g(s) =      θ i ϕW
+                               i (s), ϕW     W
+                                        i , ϕj =            ϕW      W
+                                                             i (s)ϕj (s) =        Hik Hkj = δij .
+                                 i∈[2n ]                                  s∈{−1,1}n                       k∈[2n ]
+
+
+                                                                             12
+                                               WARP Logic Neural Networks
+
+Through orthogonality, it follows that the rows of H are linearly independent which leads to the orthonormal basis argument.
+Thus, no other parametrization exists that can represent every g with less parameters.
+
+WARP is More General Than LLNN           A basis change w.r.t. ϕ1i can be computed by finding a basis transformation matrix
+T with
+                                               X                                         X
+                         Tij = ϕ1i , ϕW
+                                      j =               1b(i) (φ−1 (s))ϕW
+                                                                        j (s) =                     δik Hkj = Hij .
+                                            s∈{−1,1}n                                k∈[2n ]
+
+
+Thus, any s ∈ {−1, 1}n can be transformed between the bases by using the Hadamard matrix ij Hij ϕW                1
+                                                                                                P
+                                                                                                         j (s) = ϕi (s).
+While the LLNN parametrization restricts their parameters to be in [0, 1] through applying the sigmoid function, WARP
+allows them to take arbitrary values in R.
+
+WARP is More General Than DWN            In fact, the DWN parametrization is similar to LLNN, but uses a straight-through
+estimator in the forward pass
+
+                                         fDWN (x) = φ fLLNN φ−1 (sgn(x))
+                                                                                      
+                                                                                            .
+
+Hence, it relies on approximate gradients and is less general than LLNN and through the previous statement, DWN is also
+less general than WARP by means of a non-bijective mapping sgn.
+
+WARP is Less Redundant and More Parameter-Efficient Than DLGN Even though the the functions ϕDLGN      j    (s) are
+                                                                                                                 n
+spanning all Boolean functions, they do not form a basis. DLGNs are parametrized by way more parameters (2 ≪ 22 )
+                                                                                                          n
+
+and a linear projection to the LLNN basis is given by
+                               n   2n          (j)
+                                                                    X
+                   P ∈ {0, 1}2 ×2 , Pij = bi         ∈ {0, 1} ⇒               Pij ϕDLGN
+                                                                                   j    (s) = ϕ1i (s), ∀i ∈ [2n ].
+                                                                   k∈[22n ]
+
+
+Hence, DLGNs introduce a lot of redundancy.
+
+B. Parametrization Discretization
+Proof. We proof Theorem 4.2. The discretization error in the p-norm is given as
+                                                                                         ! p1
+                                                              X                      p
+                                                                         (i)
+                                        ∥f WARP − t∥p =             f (b ) − ti                 .
+                                                               i
+
+                                                        n
+Finding an optimal discretization strategy t ∈ {0, 1}2 leads to
+
+                                    arg min ∥f WARP − t∥p ⇔ arg min f (b(i) ) − ti ,
+                                   t∈{0,1}2n                        ti ∈{0,1}
+
+
+for all i ∈ [2n ] and with
+                                                             X                            X       
+              (f    )
+             ti WARP = arg min f (b(i) ) − t = arg min σ                Hij θj − t = 1 + sgn    Hij θj /2
+                         t∈{0,1}                 t∈{0,1}            j                                           j
+
+                                            n                                       √
+we obtain Eq. (8). For a vector s ∈ {−1, 1}2 , the WH parameters are obtained by (1/ 2n )Hs. Looking at the parameter
+vector θ ∈ Rn
+                 1                   1             X             1        X        
+arg min     θ − √ Ht = arg min Hθ − √ t ⇔ arg min      Hij θj − √ t = sgn     Hij θj ∀i ∈ [2n ],
+t∈{−1,1}n        2n 2 t∈{−1,1}n      2n 2 t∈{−1,1}   j           2n         j
+
+
+where we used the norm-preserving property of the unitary matrix H.
+
+                                                              13
+                                                            WARP Logic Neural Networks
+
+C. Parameter Initialization
+Proof. We proof the validity of the residual intialization in Eq. (10). The LUT of the pass-through function f (x) = xn is
+          (f )                 (f )
+given by ti = 0 if i < ℓ and ti = 1 else with ℓ = 2n−1 + 1. Thus, aiming for the WARP parametrization to represent f
+with probability p for every LUT entry leads to
+            (f    )    (f )
+        P(ti WARP = ti ) = p, ∀i ⇔ fWARP (b(i) ) = 1 − p, i < ℓ ∧ fWARP (b(i) ) = p, i ≥ ℓ
+                                       √                                          √
+                                                                                                
+                                         2n X                                       2 n X
+                                 ⇔ σ             Hij θj  = 1 − p, i < ℓ ∧ σ              Hij θj  = p, i ≥ ℓ
+                                        τ      j
+                                                                                    τ   j
+                                   X                 τ                   X                τ
+                                 ⇔    Hij θj = − √ σ −1 (p), i < ℓ ∧           Hij θj = √ σ −1 (p), i ≥ ℓ,
+                                                      2n                                  2n
+                                    j                                     j
+
+
+with σ −1 (1 − p) = −σ −1 (p). Due to the recursive structure of the Hadamard matrix
+                                                            (n)
+                                                                      H (n)
+                                                                                                                
+                                           1                H                               1             1     1
+                                H (n+1) = √                                    ,   H (1) = √                        ,
+                                            2               H (n)     −H (n)                 2            1    −1
+
+combining the 2n different linear equations leads to
+                                     XX                   2n−1              τ
+                                                 Hij θj = √ (θ1 + θℓ ) = − √ σ −1 (p)2n−1 ,
+                                                            2n              2n
+                                     i<ℓ     j
+                                     XX                   2n−1            τ
+                                                 Hij θj = √ (θ1 − θℓ ) = √ σ −1 (p)2n−1 .
+                                                            2n            2n
+                                     i≥ℓ     j
+
+
+Subtracting these two equations, we obtain θℓ = τ σ −1 (1 − p) and θ1 = 0. Similarly, it follows that θi = 0, ∀i ∈ [2n ] \ {ℓ}.
+
+
+
+Gradient Stability    The entries of the gradient w.r.t. to the input is computed as
+                                                                                             
+                       ∂fWARP (x)       1 ′ 1 X                            X        ∂
+                                     = σ                θi ϕW
+                                                            i (φ(x))
+                                                                     ·         θi    ϕW (φ(x)) .
+                           ∂xi          τ      τ     n                         n
+                                                                                    ∂xi i
+                                                             i∈[2 ]                        i∈[2 ]
+
+
+The gradient vanishes if one of the two factors is close to 0. For the first factor, we get
+                                                                                                      
+                   1   X
+                                          = σ 1
+                                                       X
+                                                                            · σ 1 − 1
+                                                                                            X
+              σ′           θ i ϕW
+                                 i (φ(x))                    θi ϕ W
+                                                                  i (φ(x))                     θi ϕW
+                                                                                                   i (φ(x)) ,
+                                                                                                           
+                   τ      n
+                                                    τ     n
+                                                                                        τ    n
+                      i∈[2 ]                                        i∈[2 ]                                    i∈[2 ]
+
+
+which is close to 0 if the argument is ≪ 0 or ≫ 0. For our RI, we have
+                                X                                                  Y                (ℓ)
+                                         θi ϕW              W
+                                             i (φ(x)) = θℓ ϕℓ (φ(x)) = θℓ                  φ(xk )bk = θℓ φ(xℓ ),
+                               i∈[2n ]                                             k∈[n]
+
+which can be well controlled if θl is not ≪ 0 or ≫ 0.
+The second factor evaluates to
+                                             X              ∂ W                ∂
+                                                      θi       ϕi (φ(x)) = θℓ     φ(xℓ ) = −2θℓ ,
+                                                           ∂xi                ∂xℓ
+                                            i∈[2n ]
+
+which is also well controlled if θl is < 0 or > 0. Our proposed RI intialization thus prevents gradient vanishing, compared
+to random initialization (Rüttgers et al., 2025).
+
+                                                                             14
+                                                         WARP Logic Neural Networks
+
+                                          Soft           Gumbel Soft                STE               Gumbel STE
+Disc. Val. Accuracy
+
+                      0.8
+
+                      0.6
+
+                      0.4
+                      0.2
+Disc. Gap
+
+
+
+
+                      0.1
+                      0.0
+                            0   20   50    75      100     0        20        50      75       100         0          20   50     75   100
+                                                               Training Step [x10³]
+     Figure 8. Discrete validation accuracy (top) and discretization gap (bottom) for WARP on FashionMNIST comparing different parametriza-
+     tion methods and varying LUT sizes, n = 2 (left), n = 4 (middle) and n = 6 (right).
+
+
+      Intercomparability to DLGN DLGNs use RI, introducing skip connections by increasing probability of sampling identity
+      gates. Introducing a parameter c ≥ 0 controlling this increase, we obtain
+                        (f    )
+                                                       X
+                     P(ti DLGN = 1) = fDLGN (b(i) ) =      αj ϕDLGN
+                                                                j    (b(i) )
+                                                               j
+                                                                                                   (                   n−1
+                                                               1     X (j)
+                                                                                   ′        ′         ec , if j = 22       − 1,
+                                                         = c   2 n          t i   cj ,     cj   =
+                                                          e +2 −1 j                                   1, else.
+                                                                                                   
+                                                               1     t(j
+                                                                             ′
+                                                                               ) c
+                                                                                         X (j)
+                                                         = c     n        i     e   +           ti 
+                                                          e + 22 − 1                          ′
+                                                                                         j̸=j
+                                                               1     
+                                                                                       c        2n −1
+                                                                                                                   
+                                                         = c     n     δ i>2    n−1 e + 2              −  δ i>2n−1   .
+                                                          e + 22 − 1
+                                                                         (f    )    (f )        (f     )       (f )
+     To obain intercomparability between methods, we want P(ti DLGN = ti ) = P(ti WARP = ti ) = p. Thus,
+                                                                                   n
+                                                                                           
+                                 θℓ = τ σ −1 (1 − p) = (2n − 1) log(2) − log ec + 22 −1 − 1 .
+
+      For obtaining the corresponding value of c representing a certain probability p, we compute
+                                                       1       n 
+                                                         n     22 −1 = 1 − p
+                                                 ec + 2 2 − 1
+                                                                         n
+                                                           c    2n     22 −1
+                                                        ⇔e +2 −1=
+                                                                       1−p
+                                                                        2n −1      
+                                                                         2       2n
+                                                                   ⇔c=         −2 +1 .
+                                                                         1−p
+
+      D. Training Dynamics on MNIST and Fashion-MNIST
+     We run a similar experiment to the one conducted in Sec. 5.1, but on different datasets. That is, we plot the discrete validation
+     accuracy and the discretization gap for LUT sizes n = 2, 4, 6 on MNIST and FashionMNIST, varying the parametrization
+     with using Gumbel noise injection and STEs. For both datasets, we utilize the small model from (Petersen et al., 2022) and
+     the plots are given in Figs. 8 and 9. We scale the temperature parameter τ proportional to the number of parameters to
+     accomodate for the number of summands, that is τ = 1 for n = 2, τ = 4 for n = 4, and τ = 16 for n = 6.
+
+                                                                         15
+                                                                WARP Logic Neural Networks
+
+
+
+
+                                                Soft            Gumbel Soft              STE             Gumbel STE
+Disc. Val. Accuracy
+
+
+
+
+                      0.9
+                      0.8
+                      0.7
+
+                      0.2
+Disc. Gap
+
+
+
+
+                      0.1
+                      0.0
+                            0      20     50     75       100    0        20        50     75     100      0     20      50         75   100
+                                                                     Training Step [x10³]
+     Figure 9. Discrete validation accuracy (top) and discretization gap (bottom) for WARP on MNIST comparing different parametrization
+     methods and varying LUT sizes, n = 2 (left), n = 4 (middle) and n = 6 (right).
+
+
+
+
+     Table 4. Hyperparameters used in the thresholding and high-input convolution experiments. Parameters not listed were adopted from the
+     original literature of the respective model architectures.
+
+                                Experiment                               Hyperparameter                        Value
+                                                                         Batch size                            128
+                                                                         Forward sampling                      Gumbel-Soft
+                                                                         Learning rate                         0.002
+                                                                         WARP sigmoid temperature              1.0
+                                Learnable Thresholding (JSC)
+                                                                         Binarization learning rate            1/nbits (relative)
+                                                                         Binarization temperature              0.001
+                                                                         Binarization temperature (Softplus)   0.001
+                                                                         Residual initialization probability   0.95
+                                                                         Binarization learning rate            0.02
+                                Learnable Thresholding (CIFAR-10)        Binarization temperature              0.0002
+                                                                         Binarization temperature (Softplus)   0.01
+                                                                         Batch size                            128
+                                High-Input Convolutions                  Parametrization temperature           1.0
+                                                                         Residual initialization probability   0.95
+
+
+
+
+                                                                               16
+

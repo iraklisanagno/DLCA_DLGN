@@ -1,0 +1,15 @@
+# Downloaded compiler; retain .tools/compiler_source.json as provenance.
+/.tools/tectonic
+
+# Temporary LaTeX products and rendered previews. Keep sources and final PDFs.
+*.aux
+*.blg
+*.out
+*.xdv
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+/output/preview/
+/output/*.bbox.html
+/output/figures/*.bbox.html
+/output/main.txt

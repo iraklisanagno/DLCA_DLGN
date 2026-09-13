@@ -1,0 +1,74 @@
+{
+  "00_abstract": {
+    "words": 163,
+    "target": 163,
+    "range": [
+      140,
+      180
+    ],
+    "approx_mean_sentence_words_excluding_math": 18.1,
+    "sentences_over_35_words": [],
+    "em_dashes": 0,
+    "banned_terms": []
+  },
+  "01_introduction": {
+    "words": 425,
+    "target": 450,
+    "range": [
+      383,
+      517
+    ],
+    "approx_mean_sentence_words_excluding_math": 17.7,
+    "sentences_over_35_words": [],
+    "em_dashes": 0,
+    "banned_terms": []
+  },
+  "02_related_work": {
+    "words": 464,
+    "target": 450,
+    "range": [
+      383,
+      517
+    ],
+    "approx_mean_sentence_words_excluding_math": 19.5,
+    "sentences_over_35_words": [],
+    "em_dashes": 0,
+    "banned_terms": []
+  },
+  "03_methodology": {
+    "words": 823,
+    "target": 900,
+    "range": [
+      765,
+      1035
+    ],
+    "approx_mean_sentence_words_excluding_math": 17.9,
+    "sentences_over_35_words": [],
+    "em_dashes": 0,
+    "banned_terms": []
+  },
+  "04_experiments": {
+    "words": 642,
+    "target": 585,
+    "range": [
+      498,
+      672
+    ],
+    "approx_mean_sentence_words_excluding_math": 17.4,
+    "sentences_over_35_words": [],
+    "em_dashes": 0,
+    "banned_terms": []
+  },
+  "05_conclusion": {
+    "words": 327,
+    "target": 315,
+    "range": [
+      268,
+      362
+    ],
+    "approx_mean_sentence_words_excluding_math": 19.2,
+    "sentences_over_35_words": [],
+    "em_dashes": 0,
+    "banned_terms": []
+  }
+}

@@ -1,0 +1,24 @@
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,>=Stealth,
+ box/.style={draw=methodblue,rounded corners=1pt,align=center,minimum height=0.85cm,font=\normalsize},
+ smallbox/.style={box,text width=3.5cm},
+ arr/.style={->,thick,draw=methodblue}]
+\node[smallbox] (dense) at (1.8,1.0) {Dense image input\\$(c,y,x,\text{threshold})$};
+\node[smallbox] (conv) at (1.8,-0.25) {Convolutional channels\\retain spatial sampling};
+\node[box,text width=3.25cm] (semantic) at (6.0,1.0) {Semantic pairing\\first layer / classifier input};
+\node[box,text width=3.25cm] (stages) at (6.0,-0.25) {Multiscale matchings\\deeper layers};
+\node[box,text width=3.4cm] (fixed) at (10.4,0.4) {Fixed predecessor indices\\train gate functions};
+\node[box,text width=2.4cm] (hard) at (14.1,0.4) {Harden gates\\Boolean inference};
+\draw[arr] (dense) -- (semantic);
+\draw[arr] (conv.east) -- ++(0.35,0) |- (semantic.west);
+\draw[arr] (semantic) -- (stages);
+\draw[arr] (semantic.east) -- ++(0.4,0) |- (fixed.west);
+\draw[arr] (stages.east) -- ++(0.4,0) |- (fixed.west);
+\draw[arr] (fixed) -- (hard);
+\node[align=center,font=\normalsize,text=controlgray] at (7.6,-1.2)
+ {Stage priority: degree spread $\rightarrow$ ancestry novelty $\rightarrow$ nominal scale};
+\end{tikzpicture}
+\caption{One offline construction, two architecture adapters. Semantic pairing defines the input graph; matching stages organize deeper predecessors. Convolution retains the existing spatial sampler and shared logic trees. Construction metadata is discarded before deployment.}
+\label{fig:overview}
+\end{figure*}

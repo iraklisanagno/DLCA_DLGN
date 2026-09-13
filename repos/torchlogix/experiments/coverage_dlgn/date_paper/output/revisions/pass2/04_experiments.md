@@ -1,0 +1,31 @@
+# Experimental Evaluation
+
+## Protocol and main accuracy results
+
+We evaluate MNIST [@lecun1998], Fashion-MNIST [@xiao2017], and CIFAR-10 [@krizhevsky2009] using the saved configurations summarized in Table \ref{tab:protocol}. Each attribution pair shares the architecture, encoding, optimizer, budget, split, and seed, with 10% validation data selected using split seed 2027. The archived runs use RTX PRO 6000 Blackwell Max-Q GPUs and PyTorch 2.9.0 with CUDA 13.0, selecting checkpoints by hardened validation accuracy. Tables distinguish locally reproduced baselines (REP), our methods (OUR), and paper-reported references (R), with V/T denoting validation/test accuracy. Intervals use paired Student-$t$ statistics over training seeds, with sample standard deviations reported alongside means.
+
+{{table:protocol}}
+
+Table \ref{tab:dense} compares three paired seeds for random, V3, and U2; V3 uses semantic ordering, butterfly pairing, and ancestry-based swaps. U2 improves dense CIFAR-10 test accuracy by 3.18, 4.56, and 4.59 percentage points at S, M, and L, with positive paired intervals. The MNIST interval also excludes zero, whereas the Fashion-MNIST interval includes zero despite a positive mean across the three seeds. V3 remains more accurate at L, preventing a claim that the unified construction dominates every dense specialization. Published baselines differ from local results and provide context rather than paired evidence.
+
+{{table:dense}}
+
+The convolutional comparison in Table \ref{tab:conv} retains this distinction. Existing single-seed S/M tests improve by 3.26/2.08 points, respectively. Additional full-S seeds yield 61.05% mean U2 validation accuracy versus 59.82% for random, giving a 1.23-point gain with interval $[-3.36,5.82]$. U2 loses on seed 2, exposing variability that the existing single-seed test comparison cannot characterize across independent training runs. These new checkpoints have no held-out test results, so the single-seed test gains do not establish a replicated convolutional improvement.
+
+{{table:conv}}
+
+## Training-resource trade-offs
+
+Across matched dense configurations, U2 retains the same peak GPU allocations as random connectivity while adding a separate offline construction step. For U2, construction takes approximately 14.33 seconds at M and 31.22 seconds at L, compared with 41.39 and 113.53 minutes of recorded training. Full-S training averages 4.97 hours for both methods at 1.83 GiB, whereas Full-M U2 records 35.69 hours versus 25.47 for random. Different execution conditions prevent attributing that difference solely to topology, but the observed cost must remain visible.
+
+Table \ref{tab:routing} compares U2 with learned Top-32 routing under the LILogic architectures and encoding. U2 uses 80% fewer training parameters but loses 5.30/1.84 accuracy points at the two sizes. Top-32 allocates 17.1/16.0 times the peak GPU memory of U2, exposing the resource cost of its additional candidate signals. The Top-32 runs have one local seed, so these descriptive comparisons identify a resource trade-off without establishing an accuracy advantage over learned routing. All memory values are peak PyTorch allocations, and wall times include evaluation overhead.
+
+{{table:routing}}
+
+## Where does structure help?
+
+To examine the dense gain, we cross structured (S) and randomized (R) first/deeper layers at M with 20K updates. This randomization preserves each predecessor's degree in each input slot, controlling endpoint reuse while changing which predecessors feed each gate. Full U2 attains the highest mean in Table \ref{tab:factorial}, with first-layer effects of 4.49/3.69 points under structured/randomized deeper layers. Both first-layer intervals exclude zero, whereas the additional deeper-layer effect remains uncertain under the same degree-preserving randomization. The additional deeper-layer gain is 0.52 points with interval $[-0.52,1.56]$. All five contrasts are exploratory and unadjusted.
+
+{{table:factorial}}
+
+The corresponding convolutional body/classifier study finds a 2.14-point body effect with a fixed reference-U2 classifier, interval $[0.67,3.61]$. That effect remains conditional because the fixed classifier uses reference-body ancestry; separate controls do not establish an incremental benefit from ancestry-based selection over nominal stages. Adapted WARP preserves a dense U2 advantage but gives an inconclusive convolutional effect; both adapted variants trail the matched raw parameterization. These outcomes bound the mechanism and compatibility claims.

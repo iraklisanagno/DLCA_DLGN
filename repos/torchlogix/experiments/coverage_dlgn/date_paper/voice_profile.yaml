@@ -1,0 +1,195 @@
+# Author-group voice inferred from six user-provided papers.
+# Observations describe the corpus; drafting targets and project rules are prescriptions.
+profile_version: "1.0"
+generated_on: "2026-09-11"
+target: "DATE paper on unified structured connectivity for dense and convolutional LGNs"
+
+source_corpus:
+  root: "/home/ianagno/.codex/skills/writing-style/assets/pdfs"
+  documents:
+    - "Balancing_Throughput_and_Fair_Execution_of_Multi-DNN_Workloads_on_Heterogeneous_Embedded_Devices.pdf"
+    - "Ecomap.pdf"
+    - "Less_is_More_Optimizing_Function_Calling_for_LLM_Execution_on_Edge_Devices.pdf"
+    - "Pythia_An_Edge_First_Agent_for_State_Prediction_in_High-Dimensional_Environments.pdf"
+    - "RankMap_Priority_Aware_Multi_DNN_Manager_for_Heterogeneous_Embedded_Devices.pdf"
+    - "ToolAssist_An_Edge_First_Function_Calling_Framework_for_Large_Language_Models_with_Adaptive_Cloud_Collaboration.pdf"
+  document_ids: ["D1: FairBoost", "D2: Ecomap", "D3: Less is More", "D4: Pythia", "D5: RankMap", "D6: ToolAssist"]
+  page_counts: [14, 13, 7, 4, 8, 14]
+  notes: "All six papers informed the analysis of abstracts, introductions, methods, results, and conclusions. Page references use one-based PDF pages. These are coauthored papers with Iraklis Anagnostopoulos in every author list; the profile describes their shared technical voice, not uniquely attributable individual authorship. D6 explicitly discloses language-model assistance for grammar, language, and clarity on PDF page 13. Its distinctive rhetoric is not treated as independent proof of personal style."
+  extraction: "pdftotext in default and layout modes. Text is readable; two-column ordering, mathematical notation, figure labels, and line-end hyphenation require care. Bibliographies, tables, affiliations, and figure labels are excluded from cadence samples. Color-profile warnings did not prevent extraction."
+  weighting: "Use recurrence across documents, rather than raw word frequency, to identify stable habits. Prefer the compact organization of D3 and D5, explicitly labeled DATE 2025 papers in their PDFs. Do not let the longer journal manuscripts dictate conference length."
+  document_sha256:
+    D1: "ba071a1f42775e471bec95064f91a9b5c2c611e0101c2edbe42b8d0e5804ed0c"
+    D2: "7ea0b6897cc1723f25119e604704d920dd893c8e7670528064261d3d3fa401cb"
+    D3: "2544657b76d45ede0f4a7e219914f4643a6cc993a9f82c0f57324391567333e9"
+    D4: "efd84c863afb5c8b4ef9a159ebc89824830b2db9ca96627b9dc3a082b26d8a04"
+    D5: "0d1e94c13f27e1576b36892f3ccd3c51f31cc3cb1f492403b5be9f994986da11"
+    D6: "a7132af95f14013ae3880529ce6668813189361cacd4aa422f684815aa1bf6b8"
+
+constraints:
+  forbid_em_dash: true
+  avoid_ai_scaffolding: true
+  preserve_user_wording: true
+  prefer_precise_claims: true
+  policy: "These are supplied skill constraints, not claims that the source papers always follow them. Preserve technical meaning and established terms while correcting grammar and unsupported claims. Do not manufacture awkward wording to imitate errors in the corpus."
+  punctuation: "Use periods, commas, semicolons, or parentheses instead of an em dash. Do not use a spaced en dash as a substitute. Retain established technical compounds and mathematical minus signs."
+
+style_dimensions:
+  rhetorical_posture_and_intent:
+    summary: "An engineering argument organized around a concrete deployment constraint, the mechanism that addresses it, and a measured trade-off. The papers use an explicit author voice and repeatedly connect algorithmic choices to system behavior."
+    confidence: "High across D1-D6; promotional intensity varies."
+    do:
+      - "Start with the specific technical bottleneck and its consequence. For this paper, connect fixed connectivity to accuracy at a declared gate budget."
+      - "Use 'we propose', 'we define', and 'we evaluate' for research actions. Use the method or component name as the subject when describing its operation."
+      - "State a design decision, explain why it is needed, and identify the metric or experiment that evaluates it."
+      - "Keep a direct affirmative contribution statement, followed by its scope and evidence."
+      - "Name the cost accompanying an accuracy benefit; qualify the result where the trade-off occurs."
+    avoid:
+      - "Broad opening claims about a revolution, rapid advances, or a new era when they do not establish the technical problem."
+      - "Promotional adjectives as substitutes for mechanisms or measurements."
+      - "Converting the papers' occasional 'first', 'optimal', or 'guarantees' language into default wording."
+      - "A rhetorical opposition that introduces an irrelevant alternative merely for emphasis."
+
+  macro_structure_fingerprints:
+    summary: "Problem and motivation precede a component-based methodology; evaluation establishes the setup and metrics before comparing outcomes and resource costs."
+    section_patterns:
+      - "Abstract: concrete problem, limitation, proposed method, two or three mechanism details, evaluation scope, and one or two supported quantitative findings."
+      - "Introduction: deployment constraint, limitation of existing choices, a motivating example or observation, proposed approach, and usually three contributions. D1 uses four."
+      - "Related work: group methods by the capability or constraint being compared. End each group with the specific unresolved issue relevant to the contribution."
+      - "Methodology: introduce the graph or system and its inputs/outputs with an overview figure, then explain components in processing order."
+      - "Evaluation: dataset and platform, baseline definitions, training or execution protocol, metric definitions, main comparisons, ablations, and overhead."
+      - "Conclusion: restate the mechanism and supported outcome; include a concrete limitation when appropriate. Separate discussion is common in longer papers, but is not mandatory for DATE."
+    paragraph_patterns:
+      - "Method paragraph: purpose -> representation or input -> operation -> output and reason for the choice."
+      - "Results paragraph: identify comparison/figure -> quantify observation -> explain the supported interpretation -> state a relevant exception or cost."
+      - "Transition: carry a named concept from the preceding paragraph into the next. A connective is optional; semantic continuity is required."
+      - "Use (i), (ii), (iii) for a short parallel component list. Move long baseline/model enumerations into a table."
+    title_guidance: "Five of six source titles use a name followed by a descriptive subtitle. This is an observed packaging habit, not a requirement. A descriptive title without CoverageDLGN remains appropriate for the current paper."
+
+  sentence_mechanics:
+    summary: "Short declarative sentences establish the point; longer sentences describe a mechanism, condition, or enumeration. Concrete subjects and repeated technical nouns keep the argument traceable."
+    avg_sentence_len_range:
+      min: 18
+      max: 24
+    target_basis: "A recommended section-average range, informed by the selected-passage measurements below. It is not a limit on every sentence or a measured full-corpus range."
+    cadence_rules:
+      - "Mix short statements of roughly 8-15 words with explanations of roughly 18-30 words. Treat these as editing guides."
+      - "Review sentences longer than 35 words. Split independent claims while retaining necessary definitions and parallel lists."
+      - "Keep the main subject and verb close. Move long conditions after the main clause when meaning permits."
+      - "Use active voice for author decisions; use passive voice when the transformed object or experimental condition is the useful subject."
+      - "Prefer three to five sentences per ordinary paragraph, but let equations and component descriptions determine exceptions."
+      - "Define an acronym on first use. Keep metric names, symbols, and component names consistent afterward."
+      - "Use present tense for method behavior and figure interpretation; use past tense for completed experimental actions when it clarifies the protocol."
+      - "Keep lists parallel and avoid chains of 'which', 'thereby', or 'thus' linking several claims."
+
+  lexical_preferences:
+    summary: "The corpus favors concrete operations and named system metrics, with explicit explanatory transitions. Some recurring vocabulary is more ornate than the requested final style."
+    preferred_terms:
+      - "we propose; we present; we define; we evaluate; we observe"
+      - "construct; select; map; partition; encode; predict; measure"
+      - "input; output; representation; component; constraint; baseline"
+      - "accuracy; throughput; latency; power consumption; memory; overhead; trade-off"
+      - "under the evaluated conditions; on average; compared to; with respect to"
+    discouraged_terms:
+      - "novel, innovative, remarkable, superior, or robust without a precise supported meaning"
+      - "lightweight or efficient without naming a size, cost, or comparison"
+      - "performance when the intended metric is accuracy, time, memory, or another specific quantity"
+      - "manyfold; aforementioned; it is important to note; it is worth noting"
+      - "key differentiator; fundamental gap; holistic; seamless; synergistically"
+    usage_notes:
+      - "The sources often use 'employ', 'utilize', and 'in terms of'. Retain them when natural, but prefer a direct verb or named metric when shorter."
+      - "Use 'however' only for a real contrast and 'therefore' only for a supported consequence. Do not begin consecutive paragraphs with the same connective."
+      - "Treat preferred terms as options, not a phrase bank to repeat mechanically."
+
+  technical_argument_habits:
+    summary: "Define the representation and metric before interpretation, motivate a choice with a concrete example, and compare benefit with operational cost."
+    claim_patterns:
+      - "Given [input and constraint], we [specific operation] to [technical purpose]."
+      - "[Component] transforms [defined input] into [defined output] using [operation]."
+      - "Under [matched setting], [method] changes [metric] from [baseline] to [result], with [cost or uncertainty]."
+      - "Figure [X] shows [observation]. The [controlled comparison] supports [bounded interpretation]."
+    evidence_patterns:
+      - "State the platform, workload or dataset, baseline, and metric normalization before comparative results."
+      - "Use a worked example to make a design constraint tangible: D3 tool selection, D5 reward calculation, D1 throughput/fairness conflict."
+      - "Report primary outcome and overhead together: D2 estimator overhead, D4 runtime/power, D5 throughput/prioritization, D6 success/latency/cost."
+      - "Acknowledge a losing coordinate: D1 mix 7 fairness, D3 some Mistral execution times, D4 AGX power, D5 aggregate throughput."
+      - "Explain why a proxy differs from the target: D2 energy versus emissions; D6 sequence agreement versus absolute correctness."
+    refinement_for_new_drafting: "Retain the explanatory pattern but distinguish observation, interpretation, and causal evidence. The corpus sometimes draws stronger conclusions than its described controls justify; those conclusions are not a style requirement."
+
+observed_measurements:
+  scope: "Selected prose only; descriptive estimates, not an exhaustive linguistic analysis."
+  sample_design: "One complete abstract and two selected body passages per document: 18 passages, including method and results prose. Body passages contain three sentences except D5's two-sentence results passage, which ends before the next heading. These passages sample contrasting purposes; they are not random samples."
+  sentence_count: 78
+  word_count: 1554
+  mean_sentence_words: 19.92
+  median_sentence_words: 18
+  sentence_words_min: 7
+  sentence_words_max: 41
+  per_document_mean_sentence_words: [16.65, 23.73, 21.08, 16.46, 18.70, 23.93]
+  abstract_word_counts: [179, 130, 149, 108, 100, 201]
+  counting_method: "Normalize whitespace and alphabetic line-break hyphenation; count whitespace-delimited tokens. Split at sentence-final punctuation followed by uppercase text, protecting common abbreviations. Manually exclude the stray D5 subsection marker. Approximate counts are sensitive to PDF word joining and symbol extraction."
+  recurring_features:
+    - "All six abstracts identify a problem and introduce the method; five provide numeric results, while D4 reports a qualitative accuracy comparison."
+    - "All six use overview figures and connect method choices to resource or deployment constraints."
+    - "All six contain 'however' and 'in terms of' in the extracted pre-reference text."
+    - "'Specifically' and 'for example' each occur in five documents; 'to that end' occurs in three and 'to this end' in two. These are document-presence counts, not paragraph-frequency targets."
+  sample_anchors:
+    D1: "Abstract p1, ending 'without any retraining or fine-tuning achieving similar gains.'; method p4, three sentences from 'FairBoost is designed for heterogeneous embedded systems.'; results p10, three sentences from 'A noticeable exception occurs in mix 7,'."
+    D2: "Abstract p1, ending 'while maintaining comparable or better latency and power efficiency.'; method p4, three sentences from 'We define device-specific hardware operational modes'; results p12, three sentences from 'In our experiments, both EcomapR and EcomapS spent'."
+    D3: "Abstract p1, ending 'power consumption by up to 40%.'; method p2, three sentences from 'The core idea behind Less-is-More'; results p6, three sentences from 'The optimizations resulted in a success rate increase to 46%'."
+    D4: "Abstract p1, ending 'both intrinsic and extrinsic metrics.'; method p2, three sentences from 'The architecture of the decoder module is symmetric'; results p4, three sentences from 'Regarding MAE, Pythia and VQ-VAE2'."
+    D5: "Abstract p1, ending 'specified DNNs by ×57.5.'; method p3, three sentences from 'We employ two distinct approaches within the RankMap'; results p6, two sentences from 'Comparing only the average system throughput'."
+    D6: "Abstract p1, ending 'resource-constrained edge platforms.'; method p7, three sentences from 'It is important to note that the cloud model serves'; results p10, three sentences from 'In terms of efficiency, ToolAssist achieves lower latency'."
+
+output_preferences:
+  connectives:
+    - "however"
+    - "therefore"
+    - "specifically"
+    - "for example"
+    - "to this end"
+    - "next"
+    - "in addition"
+  banned_words:
+    - "brittle"
+    - "delve"
+    - "dive into"
+    - "embark"
+    - "intricate"
+    - "multifaceted"
+    - "admittedly"
+    - "testament"
+  banned_words_policy: "Inherited skill-template defaults for new prose, not inferred corpus absences. Preserve a necessary technical term or exact quotation when a higher-priority instruction requires it."
+  abstract_words_target: [140, 180]
+  abstract_target_basis: "Editorial target for the requested short abstract, not a verified DATE submission limit."
+  contributions_target: [3, 4]
+  paragraph_sentences_target: [3, 5]
+  editing: "Preserve the user's technical nouns and intended claim; repair grammar locally before rewriting a whole paragraph. Do not invent a method acronym, expand the contribution, or add results to improve rhetoric."
+
+project_specific_constraints:
+  origin: "../AGENTS.md and the current paper discussion; these are research-integrity requirements, not inferred voice. Recheck current evidence before drafting numeric claims."
+  rules:
+    - "Present U2 as the unified dense/convolutional construction; distinguish V3 as a dense specialization. Do not imply universal superiority."
+    - "Explain connectivity throughout the network. Bound the first-layer-dominance finding to the evaluated dense factorial experiment."
+    - "Do not equate structured connectivity with proven benefits from degree balancing, maximum coverage, or ancestry novelty alone."
+    - "Separate achieved, reproduced, adapted, negative-reproduction, and paper-reported results; distinguish hardened validation (V) from held-out test (T)."
+    - "Preserve seed counts and pairing. Give raw seeds, sample SD, paired Student-t intervals, and wins in supporting tables where required by the project. An abstract can select findings without changing their scope."
+    - "Do not turn a positive mean with an interval crossing zero into an established improvement. Do not call a gain statistically significant without the relevant analysis."
+    - "Label percentage-point accuracy differences explicitly. State the normalization baseline for ratios and relative percentage changes."
+    - "Distinguish offline construction, training time, peak allocated GPU memory, and inference cost. Unchanged gate count does not establish unchanged physical area or energy."
+    - "Describe offline fixed-index construction without added trainable routing parameters or inference operators; substantiate any measured overhead separately."
+
+validation_checklist:
+  - "Every empirical claim identifies its comparison and scope locally or through an unambiguous table reference."
+  - "Every paragraph develops one technical point and connects to the surrounding argument."
+  - "Every method component has a defined input, operation, and output before its benefit is asserted."
+  - "Review sentences over 35 words and paragraphs outside the soft targets; do not shorten definitions merely to pass a count."
+  - "Remove em dashes and generic scaffolding; check acronym consistency and user terminology."
+  - "Check that observed habits, editorial targets, and project evidence rules remain distinct."
+
+precedence:
+  - "Explicit user instructions, subject to governing system/developer requirements."
+  - "Project-specific evidence and technical constraints."
+  - "Hard writing constraints supplied with the skill and compatible project style rules."
+  - "Stable voice observations and actionable defaults in this profile."
+  - "Soft word-count targets and occasional corpus habits."

@@ -1,0 +1,777 @@
+      Two-Stage Unit Tying for Simplifying Differentiable Logic Gate Networks
+
+
+                                  Seungheon Lee * 1 Jeongmin Sun * 1 Jaeyong Chung 1 2
+
+
+                                                                                Original Model
+                          Abstract                                                                           Tying 1%                       Tying 30%
+
+                                                                                                                               1                        0       1
+      Differentiable logic gate networks map directly                                                                                           0
+                                                                                                                                                                1       1
+      to gate-level circuits, enabling ultra-low-latency                                                                                        1                       0
+      inference, yet their logic footprint often exceeds                                   Synthesis                      Synthesis                         Synthesis
+
+      FPGA capacity budgets. Tightly fitting a trained                                              Budget                         Budget
+                                                                                 FPGA                          FPGA                                                 Budget
+      model to a target FPGA requires a post-training                                                                                           FPGA
+
+
+
+
+      mechanism to trade off network complexity and                            Cost: $$$    LUT              Cost: $$$     LUT                Cost: $
+                                                                                                                                                            LUT
+                                                                                            Usage                          Usage                            Usage
+      accuracy—analogous to pruning in standard neu-                              Out-of-Capacity                        Fit                            Fit
+      ral networks. To this end, we introduce unit ty-
+      ing: a simplification that forces selected gates                   Figure 1. Impact of unit tying on FPGA deployment feasibil-
+                                                                         ity. While direct synthesis of the trained model results in out-of-
+      to constants (0 or 1), enabling constant propa-                    capacity failure due to excessive LUT usage, applying unit tying
+      gation and downstream logic elimination. How-                      reduces the logic footprint to fit within the target device budget.
+      ever, we observe that naively extending prun-
+      ing criteria to logic networks is unreliable un-
+      der such near-discrete modifications. We there-                    commodity processors and specialized accelerators (Raste-
+      fore propose a two-stage algorithm for unit tying:                 gari et al., 2016; Umuroglu et al., 2017). More recently,
+      (i) a fast Gauss–Newton screening step under a                     this line of research has progressed beyond low-precision
+      teacher-referenced logit-distortion objective that                 matrix-multiplication pipelines toward differentiable logic
+      constructs a high-recall overshoot set and (ii) a                  gate networks (Petersen et al., 2022; 2024), a direction fur-
+      refinement step that corrects approximation and                    ther advanced by recent studies (Yousefi et al., 2025; Fojcik
+      interaction-driven errors using a small number                     et al., 2025). These networks learn discrete gate types from
+      of finite-difference evaluations. On CIFAR-10                      a small operator set (e.g., AND/OR/XOR) by optimizing a
+      and MNIST, our method consistently improves                        softmax relaxation over gate choices, and then discretize the
+      the accuracy–area trade-off over common saliency                   learned distribution via argmax to obtain a pure gate-level
+      baselines, yielding substantial post-synthesis LUT                 network for highly efficient inference.
+      reductions of up to 48% on CIFAR-10 and 43%                        A distinctive advantage of logic networks is that, once dis-
+      on MNIST, with modest accuracy degradation.                        cretized, their computation aligns closely with the primitives
+                                                                         of digital hardware. This makes them attractive for direct
+                                                                         FPGA/ASIC mapping, where gate-level structure can be
+1. Introduction                                                          compiled into netlist-like implementations that support very
+Efficient neural network inference has been studied exten-               low latency and real-time operation (Umuroglu et al., 2020).
+sively, driven by the need to deploy learned models across               At the same time, hardware mapping imposes a stronger no-
+diverse compute platforms under tight latency, energy, and               tion of feasibility than software execution: on CPUs/GPUs,
+memory constraints. A large body of work has focused                     oversized models are typically still runnable (albeit slower),
+on reducing arithmetic cost through quantization and bina-               whereas on FPGAs even small capacity overruns can prevent
+rization, enabling fast execution with bitwise operations on             successful place-and-route (Umuroglu et al., 2020). This
+  *
+    Equal contribution 1 Department of System Semiconduc-                challenge is further amplified in differentiable logic gate net-
+tor Engineering, Yonsei University, Seoul, Republic of Korea             works because the gate count implied by the trained model
+2
+  Department of Electrical and Electronic Engineering, Yonsei Uni-       parameters can differ from the gate count of the finalized
+versity, Seoul, Republic of Korea. Correspondence to: Jaeyong            circuit after logic synthesis (Petersen et al., 2024), making
+Chung <jyc@yonsei.ac.kr>.                                                it difficult to train a network that tightly fits a given FPGA
+Proceedings of the 43 rd International Conference on Machine             budget a priori. Consequently, controlling network size
+Learning, Seoul, South Korea. PMLR 306, 2026. Copyright 2026             and structure is a first-order requirement for FPGA/ASIC
+by the author(s).                                                        deployment.
+
+                                                                     1
+                           Two-Stage Unit Tying for Simplifying Differentiable Logic Gate Networks
+
+In conventional neural networks, pruning is a natural and             entiable logic gate networks, yielding compact circuits that
+widely used approach to meet capacity constraints, reducing           better match FPGA/ASIC resource constraints while main-
+model size after training while preserving accuracy (Han              taining accuracy. Figure 1 illustrates the FPGA feasibility
+et al., 2016; Li et al., 2017; He et al., 2017; Molchanov             gap and the role of unit tying as a post-training mechanism
+et al., 2017). At a high level, pruning assigns a saliency            for meeting device budgets.
+score to parameters (or structured units such as channels)
+and removes those expected to have the smallest impact                Contributions.
+on performance. The simplest saliency measure is weight
+magnitude: truncating small weights to zero is often inter-              • To our knowledge, we present the first systematic study
+preted as introducing a small perturbation with marginal                   of complexity reduction in differentiable logic gate
+effect on the network function, and it serves as a strong and              networks via unit tying, and identify key differences
+inexpensive baseline in practice (Han et al., 2016).                       between pruning and tying in this setting.
+More principled pruning criteria define saliency as the true             • We propose a two-stage tying algorithm that remains
+increase in task loss induced by removing or perturbing a                  effective despite the near-discrete nature of tying ac-
+parameter, treating this change as a pruning oracle (LeCun                 tions, combining efficient screening with refinement to
+et al., 1990). Since evaluating this oracle for every parameter            handle approximation error and interaction effects.
+is computationally prohibitive, prior work typically approx-
+imates it using a Taylor expansion of the task loss around               • We demonstrate that our method consistently outper-
+the current solution. Classic second-order methods such as                 forms a range of baselines across multiple models on
+Optimal Brain Damage (LeCun et al., 1990) and Optimal                      CIFAR-10 and MNIST.
+Brain Surgeon (Hassibi et al., 1993) estimate this increase
+via Hessian-based approximations, as the first-order term             2. Related Work
+vanishes (or becomes negligible) near a (local) optimum.
+                                                                      Logic-centric Efficient Models. Recent work has ex-
+In this paper, we present a method to reduce the model size           plored bit-level logic models to bridge deep learning
+of differentiable logic gate networks, taking into account            and hardware primitives. Binary neural networks re-
+how these models differ from conventional neural networks.            place multiplications with bitwise operators (e.g., XNOR–
+Rather than suppressing or removing parameters—the stan-              popcount) (Rastegari et al., 2016) and have been deployed
+dard primitive in pruning—we perform unit tying: forcing a            via FPGA-oriented frameworks (Umuroglu et al., 2017),
+unit’s output to a constant (0 or 1) to enable constant prop-         while other approaches more directly exploit FPGA soft
+agation (Wegman & Zadeck, 1991; Muchnick, 1997) and                   logic by compiling networks into LUT circuits or learning
+eliminate downstream logic during synthesis (Chen et al.,             truth-table operators (Umuroglu et al., 2020; Wang et al.,
+2006).                                                                2020; Benamira et al., 2024). More recently, differentiable
+While unit tying departs from pruning in its primitive, the           logic gate networks learn gate-level circuit topology end-to-
+two share the same core question of which units can be mod-           end (Petersen et al., 2022; 2024), turning inference into pure
+ified with minimal impact on model behavior. We therefore             logic propagation and achieving substantial improvements
+adapt the saliency-based pruning perspective. Motivated by            over prior state-of-the-art logic-centric models. Because
+function-preservation approaches in model compression (He             such logic networks are already extremely efficient, they of-
+et al., 2017; Frantar & Alistarh, 2023), we use a teacher-            fer limited redundancy, so further compression can naturally
+referenced logit-distortion objective for saliency: treating          incur a larger accuracy penalty than in over-parameterized
+the original trained network as a teacher, we measure the             neural models. We therefore focus on enabling a post-
+mean squared error between the tied network’s logits and              training complexity-control mechanism that provides a prac-
+the teacher’s logits. Unit tying, however, is a discrete and          tical knob to meet diverse hardware budgets.
+structural intervention rather than a small continuous pertur-
+bation, which can violate the assumptions of Taylor-based             Task-Loss-based Pruning. Most pruning methods were
+approximations commonly used in classical pruning.                    developed for models with continuous parameters, and are
+                                                                      commonly guided by minimizing the induced change in task
+To address this, we therefore propose a two-stage procedure:          loss. Because selecting an optimal sparse subset is combina-
+(i) a fast screening stage that uses a Gauss—Newton approx-           torial and NP-hard (Natarajan, 1995), early pipelines adopt
+imation to score candidate units under tie operations, and            simple proxies such as magnitude-based truncation (Han
+(ii) a refinement stage that mitigates greedy false positives         et al., 2015; 2016). To obtain more principled criteria with-
+by efficiently evaluating subsets of candidates via binary-           out combinatorial search, classical second-order pruning
+split search. Together, these stages form a distortion-guided         estimates the induced task-loss increase from local Tay-
+tying framework tailored to tie-based compression of differ-          lor/curvature information (LeCun et al., 1990; Hassibi et al.,
+
+                                                                  2
+                            Two-Stage Unit Tying for Simplifying Differentiable Logic Gate Networks
+
+                                                                                                                                                     60%
+1993). Since exact Hessians are costly, more recent work fo-                                                       ResNet-18
+                                                                                         80%                       Logic Network
+cuses on making curvature-based criteria practical through
+scalable approximations (Martens & Grosse, 2015; Theis
+
+
+
+
+                                                                        Percentage (%)
+
+
+
+
+                                                                                                                                    Percentage (%)
+                                                                                         60%                                                         40%
+et al., 2018; Singh & Alistarh, 2020). However, such ap-
+proaches assume local smoothness under small perturba-                                   40%
+tions, which may not hold for discrete functional edits in                                                                                           20%
+logic networks. Motivated by this gap, we propose alterna-                               20%
+tive objectives and an efficient procedure tailored to discrete
+                                                                                         0%                                                          0%
+interventions.                                                                                 0   0.2   0.4   0.6      0.8    >1                          0.0   0.2   0.4       0.6   0.8   1.0
+                                                                                                               w                                                             p
+                                                                                               (a) ∆w distribution                                         (b) ∆p distribution
+Function Preservation Pruning. In the context of model
+compression, some prior works have employed function                     Figure 2. Parameter perturbations required for pruning and tying.
+preservation beyond simply optimizing task loss. One line                (a) ResNet-18 uses absolute magnitude of the zeroed weight, while
+                                                                         the logic network uses weight gap between original operator and
+focuses on layer-wise reconstruction, minimizing local fea-              tying target. (b) The logic network uses the softmax probability
+ture/output mismatch as a tractable surrogate for the global             gap between the active operator and the tying target.
+objective. These approaches cast pruning as a local recon-
+struction problem and refit the remaining weights accord-
+ingly (e.g., He et al. (2017); Frantar & Alistarh (2023)).
+                                                                         Taylor-based saliency is that a pruning action induces a
+Another stream leverages Knowledge Distillation (KD) by
+                                                                         small perturbation, so that local expansions remain informa-
+treating the unpruned model as a teacher and enforcing
+                                                                         tive. This assumption may be violated by unit tying, which
+functional fidelity (Hinton et al., 2015), commonly as an
+                                                                         enforces a discrete transition from an input-dependent op-
+auxiliary signal during post-pruning fine-tuning to recover
+                                                                         erator to a constant operator. Figure 2a compares the pa-
+accuracy (Li et al., 2020). Our work connects these perspec-
+                                                                         rameter perturbations (∆w) induced by weight zeroing in
+tives but takes a different approach: we employ a global
+                                                                         ResNet-18 versus unit tying in a logic network. For the
+function preservation objective directly for pruning saliency,
+                                                                         logic network, we define ∆w as the smaller of the two gaps
+moving beyond local optimization or post-hoc fine-tuning.
+                                                                         between the originally selected (argmax) operator’s weight
+                                                                         and the weights of the two constant operators (0 or 1)—the
+3. Motivation                                                            minimum weight perturbation required to tie a unit. While
+                                                                         the perturbations involved in ResNet-18 pruning are rela-
+In differentiable logic gate networks, computation is carried
+                                                                         tively small, the ∆w required for tying in logic networks
+out by Boolean-like units (i.e., logic gates) arranged in logic
+                                                                         can be orders of magnitude larger. Figure 2b further shows
+layers. Each unit performs one operation from a small,
+                                                                         the distribution of operator softmax probability shifts ∆p
+fixed set of 16 logical operations (e.g., AND/OR/XOR),
+                                                                         induced when these tying perturbations are applied: roughly
+which also includes two constant-output operators. During
+                                                                         60% of units exhibit ∆p ≈ 1.0 —a near-complete reas-
+training, the operator choice of each unit is parameterized
+                                                                         signment of the selected operator—while the remainder are
+by 16 learnable weights; applying a softmax to the weights
+                                                                         spread across smaller values. Such discrete-like transitions
+yields a probability distribution over the operator set. We
+                                                                         limit the validity of local Taylor approximations.
+aim to reduce computation by tying selected units to one of
+these two constants (0 or 1), while minimally altering the               This observation motivates a unit tying strategy that com-
+model’s original function.                                               bines the tractability of Taylor-based saliency with explicit
+                                                                         evaluation of the effect induced by the tying operation.
+Since unit tying is closely related to pruning as a form of
+structural simplification, it is natural to select which units to
+tie using the same saliency-based criteria developed for prun-           4. Method
+ing. These criteria typically rely on first- or second-order
+                                                                         We formulate unit tying as a combinatorial optimization
+Taylor approximations, which makes them computationally
+                                                                         problem under a teacher-referenced distortion objective, in-
+attractive. In a CIFAR-10 case study comparing ResNet-18
+                                                                         spired by function preservation methods (He et al., 2017;
+with a medium-width convolutional logic network, we ex-
+                                                                         Frantar & Alistarh, 2023). To avoid layer collapse, we solve
+amine whether such criteria can be directly transferred to
+                                                                         the problem layer-wise: for each layer, we select a tying
+unit tying.
+                                                                         subset S with a fixed budget |S| = T and assign each se-
+                                                                         lected unit to a constant value. We denote this assignment
+(Observation) Unit tying in logic networks can induce                    by a mapping t : S → {0, 1}, where t(u) ∈ {0, 1} specifies
+substantial changes and is not reliably captured as a                    whether unit u ∈ S is tied to constant-0 or constant-1. In
+small perturbation. The core assumption underlying                       FC-like randomly connected logic layers, we treat every
+
+                                                                    3
+                                     Two-Stage Unit Tying for Simplifying Differentiable Logic Gate Networks
+
+A. Screening                           B. Binary Split Refinement
+                                                                           Higher FD
+                                                                           Distortion (err1)
+
+                                                                            FD Eval
+   Gauss-Newton                                       Tie S1 , Untie S2
+   Screening                                                                                                                                         Isolated
+                                                                           Lower FD                                                              Harmful Unit
+                                                                           Distortion (err2)
+                                          S1   S2                                               Stop
+     Harmful unit
+  (screening error)                                                                     (safe to tie)
+                   Overshoot Set S                     Tie S2 , Untie S1
+
+Figure 3. Stage-A uses Gauss–Newton screening to form an overshoot set S of size T +k, where k is the overshoot margin. Stage-B
+isolates a harmful unit via Binary Split refinement (as illustrated), removes the isolated unit from S, and repeats this step until |S|=T .
+
+
+unit as a tying candidate. In convolutional logic layers im-                             (GN) quadratic form:
+plemented as logic trees, we enforce structured tying by
+restricting candidates to the root unit of each tree, yielding                                                      1 
+                                                                                                                      Ex (δpu,c )⊤ Jx,u
+                                                                                                                                    ⊤
+                                                                                                                                                     
+                                                                                               Ldist ({u}, tc ) ≈                       Jx,u (δpu,c ) .     (2)
+channel-wise tying.                                                                                                 2
+Given a layer-wise configuration (S, t), we measure its func-
+                                                                                         where Jx,u is the Jacobian of the network output logits
+tional deviation by
+                                                                                         with respect to pu . In contrast to cross-entropy task loss,
+                                                                                         where second-order saliency typically involves the parame-
+                            h                        i                                   ter Hessian and thus requires additional approximations in
+         Ldist (S, t) = Ex∼D 12 ∥zS,t (x) − z∅ (x)∥22 ,                     (1)          practice (LeCun et al., 1990; Hassibi et al., 1993), Eq. (2)
+                                                                                         depends only on Jacobian products under the distortion loss.
+                                                                                         This enables a Hessian-free second-order screening rule,
+z(·) denotes the network output logits (the pre-softmax class                            which we evaluate efficiently via Jacobian–vector products.
+scores). While KL divergence is a common choice for
+distillation-style objectives, we adopt logit-level MSE and                               Jacobian–Vector Products. While Jx,u is far smaller
+empirically justify this choice in our experiments.                                       than the full parameter Hessian, it can still be high-
+Minimizing Ldist (S, t) directly is intractable due to the com-                           dimensional. Following standard automatic-differentiation
+binatorial search space. A simple baseline is to compute a                                techniques for Jacobian-vector products (Pearlmutter, 1994;
+saliency score for each candidate, rank candidates within                                 Baydin et al., 2018), we avoid explicitly constructing Jx,u
+the layer, and select the top T units. However, as discussed                              and directly evaluate the quadratic form in Eq. (2). Specifi-
+in the previous section, Taylor-based saliency can be in-                                 cally,
+accurate for unit tying, and evaluating the distortion for
+                                                                                                                         d
+every candidate via finite-difference is computationally pro-                                                            X                         2
+hibitive. To address this, we propose a two-stage algorithm                                         ∥Jx,u δpu,c ∥22 =          (δpu,c )⊤ ∇pu zi (x) ,       (3)
+                                                                                                                         i=1
+(Figure 3). In Stage-A, we use a fast Taylor-based score
+to screen candidates and construct an overshoot set of size                              where ∇pu zi (x) is the gradient of the i-th logit with respect
+T +k, where the extra k candidates provide a buffer against                              to the gate distribution pu . In practice, each reverse-mode
+approximation errors. In Stage-B, we refine this set by                                  pass yields gradients for all units in the layer, and per-unit
+removing k candidates using only a small number of finite-                               scores are obtained via inexpensive inner products with
+difference (FD) evaluations, yielding a final set of size T                              δpu,c . Finally, we estimate the GN score sb(u, c) by averag-
+with improved reliability.                                                               ing 12 ∥Jx,u δpu,c ∥22 over N calibration samples.
+
+4.1. Stage-A: Second-order Screening via Implicit                                        Selection. For each unit u, we evaluate both tie directions
+     Jacobian                                                                            (0 and 1) and select the less damaging option:
+Although unit tying is a discrete intervention, we analyze
+its effect by treating it as a perturbation in gate-probability                                              s(u) = min sb(u, c),
+                                                                                                                        c∈{0,1}
+space. For tying unit u to a constant c ∈ {0, 1}, let pu                                                                                                    (4)
+                                                                                                             t(u) = arg min sb(u, c).
+be the gate distribution over operators and ec the one-hot                                                                  c∈{0,1}
+gate for constant c, so that δpu,c = ec − pu . Let tc (u) =
+c. Leveraging the least-squares structure of Eq. (1), we                                 We select the units with the lowest s(u) to form an overshoot
+approximate the resulting distortion via a Gauss–Newton                                  set S of size T +k.
+
+                                                                                    4
+                           Two-Stage Unit Tying for Simplifying Differentiable Logic Gate Networks
+
+Algorithm 1 Binary Split Identification                                Algorithm 2 Two-Stage Unit Tying
+Require: Candidate set S, tie assignment t(·)                            Input: Model fθ , target T , overshoot k
+ 1: Scurr ← S                                                            Stage-A: Compute scores sb(u, c) for all units u
+ 2: while |Scurr | > 1 do                                                Determine s(u) and t(u) via Eq. (4)
+ 3:   Partition Scurr into two disjoint halves S1 , S2                   S ← TopT +k ({u}; −s) // Select overshoot set
+ 4:   err1 ← LFD dist (S \ S2 , t) // Tie S1 , untie S2                  Stage-B: Refine overshoot set
+ 5:   err2 ← LFD dist (S \ S1 , t) // Tie S2 , untie S1                  while |S| > T do
+ 6:   if err1 > err2 then                                                  u∗ ← B INARY S PLIT(S, t) (Alg. 1)
+ 7:      Scurr ← S1                                                        S ← S \ {u∗ }
+ 8:   else                                                               end while
+ 9:      Scurr ← S2                                                      Apply ties to units in S using assignments {t(u)}u∈S
+10:   end if
+11: end while
+12: return the remaining unit in Scurr                                 4.3. Algorithm and Complexity
+                                                                       The full procedure is summarized in Algorithm 2. We mea-
+                                                                       sure computational cost by the number of evaluation passes
+4.2. Stage-B: Refinement via Binary Split                              over the calibration set (each pass averages over N calibra-
+                                                                       tion samples).
+To efficiently identify and remove harmful units from the
+Stage-A overshoot set, we employ a binary-split search                 Let C denote the number of candidate units in the layer.
+inspired by group testing (Dorfman, 1943). This approach               A naive exhaustive strategy evaluates every unit, requir-
+allows us to isolate the most harmful unit using only a                ing O(C) calibration-set forward passes, which quickly
+logarithmic number of high-fidelity LFD    dist measurements,          becomes prohibitive for wide layers.
+where LFDdist denotes the finite-difference evaluation of Ldist
+in Eq. (1) on a calibration set.
+                                                                          • Stage-A (Implicit Jacobian): Requires computing
+Given a candidate set S, we partition it into two halves S1                 gradients of each output logit component with respect
+and S2 and perform two FD evaluations under two tie/untie                   to pu . This costs O(d) calibration-set backpropaga-
+configurations: (i) keep S1 tied while untying S2 , and (ii)                tions (one per logit per calibration pass), since each
+keep S2 tied while untying S1 . We recurse on the half that                 backpropagation yields gradients for all C units in the
+yields the larger LFD                         FD
+                   dist under tying. Because Ldist is evaluated             layer simultaneously. The C dependence appears only
+while tying many units simultaneously, Stage-B can also                     in inexpensive row-wise inner products. Since typi-
+reflect non-additive interaction effects among the units. This              cally d ≪ C, this is substantially more efficient than
+single-unit identification procedure is summarized in Alg. 1                per-unit finite-difference scoring.
+and is repeated k times until |S| = T , removing one unit
+per iteration.                                                            • Stage-B (Binary Split): We perform k iterations of
+                                                                            binary-split identification. This costs O k log(T +k)
+                                                                            calibration-set forward passes.
+Cached FD evaluation. To keep refinement scalable, we
+reuse cached prefix activations up to the current target layer,
+avoiding full forward recomputation from scratch for each
+FD evaluation.
+                                                                       5. Experiments
+                                                                       5.1. Models, Datasets, and Evaluation
+Vectorized evaluation via batch tiling. To make FD eval-               We adopt the convolutional differentiable logic gate network
+uation practical, we evaluate multiple tying configurations            architecture proposed by Petersen et al. (2024), which speci-
+in parallel. Given a minibatch of size B and G tying configu-          fies four model variants: CIFAR-10(M/S) for CIFAR-10
+rations evaluated in parallel, we tile the cached activations to       and MNIST(M/S) for MNIST. We train these models and
+form an augmented batch of size B · G, apply configuration-            use them for evaluation. All experiments run on a single
+specific tying to each block, and obtain all distortion values         NVIDIA RTX 4090 GPU. To assess robustness to calibra-
+from a single forward pass of the suffix network. We repeat            tion sampling, we repeat the tying procedure three times
+this procedure over a calibration set of N samples and av-             with different random seeds and report mean ± std. Our
+erage the resulting estimates. For binary-split refinement,            method uses 16 calibration samples for Stage-A scoring
+we evaluate the two split candidates in parallel (i.e., G=2)           and 80 calibration samples for Stage-B refinement, with an
+within each forward pass.                                              overshoot parameter k=40. Implementation details for our
+
+                                                                   5
+                                                 Two-Stage Unit Tying for Simplifying Differentiable Logic Gate Networks
+
+                                   CIFAR-10 (M)                          CIFAR-10 (S)                         MNIST (M)                      MNIST (S)
+                      0
+Accuracy Loss (%)
+
+
+
+                      5
+
+                     10
+
+                     15
+                          0   10     20     30    40     50 0       10       20   30    40     50 0      10    20     30   40   50 0    10      20     30   40   50
+                                      Tied (%)                               Tied (%)                          Tied (%)                         Tied (%)
+                                                  Ours          Ours w/ FT          FD-DL         Fisher-TL         ConstProb     Random-Tied
+
+                                   Figure 4. Accuracy loss (%) versus tied ratio on CIFAR-10(M/S) and MNIST(M/S). Lower is better.
+
+          Table 1. Top-1 accuracy on CIFAR-10(M) and MNIST(M) across tied ratios. Bold: best per ratio among without FT and with FT.
+
+         Model                            Method                         10% Tied            20% Tied           30% Tied         40% Tied             50% Tied
+                                          ConstProb                  68.85 ± 0.00           63.90 ± 0.00      57.06 ± 0.00      32.97 ± 0.00         24.73 ± 0.00
+                                          Fisher-TL                  70.37 ± 0.24           68.36 ± 0.49      64.85 ± 1.02      59.77 ± 2.57         53.97 ± 2.92
+         CIFAR-10(M)                      FD-DL                      71.12 ± 0.06           69.40 ± 0.14      67.19 ± 0.30      64.63 ± 0.38         56.05 ± 0.84
+         (original: 71.57)                Ours (Stage-A only)        70.87 ± 0.24           69.13 ± 0.23      66.49 ± 0.26      64.00 ± 0.33         59.22 ± 0.97
+                                          Ours                       70.76 ± 0.18           69.52 ± 0.25      67.30 ± 0.37      65.05 ± 0.62         61.44 ± 0.53
+                                          ConstProb w/ FT            71.17 ± 0.10           70.37 ± 0.08      69.81 ± 0.22      68.03 ± 0.12         66.78 ± 0.11
+                                          Fisher-TL w/ FT            71.51 ± 0.04           70.99 ± 0.11      70.10 ± 0.09      69.69 ± 0.21         68.92 ± 0.20
+                                          Ours w/ FT                 71.61 ± 0.03           71.12 ± 0.24      70.77 ± 0.07      69.91 ± 0.07         69.22 ± 0.08
+                                          ConstProb                  98.67 ± 0.00           97.98 ± 0.00      94.67 ± 0.00      69.25 ± 0.00         31.18 ± 0.00
+                                          Fisher-TL                  98.68 ± 0.09           98.08 ± 0.06      96.64 ± 0.77      93.94 ± 1.90         84.69 ± 5.90
+         MNIST(M)                         FD-DL                      98.75 ± 0.03           98.48 ± 0.07      97.76 ± 0.06      96.38 ± 0.06         92.18 ± 1.05
+         (original: 98.91)                Ours (Stage-A only)        98.75 ± 0.05           98.24 ± 0.25      96.92 ± 0.78      95.69 ± 0.06         91.71 ± 0.59
+                                          Ours                       98.82 ± 0.02           98.72 ± 0.01      98.53 ± 0.08      97.79 ± 0.28         96.20 ± 0.49
+                                          ConstProb w/ FT            98.85 ± 0.03           98.85 ± 0.01      98.77 ± 0.04      98.54 ± 0.04         95.12 ± 0.13
+                                          Fisher-TL w/ FT            98.92 ± 0.02           98.87 ± 0.05      98.84 ± 0.02      98.74 ± 0.02         98.54 ± 0.07
+                                          Ours w/ FT                 98.90 ± 0.02           98.90 ± 0.00      98.86 ± 0.02      98.80 ± 0.03         98.74 ± 0.00
+
+
+ baseline re-implementation and post-tying fine-tuning are                                              task loss. This criterion can be viewed as a tying ex-
+ provided in Appendix A.                                                                                tension of second-order pruning such as Optimal Brain
+                                                                                                        Damage (LeCun et al., 1990). For a fair comparison,
+ 5.2. Baselines                                                                                         Fisher-TL uses the same calibration samples with ours
+                                                                                                        (N =16).
+To validate our method, we compare against several base-
+lines. All baselines apply layer-wise greedy tying: for each                                          • FD-DL. Evaluates the saliency of each candidate by
+layer, they score each unit with a saliency metric and tie a                                            measuring the finite-difference in the distortion loss.
+fixed fraction of the least harmful candidates. This proce-                                             This requires a separate forward evaluation per candi-
+dure is repeated sequentially from early to late layers. The                                            date, making it computationally expensive. To reduce
+baselines differ only in the saliency metric, as follows:                                               estimator variance, we evaluate it with a large calibra-
+                                                                                                        tion set (N =128).
+                    • ConstProb. Ranks each unit by how strongly it already
+                      prefers a constant operator, using the larger of the prob-                  5.3. Classification Performance
+                      abilities assigned to the constant-0 and constant-1 oper-
+                      ators. This criterion can be viewed as a tying analogue                     We apply tying to all layers except the first convolutional
+                      of magnitude-based pruning.                                                 layer and the final classifier layer. Table 1 compares our
+                                                                                                  method to all baselines on CIFAR-10(M) and MNIST(M).
+                    • Fisher-TL. Uses an empirical-Fisher second-order                            Conventional saliency criteria (ConstProb and Fisher-TL)
+                      proxy (Theis et al., 2018) to estimate the task-loss                        degrade rapidly as tying increases. In particular, the weaker
+                      increase induced by tying, with cross-entropy as the                        performance of Fisher-TL suggests that task-loss-based
+
+                                                                                              6
+                           Two-Stage Unit Tying for Simplifying Differentiable Logic Gate Networks
+
+Table 2. Algorithmic metrics (Accuracy, Ops) and hardware feasibility analysis of the CIFAR-10(M) model across tied ratios, evaluated
+on three representative FPGA devices. Ops denotes the binary operation count. Time/Image denotes the inverse of throughput. Reduction
+denotes LUT reduction relative to the original model. OOC indicates Out-of-Capacity (resource budget exceeded). Prices are based on
+single-unit DigiKey list prices (accessed Jan. 2026).
+
+                                                                                  FPGA LUT Utilization
+                             Tied     Accuracy     Ops     Time/ LUT Reduction
+         Model               Ratio                         Image (1000s) (%)   V7-2000T V7-585T K7-410T
+                                        (%)
+                                                                               ($22,000) ($6,000) ($2,200)
+                     0% tied            71.57     4.73M     9 ns       475.0        –             39%       OOC      OOC
+                     10% tied           71.68     4.44M     9 ns       442.8      6.77            36%       OOC      OOC
+                     20% tied           70.47     4.05M     9 ns       392.4      17.39           32%       OOC      OOC
+         CIFAR-10(M)
+                     30% tied           69.63     3.66M     9 ns       344.6      27.44           28%       95%      OOC
+                     40% tied           68.64     3.22M     9 ns       295.3      37.82           24%       81%      OOC
+                     50% tied           67.06     2.80M     9 ns       245.4      48.33           20%       67%      97%
+
+
+
+saliency criteria can be less reliable for unit tying than the         in FPGAs. Table 2 reports algorithmic metrics (accuracy
+teacher-referenced distortion objective. At 50% tied, Const-           and Ops) together with post-synthesis LUT usage and de-
+Prob collapses to 24.73% on CIFAR-10(M) and 31.18%                     ployment feasibility, where Ops denotes the pre-synthesis
+on MNIST(M), while Fisher-TL improves to 53.97% /                      binary operation count accounting for constant propagation.
+84.69% but still trails distortion-based criteria. FD-DL of-           Crucially, the original model fits only on the high-capacity
+ten outperforms Ours (Stage-A only), indicating that the               FPGA (V7-2000T) and cannot be implemented on the cost-
+Taylor-based approximation error can be substantial under              effective medium (V7-585T) and small (K7-410T) FPGAs.
+unit tying. Despite this, our full method achieves better              However, the significant resource reduction achieved via
+accuracy than FD-DL in most cases by correcting screen-                unit tying successfully enables the design to fit within the
+ing errors. At 50% tied, Ours reaches 61.44% / 96.20%                  strict capacity constraints of the medium FPGA at 30% ty-
+on CIFAR-10(M) / MNIST(M). With fine-tuning, most                      ing and the small FPGA at 50% tying. This demonstrates
+of the remaining loss is recovered, bringing aggressively              that unit tying serves as an effective control knob, trading
+tied models close to the original model. Figure 4 sum-                 moderate accuracy degradation for deployability on lower-
+marizes the accuracy–tied-ratio trade-off; we additionally             cost hardware platforms, all while preserving the original
+report a sanity-check reference, Random-Tied, which ran-               ultra-low inference latency.
+domly selects units and tie directions. Results on the smaller
+                                                                       Table 3 presents the evaluation results for the MNIST(M)
+variants CIFAR-10(S) and MNIST(S) are provided in
+                                                                       model synthesized on V7-2000T. Unit tying enables aggres-
+Appendix B.
+                                                                       sive resource reduction with minimal accuracy drop: even
+                                                                       at a 50% tied ratio, it achieves a substantial LUT reduction
+5.4. Hardware Deployment Evaluation                                    of 42.88% while incurring a negligible loss of only 0.35%.
+We generate a Verilog hardware description of the trained              This further validates unit tying as a generic optimization
+logic networks and synthesize it with Xilinx Vivado. We fol-           technique that significantly improves area efficiency. Addi-
+low the implementation strategy of Petersen et al. (2024) and          tional results for the smaller variants, CIFAR-10(S) and
+realize the convolutional layers as a spatially unrolled datap-        MNIST(S), are provided in Appendix B.
+ath, replicating the per-position logic to maximize through-
+put. We apply 9 ns (111 MHz) and 5 ns (200 MHz) clock                  Table 3. Accuracy and LUT usage of MNIST(M) model across
+period constraints for CIFAR-10(M) and MNIST(M),                       tied ratios. Time/Image denotes the inverse of throughput. Red.
+respectively, enforcing consistent timing constraints and              denotes LUT reduction relative to the original model.
+pipeline schedules across all tied ratios. To assess the maxi-
+                                                                                          Tied      Acc.    Time/    LUT       Red.
+mum potential efficiency, we apply unit tying to all layers            Model
+                                                                                          Ratio     (%)     Image   (1000s)    (%)
+and report results on fine-tuned models for all hardware ex-
+periments. Implementation details and synthesis directives                             0% tied      98.91    5 ns     82.0       –
+are provided in Appendix A.                                                           10% tied      98.91    5 ns     73.1     10.81
+                                                                                      20% tied      98.90    5 ns     68.0     17.00
+                                                                       MNIST(M)
+To quantify how unit tying trades accuracy for hardware                               30% tied      98.92    5 ns     61.8     24.57
+deployability, we target three FPGA platforms of different                            40% tied      98.69    5 ns     54.1     34.00
+capacities and measure hardware cost using lookup table                               50% tied      98.56    5 ns     46.8     42.88
+(LUT) count, the primary programmable logic resource
+
+                                                                   7
+                            Two-Stage Unit Tying for Simplifying Differentiable Logic Gate Networks
+
+5.5. Ablation Study                                                       Refinement Strategies. We compare our Binary Split
+                                                                          (BS) refinement against two refinement baselines: Tail
+In this subsection, we validate our design choices through
+                                                                          Rescore (TR) and Full-set Rescore (FR). Both methods
+extensive ablation studies on the CIFAR-10(M) model.
+                                                                          start from the Stage-A overshoot set of size T +k. TR re-
+                                                                          evaluates only the bottom 2k candidates and removes the
+Sample efficiency of Stage-A screening. Table 4 shows                     worst k units, whereas FR re-evaluates all T +k candidates
+the efficiency of Stage-A under varying calibration sample                and removes the worst k. Table 6 shows that BS achieves
+size N at 30% tying. FD-DL is variance-limited at small                   the best accuracy at 30% tied while remaining as fast as TR,
+N , but improves as N increases, saturating around N =64.                 and is much faster than FR. This suggests that subset-level
+However, its wall-clock time grows roughly linearly with N                FD comparisons in BS efficiently correct approximation-
+even with vectorized evaluation (G=32). In contrast, while                induced errors and can mitigate interaction-driven effects
+Ours (Stage-A only) trails the best FD-DL result, adding                  that one-shot per-unit rescoring may miss.
+a short refinement step (≈36 s) already surpasses FD-DL,
+yielding a better accuracy–time trade-off under limited cali-             Table 6. Refinement strategy ablation at 30% tied (k=40). We
+bration budgets.                                                          compare Binary Split to Tail Rescore and Full-set Rescore, which
+                                                                          rescore units using FD on a tail subset or the full overshoot set.
+Table 4. Sample efficiency of Stage-A at 30% tied: FD-DL (finite-
+difference baseline, varying N ) versus our Gauss–Newton screen-
+                                                                                                 Refinement                          Acc. (%)                 Time (s)
+ing, reporting accuracy and wall-clock time.                                                     Tail Rescore                   66.33 ± 0.66                    35.5
+                                                                                                 Full-set Rescore               66.88 ± 0.20                    398
+ Method                    N        Acc. (%)         Time (s)                                    Binary Split                   67.30 ± 0.37                    35.8
+                           16     66.38 ± 0.35         269
+                           32     67.23 ± 0.11         535
+ FD-DL
+                           64     67.30 ± 0.45         1066                Sensitivity to Calibration Size and Overshoot. We study
+                          128     67.19 ± 0.30         2129                the sensitivity of our two-stage procedure to key hyperpa-
+                                                                           rameters: the Stage-A calibration size NA , the Stage-B
+ Ours (Stage-A only)       16     66.49 ± 0.26         36.6
+                                                                           calibration size NB , and the Stage-A overshoot parameter
+ Ours                      16     67.30 ± 0.37         72.4
+                                                                           k. Figure 5 shows the results of these sensitivity sweeps.
+                                                                           Stage-A screening improves as NA increases up to 16, but
+                                                                           changes only marginally thereafter. Stage-B refinement
+Distortion objective (KL vs. MSE). We compare Stage-                       largely saturates at NB = 10, indicating that reliable refine-
+A-only screening performance under different distortion                    ment can be achieved with a modest calibration size. The
+objectives. Table 5 compares KL-based distillation across                  sweep over k also shows a broad plateau for k≥20, support-
+temperatures τ to logit-level MSE. KL with τ =1 degrades                   ing our default choice k=40 as a balance between accuracy
+accuracy, while increasing τ steadily improves performance                 and refinement cost. Overall, these results indicate that our
+and approaches the logit-level MSE result, consistent with                 two-stage procedure is robust across calibration sizes and
+the high-temperature limit where KL reduces to squared                     overshoot values.
+error on logits (Hinton et al., 2015). Prior work further
+reports that direct logit-level MSE can be competitive or                              60
+                                                                        Accuracy (%)
+
+
+
+
+superior to KL and avoids temperature sensitivity, while
+small-τ KL may be preferable under label noise (Kim et al.,                            55
+
+2021). Accordingly, we adopt logit-level MSE as our default                            50
+distortion metric.
+                                                                                            4     8    16   32   64 128 10      20    40    80       160 10     20   40     80   160
+                                                                                                a) Stage-A samples NA        b) Stage-B samples NB              c) Overshoot k
+Table 5. Teacher-referenced distortion objective ablation at 50%
+tied: KL distillation with temperature τ versus logit-level MSE.          Figure 5. Sensitivity analysis at 50% tied. Sweeping (a) Stage-
+                                                                          A calibration size NA , (b) Stage-B calibration size NB , and (c)
+                                                                          overshoot k. Lines show the mean accuracy; shaded bands indicate
+               Metric      τ       Acc. (%)                               the standard deviation.
+                          1      55.88 ± 0.85
+                          4      58.47 ± 1.49
+               KL
+                          10     58.94 ± 1.16                              6. Conclusion
+                          20     59.14 ± 1.04
+                                                                          We study unit tying as a synthesis-aware post-training simpli-
+               MSE         –     59.22 ± 0.97                             fication for differentiable logic gate networks. We develop
+                                                                          a two-stage procedure using a teacher-referenced distortion
+
+                                                                    8
+                          Two-Stage Unit Tying for Simplifying Differentiable Logic Gate Networks
+
+objective, combining fast Gauss–Newton screening with                 A survey. Foundations and Trends in Electronic Design
+Binary Split refinement. Across CIFAR-10 and MNIST, our               Automation, 1(3):395–491, 2006.
+method achieves higher accuracy at the same tied ratios and
+                                                                    Dorfman, R. The detection of defective members of large
+makes previously out-of-capacity designs FPGA-feasible
+                                                                      populations. The Annals of Mathematical Statistics, 14
+under fixed resource budgets. Overall, our framework offers
+                                                                     (4):436–440, 1943.
+a practical baseline for bridging logic network training and
+hardware-constrained deployment. More broadly, tying pro-           Fojcik, K., Zioma, R., and Armaitis, J. Lilogic net: Com-
+vides a structured setting to re-examine pruning ideas under          pact logic gate networks with learnable connectivity for
+near-discrete functional edits, helping separate transferable         efficient hardware deployment, 2025. URL https:
+second-order principles from tying-specific effects.                  //arxiv.org/abs/2511.12340.
+                                                                    Frantar, E. and Alistarh, D. SparseGPT: Massive language
+Acknowledgement                                                       models can be accurately pruned in one-shot. In Proceed-
+This work was partly supported by Institute of Information            ings of the 40th International Conference on Machine
+communications Technology Planning Evaluation (IITP)                  Learning, volume 202 of Proceedings of Machine Learn-
+grant funded by the Korea government(MSIT) (No.RS-2026-               ing Research, pp. 10323–10337. PMLR, 2023.
+25525596, Development of Specialized Library Technology             Han, S., Pool, J., Tran, J., and Dally, W. Learning both
+Based on On-device AI Semiconductors for Autonomous                   weights and connections for efficient neural networks.
+Agents) and National Research Foundation of Korea(NRF)                In Advances in Neural Information Processing Systems,
+grant funded by the Korea government(MSIT) (No.RS-2026-               volume 28, pp. 1135–1143, 2015.
+25479511, Design of a Next-Generation LLM Accelerator
+Based on Memory-Centric Data Representations).                      Han, S., Mao, H., and Dally, W. J. Deep compression: Com-
+                                                                      pressing deep neural networks with pruning, trained quan-
+                                                                      tization and Huffman Coding. In Proceedings of the Inter-
+Impact Statement                                                      national Conference on Learning Representations, 2016.
+This work improves the deployability of differentiable logic          URL http://arxiv.org/abs/1510.00149.
+gate networks under strict FPGA resource budgets by intro-
+                                                                    Hassibi, B., Stork, D. G., and Wolff, G. J. Optimal brain
+ducing a post-training, synthesis-aware unit tying procedure.
+                                                                      surgeon and general network pruning. In Proceedings of
+By reducing the logic footprint, the proposed method may
+                                                                      the IEEE International Conference on Neural Networks,
+enable implementation on smaller, lower-cost, and poten-
+                                                                      pp. 293–299, 1993.
+tially lower-power devices for real-time inference, while
+requiring only modest additional calibration-time compu-            He, Y., Zhang, X., and Sun, J. Channel pruning for acceler-
+tation. The approach is intended to improve efficiency and            ating very deep neural networks. In Proceedings of the
+hardware feasibility rather than to expand model capability,          IEEE International Conference on Computer Vision, pp.
+and it does not require new data collection beyond standard          1389–1397, 2017.
+calibration samples. As with many efficiency improvements,
+easier deployment may warrant additional safeguards to sup-         Hinton, G., Vinyals, O., and Dean, J.     Distilling
+port responsible use; we recommend deploying the method               the knowledge in a neural network. arXiv preprint
+with appropriate access controls and governance practices.            arXiv:1503.02531, 2015. URL https://arxiv.
+                                                                      org/abs/1503.02531.
+
+References                                                          Kim, T., Oh, J., Kim, N. Y., Cho, S., and Yun, S.-
+                                                                      Y. Comparing Kullback–Leibler divergence and mean
+Baydin, A. G., Pearlmutter, B. A., Radul, A. A., and Siskind,         squared error loss in knowledge distillation. In Pro-
+  J. M. Automatic differentiation in machine learning: a              ceedings of the Thirtieth International Joint Conference
+  survey. Journal of Machine Learning Research, 18(153):              on Artificial Intelligence, pp. 2628–2635, 2021. doi:
+  1–43, 2018.                                                         10.24963/ijcai.2021/362.
+Benamira, A., Peyrin, T., Yap, T., Guérand, T., and Hooi,          LeCun, Y., Denker, J. S., and Solla, S. A. Optimal brain
+  B. Truth table net: Scalable, compact & verifiable neural           damage. In Advances in Neural Information Processing
+  networks with a dual convolutional small boolean circuit            Systems, volume 2, pp. 598–605, 1990.
+  networks form. In Proceedings of the Thirty-Third Inter-
+  national Joint Conference on Artificial Intelligence, pp.         Li, H., Kadav, A., Durdanovic, I., Samet, H., and Graf, H. P.
+  13–21, 2024.                                                         Pruning filters for efficient ConvNets. In Proceedings
+                                                                       of the International Conference on Learning Representa-
+Chen, D., Cong, J., and Pan, P. FPGA design automation:                tions, pp. 1–13, 2017.
+
+                                                                9
+                          Two-Stage Unit Tying for Simplifying Differentiable Logic Gate Networks
+
+Li, T., Li, J., Liu, Z., and Zhang, C. Few sample knowl-             Umuroglu, Y., Akhauri, Y., Fraser, N. J., and Blott, M.
+  edge distillation for efficient network compression. In             LogicNets: Co-designed neural networks and circuits for
+  Proceedings of the IEEE/CVF Conference on Computer                  extreme-throughput applications. In Proceedings of the
+  Vision and Pattern Recognition, pp. 14639–14647, 2020.              30th International Conference on Field-Programmable
+                                                                      Logic and Applications, pp. 291–297. IEEE, 2020.
+Martens, J. and Grosse, R. Optimizing neural networks with
+ Kronecker-factored approximate curvature. In Proceed-               Wang, E., Davis, J. J., Cheung, P. Y. K., and Constantinides,
+ ings of the 32nd International Conference on Machine                 G. A. LUTNet: Learning FPGA configurations for highly
+ Learning, volume 37 of Proceedings of Machine Learn-                 efficient neural network inference. IEEE Transactions on
+ ing Research, pp. 2408–2417. PMLR, 2015.                             Computers, 69(12):1795–1808, 2020. doi: 10.1109/TC.
+                                                                      2020.2978817.
+Molchanov, P., Tyree, S., Karras, T., Aila, T., and Kautz,
+ J. Pruning convolutional neural networks for resource               Wegman, M. N. and Zadeck, F. K. Constant propagation
+ efficient inference. In Proceedings of the International             with conditional branches. ACM Transactions on Pro-
+ Conference on Learning Representations, pp. 1–17, 2017.              gramming Languages and Systems, 13(2):181–210, 1991.
+Muchnick, S. S. Advanced Compiler Design and Implemen-               Yousefi, S., Plesner, A., Aczel, T., and Wattenhofer, R. Mind
+ tation. Morgan Kaufmann, 1997.                                        the gap: Removing the discretization gap in differentiable
+Natarajan, B. K. Sparse approximate solutions to linear                logic gate networks. In Advances in Neural Information
+  systems. SIAM Journal on Computing, 24(2):227–234,                   Processing Systems, 2025.
+ 1995.
+Pearlmutter, B. A. Fast exact multiplication by the Hessian.
+  Neural Computation, 6(1):147–160, 1994. doi: 10.1162/
+  neco.1994.6.1.147.
+Petersen, F., Borgelt, C., Kuehne, H., and Deussen, O. Deep
+  differentiable logic gate networks. In Advances in Neural
+  Information Processing Systems, volume 35, pp. 2006–
+  2018, 2022.
+Petersen, F., Kuehne, H., Borgelt, C., Welzel, J., and Er-
+  mon, S. Convolutional differentiable logic gate networks.
+  In Advances in Neural Information Processing Systems,
+  volume 37, pp. 121185–121203, 2024.
+Rastegari, M., Ordonez, V., Redmon, J., and Farhadi, A.
+  XNOR-net: ImageNet classification using binary convo-
+  lutional neural networks. In Proceedings of the European
+  Conference on Computer Vision, pp. 525–542. Springer,
+  2016.
+Singh, S. P. and Alistarh, D. WoodFisher: Efficient second-
+  order approximation for neural network compression. In
+  Advances in Neural Information Processing Systems, vol-
+  ume 33, pp. 18098–18109, 2020.
+Theis, L., Korshunova, I., Tejani, A., and Huszár, F. Faster
+  gaze prediction with dense networks and Fisher pruning.
+  arXiv preprint arXiv:1801.05787, 2018. URL https:
+  //arxiv.org/abs/1801.05787.
+Umuroglu, Y., Fraser, N. J., Gambardella, G., Blott, M.,
+ Leong, P., Jahre, M., and Vissers, K. FINN: A framework
+ for fast, scalable binarized neural network inference. In
+ Proceedings of the 2017 ACM/SIGDA International Sym-
+ posium on Field-Programmable Gate Arrays, pp. 65–74,
+ 2017.
+
+                                                                10
+                          Two-Stage Unit Tying for Simplifying Differentiable Logic Gate Networks
+
+A. Experimental Details
+Baseline Implementation. We implement convolutional logic layers via an im2col/unfold-style transformation. For
+each image, we extract all K×K receptive-field patches at every spatial location and flatten them, unfolding patches from
+all input channels once to form a per-location feature vector.
+We follow the original convolutional logic network connectivity: each output channel samples two input channels uniformly
+at random and keeps this selection fixed. Accordingly, at each spatial location the output-channel computation uses only the
+two corresponding patch blocks from the unfolded vector and ignores the remaining channels.
+This formulation allows us to leverage the public CUDA kernel from the original logic network implementation (for FC-like
+logic layers) by treating spatial locations as batch elements and sharing the same parameters across all locations (Petersen
+et al., 2022).
+
+Model variants. We follow the reference convolutional logic network (LogicTreeNet) configurations from (Petersen et al.,
+2024), where (S) and (M) denote the Small/Medium width variants. Accordingly, the first convolutional layer has 256/32
+output channels for CIFAR-10(M/S) and 64/16 output channels for MNIST(M/S); all other architectural settings follow
+the released implementation.
+
+Post-Tying Fine-tuning Protocol. After completing layer-wise tying across all layers, we perform a single fine-tuning
+run to recover accuracy. We use the standard training recipe from the convolutional differentiable logic gate network
+implementation (Petersen et al., 2024): AdamW with weight decay 0.002, learning rate 0.02 (CIFAR-10) or 0.01 (MNIST),
+for 30,000 iterations with batch size 128. Throughout fine-tuning, we keep the selected ties fixed and prevent fine-tuning
+from changing the tying configuration, so that the tied ratio (and corresponding post-synthesis footprint) remains unchanged.
+We apply the same fixed-tying protocol for all “w/ FT” results, including baselines, for a fair comparison.
+
+FPGA Synthesis Setup. We synthesize the generated Verilog RTL using Xilinx Vivado (v2021.2) targeting the S2C
+SingleEv7 platform (V7-2000T). Following (Petersen et al., 2024), we reconstruct a baseline pipeline schedule to match
+the reported throughput targets and keep it fixed while applying unit tying. Concretely, we insert pipeline registers after
+each convolution and or-pool layer (with an additional register after the final classifier layer for MNIST(M/S)). For the
+GroupSum reduction, we use a pipelined adder tree with model-specific fan-in partitioning: CIFAR-10(M/S) forms 4
+partial sums per group and performs a final reduction, whereas MNIST forms 64 partial sums and applies an intermediate
+reduction (16-way for MNIST(M) and 8-way for MNIST(S)) before the final reduction. We run out-of-context synthesis
+with the AreaOptimized high directive, and report post-synthesis LUT utilization from Vivado reports.
+
+B. Detailed Results
+Classification Performance on Small (S) Models. Table 7 reports accuracy (mean ± std) for the Small (S) variants on
+CIFAR-10 and MNIST across tied ratios. The table complements the main results by showing consistent trends on smaller
+models, including both post-tying performance and the recovery achieved by a single post-tying fine-tuning run.
+
+
+
+
+                                                            11
+                            Two-Stage Unit Tying for Simplifying Differentiable Logic Gate Networks
+
+                                  Table 7. Results for Small (S) models on CIFAR-10 and MNIST.
+
+ Model                Method                   10% Tied          20% Tied          30% Tied            40% Tied          50% Tied
+                      ConstProb              56.56 ± 0.00      51.47 ± 0.00      42.11 ± 0.00         31.65 ± 0.00      22.43 ± 0.00
+                      Fisher-TL              56.72 ± 0.04      53.62 ± 0.70      50.41 ± 0.69         44.78 ± 0.69      39.15 ± 2.16
+ CIFAR-10(S)          FD-DL                  57.07 ± 0.17      55.39 ± 0.08      52.81 ± 0.63         46.74 ± 0.49      38.17 ± 1.57
+ (original: 58.39)    Ours (Stage-A only)    57.08 ± 0.21      54.85 ± 0.17      51.64 ± 0.15         46.89 ± 0.80      38.89 ± 1.19
+                      Ours                   57.14 ± 0.30      55.25 ± 0.46      52.94 ± 0.46         49.50 ± 0.29      46.50 ± 1.10
+                      ConstProb w/ FT        58.04 ± 0.06      57.19 ± 0.16      55.73 ± 0.13         53.60 ± 0.18      49.62 ± 0.17
+                      Fisher-TL w/ FT        57.89 ± 0.05      57.36 ± 0.21      56.66 ± 0.15         55.65 ± 0.24      54.30 ± 0.42
+                      Ours w/ FT             58.05 ± 0.15      57.52 ± 0.25      56.70 ± 0.08         55.91 ± 0.28      54.75 ± 0.14
+                      ConstProb              97.71 ± 0.00      92.78 ± 0.00      75.00 ± 0.00         43.40 ± 0.00      11.37 ± 0.00
+                      Fisher-TL              97.43 ± 0.11      96.11 ± 0.44      87.95 ± 5.99         73.22 ± 4.05      59.87 ± 4.22
+ MNIST(S)             FD-DL                  97.77 ± 0.05      97.04 ± 0.14      94.91 ± 0.31         89.46 ± 0.91      79.15 ± 1.17
+ (original: 98.21)    Ours (Stage-A only)    97.70 ± 0.08      96.77 ± 0.24      92.73 ± 0.99         85.09 ± 1.76      75.10 ± 3.55
+                      Ours                   97.84 ± 0.02      97.05 ± 0.07      95.70 ± 0.96         91.15 ± 0.53      86.37 ± 0.84
+                      ConstProb w/ FT        98.15 ± 0.03      97.90 ± 0.09      97.46 ± 0.14         95.55 ± 0.05      78.24 ± 0.40
+                      Fisher-TL w/ FT        98.08 ± 0.03      97.89 ± 0.04      97.56 ± 0.16         97.21 ± 0.01      96.71 ± 0.16
+                      Ours w/ FT             98.16 ± 0.06      98.05 ± 0.04      97.84 ± 0.01         97.75 ± 0.09      97.52 ± 0.05
+
+
+FPGA Results on Small (S) Models. Table 8 reports accuracy and post-synthesis LUT usage for the Small (S) models
+under pixel streaming and the spatially unrolled implementation. Pixel streaming is a resource-efficient implementation that
+reuses a shared patch-processing datapath and streams patches sequentially. Consistent with the main FPGA results (Sec. 5.4),
+the Small (S) models exhibit a monotonic decrease in LUT usage as tying increases in both implementations. Overall, unit
+tying provides a reliable accuracy–area trade-off and helps meet tighter LUT budgets under both implementations.
+
+Table 8. FPGA results for Small (S) models across tied ratios. The table compares algorithmic accuracy with post-synthesis FPGA
+resource usage for Pixel Streaming and Spatially Unrolled implementations. Red. (%) denotes the reduction in LUT usage relative to the
+baseline.
+
+                                   Acc.                  Pixel Streaming                                Spatially Unrolled
+Model                Tied Ratio
+                                   (%)      Time/Image      LUT (1000s)      Red. (%)     Time/Image         LUT (1000s)     Red. (%)
+                     0% tied       58.39       9.22 µs           24.7            –             9 ns              59.3             –
+                     10% tied      57.57       9.22 µs           20.6          16.73           9 ns              54.3           8.43
+                     20% tied      56.88       9.22 µs           17.9          27.42           9 ns              49.1          17.15
+CIFAR-10(S)
+                     30% tied      55.28       9.22 µs           15.5          37.05           9 ns              41.9          29.33
+                     40% tied      53.56       9.22 µs           13.6          45.13           9 ns              35.3          40.49
+                     50% tied      52.22       9.22 µs           11.6          52.97           9 ns              29.5          50.20
+                     0% tied       98.21       3.14 µs           20.0            –             4 ns              26.5            –
+                     10% tied      98.06       3.14 µs           16.2          18.92           4 ns              22.6          14.56
+                     20% tied      97.78       3.14 µs           14.3          28.45           4 ns              20.2          23.57
+MNIST(S)
+                     30% tied      97.85       3.14 µs           12.9          35.47           4 ns              19.0          28.15
+                     40% tied      97.38       3.14 µs           11.7          41.60           4 ns              16.4          38.00
+                     50% tied      96.73       3.14 µs           9.6           51.75           4 ns              13.3          49.95
+
+
+
+
+                                                                 12
+
