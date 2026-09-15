@@ -1,0 +1,86 @@
+{
+  "pdfs/a_method_for_optimizing_connections_in_differentiable_logic_gate_networks.pdf": {
+    "sha256": "52bf52f1de4cc77a191cec207c33b68d0a128d1a80864238413adf5fba993c31",
+    "extracted_text": "evidence/literature/a_method_for_optimizing_connections_in_differentiable_logic_gate_networks.txt"
+  },
+  "pdfs/a_scalable_interpretable_verifiable_differentiable_logic_gate_convolutional_neural_network_architecture_from_truth_tables.pdf": {
+    "sha256": "a14ee11901f91b96123f2645709c955a2369cc993d2579ff272ee58ff8d645ca",
+    "extracted_text": "evidence/literature/a_scalable_interpretable_verifiable_differentiable_logic_gate_convolutional_neural_network_architecture_from_truth_tables.txt"
+  },
+  "pdfs/bitlogic_a_framework_for_gradient_based_lut_native_neural_networks.pdf": {
+    "sha256": "56fa49d15ce11976782dab1a72c4c2a7627e6a8ef0c621829e7dcc407de4590b",
+    "extracted_text": "evidence/literature/bitlogic_a_framework_for_gradient_based_lut_native_neural_networks.txt"
+  },
+  "pdfs/convolutional_differentiable_logic_gate_networks.pdf": {
+    "sha256": "cf02235547bec3c555ccf50056610426b7d72424b15e7e335418178fca122357",
+    "extracted_text": "evidence/literature/convolutional_differentiable_logic_gate_networks.txt"
+  },
+  "pdfs/deep_differentiable_logic_gate_networks.pdf": {
+    "sha256": "fa0722f9e70759ee036167471bc0f5ee6e942feb3f2cef40aa9c8650501d77ab",
+    "extracted_text": "evidence/literature/deep_differentiable_logic_gate_networks.txt"
+  },
+  "pdfs/et_an_energy_eficient_edge_transformer_architecture.pdf": {
+    "sha256": "5c4dda5a69835bcbc9af348d6d7290b572886e49087d61766d5149f1477974e5",
+    "extracted_text": "evidence/literature/et_an_energy_eficient_edge_transformer_architecture.txt"
+  },
+  "pdfs/fitting_multilinear_polynomials_for_logic_gate_networks.pdf": {
+    "sha256": "8d90970d512feebeb45cd731e8c6c8f309d245048d149203ce9a22d93116e144",
+    "extracted_text": "evidence/literature/fitting_multilinear_polynomials_for_logic_gate_networks.txt"
+  },
+  "pdfs/from_mnist_to_imagenet_understanding_the_scalability_boundaries_of_differentiable_logic_gate_networks.pdf": {
+    "sha256": "08d2cd86e32541b025c16f08077876506d2c2bc4000df2605567e9fd8f083217",
+    "extracted_text": "evidence/literature/from_mnist_to_imagenet_understanding_the_scalability_boundaries_of_differentiable_logic_gate_networks.txt"
+  },
+  "pdfs/gic_dlc_differentiable_logic_circuits_for_hardware_friendly_grayscale_image_compression.pdf": {
+    "sha256": "c81d871b70a380de4999d0b7527ae5f21981d2ed3209177488182753f53d90dc",
+    "extracted_text": "evidence/literature/gic_dlc_differentiable_logic_circuits_for_hardware_friendly_grayscale_image_compression.txt"
+  },
+  "pdfs/inter_patient_ecg_arrhythmia_classification_with_lgns_and_lutns.pdf": {
+    "sha256": "68ae1a443a43a8f58ee108baa5a4211d89b941584fb8937e8d53de96b362400b",
+    "extracted_text": "evidence/literature/inter_patient_ecg_arrhythmia_classification_with_lgns_and_lutns.txt"
+  },
+  "pdfs/learning_interpretable_differentiable_logic_networks.pdf": {
+    "sha256": "f1d9704c7dcab6282df0badb9c0e09d47a15b3c20068d12a48dd0883d05239be",
+    "extracted_text": "evidence/literature/learning_interpretable_differentiable_logic_networks.txt"
+  },
+  "pdfs/light_differentiable_logic_gate_networks.pdf": {
+    "sha256": "e3285f0a2404edb87b6f66f4d3b5053a7e81609b19122e9d1640a6360ddb90bd",
+    "extracted_text": "evidence/literature/light_differentiable_logic_gate_networks.txt"
+  },
+  "pdfs/lightweight_in_network_flow_classification_with_deep_differentiable_logic_gate_networks.pdf": {
+    "sha256": "3430fd95b457293220a55c2aee9b21ad130e2a3a96fabf8c1648356e2bf4d83f",
+    "extracted_text": "evidence/literature/lightweight_in_network_flow_classification_with_deep_differentiable_logic_gate_networks.txt"
+  },
+  "pdfs/lilogic_net_compact_logic_gate_networks_with_learnable_connectivity_for_efficient_hardware_deployment.pdf": {
+    "sha256": "0afa49fdcee8683a1ff28aea9dd94167fcffacfa525ec1d99387541fd15775e1",
+    "extracted_text": "evidence/literature/lilogic_net_compact_logic_gate_networks_with_learnable_connectivity_for_efficient_hardware_deployment.txt"
+  },
+  "pdfs/logic_neural_networks_for_efficient_fpga_implementation.pdf": {
+    "sha256": "27670031ae24d2583094760f220ba0c35eaa311617645c471afd2c3e23e37b0c",
+    "extracted_text": "evidence/literature/logic_neural_networks_for_efficient_fpga_implementation.txt"
+  },
+  "pdfs/mind_the_gap_removing_the_discretization_gap_in_differentiable_logic_gate_networks.pdf": {
+    "sha256": "6daa0fd8e766ac12fc9a28a5f2f79f8dde00a39c1c9f0108c377318887170165",
+    "extracted_text": "evidence/literature/mind_the_gap_removing_the_discretization_gap_in_differentiable_logic_gate_networks.txt"
+  },
+  "pdfs/polynomial_surrogate_training_for_differentiable_ternary_logic_gate_networks.pdf": {
+    "sha256": "0af72ef0a6d7daa1faf41c83c05a8e41d8b8790705960954c6864b32133cee1f",
+    "extracted_text": "evidence/literature/polynomial_surrogate_training_for_differentiable_ternary_logic_gate_networks.txt"
+  },
+  "pdfs/recurrent_deep_differentiable_logic_gate_networks.pdf": {
+    "sha256": "8fd50db08f92fa218dcd1181579c8b662b765fa91a12a99baab73e3e89f48b94",
+    "extracted_text": "evidence/literature/recurrent_deep_differentiable_logic_gate_networks.txt"
+  },
+  "pdfs/silicon_aware_neural_networks.pdf": {
+    "sha256": "a49ce0bdb009becd03fd41fcd188556ffe7294eaf2d2e2dfdd631dfea18cbcca",
+    "extracted_text": "evidence/literature/silicon_aware_neural_networks.txt"
+  },
+  "pdfs/two-stage_unit_tying_for_simplifying_differentiable_logic_gate_networks.pdf": {
+    "sha256": "67848458965d9e3aca207a4cab89e4d9728b8fe39529f8ba38c7bb7fe1ea4056",
+    "extracted_text": "evidence/literature/two-stage_unit_tying_for_simplifying_differentiable_logic_gate_networks.txt"
+  },
+  "pdfs/warp_logic_neural_networks.pdf": {
+    "sha256": "b6904d5323ae58cd376174bf916465f802ad31ca9e9f3b2857f563c5d6ef21dd",
+    "extracted_text": "evidence/literature/warp_logic_neural_networks.txt"
+  }
+}

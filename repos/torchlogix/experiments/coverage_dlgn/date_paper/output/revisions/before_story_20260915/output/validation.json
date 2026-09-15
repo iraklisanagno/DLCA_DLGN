@@ -1,0 +1,54 @@
+{
+  "pages": 6,
+  "bibliographic_references": 12,
+  "tables": 5,
+  "figures": 2,
+  "source_hashes_verified": 49,
+  "dense_paired_intervals_recomputed": 5,
+  "word_budgets_pass": true,
+  "unresolved_references": 0,
+  "overfull_boxes": 0,
+  "all_fonts_embedded": true,
+  "type3_fonts": 0,
+  "pdf_page_word_bounds_pt": [
+    [
+      36.85041,
+      71.343057,
+      558.429833,
+      745.406213
+    ],
+    [
+      36.85041,
+      68.254682,
+      558.429853,
+      740.339315
+    ],
+    [
+      36.85041,
+      71.873623,
+      558.434465,
+      744.904113
+    ],
+    [
+      36.85039,
+      64.668092,
+      558.434465,
+      736.955493
+    ],
+    [
+      36.8504,
+      64.668092,
+      558.431717,
+      745.406223
+    ],
+    [
+      36.8504,
+      68.254682,
+      558.415803,
+      651.637063
+    ]
+  ],
+  "new_training_or_inference": false,
+  "title": "LogicConnect: Structured Connectivity Design for Differentiable Logic Gate Networks",
+  "naming_update_verified_on": "2026-09-13"
+}

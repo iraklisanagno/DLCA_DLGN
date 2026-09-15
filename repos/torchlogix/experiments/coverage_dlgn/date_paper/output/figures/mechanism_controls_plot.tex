@@ -1,0 +1,22 @@
+\documentclass[10pt]{article}
+\usepackage[paperwidth=198mm,paperheight=59mm,margin=1mm]{geometry}
+\usepackage{newtxtext,newtxmath,tikz,pgfplots}
+\pgfplotsset{compat=1.18}
+\definecolor{methodblue}{HTML}{216A85}
+\definecolor{controlgray}{HTML}{555555}
+\definecolor{accentorange}{HTML}{A64B1D}
+\pagestyle{empty}
+\begin{document}\noindent\begin{tikzpicture}
+\begin{axis}[width=89mm,height=50mm,axis lines=left,tick align=outside,grid=major,grid style={gray!15},scaled ticks=false,tick label style={font=\fontsize{11}{13}\selectfont},label style={font=\fontsize{11}{13}\selectfont},title style={font=\fontsize{11}{13}\selectfont},legend style={font=\fontsize{11}{13}\selectfont,draw=none,fill=white,inner sep=1pt},title={(a) Dense M (V)},xmin=-3.2,xmax=6.7,ymin=-.5,ymax=2.5,ytick={0,1,2},yticklabels={{Nominal},{Balanced},{Random}},xlabel={Accuracy difference (pp)}]
+\draw[dashed,gray] (axis cs:0,-.5)--(axis cs:0,2.5);
+\addplot+[color=methodblue,mark=*,mark size=2pt,line width=0.9pt,mark options={solid,fill=methodblue,draw=methodblue},only marks,error bars/.cd,x dir=both,x explicit] coordinates {(4.3133334,2) +- (1.8386348,0)};
+\addplot+[color=methodblue,mark=*,mark size=2pt,line width=0.9pt,mark options={solid,fill=methodblue,draw=methodblue},only marks,error bars/.cd,x dir=both,x explicit] coordinates {(0.48666664,1) +- (1.2816237,0)};
+\addplot+[color=methodblue,mark=*,mark size=2pt,line width=0.9pt,mark options={solid,fill=methodblue,draw=methodblue},only marks,error bars/.cd,x dir=both,x explicit] coordinates {(-0.086666465,0) +- (1.6719677,0)};
+\end{axis}
+\begin{axis}[width=89mm,height=50mm,axis lines=left,tick align=outside,grid=major,grid style={gray!15},scaled ticks=false,tick label style={font=\fontsize{11}{13}\selectfont},label style={font=\fontsize{11}{13}\selectfont},title style={font=\fontsize{11}{13}\selectfont},legend style={font=\fontsize{11}{13}\selectfont,draw=none,fill=white,inner sep=1pt},at={(9.25cm,0)},anchor=south west,title={(b) Conv. S (V)},xmin=-3.2,xmax=6.7,ymin=-.5,ymax=2.5,ytick={0,1,2},yticklabels={{Nominal},{Balanced},{Random}},xlabel={Accuracy difference (pp)}]
+\draw[dashed,gray] (axis cs:0,-.5)--(axis cs:0,2.5);
+\addplot+[color=methodblue,mark=*,mark size=2pt,line width=0.9pt,mark options={solid,fill=methodblue,draw=methodblue},only marks,error bars/.cd,x dir=both,x explicit] coordinates {(1.7066667,2) +- (4.3065366,0)};
+\addplot+[color=methodblue,mark=*,mark size=2pt,line width=0.9pt,mark options={solid,fill=methodblue,draw=methodblue},only marks,error bars/.cd,x dir=both,x explicit] coordinates {(0.21333333,1) +- (1.0497125,0)};
+\addplot+[color=methodblue,mark=*,mark size=2pt,line width=0.9pt,mark options={solid,fill=methodblue,draw=methodblue},only marks,error bars/.cd,x dir=both,x explicit] coordinates {(0.59333333,0) +- (1.7142534,0)};
+\end{axis}
+\end{tikzpicture}\end{document}

@@ -1,0 +1,726 @@
+                                                                                                                                                                             Lightweight In-Network Flow Classification with
+                                                                                                                                                                                Deep Differentiable Logic Gate Networks
+                                                                                                                                                                                                          Song Liu, Kaiwei Gao, Xinjing Yuan, Jianxin Shi, Lingjun Pu
+                                                                                                                                                                                                     College of Computer Science, DISSec, Nankai University, Tianjin, China
+                                                                                                                                                                                                     The corresponding author is Xinjing Yuan (yuanxinjing@nankai.edu.cn)
+2025 IEEE 31th International Conference on Parallel and Distributed Systems (ICPADS) | 979-8-3315-4901-5/25/$31.00 ©2025 IEEE | DOI: 10.1109/ICPADS67057.2025.11323087
+
+
+
+
+                                                                                                                                                                            Abstract—Deploying artificial intelligence (AI) models on the                     Existing in-network AI models, such as CNNs [9] and DTs
+                                                                                                                                                                         programmable data plane is a key direction toward realizing                       [8], [14], often incur high resource costs, requiring extensive
+                                                                                                                                                                         intelligent data planes. However, this vision faces significant chal-             SRAM, costly TCAM, and packet recirculation. This hinders
+                                                                                                                                                                         lenges: existing approaches often incur excessive consumption of
+                                                                                                                                                                         scarce switch hardware resources or introduce packet recircula-                   the performance of critical network functions like the 5G
+                                                                                                                                                                         tion, leading to performance bottlenecks. To address these issues,                UPF [10], [15] and data center gateways, while attempts to
+                                                                                                                                                                         we propose SwitchLGN, a novel Deep Differentiable Logic Gate                      reduce resource usage typically sacrifice model accuracy [4].
+                                                                                                                                                                         Network (DDLGN) architecture deployable on programmable                           To address these challenges, we adopt the Deep Differentiable
+                                                                                                                                                                         switches. The core of SwitchLGN lies in its hardware-aligned                      Logic Gate Network (DDLGN) [16], [17]. DDLGN performs
+                                                                                                                                                                         design, which decomposes the model into multiple independent
+                                                                                                                                                                         sub-layers and maps each to distinct pipeline processing units.                   inference solely through bitwise operations (e.g., AND, OR),
+                                                                                                                                                                         This design enables the entire inference process to be executed                   a design that aligns naturally with the native capabilities of
+                                                                                                                                                                         solely with the switch’s native bit-level logic operations, thereby               programmable switches. This approach eliminates complex
+                                                                                                                                                                         eliminating the challenges of cross-cluster computation and                       arithmetic, thereby minimizing computational and memory
+                                                                                                                                                                         complex arithmetic in the data plane. In addition, we develop                     overhead (SRAM/TCAM) while, as shown in prior work [17],
+                                                                                                                                                                         a compilation toolchain to support the automated mapping
+                                                                                                                                                                         of SwitchLGN models to P4 code. Experimental evaluations                          maintaining accuracy comparable to more complex models.
+                                                                                                                                                                         show that SwitchLGN achieves accuracies of 99.42% for net-                           The original DDLGN topology is incompatible with pro-
+                                                                                                                                                                         work anomaly detection and 95.59% for flow size classification,                   grammable switches due to PHV size, cluster-local compu-
+                                                                                                                                                                         while reducing SRAM usage to below 3% and making TCAM                             tation, and compiler constraints. We design SwitchLGN, a
+                                                                                                                                                                         consumption negligible. Notably, it delivers line-rate inference
+                                                                                                                                                                         without packet recirculation, achieving a per-packet latency of
+                                                                                                                                                                                                                                                           hardware-aligned variant that partitions each layer into sub-
+                                                                                                                                                                         only 283 ns.                                                                      layers on separate PHV clusters, ensuring all operations are
+                                                                                                                                                                            Index Terms—Programmable Network, In-network Comput-                           local and avoiding cross-cluster dependencies. In this design,
+                                                                                                                                                                         ing, Deep Differentiable Logic Gate Network, Flow Classification.                 each neuron occupies a dedicated PHV container, features
+                                                                                                                                                                                                                                                           are bit-sliced at parsing, and per-stage ALUs execute boolean
+                                                                                                                                                                                                                                                           operations. Local votes are aggregated via popcount and
+                                                                                                                                                                                                   I. I NTRODUCTION                                        combined globally (using a resubmit on Tofino1 or a single
+                                                                                                                                                                            The emergence of the Programmable Data Plane (PDP)                             pass on Tofino2). This enables a recirculation-free deployment
+                                                                                                                                                                         enables network devices to achieve flexible programming of                        with predictable, low resource usage, primarily relying on
+                                                                                                                                                                         packet processing logic while maintaining line-rate forwarding                    PHV with minimal SRAM and negligible TCAM.
+                                                                                                                                                                         performance [1], [2]. Deploying artificial intelligence (AI)                         The contributions of this paper are as follows:
+                                                                                                                                                                         technologies such as machine learning and neural networks on
+                                                                                                                                                                         the PDP further promotes the intelligence of network devices.                        1) To the best of our knowledge, this is the first work to
+                                                                                                                                                                         Such schemes combine the PDP’s line-rate packet processing                              introduce DDLGN into the PDP and implement their
+                                                                                                                                                                         with AI-based traffic classification, enabling network decision                         deployment on commercial programmable switches. We
+                                                                                                                                                                         making and improving service quality.                                                   demonstrate the feasibility of applying DDLGN for in-
+                                                                                                                                                                            Studies [3]–[11] have attempted to offload AI models, such                           network computation.
+                                                                                                                                                                         as decision trees (DT) [3]–[7], MLP [12], BNN [8], and                               2) Based on the hardware characteristics of programmable
+                                                                                                                                                                         CNN [9] to the programmable data plane. These studies have                              switches, we design SwitchLGN, a compact and de-
+                                                                                                                                                                         preliminarily verified the feasibility and potential applications                       ployment friendly DDLGN architecture that achieves
+                                                                                                                                                                         of deploying lightweight AI models on data planes. How-                                 line-rate inference on programmable switches without
+                                                                                                                                                                         ever, most existing research fails to consider the resource                             recirculation and with low resource overhead, all without
+                                                                                                                                                                         constraints of the PDP, as it is required not only to perform                           sacrificing model accuracy.
+                                                                                                                                                                         intelligent functions but also to maintain its original packet                       3) We develop a complete compilation toolchain that sup-
+                                                                                                                                                                         forwarding capacity in practical network environments [7],                              ports efficient and automatic mapping from SwitchLGN
+                                                                                                                                                                         [13]. Therefore, it should reserve sufficient resources for its                         models to P4 programs.
+                                                                                                                                                                         core traditional functions and dedicate part to AI inference,                        Experimental results on two representative flow classifica-
+                                                                                                                                                                         while sustaining line-rate performance.                                           tion tasks, network intrusion detection using the UNSW-NB15
+
+
+
+
+                                                                                                                                                                           Authorized licensed use limited to: Southern Illinois University Carbondale. Downloaded on July 21,2026 at 00:38:59 UTC from IEEE Xplore. Restrictions apply.
+dataset and flow size classification using the UNIV1 dataset,                     tables) to reduce pipeline depth. While this lowers the per-
+demonstrate that SwitchLGN attains accuracies of 99.42% and                       stage burden, it creates high memory demand, as deeper trees
+95.59%, respectively. The accuracy is reduced by no more                          require more entries and thus consume more SRAM and
+than 0.4% compared with the original DDLGN, while still                           TCAM. Lightweight NNs can be deployed on PDPs, such as
+surpassing state-of-the-art in-network models such as Quark                       MLP [12], BNN [8], CNN [9], and RNN [22]. However, PISA-
+(CNN) and Planter (DT). In addition, SwitchLGN lowers                             based switches only support bit-wise operations, table lookup,
+SRAM consumption to 2.6%, completely avoids TCAM usage,                           and simple integer arithmetic. Operations such as multiplica-
+and sustains line-rate processing at 99.8 Gbps with an average                    tion and normalization in NNs must be approximated through
+per-packet inference latency of only 283 ns.                                      quantization [9], [12], binarization [8], or precomputed tables.
+                                                                                  Quantization and binarization reduce computation but can
+              II. BACKGROUND AND M OTIVATION                                      harm accuracy and model capacity [14]. Table-based mapping
+A. Programmable Switch                                                            preserves accuracy but increases memory consumption. For
+                                                                                  example, the P4 implementation of N3IC [8] adds about 22%
+   Tofino programmable switch [18] is a representative hard-                      SRAM for batch normalization and lookup, and Quark [9]
+ware of PDP. It typically employs a pipeline design based                         stores all convolution products in SRAM to avoid multiplica-
+on the Protocol Independent Switch Architecture (PISA) [19],                      tions, resulting in a 22.7% overhead.
+with packet processing workflows defined in the P4 language                          Existing in-network models, including decision trees,
+[20], enabling protocol independence. In a typical process,                       BNNs, and quantized neural networks, emulate unsupported
+when a packet enters the switch, the parser first extracts                        arithmetic operations on programmable switches through large
+key fields and populates them into the Packet Header Vector                       TCAM or SRAM tables, resulting in substantial memory
+(PHV). The packet is then passed through a stage-based                            overhead. As shown in Table I, none of these models can avoid
+pipeline, where each stage consists of multiple Match-Action                      heavy reliance on scarce memory while maintaining both high
+Units (MAUs) that perform field matching and corresponding                        accuracy and line-rate inference, which motivates the design
+actions. Finally, the deparser reassembles the packet and                         of our work.
+completes forwarding.
+   Although the PISA architecture enables line-rate processing,
+its programmability is constrained by hardware resources [21].                    C. Deep Differentiable Logic Gate Network
+A pipeline consists of multiple stages with SRAM/TCAM                                To address the above issues, we introduce a logic gate based
+for lookups and ALUs for computation, and each pipeline                           inference model, the Deep Differentiable Logic Gate Network
+in Tofino 1 and 2 contains 12 and 20 stages, respectively                         as a new approach for in-switch data-plane intelligence. As
+[18]. Total on-chip memory is limited to tens of megabytes,                       shown in Fig. 1, DDLGN builds each neuron from basic
+with SRAM used for exact matches and the smaller, costlier                        boolean gates (e.g., AND, OR, NOT). Each neuron receives
+TCAM for ternary matches. Registers and PHV containers are                        binary inputs, and through interconnections among neurons,
+stage-bound and accessible only once per stage, so complex                        the network as a whole achieves nonlinear mappings. This
+operations must be split across stages or implemented via                         design also combines real valued logic with a continuous,
+packet recirculation or table lookups. Each expression can use                    parameterized relaxation to enable effective training. The
+at most two variables in the same PHV cluster, further limiting                   inference requires no floating-point arithmetic and no multipli-
+the flexibility.                                                                  cations, but instead consists solely of bit-wise operations. Such
+   Programmable switches support only a limited set of integer                    operations are natively supported by programmable switches
+arithmetic and logic operations, such as addition, subtraction,                   and can be directly mapped to the data path. DDLGN has also
+and bit shifts, while lacking native support for floating-point                   been shown effective for image classification [16], [17].
+operations and division. Applications requiring floating-point
+arithmetic must use fixed-point approximations and table
+lookup for complex multiply accumulate operations. These                                         4% 2% 81% 6%       ...   1% 2%               1% 5% 78% 10% ... 1% 2%
+                                                                                                 and nand nor xor         true or             and nand nor xor  true or
+constraints make the implementation of complex AI algorithms                                        1                       0                 1                   0
+on switches require many pipeline stages, registers, and ta-                                                                                                              Class 1
+                                                                                                    0                                         0                   1
+                                                                                                                            1       Class 1
+bles, consuming memory resources and potentially reducing
+                                                                                      Features
+
+
+
+
+                                                                                                    1                                         1                   1                 Class 1
+                                                                                                                                                                          Class 2
+throughput and accuracy.                                                                            1
+                                                                                                                            1
+                                                                                                                                              1                   1
+
+                                                                                                    1                                         1                   0
+                                                                                                                            1                                             Class 1
+B. AI in Programmable Data Plane                                                                    1                                         1                   0                 Class 2
+                                                                                                                                    Class 2
+   Research on AI in programmable switches follows two                                              1
+                                                                                                                            1
+                                                                                                                                     √        1                   0
+                                                                                                                                                                          Class 2
+                                                                                                                                                                                    √
+                                                                                                    1                       1                 1                   1
+main lines: tree-based models and NNs. Tree-based models
+like DTs and Random Forests found early adoption as their
+structure aligns with the match–action pipeline. However, their                   Fig. 1: Original DDLGN (left) with random inter-layer con-
+depth—and thus complexity—is limited by available MAUs.                           nections and the proposed SwitchLGN (right) with fixed intra-
+Later works [5] used encoding (e.g., mapping tree levels to                       sub-layer connections aligned to PHV clusters.
+
+
+
+
+  Authorized licensed use limited to: Southern Illinois University Carbondale. Downloaded on July 21,2026 at 00:38:59 UTC from IEEE Xplore. Restrictions apply.
+                    TABLE I: In-Network ML Approaches: A Comparison of Computation and Hardware Costs.
+
+In-Network ML                      Core Computation                                  Major Hardware Overhead                           Representative Works
+
+Decision Tree                      Encoded table lookup                              Moderate SRAM or TCAM                             IIsy [3], Planter [5]
+Binary Neural Network (BNN)        Xnor-popcount-based bitwise multiplication        Moderate SRAM, Negligible TCAM                    N3IC [8]
+Quantized Neural Network           Lookup-table-based multiplication                 Extremely High SRAM, Negligible TCAM              Quark [9], INQ-MLT [12]
+DDLGN                              Native bit-level logic operations                 Negligible SRAM & TCAM                            SwitchLGN (our)
+
+
+
+   Despite its natural affinity to bit-wise architectures, the                    the classification result, the switch applies the appropriate
+original DDLGN is not directly deployable on programmable                         forwarding policy, such as redirecting high-risk flows to the
+switches. DDLGN layers produce and pass many intermediate                         CPU for further analysis or forwarding benign flows directly.
+variables, but the PHV is limited in size and cannot hold
+all intermediate results for larger models. The pipeline has                                       IV. S WITCH LGN M ODEL D ESIGN
+a fixed number of stages, and each stage supports only a                          A. Model Architecture
+limited set of logical operations and a limited number of                            Considering that programmable switches organize PHVs
+field writes. Additional, compiler constraints, such as PHV                       into clusters and perform computations locally within the
+field dependency order, operator limits, and action complexity,                   same cluster, we redesign the original DDLGN architecture
+further prevent a direct mapping of the original DDLGN to P4                      into a hardware-aligned architecture. Each layer is partitioned
+code. Therefore, the key challenge is to redesign an DDLGN                        into multiple independent sub-layers, and a fixed, localized
+that fits programmable switches without sacrificing too much                      wiring pattern is employed to match the “intra-cluster local
+inference capability, and to map it into P4 code under these                      computation” data path. This subsection defines only the
+hardware constraints.                                                             model’s connection scheme, while the detailed implementation
+                                                                                  mapping is deferred to the implementation section. The neuron
+                      III. S YSTEM OVERVIEW
+                                                                                  connectivity is defined as follows.
+   As shown in Fig. 2, the SwitchLGN framework comprises                             Let the number of neurons in layer l be Nl . The layer is
+two main components: the control plane and the data plane.                        divided into S sub-layers, each containing nl = Nl /S neurons.
+This framework is built upon SwitchLGN, a hardware-aligned                        We assume that all layers have the same total number of
+variant of the DDLGN designed for efficient deployment                            neurons and that all sub-layers contain the same number of
+on programmable switches. SwitchLGN retains the inference                         neurons. Denote by hl ∈ {0, 1}Nl the output vector of layer l,
+                                                                                           (s)
+principles of DDLGN while restructuring its topology to                           and by hl ∈ {0, 1}nl the output vector of the s-th sub-layer,
+match hardware constraints such as PHV size, cluster-local                        where s ∈ {0, . . . , Sl − 1} and j ∈ {0, . . . , nl − 1} is the
+computation, and limited pipeline stages.                                         position index within the sub-layer.
+   The control plane is responsible for collecting traffic data                      We adopt a fixed topology where, within each sub-layer,
+from the data plane or developer uploads, preprocessing the                       every neuron takes two inputs from adjacent neurons. The j-
+data, and training the SwitchLGN model. Once trained, the                         th neuron of the s-th sub-layer in layer l + 1 receives inputs
+model is compiled into P4 code with hardware-aware op-                            only from the j-th and (j + 1) mod nl -th neurons of the same
+timizations, including sub-layer partitioning and PHV clus-                       sub-layer in the preceding layer, and computes its output via
+ter alignment. The compiled code is deployed to the pro-                                                          (s)
+                                                                                  a two-input boolean gate Gl+1 (·, ·):
+grammable switch via control-plane APIs such as P4Runtime,                                                                             
+                                                                                          (s)        (s)     (s)       (s) 
+BFRuntime, or gRPC using fast reconfiguration [23]. Although                             hl+1 [j] = Gl+1 hl [j], hl (j + 1) mod nl ,
+deployment temporarily pauses packet processing, the update                                                                                    (1)
+                                                                                                   j = 0, . . . , nl − 1.
+latency is typically below 50 ms [23], which is negligible for
+most online services.                                                             To improve the predictability of PHV allocation by the P4
+   The data plane executes the trained SwitchLGN model                            compiler, the first layer of SwitchLGN uses a reduced boolean
+directly on the programmable switch. Incoming traffic fea-                        operator set Othin . This set contains 10 strictly binary logic
+tures, including five-tuples, port numbers, packet lengths, and                   gates, such as AND, OR, XOR, and their negated or composite
+protocol identifiers, are mapped into PHV containers. Multi-                      variants, where the right-hand side of each operation explicitly
+bit fields are decomposed into individual 1-bit features through                  involves two variables. The remaining layers use the full
+assignment and bit-shift operations to satisfy the binary input                   operator set Ofull of 16 gates, including constants and unary
+requirement of SwitchLGN. Each pipeline stage implements                          negation. Those gates can be seen in Table II. The rationale
+one model layer, performing the associated boolean compu-                         is that, in practical compilation for programmable switches,
+tations and writing the results back into PHV containers.                         when the first-layer operators always reference two variables
+After all layers are processed, a bit-wise popcount aggregates                    and connections are restricted within sub-layers, the compiler
+neuron activations into per-class vote counts, and the final                      is more likely to place both inputs and the write-back target
+label is determined by comparing these counts. Based on                           in the same PHV cluster, thereby reducing the frequency and
+
+
+
+
+  Authorized licensed use limited to: Southern Illinois University Carbondale. Downloaded on July 21,2026 at 00:38:59 UTC from IEEE Xplore. Restrictions apply.
+                     Control Plane
+                                                                              Training SwitchLGN                                                       SwitchLGN P4 Code
+                            Data Processing                                   4% 2% 81% 6%              1% 2%                            // layer 1 code                  // layer N code
+                                                                                                 ...
+                                                                              and nand nor xor         true or                           var_0 = var_0_tmp;               var_0_tmp = 0;
+                                                                                                                                         var_1 = var_1 | (~var_2);        var_1 = ~var_1;
+                                                                              1                           0                              var_2 = ~(var_2 & var_3);        var_2 = 0;
+                                                                                                                 Class 1                 var_3 = ~var_0_tmp;              var_3 = (~var_3) & (var_4);
+                                                   From                       0                           1
+                           From User
+                                                 Data Plane                                                                              // layer 2 code
+                             Upload              Collection                                                                Compiling                                      // popcount
+                                                                              1                           1                              var_0_tmp = ~(var_0 | var_1);
+                                                                                                                 Class 2                                                  var_0 = var_0 + var_1;
+                                                                                                                                         var_1 = var_1 | (~var_2);
+                                                                              1                           1                                                               var_2 = var_2 + var_3;
+                                                                                                                                         var_2 = ~var_3;
+                                                                                                                                                                          Final = var_0 > var_2;
+                                                                                                                                         var_3 = (~var_3) & (~var_0)
+
+
+
+                                                              Clone marked traffic                                                                Update SwitchLGN Code
+
+                      Data Plane                                                                                                                                 Few SRAM         ALU       Packet
+
+                       Parser          Stage 0         Stage 1       Stage 2        Stage 3               Stage 6          Stage 7      Stage 8    Stage 9   Stage 10    Stage 11    Traffic
+                                                                                                                                                                                    Manager
+     Incoming                              &                    >>                         &                     |               +          +           +            +        +
+
+
+
+
+                                                                                                                                                                                                     Deparser
+                                                                          ~
+      Packets
+                                                                                            |                    &               +          +
+                                           &                    >>        &                       …
+                                           &                    >>        |                 ~                    ^               +          +
+
+                                            +                   +         +                 ^                    ~               +          +
+    Different Type
+        packets
+
+
+                                                                                                                                                                                            First Pass
+                                  Preprocess                                                                      Local Popcount
+                                                                      Layers Inference                                                              Global Popcount                         Second Pass
+                                   Features                                                                      PHV Reallocation
+                                                                                                                                                                                            Resubmit
+
+                                        Fig. 2: Overall architecture of the proposed SwitchLGN Framework.
+
+
+overhead of cross-cluster reallocation. In other words, this is                                                  boundaries into multiple consecutive bit segments, which are
+an implementation-aware modeling choice aimed at improving                                                       assigned to different sub-models for parallel processing. When
+the predictability of first layer PHV allocation. Experimental                                                   the bit width slightly exceeds n0 , A constrained truncation
+results show that under the evaluated tasks and model size, this                                                 policy is applied: n0 bits are retained within a single sub-
+constraint has negligible impact on classification accuracy.                                                     model. For example, if a sub-model contains 14 neurons and a
+   The above neuron connectivity can be viewed as partitioning                                                   feature is 16 bits wide, the lower 14 bits are taken as the input.
+the overall model into multiple relatively independent sub-                                                      As shown in our experiments, this localized mapping strategy
+models that are trained and inferred in parallel. Each sub-layer                                                 maintains high feasibility and stable classification accuracy for
+is treated as one layer of an independent sub-model, producing                                                   the evaluated tasks and model size.
+local decisions in parallel during the feed-forward process. For
+                                                                                                                           TABLE II: List of all real-valued binary logic gates.
+a binary classification task, the final layer in each sub-layer
+produces two binary output vectors. Within each sub-layer, a                                                                ID          Operator      real-valued                   Ofull      Othin
+                                                                                                                             0           False        0                              ✓
+bit-wise popcount is performed for each class to obtain local                                                                1           A∧B          A·B                            ✓             ✓
+vote counts. These local counts are then aggregated across                                                                   2         ¬(A ⇒ B)       A − AB                         ✓             ✓
+sub-layers along the same class dimension by summing the                                                                     3             A          A                              ✓
+                                                                                                                             4         ¬(A ⇐ B)       B − AB                         ✓             ✓
+counts from all sub-layers to obtain the global vote counts,                                                                 5             B          B                              ✓
+and the class with the highest global count is selected as the                                                               6           A⊕B          A + B − 2AB                    ✓             ✓
+final prediction.                                                                                                            7           A∨B          A + B − AB                     ✓             ✓
+                                                                                                                             8         ¬(A ∨ B)       1 − (A + B − AB)               ✓             ✓
+B. Feature Processing                                                                                                        9         ¬(A ⊕ B)       1 − (A + B − 2AB)              ✓             ✓
+                                                                                                                            10            ¬B          1−B                            ✓
+   The feature processing in SwitchLGN follows the bit-level                                                                11          A⇐B           1 − A + AB                     ✓             ✓
+computation paradigm: original fields are firstly bit sliced,                                                               12            ¬A          1−A                            ✓
+and each bit is mapped to a single neuron in the input                                                                      13          A⇒B           1 − A + AB                     ✓             ✓
+                                                                                                                            14         ¬(A ∧ B)       1 − AB                         ✓             ✓
+layer. To align with the PHV and cluster organization of                                                                    15            True        1                              ✓
+the programmable switch and reduce the likelihood of cross-
+cluster binding during compilation, we adopt a feature-to-
+sub-model allocation strategy, whereby each feature is pref-                                                     C. Model Training
+erentially mapped to a single sub-model so that its boolean                                                         Training is performed on the control plane, with the objec-
+operations are performed within the same cluster, avoiding                                                       tive of selecting the optimal boolean operator for each neuron
+cross-cluster dependencies.                                                                                      to minimize task loss. To enable gradient-based optimization
+   When a feature’s bit width significantly exceeds the neuron                                                   for this discrete selection problem, we approximate boolean
+capacity n0 of a single input-layer sub-model, it is split at fixed                                              gates using their real-valued logic formulations. Each neuron
+
+
+
+
+  Authorized licensed use limited to: Southern Illinois University Carbondale. Downloaded on July 21,2026 at 00:38:59 UTC from IEEE Xplore. Restrictions apply.
+maintains a set of learnable parameters, which are passed                         with the highest selection probability is chosen and fixed in
+through a softmax function to generate selection probabilities                    the final model:
+over the candidate gates. During forward propagation, these                                            r⋆ = arg max αl+1 ,
+                                                                                                                                 (s,j,r)
+probabilities are used to compute a weighted sum of all gate                                                 r∈Ol+1
+                                                                                                                                                              (7)
+outputs. The parameters are subsequently updated via gradient                               (s)
+                                                                                                         
+                                                                                                           (s)      (s)
+                                                                                                                                      
+                                                                                           hl+1 [j] = Gr⋆ hl [j], hl [(j + 1) mod nl ] .
+descent. After convergence, the gate with the highest selection
+probability at each neuron is chosen for the final model.                         During inference, no real valued approximation is performed.
+                                                 (s)
+   Specifically, let the two inputs to neuron hl+1 [j] in the s-th                Instead, the network is evaluated layer-by-layer using the fixed
+                                             (s)          (s)
+sub-layer at position j of layer l + 1 be hl [j] and hl [(j +                     boolean gates. In each sub-layer, a popcount is applied to
+1) mod nl ]. The candidate boolean gate set for all neurons in                    the binary output vector of each class to obtain local vote
+layer l + 1 is defined as                                                         counts, which are then summed across sub-layers along the
+                             (                                                    class dimension to produce global vote counts. The class with
+                               Othin , l = 0                                      the highest global vote count is returned as the prediction.
+                     Ol+1 =                                    (2)
+                               Ofull , l ≥ 1,                                     Since all nonlinearities are provided by the boolean gates,
+                                                                                  SwitchLGN requires no separate activation function in either
+where Othin denotes the reduced set used in the first layer and                   training or inference. The only difference between the first
+Ofull denotes the complete set used in all subsequent layers.                     layer and subsequent layers lies in the size of their candidate
+                                                                  (s)
+For each candidate boolean gate r ∈ Ol+1 of neuron hl+1 [j],                      operator sets, while the training process remains identical.
+                                                           (s,j,r)
+we assign a learnable floating-point parameter αl+1 ∈ R.
+                             (s,j,r)
+                                                                                                  V. DATA P LANE I MPLEMENTATION
+The selection probability πl+1 for gate r is obtained via the
+                                                                                  A. PHV Allocation Strategy
+softmax function:
+                                                                                   To support computations between neurons in SwitchLGN,
+                                       (s,j,r)
+                               exp αl+1                                           we adopt a one-to-one mapping strategy in which each PHV
+              (s,j,r)
+            πl+1 = P                                   .            (3)         container stores the state of a single neuron, regardless of
+                                             (s,j,r ′ )
+                          r ′ ∈Ol+1 exp αl+1                                      whether the nominal width of the container is 8, 16, or
+                                                                                  32 bits. In this design, each container represents only a 1-
+To enable gradient-based optimization in SwitchLGN during
+                                                                                  bit neuron state. The benefits are threefold: (1) eliminating
+forward propagation, each boolean gate function G(·, ·) :
+                                                                                  alignment and interference issues caused by multi-bit reuse
+{0, 1}2 → {0, 1} is extended to a continuously differentiable
+                                                                                  within the same PHV container; (2) ensuring that each neuron
+function g(·, ·) : [0, 1]2 → [0, 1] over the real valued domain.
+                            (s)                                                   is fully contained within a single PHV container, avoiding
+The output of neuron hl+1 [j] in the relaxed form is then                         cross container slicing and recombination; and (3) facilitating
+computed as the weighted sum                                                      PHV container reuse across different layers without requiring
+           (s)
+         h̃l+1 [j] =
+                         X (s,j,r)
+                              πl+1 · gr (a, b) ∈ [0, 1].     (4)                  additional allocation.
+                           r∈Ol+1
+                                                                                     Furthermore, we constrain all PHV containers used by a
+                                                                                  given sub-model to reside within the same PHV cluster. This
+   The loss function is based on the task-specific cross-entropy                  is achieved by defining, in the switch meta fields, contiguous
+and follows the same “intra-sub-layer counting + inter-sub-                       blocks for all sub-models (e.g., sub_layer_x.var_y) and
+layer summation” aggregation logic to construct soft votes                        keeping the field widths within each block consistent, which
+during training. For a K-class classification task, let the final                 guides the compiler to pack them into the same PHV cluster.
+layer be L and denote the class index by k ∈ {1, . . . , K}. Let                  This strategy makes the compiler’s resource allocation more
+  (s,k)
+h̃L be the soft output vector of sub-layer s for class k. The                     predictable and the overall resource usage more controllable.
+                   (s)
+local vote count c̃k for class k in sub-layer s, and the global                   B. Feature Processing in Data Plane
+vote count c̃k obtained by summing across all sub-layers, are
+                                                                                     To satisfy SwitchLGN’s requirement for binary inputs and
+given by
+                                                                                  ensure PHV cluster locality during inference, each feature is
+                                                      L −1
+                                                     SX                           converted into multiple 1-bit neurons, with each bit mapped
+              (s)            (s,k)                            (s)
+                      X
+             c̃k =          h̃L      [j],    c̃k =           c̃k .         (5)    independently to a dedicated PHV container within its cor-
+                       j                             s=0                          responding sub-model. The entire mapping process is imple-
+The training loss adopts the standard softmax cross-entropy,                      mented in the data plane in three steps: feature assignment,
+defined as                                                                        bit selection, and right-shift alignment, which are executed in
+                                                                                 the parser and two consecutive pipeline stages, respectively.
+                                                    
+           Lcls = CE y, softmax [c̃1 , . . . , c̃K ] ,   (6)                         First, during parsing, the required features are extracted
+                                                                                  and assigned. Multiple fields are obtained from the packet
+where y is the ground-truth label. After convergence, all                         header, such as diffserv, flags, total_len, and
+floating-point parameters α and probabilities π are discarded.                    src/dst_addr, representing key traffic characteristics.
+For each neuron (l + 1, s, j), the candidate boolean operator                     Each field is assigned to a predefined set of PHV containers
+
+
+
+
+  Authorized licensed use limited to: Southern Illinois University Carbondale. Downloaded on July 21,2026 at 00:38:59 UTC from IEEE Xplore. Restrictions apply.
+within a sub-model. For example, a 16-bit field is assigned to                    and the hardware does not support cross-cluster addition in
+the 16 PHV containers corresponding to that sub-model. At                         one step. To efficiently address this challenge, we employ a
+this point, the values stored in these 16 containers are identical,               table-driven method that integrates local counting with PHV
+each holding the original integer representation of the field.                    redistribution. We use the 7 neuron activation values as a 7-
+   The next two stages perform the extraction and alignment of                    bit key for a match-action table to look up their pre-computed
+bit-level neurons. In the first stage, a bit-wise AND operation                   sum. The action of this table not only returns the count but also
+is applied. Each PHV container is assigned a corresponding                        writes it directly into a designated common PHV cluster.In this
+bit-mask that retains only the k-th bit of interest while clearing                way, the entire process, from local counting and redistribution
+all other bits. Through this masking process, the first stage                     to the final global summation, is organized into a sequential
+isolates each individual bit from the original field value and                    computation that must span multiple pipeline stages.
+distributes them into 16 separate containers.                                        Consider a binary, 5-layer SwitchLGN on Tofino 1. Due
+   In the second stage, these masked containers undergo a                         to the limited number of available pipeline stages, a single
+bit-wise right shift. Each container is shifted by k positions,                   traversal cannot complete all local counts, redistribution, and
+moving the target bit into the least significant bit position.                    the final global summation within 12 stages. We therefore
+After this operation, all container values are normalized to                      trigger a resubmit at the end of the first traversal, carrying
+either 0 or 1, representing whether the original bit at that                      the redistributed counts into a second traversal, where the
+position was 0 or 1. This representation fully matches the                        global adding and class decision are completed using the
+input requirement of boolean logic gates, enabling subsequent                     newly available stages. Unlike recirculation through a physical
+boolean computations to be performed directly on these con-                       port, resubmit does not consume an external port for packet
+tainers without any further alignment or masking.                                 return and thus does not degrade throughput. On Tofino 2,
+                                                                                  where stage resources are more sufficient. Local counting,
+C. Layers Inference                                                               redistribution, and global aggregation can all be completed
+   After feature processing, the PHV container values within                      in a single pipeline pass, thereby reducing inference latency.
+each sub-model are bit-aligned and co-located in a single PHV                        After obtaining the global vote counts, the data plane com-
+cluster. Inference proceeds layer-by-layer, where each layer                      pares the two class totals and outputs the class with the larger
+maps to a single pipeline stage and is decomposed into multi-                     count as the prediction. The classification result can be written
+ple independent sub-layers. Each sub-layer’s logic is executed                    into metadata for subsequent processing, e.g., used directly as
+locally within its dedicated PHV cluster, guaranteeing data                       a match key to steer flows and enforce priority scheduling in
+independence and avoiding cross-cluster interactions.                             traffic classification. In security scenarios, it can trigger drop or
+   As described in §IV-A, each neuron in a sub-layer takes                        quarantine actions. For traffic deemed malicious or anomalous,
+inputs from itself and the next position in a ring (i.e., wrap-                   the data plane can also generate a report to the control plane,
+around at the end). However, this wiring creates a special                        exporting contextual information (such as the five tuple and
+case for var_0. Unlike most neurons, which allow safe in-                         feature values) for more sophisticated analysis and response.
+place updates, such an update for var_0 is hazardous. It
+would overwrite the original value before it is read by another                                               VI. E XPERIMENT
+operation within the same stage, creating a classic Read-after-                     To validate SwitchLGN, we deployed it on a P4-
+Write hazard. This dependency violation is rejected by the                        programmable switch equipped with an Intel Tofino ASIC and
+compiler as it breaks PHV read/write rules.                                       conducted a series of experiments.
+   To resolve this hazard, we employ a ping-pong update
+strategy. In any given stage, var_0’s computed result is                          A. Experiment Setup
+written to a temporary container, var_0_tmp, while reads                             Our experimental testbed consists of two servers and a
+continue from the original var_0. In the subsequent stage,                        Flnet S9180-32X programmable switch equipped with an Intel
+the roles of these two containers are swapped. This alternating,                  Tofino 1 ASIC and 32×100 GbE ports. Each server is config-
+cross-stage update mechanism eliminates the conflict while                        ured with an Intel Core i9-11900K processor, 64 GB RAM,
+maintaining full logical equivalence.                                             and a 100 GbE network interface. We use Intel SDE v9.2.0 to
+                                                                                  compile P 416 programs for deploying the SwitchLGN model
+D. Popcount and Final Decision                                                    onto programmable switch. In the experiments, one server acts
+   After inference, we compute the final classification via a                     as a traffic generator, transmitting traffic to the switch, while
+popcount. Because SwitchLGN uses a “one PHV container                             the other serves as the traffic sink. We employ the Pktgen [24]
+per 1-bit neuron” design, vote counting (popcount) can be                         to measure and evaluate system throughput, and all models
+implemented directly in the data plane. In our binary classifica-                 are trained offline on a separate GPU server equipped with an
+tion task setting where each layer of SwitchLGN contains 112                      NVIDIA RTX 3080 Ti.
+neurons evenly divided into 8 sub-layers, we assign the first                        To comprehensively evaluate the performance of our
+7 neurons of each sub-layer to class 1 and the remaining 7 to                     SwitchLGN model under different network scenarios, we
+class 2. However, since each sub-layer is bound to a different                    select two representative classification tasks, network intrusion
+PHV cluster, the local vote counts are physically separated,                      detection and flow size classification:
+
+
+
+
+  Authorized licensed use limited to: Southern Illinois University Carbondale. Downloaded on July 21,2026 at 00:38:59 UTC from IEEE Xplore. Restrictions apply.
+               100                                                 100                                                                                             Hardware Limit
+                                                                                                                                                                                                   100
+
+
+
+
+                                                                                                             PHV Resource Usage (%)
+                                                                              UNVI1                                                                                                                                                UNIV1
+                                                                              UNSW-NB15                                               60
+               98                                                   98
+
+
+
+
+                                                                                                                                                                                    Accuracy (%)
+Accuracy (%)
+
+
+
+
+                                                    Accuracy (%)
+                                                                                                                                                                                                    95
+               96                                                   96                                                                40
+
+               94                                                   94
+                                                                                                                                                                                                    90
+                                                                                                                                      20
+               92        UNIV1                                      92
+                         UNSW-NB15
+               90                                                   90                                                                 0                                                            85
+                     4        5      6     7    8                        64       80      96   112    128                                  8   10    12     14          16                               3   5   7   9   11 13 15 17 19
+                             Number of Layers                        Feature Bit Width (Neurons per Layer)                                     Feature Bit Width                                                 Temperature τ
+
+
+          (a) Impact of Network Depth                         (b) Impact of Network Width                                              (c) PHV Usage per Width                          (d) Impact of Temperature τ
+Fig. 3: Analysis of key hyperparameters for SwitchLGN, illustrating the impact of (a) network depth, (b) network width, and
+(d) training temperature τ on model performance. (c) shows the corresponding PHV consumption as network width increases.
+
+
+     Network Intrusion Detection: We use the UNSW-NB15
+               •                                                                                                clear sensitivity to network depth. When the number of layers
+     dataset [25], generated by the IXIA PerfectStorm tool,                                                     increases from 4 to 5, the accuracy improves significantly from
+     which contains real normal network activity and nine                                                       94.61% to 95.59%, indicating that increasing depth within
+     types of modern network attack traffic. It is widely recog-                                                a certain range can enhance the model’s ability to capture
+     nized as a benchmark for evaluating intrusion detection                                                    complex flow features. However, when the depth is further
+     systems. We formulate this task as a binary classification                                                 increased to 6 layers and beyond, all performance metrics
+     problem to distinguish between Attack and Normal traf-                                                     begin to show a slight but consistent decline. In contrast, on
+     fic. Eight key flow-level statistical features are extracted,                                              the UNSW-NB15 intrusion detection task, the model follows
+     and following standard evaluation practice, the dataset is                                                 a different trend, achieving its best performance with an 8-
+     split into 80% for training and 20% for testing.                                                           layer network. Nevertheless, in hardware deployment, each
+   • Flow Size Classification: To assess the model’s capa-                                                      additional network layer occupies a valuable hardware pipeline
+     bility in traffic prediction, we use the UNIV1 dataset                                                     stage and directly leads to a linear increase in inference
+     [26] to classify flows into elephant flows and mice flows.                                                 latency. Therefore, a trade-off between accuracy and resource
+     Specifically, the top 20% of flows ranked by total bytes                                                   efficiency must be made. Considering all factors, the 5-
+     are labeled as elephant flows, and the remaining flows are                                                 layer configuration offers the best overall balance between
+     labeled as mice flows. These labels serve as the ground                                                    performance and cost.
+     truth for our binary classification task.                                                                     2) Impact of Network Width: In this experiment, we fix
+   We compare SwitchLGN against a diverse set of baselines                                                      the network depth at 5 layers and the temperature parameter
+that represent different technical approaches in in-network                                                     τ at 6 to investigate the impact of feature width (number of
+machine learning.                                                                                               neurons per layer). The width is set to 8, 10, 12, 14, and
+   1) N3IC [8]: A pioneering work that deploys BNN on                                                           16 neurons per sub-layer. As shown in Fig. 3b, increasing
+       programmable NIC.                                                                                        the network width consistently improves model accuracy. In
+   2) Quark&INQ-MLT [9], [12]: State-of-the-art models                                                          the UNIV1 task, when the number of neurons increases from
+       that adapt traditional neural networks (CNN, MLP) to                                                     64 to 112, the accuracy rises steadily from 94.95% to a
+       the data plane through quantization and other optimiza-                                                  peak of 95.59%. A similar trend is observed on the UNSW-
+       tion techniques.                                                                                         NB15 dataset, with the best performance also achieved at
+   3) IIsy&Planter [3], [5]: They map traditional ML models                                                     112 neurons. This indicates that a wider network can capture
+       such as decision trees and random forests onto pro-                                                      feature information with greater granularity. However, this
+       grammable switches.                                                                                      performance gain comes at a significant hardware cost. As
+  4) LINC [7]: A novel paradigm that interprets a neural                                                        shown in Fig. 3c, PHV consumption increases linearly with
+       network as a set of efficient match–action rules.                                                        network width, since in our design, the computation result of
+                                                                                                                each neuron must be temporarily stored in the PHV. When
+B. Parameters Affecting SwitchLGN                                                                               the width reaches 16, PHV usage hits the hardware limit. In
+   We conduct a series of studies to investigate the impact of                                                  contrast, SRAM and TCAM consumption remains minimal
+model hyperparameters on the final performance and to guide                                                     and unchanged. Therefore, 112 neurons per layer offer the
+the selection of the optimal model configuration.                                                               best trade-off between accuracy and hardware feasibility.
+   1) Impact of Network Depth: In this experiment, we fix the                                                      3) Impact of Training Temperature τ : Based on the opti-
+network width (number of neurons per layer) at 112 and the                                                      mized architecture determined from the previous experiments,
+temperature parameter τ at 6, while gradually increasing the                                                    which consists of 5 layers with 112 neurons per layer, we
+network depth from 4 to 8 layers to observe its performance                                                     further investigate the impact of a key training hyperparameter:
+variation on the two tasks. As shown in Fig. 3a, in the UNIV1                                                   the temperature coefficient τ . During training, τ controls the
+flow size classification task, the model’s performance exhibits                                                 randomness in logic gate selection, directly affecting whether
+
+
+
+
+         Authorized licensed use limited to: Southern Illinois University Carbondale. Downloaded on July 21,2026 at 00:38:59 UTC from IEEE Xplore. Restrictions apply.
+               100                                                            100                                                                       100.1
+                     Original DDLGN                                                 SwitchLGN    Quark                                                                Baseline Switch
+                     SwitchLGN                                                      LINC         N3IC                                                                 SwitchLGN
+                                                                              98
+                                                                                    IISY         INQ-MLT
+               99                                                                                                                                       100.0
+
+
+
+
+                                                                                                                                  Throughput (Gbit/s)
+                                                                                    Planter
+                                                                              96
+Accuracy (%)
+
+
+
+
+                                                               Accuracy (%)
+               98                                                             94                                                                         99.9
+
+                                                                              92
+               97                                                                                                                                        99.8
+                                                                              90
+
+               96                                                             88                                                                         99.7
+
+                                                                              86
+               95                                                                                                                                        99.6
+                         UNIV1                  UNSW-NB15                                UNIV1                UNSW-NB15                                         0       5          10     15     20     25      30
+                                      Dataset                                                     Dataset                                                                           Time (seconds)
+(a) Accuracy comparison between the original (b) Performance comparison with other data                                            (c) Throughput comparison with a baseline
+       DDLGN and our SwitchLGN.              plane models on UNIV1 and UNSW-NB15.                                                  switch, showing near line-rate performance.
+                                                            Fig. 4: Data plane performance of SwitchLGN.
+
+
+the model can converge to a high-performance discretized                                                 2) Throughput and Latency: Throughput is also a core
+logic structure. As shown in Fig. 3d, we evaluate multiple τ                                          metric for in-network computing. As shown in Fig. 4c, the
+values ranging from 3 to 19 on the UNIV1 dataset. The results                                         programmable switch deployed with the SwitchLGN model
+indicate that the model’s performance is highly sensitive to τ ,                                      achieves a line-rate processing throughput of 99.8 Gbps,
+with a clear optimal range. When τ = 6, the model achieves its                                        almost identical to the 100 Gbps performance of a Baseline
+peak performance, reaching an accuracy of 95.59%. Therefore,                                          Switch, which represents a simple forwarding application
+based on these comprehensive experimental results, we select                                          without any deployed model. Inference latency refers to the
+τ = 6 as the final training parameter for our model.                                                  delay from when a packet enters the switch and begins
+                                                                                                      inference to when inference is completed and the packet is
+C. Data Plane Performance                                                                             forwarded. For the SwitchLGN model, the average per-packet
+   Based on these experiments, the final model adopts 5 layers,                                       inference latency is only 283 ns. This nanosecond-level delay
+112 neurons per layer, and a training temperature τ of 6 for                                          confirms that its inference process has a negligible impact on
+performance benchmarking.                                                                             packet forwarding.
+   1) Accuracy: Classification accuracy is the primary met-                                           D. Resource Usage
+ric for evaluating model performance. Before benchmarking
+                                                                                                         The resource usage of SwitchLGN is shown in Table III. A
+against other state-of-the-art approaches, we first need to
+                                                                                                      distinctive aspect of its consumption is that it primarily relies
+verify that our hardware-adapted SwitchLGN topology does
+                                                                                                      on the PHV to temporarily store bit-level computation results
+not significantly compromise the theoretical accuracy of the
+                                                                                                      between layers, occupying approximately 56.7% of the PHV
+original DDLGN model.
+                                                                                                      space. Crucially, the inference process of SwitchLGN makes
+   To this end, we conduct a key internal comparison ex-
+                                                                                                      almost no use of costly TCAM resources, and its SRAM
+periment, evaluating both models under the same optimal
+                                                                                                      usage is also minimal (less than 3%). This stands in sharp
+hyperparameters. The results are shown in Fig. 4a. Com-
+                                                                                                      contrast to traditional in-network computing approaches that
+pared to the original DDLGN, SwitchLGN exhibits only a
+                                                                                                      depend heavily on large-scale table lookups (TCAM/SRAM),
+negligible accuracy difference of approximately 0.4% across
+                                                                                                      as illustrated in Table IV. This not only demonstrates the
+both datasets. This minimal performance change strongly
+                                                                                                      efficiency of SwitchLGN itself but also means it can easily
+demonstrates that our design represents an effective trade-
+                                                                                                      coexist with other TCAM/SRAM-intensive applications on the
+off: it resolves the core challenge of efficiently deploying the
+                                                                                                      switch without causing resource contention.
+original topology on the data plane without significantly sacri-
+ficing model accuracy. Having established the high fidelity of                                                    TABLE III: Resource utilization breakdown
+SwitchLGN, we further benchmark it against state-of-the-art
+AI model deployment schemes for the data plane. As shown                                                      Computational                                         Memory                            PHV
+in Fig. 4b, our SwitchLGN model demonstrates outstanding                                                   eMatch xBar    7.68%                         SRAM                  2.60%        8 b used         70.31%
+performance, achieving a classification accuracy of 99.42%                                                 tMatch xBar    0.38%                         TCAM                  0.00%        16 b used        59.38%
+                                                                                                           Gateway        0.00%                         Map RAM               0.00%        32 b used        23.44%
+on the UNSW-NB15 intrusion detection task and 95.59% on                                                    VLIW           6.25%                         TableID              13.02%
+the UNIV1 flow size classification task. This performance                                                  Hash bits      4.40%                         Stash                11.46%        Overall          56.70%
+significantly surpasses that of traditional models adapted for
+data plane deployment, such as decision trees and quantized
+neural networks, clearly demonstrating the advantage of our                                                                         VII. C ONCLUSION
+logic-gate-based approach in maintaining high accuracy for                                               We propose SwitchLGN, a logic-gate network architecture
+binary classification.                                                                                tailored for programmable switches, addressing the dual chal-
+
+
+
+
+          Authorized licensed use limited to: Southern Illinois University Carbondale. Downloaded on July 21,2026 at 00:38:59 UTC from IEEE Xplore. Restrictions apply.
+TABLE IV: Memory usage comparison on the UNIV1 dataset.                           [10] S. Schwarzmann, T. E. Civelek, A. Iera, D. Corujo, G. T. Karetsos,
+                                                                                       R. Guerzoni, O. Abboud, A. M. Valenzuela, R. Trivisonno, M. G. Spina
+             Model            SRAM Usage         TCAM Usage                            et al., “Native support of ai applications in 6g mobile networks via
+             Planter (DT)           6.04%             0.00%                            an intelligent user plane,” in 2024 IEEE Wireless Communications and
+             IISY (DT)              3.20%            80.37%                            Networking Conference (WCNC). IEEE, 2024, pp. 1–6.
+             Quark                 24.27%             0.00%                       [11] J. Yan, H. Xu, Z. Liu, Q. Li, K. Xu, M. Xu, and J. Wu, “Brain-
+             SwitchLGN              2.60%             0.00%                            on-Switch: Towards advanced intelligent network data plane via NN-
+                                                                                       Driven traffic analysis at Line-Speed,” in 21st USENIX Symposium on
+                                                                                       Networked Systems Design and Implementation (NSDI 24), 2024, pp.
+                                                                                       419–440.
+                                                                                  [12] K. Zhang, N. Samaan, and A. Karmouch, “A machine learning-based
+lenges of high resource consumption and limited performance                            toolbox for p4 programmable data-planes,” IEEE Transactions on Net-
+in existing in-network computing models. By decomposing                                work and Service Management, vol. 21, no. 4, pp. 4450–4465, 2024.
+the network structure in accordance with switch hardware                          [13] D. Wen, Z. Liu, T. Yang, T. Li, T. Li, C. Li, J. Li, and Z. Sun,
+                                                                                       “Inference-to-complete: A high-performance and programmable data-
+characteristics, the inference process is fully mapped to native                       plane co-processor for neural-network-driven traffic analysis,” arXiv
+bit-level logic operations, enabling high-accuracy, nanosecond-                        preprint arXiv:2411.00408, 2024.
+latency, line-rate classification without recirculation. Experi-                  [14] C. Zheng, X. Hong, D. Ding, S. Vargaftik, Y. Ben-Itzhak, and N. Zil-
+                                                                                       berman, “In-network machine learning using programmable network
+mental results demonstrate that SwitchLGN significantly re-                            devices: A survey,” IEEE Communications Surveys & Tutorials, vol. 26,
+duces SRAM and TCAM usage while maintaining excellent                                  no. 2, pp. 1171–1200, 2023.
+inference performance, offering a practical solution for build-                   [15] Z. Wen and G. Yan, “HiP4-UPF: Towards High-Performance compre-
+                                                                                       hensive 5g user plane function on p4 programmable switches,” in 2024
+ing efficient and cost-effective intelligent data planes. Future                       USENIX Annual Technical Conference (USENIX ATC 24), 2024, pp.
+work will explore the deployment of SwitchLGN on other pro-                            303–320.
+grammable hardware platforms and enhance its classification                       [16] F. Petersen, H. Kuehne, C. Borgelt, J. Welzel, and S. Ermon, “Con-
+                                                                                       volutional differentiable logic gate networks,” Advances in Neural
+accuracy and applicability to broader tasks.                                           Information Processing Systems, vol. 37, pp. 121 185–121 203, 2024.
+                                                                                  [17] F. Petersen, C. Borgelt, H. Kuehne, and O. Deussen, “Deep differen-
+                        ACKNOWLEDGEMENT                                                tiable logic gate networks,” Advances in Neural Information Processing
+                                                                                       Systems, vol. 35, pp. 2006–2018, 2022.
+  This work is supported by the National Natural Science                          [18] A. Agrawal and C. Kim, “Intel tofino2–a 12.9 tbps p4-programmable
+Foundation of China (No. 62172241, No. 62402247, No.                                   ethernet switch,” in 2020 IEEE Hot Chips 32 Symposium (HCS). IEEE
+                                                                                       Computer Society, 2020, pp. 1–32.
+62502239).                                                                        [19] N. McKeown, “Pisa: Protocol independent switch architecture,” in P4
+                                                                                       Workshop, vol. 516, 2015.
+                              R EFERENCES                                         [20] P. Bosshart, D. Daly, G. Gibb, M. Izzard, N. McKeown, J. Rexford,
+                                                                                       C. Schlesinger, D. Talayco, A. Vahdat, G. Varghese et al., “P4: Pro-
+ [1] O. Michel, R. Bifulco, G. Rétvári, and S. Schmid, “The programmable             gramming protocol-independent packet processors,” ACM SIGCOMM
+     data plane: Abstractions, architectures, algorithms, and applications,”           Computer Communication Review, vol. 44, no. 3, pp. 87–95, 2014.
+     ACM Computing Surveys (CSUR), vol. 54, no. 4, pp. 1–36, 2021.                [21] Barefoot Networks, “Tofino native architecture (tna) overview,”
+ [2] F. Hauser, M. Häberle, D. Merling, S. Lindner, V. Gurevich, F. Zeiger,           https://raw.githubusercontent.com/barefootnetworks/Open-
+     R. Frank, and M. Menth, “A survey on data plane programming with                  Tofino/master/PUBLIC Tofino-Native-Arch.pdf, Barefoot Networks,
+     p4: Fundamentals, advances, and applied research,” Journal of Network             Tech. Rep., 2021, accessed: 2025-08-13.
+     and Computer Applications, vol. 212, p. 103561, 2023.                        [22] Z. Zhao, Z. Li, Z. Song, F. Zhang, and B. Chen, “Rids: Towards
+ [3] C. Zheng, Z. Xiong, T. T. Bui, S. Kaupmees, R. Bensoussane, A. Bern-              advanced ids via rnn model and programmable switches co-designed
+     abeu, S. Vargaftik, Y. Ben-Itzhak, and N. Zilberman, “IIsy: Hybrid                approaches,” in IEEE INFOCOM 2024-IEEE Conference on Computer
+     in-network classification using programmable switches,” IEEE/ACM                  Communications. IEEE, 2024, pp. 591–600.
+     Transactions on Networking, vol. 32, no. 3, pp. 2555–2570, 2024.             [23] A. Bas, “Leveraging stratum and tofino fastrefresh for software
+ [4] G. Xie, Q. Li, Y. Dong, G. Duan, Y. Jiang, and J. Duan, “Mousika:                 upgrades,” Barefoot Networks, Tech. Rep., 2018, accessed:
+     Enable general in-network intelligence in programmable switches by                Aug. 13, 2025. [Online]. Available: https://opennetworking.org/wp-
+     knowledge distillation,” in IEEE INFOCOM 2022-IEEE Conference on                  content/uploads/2018/12/Tofino Fast Refresh.pdf
+     Computer Communications. IEEE, 2022, pp. 1938–1947.                          [24] K. Wiles, “Pktgen-dpdk: Dpdk-based packet generator,” https://pktgen-
+ [5] C. Zheng, M. Zang, X. Hong, L. Perreault, R. Bensoussane, S. Var-                 dpdk.readthedocs.io/, 2025, accessed: 2025-08-14.
+     gaftik, Y. Ben-Itzhak, and N. Zilberman, “Planter: Rapid prototyping         [25] N. Moustafa and J. Slay, “UNSW-NB15: a comprehensive data set for
+     of in-network machine learning inference,” ACM SIGCOMM Computer                   network intrusion detection systems (UNSW-NB15 network data set),”
+     Communication Review, vol. 54, no. 1, pp. 2–21, 2024.                             in 2015 military communications and information systems conference
+ [6] S. Mittal, H. V, P. Heetkumar, and P. Tammana, “iGuard: Efficient                 (MilCIS). IEEE, 2015, pp. 1–6.
+     isolation forest design for malicious traffic detection in programmable      [26] T. Benson, A. Akella, and D. A. Maltz, “Network traffic characteristics
+     switches,” in Proceedings of the 20th International Conference on                 of data centers in the wild,” in Proceedings of the 10th ACM SIGCOMM
+     emerging Networking EXperiments and Technologies, 2024, pp. 55–64.                conference on Internet measurement, 2010, pp. 267–280.
+ [7] H. Yan, Q. Li, G. Xie, G. Tyson, and Y. Jiang, “Linc: Enabling
+     low-resource in-network classification and incremental model update,”
+     in 2024 IEEE 32nd International Conference on Network Protocols
+     (ICNP). IEEE, 2024, pp. 1–12.
+ [8] G. Siracusano, S. Galea, D. Sanvito, M. Malekzadeh, G. Antichi,
+     P. Costa, H. Haddadi, and R. Bifulco, “Re-architecting traffic analysis
+     with neural network interface cards,” in 19th USENIX Symposium on
+     Networked Systems Design and Implementation (NSDI 22), 2022, pp.
+     513–533.
+ [9] M. Zhang, L. Cui, X. Zhang, F. P. Tso, Z. Zhen, Y. Deng, and
+     Z. Li, “Quark: Implementing convolutional neural networks entirely on
+     programmable data plane,” in IEEE INFOCOM 2025-IEEE Conference
+     on Computer Communications. IEEE, 2025, pp. 1–10.
+
+
+
+
+  Authorized licensed use limited to: Southern Illinois University Carbondale. Downloaded on July 21,2026 at 00:38:59 UTC from IEEE Xplore. Restrictions apply.
+

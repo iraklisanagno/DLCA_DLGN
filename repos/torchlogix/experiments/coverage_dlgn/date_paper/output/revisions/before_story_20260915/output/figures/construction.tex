@@ -1,0 +1,17 @@
+\begin{algorithm}[t]
+\caption{Deeper-layer stage selection}
+\label{alg:construction}
+\begin{algorithmic}
+\REQUIRE Ancestry $A$, width $m$, layer $l$, seed
+\STATE Initialize degrees $d=0$, output pairs $I=\varnothing$.
+\WHILE{$|I|<m$}
+  \STATE Generate the $K$ seeded scale matchings $M_s$.
+  \STATE Form degree-ordered partial stages $P_s$ if needed.
+  \STATE Compute $D_s$ and $N_s$ using (\ref{eq:degree})--(\ref{eq:novelty}).
+  \STATE Among unused scales, minimize $D_s$, then maximize $N_s$; break ties by nominal scale order.
+  \STATE Append $P_s$; update $d$ and mark scale $s$ used.
+  \STATE Reset used scales after a complete $K$-stage cycle.
+\ENDWHILE
+\STATE Propagate ancestry by union; return fixed indices $I$.
+\end{algorithmic}
+\end{algorithm}

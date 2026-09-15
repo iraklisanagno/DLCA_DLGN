@@ -1,0 +1,20 @@
+\begin{table*}[t]
+\centering
+\caption{Dense held-out accuracy (T, \%). Local entries are mean $\pm$ sample SD over seeds 0, 1, 2. U2 gains are percentage points against the paired random baseline.}
+\label{tab:dense}
+\tabfont
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lrrrrrrr@{}}
+\toprule
+Model & Gates, K & Random (REP) & V3 (OUR) & U2 (OUR) & $\Delta$ U2 & Paired 95\% CI & Random (R) \\
+\midrule
+MNIST & 8 & $91.27\pm0.22$ & $91.91\pm0.31$ & $91.94\pm0.14$ & $+0.66$ & $[0.02,1.31]$ & \NA \\
+Fashion-MNIST & 16 & $85.20\pm0.26$ & $85.91\pm0.36$ & $85.72\pm0.45$ & $+0.52$ & $[-1.02,2.06]$ & \NA \\
+CIFAR-10 S & 48 & $48.91\pm0.35$ & $52.39\pm0.30$ & $52.10\pm0.63$ & $+3.18$ & $[0.77,5.60]$ & $51.27\pm0.26$ \\
+CIFAR-10 M & 512 & $54.10\pm0.17$ & $58.36\pm0.25$ & $58.65\pm0.17$ & $+4.56$ & $[3.78,5.33]$ & $57.39\pm0.13$ \\
+CIFAR-10 L & 1,280 & $55.87\pm0.31$ & $61.07\pm0.46$ & $60.46\pm0.35$ & $+4.59$ & $[3.72,5.47]$ & $60.78\pm0.12$ \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\begin{minipage}{\textwidth}\normalsize U2 wins all three seed pairs at each coordinate. R: original-paper random baseline and reported spread \cite{petersen2022}; no exact-budget published reference is inserted for MNIST or Fashion-MNIST. Reported values are contextual references, not observations from the paired local protocol.\end{minipage}
+\end{table*}

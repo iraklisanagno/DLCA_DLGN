@@ -1,42 +1,44 @@
-# DATE paper draft
+# LogicConnect DATE manuscript
 
-The completed six-page anonymous manuscript uses the title from `project.yaml` and the voice guidance from `voice_profile.yaml`. It presents U2 as a unified dense/convolutional construction and retains V3, learned-routing trade-offs, reported references, and inconclusive findings where they affect the claim.
+The current draft is **LogicConnect: Structured Connectivity Design for Differentiable Logic Gate Networks**. The 2026-09-15 rewrite builds the research argument around offline graph design, matched accuracy/resource trade-offs, and degree-preserving attribution.
 
-- [Compiled paper](output/main.pdf)
-- [LaTeX entry point](output/main.tex) and [bibliography](output/references.bib)
-- [Quality and evidence review](output/quality_report.md)
-- [Claims and section budgets](notes/claims_and_budget.md)
-- Editable section prose: [abstract](sections/00_abstract.md), [introduction](sections/01_introduction.md), [related work](sections/02_related_work.md), [methodology](sections/03_methodology.md), [evaluation](sections/04_experiments.md), [conclusion](sections/05_conclusion.md)
-- Section briefs are in `notes/`; manuscript prose is in `sections/`.
-- [Raw seed results](evidence/raw_results.md), [machine-readable evidence](evidence/paper_evidence.json), and [reported-value provenance](evidence/reported_sources.md)
-- [Broader historical dataset/topology/method catalog](evidence/historical_comparison_tables.md). This preserves the earlier comparison document; its entire historical inventory was not re-audited for the six-page manuscript.
-- [Standalone factorial plot](output/figures/factorial_effects.pdf)
+- [Main paper PDF](output/main.pdf): six content pages plus one references-only page; anonymous DATE format.
+- [Paper story and claim–evidence map](paper_story.md): established before section drafting.
+- [Quality report](output/quality_report.md) and [section review log](output/section_review_log.md).
+- [Evidence atlas PDF](output/evidence_atlas.pdf) and [detailed Markdown tables](evidence_atlas.md): fifteen tables and ten two-panel vector plots for internal review and presentations.
+- Editable manuscript: [abstract](sections/00_abstract.md), [introduction](sections/01_introduction.md), [related work](sections/02_related_work.md), [methodology](sections/03_methodology.md), [evaluation](sections/04_experiments.md), and [conclusion](sections/05_conclusion.md).
+- [LaTeX entry point](output/main.tex) and [bibliography](output/references.bib).
+- [Frozen evidence](evidence/paper_evidence.json), [raw seeds](evidence/raw_results.md), [reported-value sources](evidence/reported_sources.md), and [recent-literature review](evidence/literature_review_20260915.md).
+- [Figure registry](evidence/figure_registry.json), [atlas tables](evidence/atlas_tables.json), and [validation record](output/validation.json).
 
-## Rebuild
+The main paper contains four tables, four figures, one algorithm, and fifteen references. Related work uses eleven papers from 2022–2026. Older dataset citations identify the benchmarks.
+
+## Naming and evidence
+
+LogicConnect is the frozen unified construction, archived as U2. LogicConnect-D is the distinct dense specialization, archived as V3. The methodology describes only LogicConnect. Comparative results retain both variants, highlight the largest local dense mean, and preserve measurement provenance. Specialized results are not attributed to the unified constructor.
+
+The text emphasizes dense accuracy and training-memory benefits while retaining the learned-routing accuracy advantage, inconclusive convolutional replication, uncertain deeper/ancestry effects, and transfer limitations. Equal logical cost is not a physical area or energy result.
+
+The atlas is a separate internal artifact; its creation does not imply DATE permits it as a submission supplement. The [historical catalog](evidence/historical_comparison_tables.md) preserves the broader earlier inventory and is not represented as an entirely re-audited experiment set.
+
+## Rebuild and validate
 
 From this directory:
 
-```bash
-bash scripts/build.sh
-```
+    bash scripts/build.sh
 
-The build reads the frozen `evidence/paper_evidence.json`, regenerates section LaTeX, tables, and the statistical plot, then compiles both PDFs using the local Tectonic binary. It runs without network access after the initial package cache has been populated. The repository Python environment is used; no new Python dependency is needed. All generated files, compiler caches, and temporary files remain in this paper directory.
+The build uses the repository Python environment and existing local Tectonic cache. It generates the manuscript, ten two-panel vector plots, atlas, and validation records without network access or new experiments. All writes remain inside this directory.
 
-Edit prose in `sections/*.md`; generated section `.tex` files and table files will be overwritten by the renderer. The controlled Markdown dialect supports headings, paragraphs, contribution bullets, bold labels, `$...$` math, display equations, `[@citation_key]` citations, LaTeX references, and `{{table:name}}`/`{{figure:name}}`/`{{algorithm:name}}` asset markers. Float enqueue points are adjusted in the renderer for the current six-page layout. The source retains URLs while the printed bibliography suppresses them for readability.
+For validation alone:
 
-To deliberately refresh the evidence from existing experiment records, run:
+    ../../../venv/bin/python -B scripts/validate_paper.py
 
-```bash
-../../../venv/bin/python -B scripts/collect_evidence.py
-bash scripts/build.sh
-```
+Validation checks 49 frozen source hashes, 16 refinement logical rows and their completion artifacts, paired statistics, method naming, citation years, fonts, references, and PDF bounds. It does not load checkpoints or access datasets.
 
-The collector only reads saved artifacts. It does not run training, access datasets, or evaluate checkpoints. After a refresh, review changed numbers and the claim boundaries before using the manuscript.
+Edit prose in sections/*.md; generated section LaTeX and tables are overwritten by the renderer. Figure and atlas generators read the frozen evidence. The nominal project.yaml prose targets exceed the space available beside the figures and tables; justified shortfalls are recorded in the quality report.
 
-## Scope and remaining evidence
+## Preserved first effort
 
-The paper includes five principal dense coordinates across MNIST, Fashion-MNIST, and CIFAR-10; convolutional S/M; LILogic M/L routing comparisons; first/deeper-layer ablations; and the recorded compatibility/transfer boundaries. The broader historical catalog preserves additional architectures, methods, compression studies, and reported values that do not fit the main six-page narrative.
+The earlier manuscript and supporting sources are preserved in [output/revisions/before_story_20260915/](output/revisions/before_story_20260915/). Previous pass1–pass3 snapshots remain historical. Original section notes remain research input; paper_story.md is the current narrative anchor.
 
-The writing and build are complete. The main scientific limitations are the inconclusive three-seed full-S validation result, single-seed convolutional held-out and Top-32 comparisons, execution-dependent wall times, and the absence of matched physical synthesis. The text states these limitations rather than proposing unsupported conclusions. This directory is an internal working package; the anonymous submission artifact is `output/main.pdf`, while source evidence and historical records retain their repository provenance.
-
-The official DATE template and its source manifest are under `latex_templates/ieee/`. The local compiler provenance is in `.tools/compiler_source.json`. The user-supplied title and voice-profile files were preserved.
+Compiler and official-template provenance remain in .tools/ and latex_templates/. No experiment implementation, checkpoint, or result directory was changed.

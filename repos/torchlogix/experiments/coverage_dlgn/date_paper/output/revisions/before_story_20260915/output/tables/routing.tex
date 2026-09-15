@@ -1,0 +1,22 @@
+\begin{table*}[t]
+\centering
+\caption{CIFAR-10 routing trade-off under LILogic architectures: M is $1\times64$K gates; L is $2\times128$K gates. Both use seven input thresholds. Local accuracy is T; R retains the published statistic.}
+\label{tab:routing}
+\tabfont
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}llcrrrrr@{}}
+\toprule
+Size & Method & $n$ & Accuracy, \% & Params., M & Time, min & GPU, GiB & Accuracy (R) \\
+\midrule
+M & Random (REP) & 3 & $49.01\pm0.43$ & 1.024 & 14.62 & 0.474 & 49.17$\pm$0.14 \\
+M & U2 (OUR) & 3 & $52.54\pm0.30$ & 1.024 & 14.59 & 0.474 & \NA \\
+M & Top-32 (REP) & 1 & $57.84$ & 5.120 & 37.81 & 8.100 & 57.28$\pm$0.30 \\
+\midrule
+L & Random (REP) & 3 & $55.33\pm0.47$ & 4.096 & 15.20 & 1.557 & 54.76$\pm$0.27 \\
+L & U2 (OUR) & 3 & $60.19\pm0.29$ & 4.096 & 18.47 & 1.557 & \NA \\
+L & Top-32 (REP) & 1 & $62.03$ & 20.480 & 350.63 & 24.861 & 60.98$\pm$0.19 \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\begin{minipage}{\textwidth}\normalsize Local protocol: 35K updates, batch 256, Adam at 0.075, random crops with reflected padding and horizontal flips. R: LILogic Net, archived version 2 \cite{fojcik2026}. U2/random have no trainable routing parameters; Top-32 adds 4.096M/16.384M routing parameters at M/L. The Top-32 resource comparison is descriptive because each learned-routing configuration has one local seed.\end{minipage}
+\end{table*}

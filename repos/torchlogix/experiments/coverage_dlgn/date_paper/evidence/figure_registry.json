@@ -1,0 +1,136 @@
+{
+  "evidence_sha256": "2d785dc24b80012928f91828654b8e100e8571aa50242998f848311abff53627",
+  "figures": {
+    "dense_results": {
+      "caption_tex": "Dense accuracy at fixed budgets. (a) Mean $\\pm$ sample SD over three seeds. LC-D is the separate dense specialization. (b) Paired 95\\% confidence intervals for LC minus random; all three CIFAR-10 intervals exclude zero.",
+      "source": [
+        "dense"
+      ],
+      "standalone_pdf": "output/figures/dense_results_plot.pdf"
+    },
+    "routing_tradeoff": {
+      "caption_tex": "Accuracy versus (a) peak GPU allocation and (b) observed training time under the LILogic M/L configurations. LC and random: three seeds, mean $\\pm$ sample SD. Top-32: one seed. M/L identify architectures; wall-time ratios are descriptive execution measurements.",
+      "source": [
+        "resources"
+      ],
+      "standalone_pdf": "output/figures/routing_tradeoff_plot.pdf"
+    },
+    "structural_ablation": {
+      "caption_tex": "Dense M attribution at 20K updates. S retains LC structure; R randomizes pairs while preserving each predecessor degree in each input slot. (a) Three seed values (crosses) and mean $\\pm$ sample SD. (b) All five paired 95\\% intervals, exploratory and unadjusted. The first two contrasts isolate first-layer structure.",
+      "source": [
+        "factorial_arms",
+        "factorial_contrasts"
+      ],
+      "standalone_pdf": "output/figures/structural_ablation_plot.pdf"
+    },
+    "conv_replication": {
+      "caption_tex": "Convolutional replication and measurement scope. Single-seed tests have no error bars. Full-S validation uses three paired seeds with a 95\\% interval; its third seed reverses the sign of the gain. Validation and test observations are not pooled.",
+      "source": [
+        "conv_test",
+        "full_s"
+      ],
+      "standalone_pdf": "output/figures/conv_replication_plot.pdf"
+    },
+    "construction_cost": {
+      "caption_tex": "Offline LC construction for MNIST (MN), Fashion-MNIST (F-M), and CIFAR-10 S/M/L. Ratios use recorded training duration, including evaluation; they do not measure a controlled end-to-end speedup.",
+      "source": [
+        "dense",
+        "support.third_round_all_groups.groups"
+      ],
+      "standalone_pdf": "output/figures/construction_cost_plot.pdf"
+    },
+    "mechanism_controls": {
+      "caption_tex": "LC minus each stage-selection control at 20K updates, three paired seeds and exploratory 95\\% intervals. Neither coordinate establishes an incremental benefit over the nominal schedule. The balanced control is distinct from native random wiring.",
+      "source": [
+        "support.fourth_round_dense_mechanism",
+        "support.fourth_round_conv_mechanism"
+      ],
+      "standalone_pdf": "output/figures/mechanism_controls_plot.pdf"
+    },
+    "conv_factorial": {
+      "caption_tex": "Convolutional body/classifier attribution at 20K updates, three seeds. The structured classifier retains reference-body ancestry, so body effects are conditional on that classifier. (a) All five exploratory paired 95\\% intervals. (b) Mean $\\pm$ sample SD.",
+      "source": [
+        "support.fourth_round_factorial"
+      ],
+      "standalone_pdf": "output/figures/conv_factorial_plot.pdf"
+    },
+    "warp_compatibility": {
+      "caption_tex": "Compatibility with adapted WARP training. Dense M uses 108K updates; convolutional S uses 20K. Three seeds; paired 95\\% intervals in (a), mean $\\pm$ sample SD in (b). Both adapted recipes trail matched raw training; these data do not reproduce WARP\\textquotesingle s published headline results.",
+      "source": [
+        "support.fourth_round_warp_dense",
+        "support.fourth_round_warp_conv"
+      ],
+      "standalone_pdf": "output/figures/warp_compatibility_plot.pdf"
+    },
+    "transfer": {
+      "caption_tex": "Frozen CIFAR-10.1 evaluation without adaptation or repeat inference. Dense M has a three-seed paired 95\\% interval; convolutional points each use one seed. (b) All available paired seed differences.",
+      "source": [
+        "support.fourth_round_transfer_results"
+      ],
+      "standalone_pdf": "output/figures/transfer_plot.pdf"
+    },
+    "dense_seed_gains": {
+      "caption_tex": "All 15 paired dense LC test differences and the sample standard deviations of all three fixed constructions. MN/F-M denote MNIST/Fashion-MNIST; S/M/L denote CIFAR-10 sizes. Positive seed differences do not guarantee that every three-seed confidence interval excludes zero.",
+      "source": [
+        "dense"
+      ],
+      "standalone_pdf": "output/figures/dense_seed_gains_plot.pdf"
+    }
+  },
+  "dense_construction_rows": [
+    {
+      "label": "MNIST",
+      "raw": [
+        91.78999823331833,
+        91.95999777317047,
+        92.05999797582626
+      ],
+      "n": 3,
+      "mean": 91.93666466077168,
+      "sample_sd": 0.13650381254473604,
+      "time_min": 14.62254622992154,
+      "gpu_gib": 0.01682138442993164,
+      "construction_s": 0.09968077026618023
+    },
+    {
+      "label": "Fashion-MNIST",
+      "raw": [
+        85.33999794721603,
+        85.58999818563461,
+        86.21999770402908
+      ],
+      "n": 3,
+      "mean": 85.71666461229324,
+      "sample_sd": 0.4534679489551672,
+      "time_min": 14.593853517884337,
+      "gpu_gib": 0.03399372100830078,
+      "construction_s": 0.23135283853237829
+    },
+    {
+      "label": "CIFAR-10 S",
+      "raw": [
+        52.0699987411499,
+        51.47999858856201,
+        52.739998877048485
+      ],
+      "n": 3,
+      "mean": 52.096665402253464,
+      "sample_sd": 0.6304232822931816,
+      "time_min": 12.114587865361116,
+      "gpu_gib": 0.10611200332641602,
+      "construction_s": 0.9164163840468973
+    },
+    {
+      "label": "CIFAR-10 M",
+      "construction_s": 14.332851685738811,
+      "time_min": 41.38875358894002,
+      "gpu_gib": 1.123354434967041
+    },
+    {
+      "label": "CIFAR-10 L",
+      "construction_s": 31.217532630932208,
+      "time_min": 113.52621869148118,
+      "gpu_gib": 2.7172112464904785
+    }
+  ]
+}

@@ -1,0 +1,1652 @@
+                                         Proceedings of Machine Learning Research vol vvv:1–28, 2025
+
+
+
+
+                                                            Polynomial Surrogate Training for Differentiable
+                                                                    Ternary Logic Gate Networks
+                                         Sai Sandeep Damera                                                                       SDAMERA@UMD.EDU
+                                         Ryan Matheu                                                                              RMATHEU@UMD.EDU
+                                         Aniruddh G. Puranic                                                                       PURANIC@UMD.EDU
+                                         John S. Baras                                                                               BARAS@UMD.EDU
+                                         University of Maryland, College Park, MD, USA
+arXiv:2603.00302v1 [cs.LG] 27 Feb 2026
+
+
+
+
+                                                                                                     Abstract
+                                              Differentiable logic gate networks (DLGNs) learn compact, interpretable Boolean circuits via gradient-
+                                              based training, but all existing variants are restricted to the 16 two-input binary gates. Extending
+                                              DLGNs to Ternary Kleene 𝐾3 logic and training DTLGNs where the UNKNOWN state enables princi-
+                                              pled abstention under uncertainty is desirable. However, the support set of potential gates per neuron
+                                              explodes to 19,683, making the established softmax-over-gates training approach intractable. We
+                                              introduce Polynomial Surrogate Training (PST), which represents each ternary neuron as a degree-
+                                              (2, 2) polynomial with 9 learnable coefficients (a 2,187× parameter reduction) and prove that the
+                                              gap between the trained network and its discretized logic circuit is bounded by a data-independent
+                                              commitment loss that vanishes at convergence. Scaling experiments from 48K to 512K neurons
+                                              on CIFAR-10 demonstrate that this hardening gap contracts with overparameterization. Ternary
+                                              networks train 2-3× faster than binary DLGNs and discover true ternary gates that are functionally
+                                              diverse. On synthetic and tabular tasks we find that the UNKNOWN output acts as a Bayes-optimal
+                                              uncertainty proxy, enabling selective prediction in which ternary circuits surpass binary accuracy
+                                              once low-confidence predictions are filtered. More broadly, PST establishes a general polynomial-
+                                              surrogate methodology whose parameterization cost grows only quadratically with logic valence,
+                                              opening the door to many-valued differentiable logic.
+                                              Keywords: Ternary Logic, Logic Gate Networks, Neuro-Symbolic AI.
+
+
+                                         1. Introduction
+                                         Logic gate networks replace conventional arithmetic neurons with compositions of discrete two-
+                                         input logic gates, producing circuits that are inherently compact and interpretable (Petersen et al.,
+                                         2022). Differentiable logic gate networks (DLGNs) make these circuits trainable through gradient
+                                         descent by introducing continuous relaxations of the gate selection process. Since their introduction,
+                                         DLGNs have been extended to convolutional architectures (Petersen et al., 2024), recurrent variants
+                                         (Bührer et al., 2025), and connection-optimized formulations (Mommen et al., 2025), demonstrating
+                                         competitive accuracy at extreme parameter efficiency.
+                                             All existing DLGNs share a common design: each two-input neuron maintains a softmax distri-
+                                         bution over a fixed set of 𝐾 = 16 Boolean gates, computes a weighted blend of their outputs during
+                                         training, and selects a single gate via argmax at inference. This softmax-over-gates regime is viable
+                                         precisely because the binary gate space is small enough to enumerate exhaustively. Yet it creates
+                                                                                      Í
+                                         a structural train-test gap: the soft output 𝑘 𝑝 𝑘 𝑔 𝑘 (𝑎, 𝑏) disagrees with the hard output 𝑔 𝑘 ∗ (𝑎, 𝑏)
+                                         unless the softmax probability concentrates entirely on one gate. This is a degenerate limit with
+                                         vanishing gradients. Concurrent work has proposed Gumbel-noise injection and straight-through
+                                         estimation to mitigate this gap (Yousefi et al., 2025), though the fundamental issue with training cost
+                                         remains unaddressed.
+
+                                         © 2025 S.S. Damera, R. Matheu, A.G. Puranic & J.S. Baras.
+                                   DAMERA MATHEU PURANIC BARAS
+
+
+
+
+Why Ternary Logic? Binary DLGNs inherit the fundamental limitation of classical Boolean
+logic: every signal is either TRUE or FALSE, with no capacity to express uncertainty or indeterminate
+outcomes. Many tasks require exactly this capacity—classification under sensor dropout, temporal
+logic evaluation over finite observation windows, and medical diagnosis from incomplete records all
+demand principled abstention, where a network can output “not yet determined” rather than com-
+mitting to an unsupported decision. Kleene’s strong three-valued logic 𝐾3 (Kleene, 1952, 2002),
+with truth values T = {−1, 0, +1} representing FALSE, UNKNOWN, and TRUE, provides the minimal
+extension of Boolean logic that natively expresses this uncertainty. However, extending DLGNs
+to ternary logic reveals a fundamental limitation of the softmax-over-gates paradigm: a two-input
+                        2
+ternary gate admits 33 = 19,683 possible truth tables, making the categorical distribution approach
+intractable.
+
+Polynomial Surrogate Training. We introduce PST, which replaces the categorical parameteri-
+zation entirely: instead of learning a distribution over gates, each neuron learns the coefficients of a
+low-degree polynomial that directly represents a function over T 2 . For ternary logic, this is a degree-
+(2, 2) polynomial with exactly 9 coefficients, reducing parameters by 2,187× compared to softmax-
+over-gates while covering the full 19,683-gate vocabulary. PST is everywhere differentiable, requires
+no Gumbel tricks or softmax temperatures, and we prove that the per-neuron discretization error is
+bounded by a data-independent commitment loss (Theorem 1), providing a principled mechanism
+to narrow the train-test gap.
+
+The hardening gap. While commitment regularization bounds per-neuron discretization error,
+activation quantization across layers creates network-level train-test mismatch. Empirically, this gap
+contracts with overparameterization, falling from 14.1pp to 3.7pp as scale increases from 96K to
+512K neurons on CIFAR-10.
+
+Fourier analysis on T 2 . We develop a Fourier-analytic framework on {−1, 0, +1} 𝑛 with an or-
+thonormal basis appropriate for Kleene 𝐾3 logic, including a quadratic term 𝜑2 (𝑥) = 𝑥 2 − 2/3 with
+no Boolean analogue that captures UNKNOWN-sensitivity. Fourier coefficients serve as spectral com-
+plexity measures for principled regularization and post-hoc analysis.
+
+Contributions.
+
+1. We introduce Polynomial Surrogate Training (PST), the first training regime for logic gate
+   networks that parameterizes the function space directly (9 coefficients per neuron for ternary
+   logic) rather than through a distribution over gates. PST is everywhere differentiable and provides
+   provable bounds on the per-neuron hardening gap via a data-independent commitment loss
+   (Theorem 1).
+
+2. We develop a Fourier-analytic framework on {−1, 0, 1} 𝑛 with the orthogonal basis appropriate
+   for Kleene 𝐾3 logic, providing spectral characterization and principled regularization of learned
+   gates.
+
+3. Scaling experiments from 48K to 512K neurons on CIFAR-10 demonstrate PST trains ternary
+   circuits 2-3× faster than binary DLGNs. On synthetic tasks, ternary circuits with UNKNOWN
+   outputs achieve selective prediction, surpassing binary accuracy when low-confidence predictions
+   are filtered.
+
+                                                   2
+                                         PST FOR DIFFERENTIABLE TERNARY LOGIC GATE NETWORKS
+
+
+
+
+                                                    Softmax-over-gates
+
+             Normalize()
+
+
+
+
+                                    0    0   1
+                                                                       Binary LGN
+
+                                                                                                                        Binary Logic IC
+ Flatten()
+
+
+
+
+                                    -1   0   1                                      0.02   -0.9        0.05
+
+                                                                                     -1    0.01        0.32
+
+                                                                                    0.98   0.94        -0.9
+
+
+
+
+                                Polynomial
+                                                                                                  0           -1   0
+
+                                                                                                  -1          0
+                                Surrogate
+                                                                                                                   1
+
+                                                                     Ternary LGN                  1           1    -1
+                                Training
+                                (Ours)à                                                                                 Ternary Logic IC
+
+
+
+
+               Input Encoding                            Training Network                              Hardening            Inference Circuit
+
+
+
+
+Figure 1: End-to-end comparison of binary DLGN training (top) and the proposed Polynomial Sur-
+rogate Training pipeline for ternary logic gate networks (bottom). Input encoding maps normal-
+ized features to bits/trits using temperature thresholding. Training: binary DLGNs learn softmax
+distributions over 16 gates per neuron; PST instead learns 9 polynomial coefficients per neuron, pa-
+rameterising the full space of 19,683 ternary gates directly. Hardening: binary networks select the
+argmax gate; PST evaluates each polynomial on the 3×3 ternary grid, rounds to the nearest valid
+truth table, and recovers discrete gate coefficients via whard
+                                                          𝑗    = V−1 round T (Vw 𝑗 ). Inference: both
+pipelines produce logic circuits; which can be taped out as ultra-efficient ASICs for Inference
+
+
+2. Related Work
+Eﬀicient Neural Architectures. The computational demands of deep neural networks have moti-
+vated efficient model design Bengio et al. (2013), including binary networks, sparse networks (Fran-
+kle and Carbin, 2018), and lookup-table approaches (Zhu et al., 2016). DLGNs reduce every com-
+putation to a two-input logic gate lookup. Weightless neural networks (WNNs) (Susskind et al.,
+2022) use arbitrary lookup tables, whereas PST neurons are constrained to encode logic gates with
+compositional semantics, enabling formal verification and spectral analysis.
+
+Differentiable Logic Gate Networks Training networks of discrete components like logic gates
+is challenging because they are non-differentiable. Petersen et al. (2022) first introduced Differen-
+tiable Logic Gate Networks (DLGNs) to overcome this issue. Their approach relies relaxing discrete
+Boolean values {0, 1} to continuous [0, 1] and representing each of the 16 two-input gates as dif-
+ferentiable functions. Crucially, the learning does not involve selecting a single gate per neuron
+a priori. Instead, each neuron in a DLGN learns a categorical probability distribution over all 16
+possible logic gates, computing a weighted blend during training and selecting the mode gate via
+argmax at inference to produce a discrete logic circuit. This final hardened network is a pure logic
+circuit, composed of fixed connections and discrete gates, making it extremely fast at inference and
+fully transparent. These networks can, in theory, be synthesized directly onto digital hardware for
+further speed, energy efficiency, and cybersecurity gains.
+
+                                                                            3
+                                   DAMERA MATHEU PURANIC BARAS
+
+
+
+
+3. Background and Preliminaries
+3.1. Polynomial Representations for Boolean Logic Functions
+The mathematical foundation of PST rests on the fact that logic functions over finite domains have
+exact polynomial representations. Boolean functions admit exact real polynomial representations
+(Nisan and Szegedy, 1994; O’Donnell, 2014). Concretely, a real polynomial 𝑝 : R𝑛 → R is said to
+represent a Boolean function 𝑓 : {−1, 1} 𝑛 → {−1, 1} if for all 𝑥 ∈ {−1, 1} 𝑛 , 𝑝(𝑥) = 𝑓 (𝑥). Here we
+interpret TRUE as +1 and FALSE as −1. Because 𝑧 2𝑘 = 1, 𝑧 2𝑘+1 = 𝑧, 𝑘 ∈ N for all 𝑧 ∈ {−1, 1}, these
+polynomials are reduced to multi-linear polynomials. Let the set 𝑃𝑛 contain all real multi-linear
+polynomials that represent Boolean functions with 𝑛 inputs. Then (𝑃𝑛 , · ) is a finite abelian group
+with group multiplication “ · ” defined as polynomial multiplication. This subtle notion allows for
+the definition of a Fourier expansion on representing polynomials, the details of which are described
+in Appendix D.
+    We extend this to the balanced ternary system with truth constants T = {−1, 0, +1} represent-
+ing FALSE, UNKNOWN, and TRUE respectively. Analogous to the Boolean case, a real multivariate
+polynomial 𝑝 is said to represent a ternary function of the form 𝑓 : T 𝑛 → T if for all 𝑥 ∈ T 𝑛 ,
+𝑝(𝑥) = 𝑓 (𝑥). Consider 𝑧 ∈ T . For integer 𝑘 odd, 𝑘 ≥ 1, 𝑧 𝑘 = 𝑧. For integer 𝑘 even, 𝑘 ≥ 2, 𝑧 𝑘 = 𝑧 2 .
+Therefore multivariate polynomials representing ternary functions are multi-quadratic, containing
+variables with powers no greater than two.
+
+3.2. Fourier Analysis on T
+The monomial basis, while convenient for parameterization, is not orthogonal under the uniform in-
+                          Í
+ner product ⟨ 𝑓 , 𝑔⟩ = 31𝑛 𝑥 ∈ T 𝑛 𝑓 (𝑥) 𝑔(𝑥). Consider the set of single input (𝑛 = 1) ternary functions
+of the form 𝑓 : T → T . Applying Gram-Schmidt orthogonalization to the basis {1, 𝑥, 𝑥 2 } yields
+the univariate orthogonal basis:
+
+                           𝜑0 (𝑥) = 1,      𝜑1 (𝑥) = 𝑥,       𝜑2 (𝑥) = 𝑥 2 − 23 .
+
+The term 𝜑2 is the “centered quadratic”: it measures whether 𝑥 is extreme (±1, where 𝜑2 (𝑥) = 13 )
+versus neutral (0, where 𝜑2 (𝑥) = − 23 ). This basis function has no Boolean analogue—it captures the
+UNKNOWN-sensitivity that distinguishes Kleene 𝐾3 from classical logic. The bivariate Fourier basis
+consists of the nine products {𝜑𝑖 (𝑥) 𝜑 𝑗 (𝑦)}0≤𝑖, 𝑗 ≤2 , and the Fourier expansion of any 𝑓 : T 2 → R is
+      Í
+ 𝑓 = 𝑖, 𝑗 𝑓ˆ𝑖 𝑗 𝜑𝑖 𝜑 𝑗 . The Fourier coefficients 𝑓ˆ𝑖 𝑗 serve as spectral complexity measures: the 𝐿 1 norm
+Í ˆ
+   | 𝑓𝑖 𝑗 | quantifies gate complexity, and we use it as a regularizer during training to bias learning
+toward spectrally sparse (interpretable) gates. The full derivation is provided in Appendix B.
+
+
+4. The Polynomial Surrogate Training Framework for DTLGNs
+4.1. PST Formulation
+The softmax-over-gates training regime creates an irreducible train-test gap: the soft network com-
+putes convex combinations of gate outputs while the hard network executes a single discrete gate.
+Gumbel relaxation approaches (Kim, 2023) and Straight Through Estimation techniques (Yousefi
+et al., 2025) reduce but do not eliminate this gap, and are intractable for ternary logic’s 19,683-gate
+support.
+
+                                                    4
+                       PST FOR DIFFERENTIABLE TERNARY LOGIC GATE NETWORKS
+
+
+
+
+    Our proposed Polynomial Surrogate Training (PST) regime addresses this gap by replacing the
+categorical parameterization with a direct polynomial parameterization. Each neuron learns a 9-
+coefficient polynomial 𝑝 w : R2 → R that approximates a ternary gate truth table on T 2 , with
+per-neuron discretization error bounded by a commitment regularizer.
+PST neuron. Each PST neuron represents a two-input ternary function as a degree-(2, 2) polyno-
+mial with 9 learnable coefficients w ∈ R9 :
+                                         𝑝 w (𝑎, 𝑏) = w⊤ m(𝑎, 𝑏),                                        (1)
+where m(𝑎, 𝑏) = [1, 𝑎, 𝑏, 𝑎𝑏, 𝑎 2 , 𝑏 2 , 𝑎 2 𝑏, 𝑎𝑏 2 , 𝑎 2 𝑏 2 ] ⊤ is the monomial basis. Since the 9×9 Van-
+dermonde matrix V evaluating this polynomial on T 2 is invertible, the parameterization is universal:
+any function 𝑓 : T 2 → R has a unique representation. The polynomial is 𝐶 ∞ -smooth and linear in
+w, requiring no softmax or Gumbel relaxations, and evaluates in 8 multiplications and 8 additions
+per neuron.
+Network architecture. A PST-DTLGN is specified by its depth 𝐿, widths {𝑛𝑙 }𝑙=0    𝐿 , a connectivity
+
+map C assigning two parent neurons to each neuron, and polynomial coefficients w (𝑙)  𝑗 ∈ R . The
+                                                                                             9
+
+training forward pass applies a clip nonlinearity after each polynomial evaluation:
+                                                                          
+                                                                     (·) 
+                                    ℎ (𝑙)
+                                      𝑗   = clip   𝑝 w
+                                                             (·)
+                                                       (𝑙) ℎ 𝑠 𝑗 , ℎ 𝑡
+                                                                       𝑗
+                                                                             ,                   (2)
+                                                       𝑗
+
+where clip(𝑥) = max(−1, min(1, 𝑥)). Clipping preserves the range [−1, 1], prevents polynomial
+blowup across layers, preserves grid points {−1, 0, +1} exactly, and implicitly regularizes toward
+ternary-range outputs through its zero-gradient saturation regime.
+Initialization. Weights are drawn i.i.d. from N (0, 0.452 ), chosen to ensure Var[ 𝑝 w (𝑎, 𝑏)] ≈ 1 on
+ternary inputs, analogous to Xavier initialization (Glorot and Bengio, 2010).
+
+4.2. Training
+The training objective combines task loss with a commitment regularizer:
+                                  L (W) = Ltask (W) + 𝜆(𝑡) · R 𝐴 (W),                                    (3)
+where W = {w (𝑙)
+             𝑗 } is the set of all polynomial coefficients and the commitment loss is:
+
+                                       1 Õ 1         Õ                              2
+                           R 𝐴 (W) =                            dist 𝑝 w 𝑗 (𝑎, 𝑏), Q ,                   (4)
+                                       𝑁 𝑗 𝑞2
+                                                  (𝑎,𝑏) ∈ Q 2
+
+with dist(𝑥, Q) = min𝑣 ∈ Q |𝑥 − 𝑣|, where Q is the set of 𝑞 truth values. For ternary logic, 𝑞 = 3 and
+Q = {−1, 0, 1}. The regularization weight 𝜆(𝑡) = 𝜆max (𝑡/𝑇) 𝛾 is annealed from ≈ 0 (free exploration)
+to 𝜆max (strong commitment) using a scheduling regime.
+
+4.3. Hardening: From Polynomials to Gates
+At inference, each PST neuron is converted to a discrete ternary gate via Algorithm 1. Since rounding
+always produces a valid truth table in T 9 , every trained PST neuron discretizes to one of the 19,683
+possible two-input ternary gates without requiring a curated vocabulary—a fundamental advantage
+over the softmax regime, where the vocabulary must be fixed before training.
+
+                                                      5
+                                        DAMERA MATHEU PURANIC BARAS
+
+
+
+
+Algorithm 1 PST Neuron Hardening
+Input: Polynomial coefficients w 𝑗 ∈ R9 , Vandermonde matrix V, gate library G
+Output: Discrete gate 𝑔 ∗𝑗 : T 2 → T
+t 𝑗 ← Vw 𝑗 ;                                  // Evaluate polynomial at grid points T 2
+t̄ 𝑗 ← round T (t 𝑗 ) ;                     // Round each entry to nearest value in T
+𝑔 ∗𝑗 ← G [ t̄ 𝑗 ] ;                              // Lookup gate in precomputed library
+return 𝑔 ∗𝑗
+
+
+4.4. The Hardening Gap
+Hardening converts the continuous training-time model into a discrete circuit by rounding each neu-
+ron’s polynomial to the nearest gate in the truth-table lattice Λ𝑞 = Q 𝑞 (see Appendix A for lattice
+                                                                         2
+
+
+geometry). For ternary logic, this lattice has 39 = 19,683 points in R9 .
+
+Theorem 1 (PST Hardening Gap Bound) Let N be a 𝑞-logic PST network with 𝑁 neurons. Let
+t 𝑗 = [ 𝑝 w 𝑗 (𝑎, 𝑏)] (𝑎,𝑏) ∈ Q 2 be neuron 𝑗’s soft truth table and t̄ 𝑗 ∈ Λ𝑞 its hardened truth table. Then
+
+                                                      1 Õ 1
+                                                          𝑁
+                                         R 𝐴 (W) =              ∥t 𝑗 − t̄ 𝑗 ∥ 22 .
+                                                      𝑁 𝑗=1 𝑞 2
+
+Proof By Algorithm 1, hardening rounds each polynomial evaluation to the nearest value in Q,
+so 𝑡¯𝑗, (𝑎,𝑏) = arg min𝑣 ∈ Q | 𝑝 w 𝑗 (𝑎, 𝑏) − 𝑣|. Therefore ( 𝑝 w 𝑗 (𝑎, 𝑏) − 𝑡¯𝑗, (𝑎,𝑏) ) 2 = dist( 𝑝 w 𝑗 (𝑎, 𝑏), Q) 2 .
+Summing over all grid points and averaging over neurons yields the result.
+
+
+Remark 2 (Scaling and Data-Independence) PST’s design improves with logic valence: a 𝑞-logic
+neuron requires only 𝑞 2 coeﬀicients (vs. softmax’s super-exponential 𝑞 𝑞 logits) while achieving
+                                                                         2
+
+
+𝑂 (1/𝑞) rounding tolerance. The commitment loss R 𝐴 is data-independent, so Theorem 1 holds for
+all inputs in Q 𝑛 , not just the training distribution.
+
+5. Results
+We evaluate PST on two fronts: scaling experiments demonstrating that ternary networks train effi-
+ciently at CIFAR-10 scale (Section 5.1), and analysis of principled abstention via UNKNOWN (𝑈)
+outputs on synthetic tasks (Section 5.2). All models use JAX (Bradbury et al., 2018) with Equinox
+(Kidger and Garcia, 2021) and Adam. Binary DLGNs follow Petersen et al. (2022). Full details in
+Appendix C.
+
+5.1. Training DTLGNs at scale using PST
+We demonstrate that Polynomial Surrogate Training (PST) successfully trains differentiable ternary
+logic gate networks (TLGN) at CIFAR-10 scale, achieving soft accuracy parity with binary DLGNs
+while training 2–3× faster. The hardening gap (the accuracy cost of converting continuous polyno-
+mials to discrete ternary circuits) contracts from 14.1 pp to 3.7 pp as network scale increases from
+96K to 512K neurons, establishing a clear trajectory toward gap elimination through overparame-
+terization and commitment loss modulation.
+
+                                                           6
+                      PST FOR DIFFERENTIABLE TERNARY LOGIC GATE NETWORKS
+
+
+
+
+Table 1: Performance across all scales. Soft: continuous forward pass (10K test). Circuit: post-
+hardening discrete evaluation (2K samples; ±2.2 pp CI). Gap = Soft − Circuit. UNK%: fraction of
+TLGN output neurons producing zero (not sample-level abstention). Speed: DLGN/TLGN wall-
+time ratio (RTX 4090).
+
+          Model             Neurons    Soft Acc   Circuit Acc   Gap (pp)   UNK%     Speed
+          DLGN-SMALL            48K     49.3%         48.9%      +0.5           —
+                                                                                      1.5×
+          TLGN-SMALL            48K     45.4%         42.6%      +2.8        5.9%
+          DLGN-MEDIUM           96K     50.7%         51.4%      −0.8           —
+                                                                                      2.0×
+          TLGN-MEDIUM           96K     50.3%         36.1%      +14.1       6.2%
+          DLGN-LARGE           144K     51.4%         51.7%      −0.4           —
+                                                                                      2.1×
+          TLGN-LARGE           144K     51.5%         38.5%      +13.0       6.0%
+          DLGN-VLARGE          192K     51.6%         52.0%      −0.4           —
+                                                                                      2.1×
+          TLGN-VLARGE          192K     51.2%         39.2%      +11.9       9.3%
+          DLGN-HUGE            512K     52.5%         53.0%      −0.5           —
+                                                                                      3.1×
+          TLGN-HUGE            512K     52.1%         48.4%      +3.7       24.6%
+          DLGN-DEEPER           60K     49.3%         49.4%      −0.1           —
+                                                                                      1.8×
+          TLGN-DEEPER           60K     45.0%         43.0%      +2.0        7.3%
+
+
+Setup. CIFAR-10 (50K train / 10K test) is flattened to 3,072 dimensions and encoded via resolution-
+4 balanced encoding (𝐾=3 thresholds), producing 9,216 binary or ternary input features. We evaluate
+six homogeneous 4-layer architectures from SMALL (4×12K neurons, 48K total) to HUGE (4×128K,
+512K total), plus a 5-layer DEEPER variant (60K total); see Table 3 for full configurations. All share
+identical random sparse connectivity (seed = 42) with two inputs per neuron. Binary DLGN uses
+Adam (lr = 0.01), cross-entropy via GroupSum (𝑘=10, 𝜏=33.3). Ternary PST uses Adam (lr adapted
+per scale), 𝜆max =0.1, 𝛾=2.0 (quadratic lambda annealing), MSE via GroupSum. Batch size 100 for
+both. Soft accuracy: full 10K test set; circuit accuracy: 2K samples (±2.2 pp Wilson CI at ∼50%).
+Table 1 presents the central results across all scales.
+
+PST trains ternary circuits at scale. Both architectures achieve comparable soft accuracy at all
+scales ≥ MEDIUM, plateauing at ∼52%, a ceiling imposed by the resolution-4 encoding rather than
+network capacity. At HUGE: TLGN 52.1% vs. DLGN 52.5% (𝑝=0.57, not significant). This par-
+ity is the key feasibility result: PST’s free polynomial parameterization (9 coefficients per neuron,
+searching 19,683 possible ternary gates) matches the representational capacity of the constrained
+softmax-over-16-gates approach, confirming that the ternary polynomial search space is trainable at
+scale.
+
+The hardening gap closes with overparameterization. The PST hardening gap follows a non-
+monotonic trajectory: modest at SMALL (+2.8 pp), peaking at MEDIUM (+14.1 pp), then contracting
+steadily through LARGE (+13.0), VLARGE (+11.9), to HUGE (+3.7 pp). This contraction is accompa-
+nied by a 10× reduction in per-neuron hardening error (0.298 → 0.029) and a 4× increase in 𝑈 output
+neurons (5.9% → 24.6%). For the neurons whose hardened truth tables map to zero, contributing
+no signal to the GroupSum class scores (a possibility unique to ternary circuits, where 0 is a valid
+output value). This indicates that overparameterization enables implicit pruning: poorly-committed
+
+                                                  7
+                                                           DAMERA MATHEU PURANIC BARAS
+
+
+
+                                                            Per-Class Circuit Accuracy    DLGN vs TLGN Across Scales
+                       80
+                                                                                                                                      DLGN-vlarge           DLGN-huge
+                                                                                                                                      TLGN-vlarge           TLGN-huge
+                       70
+
+                       60
+
+                       50
+Circuit Accuracy (%)
+
+
+
+
+                       40
+
+                       30
+
+                       20
+
+                       10
+
+                        0
+                            airplane   automobile   bird        cat            deer            dog            frog     horse   ship                 truck
+
+
+Figure 2: Per-class circuit accuracy (VLARGE and HUGE). Blue: DLGN. Orange: TLGN. Solid:
+VLARGE. Hatched: HUGE. TLGN-HUGE recovers on visually complex classes (bird +32.3 pp, cat
++37.2 pp, frog +26.9 pp vs. VLARGE), surpassing DLGN on bird and cat.
+
+
+neurons are mapped to zero-output gates during hardening, while the surviving neurons are well-
+committed to valid ternary truth tables. The mechanism is detailed in §C.1.2; Figure 2 shows the
+per-class impact.
+
+TLGNs train 2-3× faster. PST evaluates one polynomial per neuron (9 multiply-adds) vs. DLGN’s
+softmax over 16 gates, yielding 1.5× to 3.1× speedup across scales. PST matches binary DLGN soft
+accuracy while producing circuits whose hardening gap contracts with scale.
+
+Takeaway. PST is a viable and efficient training regime for ternary logic gate networks. It matches
+binary DLGN soft accuracy, trains 2–3× faster, and produces circuits whose hardening gap contracts
+with scale. The intrinsic advantages of ternary logic (principled abstention via 𝑈 outputs, a 500×
+richer gate vocabulary, and three-valued expressiveness) are examined in the following subsection.
+
+
+
+5.2. Salient Features of Ternary LGNs
+
+Binary logic gate networks (DLGN) must always commit to a classification: every neuron outputs
+{0, 1}, and the GroupSum aggregation always produces a decisive class score. Ternary logic gate
+networks (TLGN), by contrast, operate in {−1, 0, +1}, where zero propagates through truth-table
+lookup as a first-class signal. This three-valued logic endows the deployed circuit with principled
+abstention, selective prediction, and Bayes-tracking uncertainty. These capabilities have no analog
+in binary DLGNs and are only accessible via PST, the first training regime that makes ternary gate
+networks trainable.
+    We validate these properties on five 2D synthetic datasets (Moons, Circles, Spirals, Gaussians,
+Ring Sector; 𝑛=2,000 train, 500 test) using matched architectures: body [512] 3 , output = 200,
+GroupSum(𝑘=2, 𝜏=10.0), resolution-4 encoding (𝐾=3, input dim = 6). Both architectures are
+trained for 5,000 steps with discrete inputs.
+
+                                                                                      8
+                       PST FOR DIFFERENTIABLE TERNARY LOGIC GATE NETWORKS
+
+
+
+
+Table 2: Ternary vs. binary: accuracy, abstention, and selective prediction. Δ: ternary − binary
+accuracy. UNK%: fraction of ternary output neurons producing zero. Acc@𝑘%: ternary accuracy
+when retaining only the 𝑘% most confident samples (binary has no analogous mechanism).
+
+                               Raw Accuracy                Ternary Selective Prediction
+         Dataset         Bin       Tern     Δ     UNK%       Acc@90% Acc@50%              AUC
+         Moons          91.8%     85.8%   −6.0     52.9%       90.2%        98.1%         −0.955
+         Circles        97.0%     78.2%   −18.8    45.1%       76.7%         84.9%        −0.864
+         Spirals        63.2%     64.2%   +1.0     50.1%       65.4%         78.2%        −0.790
+         Gaussians      90.5%     78.8%   −11.8    50.6%       78.8%        99.5%         −0.846
+         Ring Sector    97.0%     92.2%   −4.7     38.3%       96.9%        100.0%        −0.986
+
+
+
+5.2.1. THE 𝑈 SIGNAL: PRINCIPLED ABSTENTION ABSENT IN BINARY DLGNS
+
+Table 2 presents the head-to-head comparison. Binary DLGN achieves higher raw accuracy on
+four of five datasets (+4.7 to +18.8 pp), but this comparison is misleading: the ternary circuit de-
+liberately abstains on ambiguous inputs via its 𝑈 mechanism, concentrating zero-valued outputs
+at decision boundaries (Figure 3). Under margin-based selective prediction, the ternary circuit sur-
+passes binary full-coverage accuracy: at 50% coverage, Moons achieves 98.1% (vs. binary’s 91.8%),
+Gaussians 99.5%, and Ring Sector 100.0%. This demonstrates that ternary circuits provide more
+reliable predictions on inputs they choose to classify, a capability unavailable to binary circuits (see
+Appendix C.2.1–C.2.2 for full decision boundary gallery and accuracy-vs-coverage curves).
+
+𝑈 as a Bayes-optimal uncertainty proxy To confirm that the 𝑈 signal reflects genuine statistical
+uncertainty rather than training failure, we parametrically vary the difficulty of the Gaussian classi-
+fication task (Appendix Table 10). As class separation increases from 0.5𝜎 to 3.0𝜎, three quantities
+decrease together: the Bayes error, the ternary 𝑈 fraction, and the spatial overlap between 𝑈 density
+and the Bayes entropy 𝐻 (𝑦 | 𝑥) (Figure 3). The binary baseline matches the Bayes rate at every
+separation level, confirming that these tasks are within both architectures’ capacity. The ternary cir-
+cuit trades coverage for accuracy in precisely the regions where the Bayes posterior is ambiguous, a
+behavior that emerges naturally from the three-valued signal domain without any explicit calibration
+objective.
+
+
+
+5.2.2. PST DELIVERS TERNARY CIRCUITS WITH NEAR-ZERO HARDENING GAP
+
+The practical value of these ternary-specific features depends on whether PST can faithfully transfer
+the trained behavior to the deployed circuit. Table 2 includes the hardening gap (|soft − circuit|) for
+both architectures: the binary gap is 0.00% on four of five datasets (3.19% on Spirals); the ternary gap
+is 0.00% on Moons, 0.31% on Gaussians, and 0.38% on Ring Sector. These near-zero gaps confirm
+that the polynomial surrogate training regime, including quadratic lambda annealing and ternary
+commitment regularization, produces circuits that preserve the training-time abstention behavior
+after hardening. The elevated ternary gaps on Circles (8.31%) and Spirals (4.31%) are consistent
+with the narrow hardening basins identified in the loss landscape analysis (Appendix Figure 13).
+
+                                                   9
+                                                                                                        DAMERA MATHEU PURANIC BARAS
+
+
+
+
+                                3
+                                           (a) Bayes Uncertainty H(Y|x)                           1.0
+                                                                                                                                        (b) Ternary UNKNOWN Density                                                                            (c) Binary Decision Boundary
+                                                                                                                                                                                           0.6
+                                                                                                                            2.0                                                                                                 2.0
+                                2                                                                                                                                                          0.5
+                                                                                                  0.8                       1.5                                                                                                 1.5
+
+                                1                                                                                           1.0                                                            0.4                                  1.0
+                                                                                                  0.6
+                                                                                                                            0.5                                                                                                 0.5
+                                0                                                                                                                                                          0.3
+        x2
+
+
+
+
+                                                                                                        x2
+
+
+
+
+                                                                                                                                                                                                 x2
+                                                                                                                            0.0                                                                                                 0.0
+                                                                                                  0.4
+                                1                                                                                           0.5                                                            0.2                                  0.5
+
+                                                                                                  0.2                       1.0                                                                                                 1.0
+                                2                                                                                                                                                          0.1
+                                                                                                                            1.5                                                                                                 1.5
+                                3                                                                 0.0                                                                                      0.0
+                                     3      2         1           0     1    2          3                                                 2         1           0      1    2                                                                  2           1        0    1       2
+                                                                  x1                                                                                            x1                                                                                                 x1
+
+
+                                           (d) Separation vs UNKNOWN %                                                                        (e) Accuracy vs Separation                                                                    (f) UNKNOWN vs Bayes Uncertainty
+                              55.0                                                r = -0.98                                 100                                                                                                57.5
+                                                                                 p = 0.001                                                                                                                                                                                                 =0.5
+                              52.5                                                                                          95                                                                                                 55.0
+UNKNOWN Output Fraction (%)
+
+
+
+
+                                                                                                                                                                                                 UNKNOWN Output Fraction (%)
+                                                                                                                                                                                                                                                                        =1.0
+                                                                                                                            90                                                                                                 52.5
+                              50.0
+                                                                                                                                                                                                                                                           =1.5
+                                                                                                        Test Accuracy (%)
+
+
+
+
+                                                                                                                            85                                                                                                 50.0
+                              47.5
+                                                                                                                            80                                                                                                 47.5
+                              45.0
+                                                                                                                            75                                                                                                 45.0                 =2.0
+                              42.5
+                                                                                                                            70                                                                                                 42.5
+                              40.0                                                                                          65                                             Ternary                                             40.0          =2.5
+                                                                                                                                                                           Binary
+                              37.5                                                                                          60                                             Bayes Optimal                                       37.5
+                                                                                                                                                                                                                                            =3.0                                r = 0.89
+                                     0.5        1.0         1.5        2.0   2.5            3.0                                   0.5         1.0         1.5        2.0   2.5       3.0                                              0.0            0.2          0.4    0.6         0.8
+                                                          Class Separation                                                                              Class Separation                                                                            Mean Bayes Entropy H(Y|x)
+
+
+Figure 3: Ternary 𝑈 tracks Bayes-optimal uncertainty. Top row: Bayes posterior entropy, ternary
+𝑈 density, and their overlay for Gaussians (separation = 1.5). Bottom row: as class separation
+increases from 0.5 to 3.0𝜎, 𝑈 fraction and Bayes error decrease in lockstep. Binary accuracy (red)
+matches the Bayes rate at every separation, confirming that neither architecture is capacity-limited;
+the ternary circuit chooses to abstain where the posterior is ambiguous.
+
+
+ 6. Conclusion and Future Work
+ We introduced Polynomial Surrogate Training (PST), which makes ternary logic gate networks prac-
+ tical by parameterizing the full 19,683-gate vocabulary with just 9 coefficients per neuron. PST pro-
+ vides provable bounds on per-neuron discretization error through a data-independent commitment
+ loss and trains ternary circuits 2–3× faster than binary DLGNs. Ternary logic’s key advantage is prin-
+ cipled abstention via UNKNOWN outputs, which enables selective prediction where circuits surpass
+ binary accuracy by filtering low-confidence predictions: ternary circuits achieve 98.1% accuracy at
+ 50% coverage (vs. 91.8% binary full-coverage accuracy on Moons), with UNKNOWN density tracking
+ Bayes-optimal uncertainty across varying task difficulty, demonstrating that three-valued logic is a
+ practical mechanism for uncertainty-aware inference in deployed circuits.
+     Two directions warrant immediate attention: (a) adapting straight-through estimation and Gumbel-
+ noise regularization (Bengio et al., 2013; Yousefi et al., 2025) to PST’s polynomial regime may
+ further narrow the network-level hardening gap that contracts empirically with scale but lacks theo-
+ retical guarantees; and, (b) extending PST to recurrent architectures would enable online temporal
+ monitoring with three-valued logic, as Signal Temporal Logic (STL) specifications inherently re-
+ quire ternary verdicts (TRUE, FALSE, UNKNOWN) over finite observation windows, making recurrent
+ DTLGNs a natural fit for runtime verification in safety-critical systems where partial observations
+ demand principled abstention rather than forced binary classification.
+
+                                                                                                                                                           10
+                     PST FOR DIFFERENTIABLE TERNARY LOGIC GATE NETWORKS
+
+
+
+
+References
+Yoshua Bengio, Nicholas Léonard, and Aaron Courville. Estimating or propagating gradients
+  through stochastic neurons for conditional computation. arXiv preprint arXiv:1308.3432, 2013.
+
+James Bradbury, Roy Frostig, Peter Hawkins, Matthew James Johnson, Chris Leary, Dougal Maclau-
+  rin, George Necula, Adam Paszke, Jake VanderPlas, Skye Wanderman-Milne, and Qiao Zhang.
+  JAX: composable transformations of Python+NumPy programs, 2018. URL http://github.
+  com/jax-ml/jax.
+
+Simon Bührer, Andreas Plesner, Till Aczel, and Roger Wattenhofer. Recurrent deep differentiable
+  logic gate networks. arXiv preprint arXiv:2508.06097, 2025.
+
+Jonathan Frankle and Michael Carbin. The lottery ticket hypothesis: Finding sparse, trainable neural
+  networks. arXiv preprint arXiv:1803.03635, 2018.
+
+Xavier Glorot and Yoshua Bengio. Understanding the difficulty of training deep feedforward neural
+  networks. In Yee Whye Teh and Mike Titterington, editors, Proceedings of the Thirteenth Inter-
+  national Conference on Artificial Intelligence and Statistics, volume 9 of Proceedings of Machine
+  Learning Research, pages 249–256, Chia Laguna Resort, Sardinia, Italy, 13–15 May 2010. PMLR.
+  URL https://proceedings.mlr.press/v9/glorot10a.html.
+
+Douglas W Jones. The ternary manifesto. 2012. URL https://homepage.cs.uiowa.edu/
+  ~jones/ternary/.
+
+Patrick Kidger and Cristian Garcia. Equinox: neural networks in JAX via callable PyTrees and
+  filtered transformations. Differentiable Programming workshop at Neural Information Processing
+  Systems 2021, 2021.
+
+Youngsung Kim. Deep stochastic logic gate networks. IEEE Access, 11:122488–122501, 2023. doi:
+  10.1109/ACCESS.2023.3328622.
+
+Stephen Cole Kleene. Introduction to metamathematics. 1952.
+
+Stephen Cole Kleene. Mathematical logic. Courier Corporation, 2002.
+
+Roy D Merrill Jr. Ternary logic in digital computers. In Proceedings of the SHARE design automation
+  project, pages 6–1, 1965.
+
+Wout Mommen, Lars Keuninckx, Matthias Hartmann, and Piet Wambacq. A method for optimizing
+ connections in differentiable logic gate networks. arXiv preprint arXiv:2507.06173, 2025.
+
+Noam Nisan and Mario Szegedy. On the degree of boolean functions as real polynomials. Compu-
+  tational complexity, 4(4):301–313, 1994.
+
+Ryan O’Donnell. Analysis of boolean functions. Cambridge University Press, 2014.
+
+Felix Petersen, Christian Borgelt, Hilde Kuehne, and Oliver Deussen. Deep differentiable logic gate
+  networks. Advances in Neural Information Processing Systems, 35:2006–2018, 2022.
+
+                                                11
+                                 DAMERA MATHEU PURANIC BARAS
+
+
+
+
+Felix Petersen, Hilde Kuehne, Christian Borgelt, Julian Welzel, and Stefano Ermon. Convolu-
+  tional differentiable logic gate networks. Advances in Neural Information Processing Systems,
+  37:121185–121203, 2024.
+
+Zachary Susskind, Aman Arora, Igor DS Miranda, Luis AQ Villon, Rafael F Katopodis, Leandro S
+  De Araújo, Diego LC Dutra, Priscila MV Lima, Felipe MG França, Mauricio Breternitz Jr, et al.
+  Weightless neural networks for efficient edge inference. In Proceedings of the International Con-
+  ference on Parallel Architectures and Compilation Techniques, pages 279–290, 2022.
+
+Audrey Terras. Fourier Analysis on Finite Groups and Applications. Number 43 in London Mathe-
+  matical Society Student Texts. Cambridge University Press, 1999.
+
+Shakir Yousefi, Andreas Plesner, Till Aczel, and Roger Wattenhofer. Mind the gap: Removing the
+  discretization gap in differentiable logic gate networks. arXiv preprint arXiv:2506.07500, 2025.
+
+Chenzhuo Zhu, Song Han, Huizi Mao, and William J Dally. Trained ternary quantization. arXiv
+  preprint arXiv:1612.01064, 2016.
+
+
+
+
+                                                12
+                      PST FOR DIFFERENTIABLE TERNARY LOGIC GATE NETWORKS
+
+
+
+
+Appendix A. Hardening Gap: Lattice Geometry
+A.1. Truth-Table Lattice Quantization
+Both the softmax-over-gates and PST training regimes face the same geometric problem: after train-
+ing, each neuron must be assigned one of finitely many discrete gates. We formalize this as a quan-
+tization problem on a truth-table lattice.
+
+Definition 3 (Truth-Table Lattice) Let Q = {𝑣 0 , 𝑣 1 , . . . , 𝑣 𝑞−1 } ⊂ R be an equally spaced set of 𝑞
+truth values. The truth-table lattice Λ𝑞 = Q 𝑞 is the set of all valid truth tables for two-input 𝑞-logic
+                                              2
+
+
+gates, embedded in R𝑞 . The lattice has |Λ𝑞 | = 𝑞 𝑞 points.
+                       2                            2
+
+
+
+    For the cases of interest: Boolean logic has 𝑞 = 2, |Λ2 | = 24 = 16 gates in R4 ; ternary logic has
+𝑞 = 3, |Λ3 | = 39 = 19,683 gates in R9 ; and quaternary logic has 𝑞 = 4, |Λ4 | = 416 ≈ 4.3 × 109 gates
+in R16 .
+    Hardening maps each neuron’s continuous output (a point in R𝑞 ) to the nearest lattice point in
+                                                                      2
+
+
+Λ𝑞 . The per-neuron hardening error is the ℓ2 distance from the neuron’s soft truth table to the nearest
+valid gate. The key geometric quantity is the covering radius of Λ𝑞 : the maximum distance from
+any point in the ambient space to the nearest lattice point.
+
+Proposition 4 (Covering Radius) The covering radius of the lattice Λ𝑞 (with truth values uni-
+formly spaced by Δ = 2/(𝑞 − 1) in [−1, 1]) satisfies
+                                                           𝑞
+                                          𝑟 cov (Λ𝑞 ) =       ,
+                                                          𝑞−1
+and the maximum per-entry rounding error is
+                                                      1
+                                              𝜖𝑞 =       .
+                                                     𝑞−1
+Proof Each coordinate of the truth table independently rounds to the nearest value in Q. With 𝑞
+uniformly spaced values in [−1, 1], consecutive values are separated by Δ = 2/(𝑞 − 1). The worst-
+p per-coordinate error is Δ/2 = 1/(𝑞 − 1). The ℓ2 covering radius over all 𝑞 coordinates is
+case                                                                             2
+
+  𝑞 · (Δ/2) = 𝑞 · Δ/2 = 𝑞/(𝑞 − 1).
+   2       2
+
+
+    For ternary logic (𝑞 = 3), 𝜖 3 = 1/2 = 0.5; for quaternary (𝑞 = 4), 𝜖4 = 1/3 ≈ 0.333. As 𝑞
+increases, each coordinate need only be accurate to within 𝑂 (1/𝑞) to snap to the correct gate entry.
+
+Proposition 5 (PST Architectural Scaling) A 𝑞-logic PST neuron over two inputs requires 𝑞 2
+learnable coeﬀicients. The maximum per-entry rounding error at hardening time is 𝜖 𝑞 = 1/(𝑞 −1) =
+𝑂 (1/𝑞). Therefore, a higher-valence PST architecture achieves tighter rounding tolerance per truth-
+table entry at a cost that grows only quadratically in 𝑞. By contrast, a softmax-over-gates neuron
+for 𝑞-ary logic requires 𝐾 = 𝑞 𝑞 logits (super-exponential in 𝑞), and its rounding error is governed
+                                2
+
+
+by the concentration of a categorical distribution over 𝐾 categories.
+
+    PST’s design improves with logic valence: the polynomial representation cost grows polynomi-
+ally (𝑞 2 coefficients) while the lattice becomes denser (𝜖 𝑞 → 0). The softmax-over-gates regime
+faces the opposite situation: its parameterization cost explodes super-exponentially while the con-
+centration problem worsens.
+
+                                                     13
+                                    DAMERA MATHEU PURANIC BARAS
+
+
+
+
+Appendix B. Spectral Analysis of Ternary Logic Gate Networks
+Computing the Orthonormal Basis. We have the ternary set T = {−1, 0, +1} and want to represent
+every function 𝑓 : T 2 → R as a linear combination of basis functions. Since T 2 = 9, the space
+of such functions is R9 − nine-dimensional. We need exactly 9 basis functions, and we want them
+orthogonal under some inner product.
+The Inner Product. The uniform measure on T assigns probability 1/3 to each value. The inner
+product on functions 𝑓 , 𝑔 : T → R is:
+
+                            1Õ               1
+               ⟨ 𝑓 , 𝑔⟩ =         𝑓 (𝑥)𝑔(𝑥) = [ 𝑓 (−1)𝑔(−1) + 𝑓 (0)𝑔(0) + 𝑓 (1)𝑔(1)]
+                            3 𝑥∈T            3
+
+Each ternary input is equally weighted. The factor 1/3 is a normalization - it makes ⟨1, 1⟩ = 1 so the
+constant function has unit norm. The bivariate inner product on T 2 uses the same idea with factor
+1/9.
+                                        
+The Monomial Basis. The monomials 1, 𝑥, 𝑥 2 are a valid basis for polynomials of degree ≤ 2 in
+one variable, and they span the right space (any function T → R is determined by 3 values, and 3
+monomials give 3 degrees of freedom). But they are not orthogonal under this inner product:
+
+                                            1                          2
+                                 1, 𝑥 2 =     [1 · 1 + 1 · 0 + 1 · 1] = ≠ 0
+                                            3                          3
+
+The constant function and 𝑥 2 are correlated on T because 𝑥 2 evaluates to 1 at both ±1 and 0 at 0 .
+Under the uniform measure, 𝑥 2 has mean 2/3 - it is biased toward 1 because two out of three ternary
+inputs are extreme ( ±1 ) and only one is neutral ( 0 ). Since 𝑥 2 is nonzero at two-thirds of the
+domain, its mean is nonzero, which means it is not orthogonal to the constant. The monomial basis
+is fine for computation (and is what we use for the weight parameterization), but it is unsuitable for
+analysis because the coefficients are entangled and we cannot ascribe meaning to the values of these
+coefficients like we can with the Fourier coefficients.
+Gram-Schmidt Orthogonalization. We generate the orthonormal basis from the monomial basis
+by following the Gram-Schmidt process:
+Step 1: 𝜑0 (𝑥) = 1. Norm: ∥𝜑0 ∥ 2 = ⟨1, 1⟩ = 1.
+Step 2: Start with x , subtract its projection onto 𝜑0 .
+
+                                              1
+                                 ⟨𝑥, 𝜑0 ⟩ =     (−1 · 1 + 0 · 1 + 1 · 1) = 0
+                                              3
+The projection is zero; x is already orthogonal to the constant. This happens because 𝑥 is an odd
+function and the measure is symmetric around 0. So 𝜑1 (𝑥) = 𝑥, with ∥𝜑1 ∥ 2 == 2/3.
+Step 3: Start with 𝑥 2 , subtract projections onto 𝜑0 and 𝜑1 .
+
+                                           1                              
+                              𝑥 2 , 𝜑1 =      (−1) 2 (−1) + 02 · 0 + 12 · 1 = 0
+                                           3
+
+Zero by symmetry −𝑥 2 is even, 𝑥 is odd, their product is odd, and odd functions sum to zero on T .
+So we only need to subtract the 𝜑0 projection:
+
+                                                      14
+                      PST FOR DIFFERENTIABLE TERNARY LOGIC GATE NETWORKS
+
+
+
+
+                                                    1                2
+                                     𝑥 2 , 𝜑0 =       (1 + 0 + 1) =
+                                                    3                3
+                                         𝑥 2 , 𝜑0                2/3             2
+                        𝜑2 (𝑥) = 𝑥 2 −              · 𝜑0 = 𝑥 2 −      · 1 = 𝑥2 −
+                                         ∥𝜑0 ∥ 2                  1              3
+
+The −2/3 is not arbitrary - it is the mean of 𝑥 2 under the uniform measure on T . The polynomial
+𝜑2 (𝑥) = 𝑥 2 −2/3 is the “centered” quadratic: it measures whether 𝑥 is extreme (±1 , where 𝜑2 = 1/3)
+versus neutral (0 , where 𝜑2 = −2/3). It has zero mean on T by construction with ∥𝜑2 ∥ 2 = 2/9. In
+Boolean analysis on {−1, +1}, every function of one variable is a linear combination of 1 and x -
+there are only two basis functions because |{−1, +1}| = 2. The quadratic 𝜑2 is the ”extra dimension”
+that ternary logic provides, and it captures exactly the UNKNOWN-sensitivity that makes Kleene
+K3 logic different from Boolean logic.
+
+Remark 6 Our basis differs from the additive-combinatorial convention in two ways: (i) we use
+real-valued orthogonal polynomials rather than complex characters, matching the real polynomial
+parameterization of PST neurons; and (ii) we construct the basis via Gram-Schmidt from {1, 𝑥, 𝑥 2 }
+rather than from the group characters of Z3 , yielding a basis that is adapted to the Kleene interpre-
+tation where {−1, +1} are “decided” values and 0 is “undetermined.” The resulting quadratic basis
+function 𝜑2 = 𝑥 2 − 2/3 is orthogonal to both the constant and linear terms and captures precisely
+the sensitivity to UNKNOWN that has no analogue in Boolean Fourier analysis.
+
+The full list of the Fourier coefficients is as follows: Φ00 = 1, Φ10 = 𝑥, Φ01 = 𝑦, Φ11 = 𝑥𝑦, Φ20 =
+𝑥 2 − 2/3, Φ02 = 𝑦 2 − 2/3, Φ21 = (𝑥 2 − 2/3)𝑦, Φ12 = 𝑥(𝑦 2 − 2/3), Φ22 = (𝑥 2 − 2/3) (𝑦 2 − 2/3).
+
+
+Spectral complexity classes. The Fourier spectrum naturally stratifies the 19,683 ternary gates
+into complexity classes. Linear gates have energy only in 𝑓ˆ00 , 𝑓ˆ10 , 𝑓ˆ01 . These include MAJOR-
+ITY and the trivial pass-through gates, and they are the only gates that can be computed by a single
+linear threshold on ternary inputs. Bilinear gates additionally use the interaction term 𝑓ˆ11 ; AND,
+OR, XOR, and their variants fall here. Quadratic gates involve 𝑓ˆ20 or 𝑓ˆ02 and are the genuinely
+“ternary” gates that distinguish between decided and undecided inputs. Full gates use all nine terms.
+                               Í
+The Fourier 𝐿 1 norm ∥ 𝑓ˆ∥ 1 = 𝑖 𝑗 | 𝑓ˆ𝑖 𝑗 | is a rigorous complexity measure: it upper-bounds the num-
+ber of random examples needed to learn the gate to constant accuracy, and it determines the gate’s
+sensitivity to random input perturbations.
+
+Fourier sparsity regularization. The 𝐿 1 norm of Fourier coefficients serves as a sparsity regu-
+larizer independent of the commitment loss:
+
+                                                    1 Õ Õ ˆ( 𝑗 )
+                                                        𝑁
+                                     R 𝐹 (W) =               | 𝑓 |.                              (B.1)
+                                                    𝑁 𝑗=1 𝑖,𝑘 𝑖𝑘
+
+The commitment loss R 𝐴 drives neurons toward any of the 19,683 gates; the Fourier regularizer
+biases that choice toward spectrally sparse, interpretable gates. The combined training objective is
+L = Ltask + 𝜆(𝑡) · R 𝐴 + 𝛽 · R 𝐹 .
+
+                                                     15
+                                    DAMERA MATHEU PURANIC BARAS
+
+
+
+
+Table 3: Architecture configurations. All use GroupSum(𝑘=10, 𝜏=33.3) for 10-class output. Input
+dimension: 9,216.
+
+             Scale      Widths                                      Neurons    PST LR      Steps
+             SMALL      [12000, 12000, 12000, 12000]                 48,000       0.003    100K
+             MEDIUM     [24000, 24000, 24000, 24000]                 96,000       0.001    150K
+             LARGE      [36000, 36000, 36000, 36000]                144,000       0.001    200K
+             DEEPER     [12000, 12000, 12000, 12000, 12000]          60,000       0.003    100K
+             VLARGE     [48000, 48000, 48000, 48000]                192,000       0.001    150K
+             HUGE       [128000, 128000, 128000, 128000]            512,000       0.001    200K
+
+
+Post-hoc spectral profiling. After training and discretization, the aggregate spectral energy dis-
+tribution across all neurons reveals whether the task genuinely exploits ternary structure. If most
+energy concentrates in linear Fourier terms ( 𝑓ˆ10 , 𝑓ˆ01 , 𝑓ˆ11 ), the network is essentially performing
+sign propagation and could function as a Boolean circuit. If substantial energy appears in quadratic
+terms ( 𝑓ˆ20 , 𝑓ˆ02 , 𝑓ˆ22 ), the network is genuinely exploiting the three-valued distinction, routing infor-
+mation differently based on whether inputs are decided versus undetermined. This spectral profile
+is a principled diagnostic for whether 𝐾3 logic adds value over binary logic for a given task.
+
+Vocabulary coverage. The Hamming distance between a neuron’s discretized truth table and the
+nearest curated gate quantifies vocabulary coverage. The Level 2 coverage (the fraction of neurons
+whose nearest curated gate has Hamming distance zero) reveals which tasks are “natively ternary”
+(high coverage) versus tasks requiring gates outside the standard vocabulary. One of the more in-
+teresting, formally defined vocabularies of ternary gates is that of threshold logic (Jones, 2012). In
+threshold logic, each input 𝑖 𝑗 is multiplied by a constant 𝑘 𝑗 and then the inputs are summed and then
+compared to two thresholds 𝑡+ and 𝑡. If the sum is 𝑡+ or greater, the output is +1. If the sum is 𝑡,
+the output is 1. According to Merrill Jr (1965), 471 of the 19,683 diadic ternary operators can be
+computed using threshold logic.
+
+
+Appendix C. Additional Experimental Results
+C.1. Supplementary: CIFAR-10 scaling details
+
+C.1.1. TRAINING DYNAMICS
+
+Base scales (48K-144K). Figure 4 shows training loss curves for four scales. At SMALL and MEDIUM
+scales, DLGN enters a noisy plateau (oscillating in 0.5-1.4), while PST achieves 10-38× lower task
+loss (e.g., TLGN-LARGE: 0.017 vs. DLGN-LARGE: 0.65). The 5-layer DEEPER variant shows the same
+plateau as SMALL, confirming that depth alone does not resolve it.
+    Extended scales (192K-512K). Figure 5 extends to VLARGE and HUGE. DLGN-HUGE (512K)
+breaks through to 0.015, a qualitative transition from plateau-dominated to clean convergence, sug-
+gesting the softmax-over-gates parameterization requires a threshold overparameterization level (be-
+tween 48K and 128K per-layer width). TLGN-HUGE reaches 0.004, the lowest task loss of any model.
+    Ternary convergence. Figure 6 overlays TLGN task loss curves for VLARGE and HUGE. TLGN-
+HUGE reaches its floor (∼10−3 ) by step 30K, matching TLGN-VLARGE’s asymptotic performance in
+
+                                                     16
+                                     PST FOR DIFFERENTIABLE TERNARY LOGIC GATE NETWORKS
+
+
+
+
+                                                     Training Loss Curves           Binary DLGN vs Ternary PST-DTLGN
+
+                                     Small (48K neurons, 4L)                                                                            Medium (96K neurons, 4L)
+                                                                        DLGN-small                                                                                     DLGN-medium
+                                                                        TLGN-small (task)                                                                              TLGN-medium (task)
+                                                                        TLGN-small (total)                                                                             TLGN-medium (total)
+                0
+       2 × 10
+                                                                                                              0
+                                                                                                         10
+Loss
+
+
+
+
+                                                                                                  Loss
+              0
+         10                                                                                                   1
+                                                                                                         10
+
+
+
+                    0       20000     40000          60000      80000            100000                            0    20000   40000     60000    80000 100000 120000 140000
+                                              Step                                                                                                Step
+                                    Large (144K neurons, 4L)                                                                            Deeper (60K neurons, 5L)
+                                                                        DLGN-large                                                                                     DLGN-deeper
+                                                                        TLGN-large (task)                                                                              TLGN-deeper (task)
+                                                                        TLGN-large (total)                                                                             TLGN-deeper (total)
+              0                                                                                               0
+         10                                                                                          2 × 10
+  Loss
+
+
+
+
+                                                                                              Loss
+
+              1
+         10
+
+
+                                                                                                              0
+                                                                                                         10
+              2
+         10
+
+                    0   25000 50000 75000 100000 125000 150000 175000 200000                                       0       20000          40000          60000     80000         100000
+                                              Step                                                                                                Step
+
+Figure 4: Training loss curves (SMALL–LARGE + DEEPER). 2 × 2 grid, log-scale 𝑦-axis. Blue:
+DLGN. Dashed orange: TLGN task loss. Solid orange: TLGN total loss (task + 𝜆· commitment).
+TLGN converges 1-2 orders of magnitude below DLGN at MEDIUM and LARGE scales, while both
+remain comparable at SMALL scale.
+
+           Table 4: Training wall time (single RTX 4090). Speed ratio = DLGN time / TLGN time.
+
+                                        Scale                Neurons           DLGN (s)                           TLGN (s)         Speedup
+                                        SMALL                   48K                           241                       156              1.5×
+                                        MEDIUM                  96K                           587                       292              2.0×
+                                        LARGE                  144K                          1023                       479              2.1×
+                                        DEEPER                  60K                           297                       167              1.8×
+                                        VLARGE                 192K                           936                       455              2.1×
+                                        HUGE                   512K                          4408                      1401              3.1×
+
+
+15% of the training budget. Periodic spikes coincide with lambda annealing ramp-up; these are
+transient (recovery within 1-2K steps) and do not affect final performance.
+
+C.1.2. HARDENING GAP MECHANISM
+Three regimes govern the gap trajectory.
+
+                                                                                             17
+                                                                        DAMERA MATHEU PURANIC BARAS
+
+
+
+
+                                                                   Training Loss Curves         Binary DLGN vs Ternary PST-DTLGN
+
+                                                 Vlarge (192K neurons, 4L)                                                                        Huge (512K neurons, 4L)
+                                                                                    DLGN-vlarge                                                                                             DLGN-huge
+                                                                                    TLGN-vlarge (task)                                                                                      TLGN-huge (task)
+                                                                                    TLGN-vlarge (total)               0                                                                     TLGN-huge (total)
+            0                                                                                                    10
+       10
+
+                                                                                                                      1
+                                                                                                                 10
+            1
+Loss
+
+
+
+
+                                                                                                          Loss
+       10
+                                                                                                                      2
+                                                                                                                 10
+
+            2
+       10                                                                                                        10
+                                                                                                                      3
+
+
+
+
+                0                20000   40000     60000    80000 100000 120000 140000                                    0     25000 50000 75000 100000 125000 150000 175000 200000
+                                                           Step                                                                                            Step
+
+Figure 5: Training loss curves (VLARGE and HUGE). Left: VLARGE (192K neurons). Right: HUGE
+(512K neurons). At HUGE scale, DLGN finally achieves clean convergence (0.015), eliminating the
+noisy-plateau pathology. TLGN-HUGE reaches 0.004 (task), the lowest of any model.
+
+                                                                         Ternary PST-DTLGN Task Loss                  Convergence Across Scales
+                                                                                                                                                             TLGN-vlarge (192K, lr=0.001)
+                                                                                                                                                             TLGN-huge (512K, lr=0.001)
+                                 0
+                            10
+
+
+                                 1
+                            10
+                Task Loss
+
+
+
+
+                                 2
+                            10
+
+
+                                 3
+                            10
+
+
+
+                                         0             25000          50000         75000                  100000             125000       150000            175000            200000
+                                                                                                            Step
+
+
+Figure 6: Ternary task loss convergence (VLARGE and HUGE). Triangles mark the minimum. Both
+use lr=0.001. TLGN-HUGE reaches its floor (∼10−3 ) by step 30K, matching TLGN-VLARGE’s asymp-
+totic performance in 15% of the training budget, then continues improving to 3 × 10−4 . Periodic
+spikes (visible as upward excursions) coincide with lambda annealing ramp-up.
+
+
+    Regime I: Low capacity (48K-60K). Gap is modest (2.0-2.8 pp). The polynomials have limited
+freedom; the gap is small because there is little to lose in hardening. However, hardening error is
+high (0.298): the polynomials are not close to valid gates, but per-neuron rounding errors do not
+compound catastrophically at this scale.
+    Regime II: Mid capacity (96K-192K). Gap peaks at 14.1 pp (MEDIUM) and remains elevated
+through VLARGE (11.9 pp). The network develops rich polynomial representations far from valid
+ternary truth tables. The commitment regularizer reduces hardening error monotonically (0.253 →
+0.067), but accumulated rounding through four layers remains destructive.
+
+                                                                                                          18
+                     PST FOR DIFFERENTIABLE TERNARY LOGIC GATE NETWORKS
+
+
+
+
+Table 5: Hardening error and UNKNOWN% across scales. Hardening error drops 10× while
+UNKNOWN% increases 4× at HUGE scale.
+
+                           Scale     TLGN Gap (pp)     Hard Err   UNK%
+                           SMALL                +2.8      0.298    5.9%
+                           DEEPER               +2.0      0.218    7.3%
+                           MEDIUM              +14.1      0.253    6.2%
+                           LARGE               +13.0      0.074    6.0%
+                           VLARGE              +11.9      0.067    9.3%
+                           HUGE                 +3.7      0.029   24.6%
+
+
+Table 6: Gate diversity and functional redundancy. Unique: distinct truth tables. Eff. Div: ex-
+ponential Shannon entropy. Gini: concentration (higher = more concentrated). Max copies: neuron
+count of the most common gate. Singletons: gates used by exactly one neuron.
+
+         Model            Unique    Eff. Div    Gini   Redund.%   Max Copies    Singletons
+         DLGN-SMALL            16      14.9    0.176     100.0%         4,128            0
+         TLGN-SMALL         8,987     4,268    0.603      81.3%           224        3,149
+         DLGN-MEDIUM           16      14.7    0.209     100.0%        10,341            0
+         TLGN-MEDIUM       12,655     6,719    0.587      86.8%           144        3,032
+         DLGN-LARGE            16      14.5    0.222     100.0%        16,620            0
+         TLGN-LARGE        14,375     7,590    0.592      90.0%           190        2,578
+         DLGN-VLARGE           16      14.4    0.231     100.0%        23,263            0
+         TLGN-VLARGE       14,360     7,239    0.610      92.5%           338        2,181
+         DLGN-HUGE             16      14.2    0.251     100.0%        66,609            0
+         TLGN-HUGE         13,955     5,437    0.696      97.3%         1,490        1,710
+
+
+
+    Regime III: High capacity (512K). Gap contracts to 3.7 pp with hardening error 0.029, meaning
+each truth table entry is within 0.029 of the nearest ternary value on average. The contraction is
+accompanied by a sharp increase in UNKNOWN output neurons (24.6% vs. ∼6% at smaller scales),
+reflecting implicit pruning: neurons near Voronoi cell boundaries in truth-table space are mapped to
+zero-output gates, while surviving neurons carry sufficient discriminative signal.
+
+
+C.1.3. GATE DIVERSITY AND FOURIER SPECTRAL ANALYSIS
+
+Table 6 reports gate diversity and functional redundancy. The effective diversity ratio (TLGN/DLGN)
+ranges from 286× (SMALL) to 523× (LARGE). Unique gates grow from 8,987 (SMALL) to ∼14,000
+(LARGE-VLARGE) then decrease slightly to 13,955 at HUGE, while Gini increases monotonically (0.603
+→ 0.696) and effective diversity drops from 7,590 to 5,437. The HUGE model uses fewer distinct gate
+types but copies each more frequently.
+    Table 7 decomposes the unique gates into Fourier complexity bands. Larger networks learn more
+complex gates: linear energy decreases from 36.8% (SMALL) to 32.6% (LARGE) while quadratic and
+cubic energy increase. The DEEPER variant has the most linear profile (37.7%), consistent with nar-
+
+                                                 19
+                                  DAMERA MATHEU PURANIC BARAS
+
+
+
+
+Table 7: Fourier spectral profile (TLGN models). Percentage of total Fourier energy in each degree
+band. %Ternary: fraction of unique gates that are genuinely ternary (not binary-equivalent).
+
+         Model             Unique    %Ternary    Const    Linear    Quad    Cubic   Quartic
+         TLGN-SMALL         8,987     98.6%      18.1%    36.8%    31.4%    11.0%      2.8%
+         TLGN-MEDIUM       12,655     99.3%      17.4%    33.5%    33.1%    12.6%      3.3%
+         TLGN-LARGE        14,375     99.4%      17.0%    32.6%    33.5%    13.4%      3.5%
+         TLGN-DEEPER        9,068     96.8%      23.6%    37.7%    26.8%     9.4%      2.5%
+
+
+
+
+Figure 7: Gate landscape - MDS embedding of ternary gates across scales. Top row: Hamming
+distance (number of differing truth table entries out of 9). Bottom row: Fourier 𝐿 2 distance. Each
+point is a unique gate; area ∝ log2 (neuron count); colour encodes log10 (neuron count). Red dia-
+monds: the 15 named curated gates (AND, OR, XOR, etc.). Curated gates occupy the high-count
+core in all four embeddings, confirming that PST rediscovers classical logic operations without any
+gate-vocabulary constraint.
+
+
+rower per-layer width limiting inter-neuron interaction complexity. Over 98% of gates are genuinely
+ternary at all scales.
+
+C.1.4. GATE LANDSCAPE GEOMETRY VIA MDS EMBEDDING
+The Fourier spectral profile (Table 7) summarizes aggregate complexity but does not reveal how
+the ∼9,000–14,000 unique gates are organized relative to one another. We apply multidimensional
+scaling (MDS) under two complementary distance metrics: Hamming distance on truth tables; and,
+Euclidean (𝐿 2 ) distance on Fourier coefficient vectors; to embed each unique gate as a point in R2 .
+Figure 7 shows the result for all four base scales.
+
+Clustering of learned gates around named gates. Under both metrics and at all four scales,
+the highest-count learned gates (bright points, log10 (count) > 2) cluster in the same region as the
+15 named curated gates (red diamonds). This co-location indicates that PST, despite searching an
+
+                                                 20
+                                                    PST FOR DIFFERENTIABLE TERNARY LOGIC GATE NETWORKS
+
+
+
+                                                                   Per-Class Circuit Accuracy   DLGN vs TLGN Across Scales
+                       80
+                                                                                                                                        DLGN-small   DLGN-medium   DLGN-large     DLGN-deeper
+                                                                                                                                        TLGN-small   TLGN-medium   TLGN-large     TLGN-deeper
+                       70
+
+                       60
+
+                       50
+Circuit Accuracy (%)
+
+
+
+
+                       40
+
+                       30
+
+                       20
+
+                       10
+
+                        0
+                            airplane   automobile        bird    cat                deer               dog               frog   horse                  ship               truck
+
+
+
+Figure 8: Per-class circuit accuracy at smaller scales. Blue: DLGN. Orange: TLGN. Solid: lower
+scale. Hatched: higher scale. TLGN shows high class-level variance at SMALL-DEEPER scales, with
+catastrophic failures on visually complex classes (bird, cat, deer, frog). For larger scales (VLARGE,
+HUGE) showing partial recovery, see Figure 2 in the main text.
+
+
+unconstrained space of 19,683 truth tables, independently converges toward the neighbourhood of
+classical logic operations (AND, OR, XOR, NAND, etc.). Low-count gates — including the ∼2,600
+singletons at LARGE (Table 6) - are scattered at greater embedding distances from this core, consistent
+with their role as rare, task-specific functions.
+     The two metrics provide complementary views. Hamming distance captures how many truth
+table entries differ between gates (out of 9), so nearby points in the top row are functionally simi-
+lar. Fourier 𝐿 2 distance captures differences in spectral energy distribution, so nearby points in the
+bottom row share similar complexity profiles regardless of which specific entries differ. The named
+gates occupy the high-count core under both metrics, confirming that they are central in both the
+functional and spectral sense.
+Scale dependence. From SMALL to LARGE, the gate cloud grows denser as unique gates increase
+(8,987 → 14,375) and effective diversity rises (4,268 → 7,590; Table 6). The DEEPER variant (right-
+most column), despite a comparable neuron count to SMALL, produces a more compact cloud, consis-
+tent with its higher constant-energy fraction (23.6% vs. 18.1%) and lower quadratic-energy fraction
+(26.8% vs. 31.4%; Table 7).
+
+C.1.5. PER-CLASS ANALYSIS
+The per-class breakdown (Figure 8, Table 8) reveals that the TLGN hardening gap is not uniform
+across classes.
+    TLGN-HUGE recovers on hard classes. The most dramatic improvements from VLARGE to
+HUGE occur on visually complex classes: bird (+32.3 pp), cat (+37.2 pp), frog (+26.9 pp), and ship
+(+13.8 pp). At HUGE scale, TLGN surpasses DLGN on bird (50.8% vs. 43.6%) and cat (50.8% vs.
+30.7%).
+    Dog class regression. TLGN-VLARGE achieved 64.3% on dog but TLGN-HUGE drops to 30.8%
+(−33.5 pp). The dog-cat confusability in CIFAR-10 and the 4× increase in UNKNOWN neurons
+suggest a redistribution of discriminative capacity rather than uniform improvement.
+    DLGN is more uniform. Binary circuit accuracy has lower per-class variance (CoV: 0.23 for
+DLGN-HUGE vs. 0.28 for TLGN-HUGE) and dominates on “easy” classes (frog: 65.3% vs. 51.4%;
+automobile: 65.2% vs. 56.6%).
+
+                                                                                           21
+                                    DAMERA MATHEU PURANIC BARAS
+
+
+
+
+Table 8: Per-class circuit accuracy (%) at selected scales. Bold: best ternary result per class. Δ:
+improvement from VLARGE to HUGE. Classes with VLARGE accuracy < 30% are marked with †.
+
+                                           TLGN                     DLGN ref.
+                 Class         SMALL    LARGE     VLARGE    HUGE   VLARGE   HUGE   Δvl→h
+                 airplane      51.5      50.5     62.8      61.2   58.7     60.2    −1.6
+                 automobile    55.1      62.1     55.6      56.6   58.6     65.2    +1.0
+                 bird†         21.5      17.9     18.5      50.8   37.9     43.6   +32.3
+                 cat†          33.2      42.7     13.6      50.8   32.7     30.7   +37.2
+                 deer†         44.9      11.1     24.2      25.8   36.4     40.9    +1.6
+                 dog           33.5      35.7     64.3      30.8   44.9     44.9   −33.5
+                 frog†         42.6      28.2     24.5      51.4   65.7     65.3   +26.9
+                 horse         46.6      59.6     37.8      46.1   55.4     56.5    +8.3
+                 ship          48.8      30.4     42.4      56.2   69.1     62.2   +13.8
+                 truck         47.3      48.3     51.2      52.7   57.1     58.6    +1.5
+
+Table 9: Margin-based selective classification (2K test samples). Margin(C/W): mean GroupSum
+margin for correct/wrong predictions. Separation: ratio of correct to wrong margin. Acc@𝑘%:
+accuracy when retaining only the 𝑘% most confident samples.
+
+       Model             Circ Acc     Margin(C)     Margin(W)      Sep.     Acc@90%        Acc@50%
+       DLGN-SMALL         48.9%         37.1             19.5      1.90×     52.0%          64.3%
+       TLGN-SMALL         42.6%         38.4             22.9      1.68×     44.8%          54.5%
+       DLGN-LARGE         51.7%         49.3             26.6      1.85×     54.9%          66.1%
+       TLGN-LARGE         38.5%         66.3             41.3      1.61×     39.9%          48.3%
+       DLGN-VLARGE        52.0%         58.6             30.1      1.95×     54.6%          66.3%
+       TLGN-VLARGE        39.2%         85.6             51.9      1.65×     41.2%          49.5%
+       DLGN-HUGE          53.0%         106.4            50.5      2.11×     55.7%          70.3%
+       TLGN-HUGE          48.4%         131.7            73.9      1.78×     50.6%          61.5%
+
+
+C.1.6. MARGIN-BASED CONFIDENCE
+Ternary circuits provide a natural confidence signal via the GroupSum margin (difference between
+highest and second-highest class scores).
+    Ternary margins are larger in absolute magnitude ({−1, 0, 1} outputs actively suppress competing
+classes), but DLGN achieves better margin separation: 2.11× vs. 1.78× at HUGE scale, yielding
+Acc@50% of 70.3% vs. 61.5%. Ternary separation improves with scale (1.65× → 1.78× from
+VLARGE to HUGE; Acc@50%: 49.5% → 61.5%), indicating genuine improvement in discriminative
+quality of surviving neurons.
+
+C.2. Appendix: Supporting Experiments
+C.2.1. DECISION BOUNDARY GALLERY
+Figure 9 presents the full 5 × 4 decision boundary gallery. Each row shows one dataset; columns
+display the raw data, binary circuit boundary, ternary circuit boundary, and UNKNOWN density
+
+                                                    22
+                     PST FOR DIFFERENTIABLE TERNARY LOGIC GATE NETWORKS
+
+
+
+
+Table 10: Gaussian separation sweep. As separation increases, UNKNOWN fraction tracks the
+Bayes error. Binary accuracy matches the Bayes rate at all separations, confirming neither architec-
+ture is capacity-limited.
+
+                         Separation       Tern Acc    UNK%     Bin Acc   Bayes
+                              0.5𝜎         59.8%      54.9%    68.2%     68.2%
+                              1.0𝜎         71.0%      53.1%    83.5%     83.5%
+                              1.5𝜎         78.7%      50.6%    90.5%     90.5%
+                              2.0𝜎         85.5%      44.0%    97.8%     97.8%
+                              2.5𝜎         92.2%      39.1%    99.0%     99.0%
+                              3.0𝜎         93.5%      37.5%    99.8%     99.8%
+
+                  Table 11: Asymmetric thresholding sweep (Moons, test set).
+
+                                      𝛿    Test Acc    UNK%      Gap
+                                1.00        85.8%      52.8%     0.00%
+                                0.50        95.0%      38.3%     0.00%
+                                0.25        93.0%      36.6%     0.00%
+                                0.00        91.7%      42.0%    −0.81%
+
+
+overlay. Across all five datasets, the ternary UNKNOWN regions (orange) concentrate at decision
+boundaries, confirming the pattern described in Section 5.2.1.
+    The UNKNOWN fraction ranges from 38.3% (Ring Sector) to 52.9% (Moons), scaling with
+boundary complexity. Ring Sector, with its clean angular separation, produces the smallest UN-
+KNOWN band; Moons, with its high boundary curvature and noise = 0.5, produces the largest.
+
+C.2.2. ACCURACY VS. COVERAGE CURVES
+Figure 10 shows the full accuracy-vs-coverage curves for three representative datasets. The mono-
+tonic increase confirms that the GroupSum margin is a well-calibrated confidence proxy: low-margin
+predictions are disproportionately incorrect, and abstaining on them systematically improves accu-
+racy on the retained set.
+
+C.2.3. CONTROLLING THE UNKNOWN BAND
+The delta_fraction parameter (𝛿 ∈ [0, 1]) controls the width of the UNKNOWN encoding band.
+Table 11 and Figure 11 show that peak accuracy on Moons occurs at 𝛿=0.50 (95.0%), not at either
+extreme. Notably, UNK% does not reach zero even at 𝛿=0.0 (42.0%), because UNKNOWN outputs
+emerge from internal truth tables, not only from the input encoding.
+
+C.2.4. ENCODING RESOLUTION
+Higher resolution simultaneously increases accuracy and decreases UNKNOWN rate (Table 12, Fig-
+ure 12): from 84.0% accuracy / 53.8% UNK at 𝐾=2 to 95.5% / 23.8% at 𝐾=16, confirming that the
+UNKNOWN band reflects input-level ambiguity resolvable by finer quantization.
+
+                                                      23
+                                      DAMERA MATHEU PURANIC BARAS
+
+
+
+
+              Data                     Binary DLGN                     Ternary PST-DTLGN                UNKNOWN Density
+                         Acc: 91.8%                       Acc: 85.8%                       UNK: 52.8%
+Moons
+
+
+
+
+                         Acc: 97.0%                       Acc: 78.2%                       UNK: 45.1%
+Circles
+
+
+
+
+                         Acc: 63.2%                       Acc: 64.2%                       UNK: 50.1%
+Spirals
+
+
+
+
+                         Acc: 90.5%                       Acc: 78.8%                       UNK: 50.9%
+Gaussians
+
+
+
+
+                         Acc: 97.0%                       Acc: 92.2%                       UNK: 38.2%
+Ring Sector
+
+
+
+
+ Figure 9: Decision boundary gallery (5 × 4 grid). Rows: Moons, Circles, Spirals, Gaussians,
+ Ring Sector. Columns: raw data, binary boundary, ternary boundary, UNKNOWN density. Orange
+ regions mark where > 50% of output neurons produce zero.
+
+
+
+                                                     24
+                                                          PST FOR DIFFERENTIABLE TERNARY LOGIC GATE NETWORKS
+
+
+
+                                              Spirals                                                        Moons                                                                Gaussians
+           1.0                                                            1.0                                                                    1.0
+
+
+           0.9                                                            0.9                                                                    0.9
+
+
+           0.8                                                            0.8                                                                    0.8
+Accuracy
+
+
+
+
+           0.7                                                            0.7                                                                    0.7
+
+
+           0.6                                                            0.6                                                                    0.6
+
+
+           0.5        Ternary PST-DTLGN                                   0.5        Ternary PST-DTLGN                                           0.5         Ternary PST-DTLGN
+                   AUCBinary
+                       = -0.790
+                             DLGN (63.2%)                                         AUCBinary
+                                                                                      = -0.955
+                                                                                            DLGN (91.8%)                                                 AUCBinary
+                                                                                                                                                            = -0.846
+                                                                                                                                                                   DLGN (90.5%)
+                 0.0        0.2         0.4             0.6   0.8   1.0         0.0        0.2         0.4           0.6        0.8        1.0         0.0        0.2            0.4       0.6        0.8   1.0
+                                            Coverage                                                       Coverage                                                                Coverage
+
+
+Figure 10: Accuracy vs. coverage (Spirals, Moons, Gaussians). As the circuit abstains on the lowest-
+margin samples, accuracy on the retained samples rises monotonically. The AUC quantifies selective
+prediction quality (closer to −1.0 is better).
+
+                                = 1.00                                       = 0.50                                                 = 0.25                                                 = 0.00
+                       Acc: 85.8%, UNK: 52.8%                       Acc: 95.0%, UNK: 38.3%                                 Acc: 93.0%, UNK: 36.6%                                 Acc: 91.8%, UNK: 42.0%
+
+
+
+
+Figure 11: Asymmetric thresholding (Moons, four 𝛿 values). Peak accuracy (95.0%) at 𝛿=0.50,
+not at the binary-like extreme.
+
+
+C.2.5. GATE DIVERSITY
+PST discovers ∼1,200 unique gates per dataset (out of 19,683), with effective diversity ∼1,050, rep-
+resenting 70× greater vocabulary utilization than binary’s fixed 16 (Table 13). Ternary redundancy
+is 28-31% vs. binary’s 99.1%, reflecting the two strategies: binary achieves expressiveness through
+dense repetition; ternary through gate specialization.
+
+C.2.6. HARDENING GAP COMPARISON
+Figure 13 compares the hardening gap across all datasets. Both architectures achieve small gaps
+under discrete-input training (binary ≤ 3.19%, ternary ≤ 8.31%). The near-zero ternary gaps on
+Moons (0.00%), Gaussians (0.31%), and Ring Sector (0.38%) validate the fidelity of the PST hard-
+ening procedure.
+
+
+Appendix D. Polynomial Representations for Boolean Logic Functions
+Let 𝑃𝑛 denote the set of real multi-linear polynomials that represent Boolean functions over 𝑛 vari-
+ables. Given real multi-linear polynomials 𝑝, 𝑞 ∈ 𝑃𝑛 , define the binary operators meet (∧) and join
+(∨):
+
+                     1 1      1      1                                                                                                 1 1      1      1
+           𝑝 ∧ 𝑞 := − + 𝑝(𝑥) + 𝑞(𝑥) + 𝑝(𝑥)𝑞(𝑥),                                                                      𝑝 ∨ 𝑞 :=           + 𝑝(𝑥) + 𝑞(𝑥) − 𝑝(𝑥)𝑞(𝑥),
+                     2 2      2      2                                                                                                 2 2      2      2
+
+                                                                                                           25
+                                                                                                 DAMERA MATHEU PURANIC BARAS
+
+
+
+                                                                                                Res=2 (K=1)                 Res=4 (K=3)            Res=8 (K=7)   Res=16 (K=15)
+                    96
+                                 Resolution Trade-off                                            Acc: 84.0%                  Acc: 85.8%             Acc: 94.5%     Acc: 95.5%
+                                                               55
+
+                    94                                         50
+
+
+
+
+                                                                UNKNOWN Output Fraction (%)
+                    92                                         45
+Test Accuracy (%)
+
+
+
+
+                    90                             Accuracy    40
+                                                   UNKNOWN %
+
+                    88                                         35
+
+                                                               30
+                    86
+
+                                                               25
+                    84
+                         2   4          8                 16
+                                      Resolution
+
+
+Figure 12: Resolution vs. accuracy and UNKNOWN rate (Moons). Higher resolution increases
+accuracy and decreases UNKNOWN fraction.
+
+                                                                        Table 12: Resolution sweep (Moons, test set).
+
+                                                               𝐾                              Input Dim        Body Widths           Test Acc     UNK%
+                                                                2                                 2               [128] 3                 84.0%   53.8%
+                                                                4                                 6                [256] 3                85.8%   50.8%
+                                                                8                                14                [512] 3                94.5%   34.2%
+                                                               16                                30               [1024] 3                95.5%   23.8%
+
+
+and define the unary operator complementation (¬):
+
+                                                                                                                ¬𝑝 := −𝑝(𝑥).
+
+Then (𝑃𝑛 , ∨, ∧, ¬, ⊥, ⊤) is a Boolean algebra with the top element being the constant polyno-
+mial 𝑝(𝑥) = 1 and the bottom element being the constant polynomial 𝑝(𝑥) = −1. For two-input
+Boolean functions (𝑛 = 2), the Boolean algebra of real multi-linear polynomials is generated by the
+set {𝑥1 , 𝑥 2 }, meaning one can reconstruct all Boolean functions using the operations meet, join, and
+complement applied to the set of generators.
+
+D.1. The Boolean Group
+The exclusive not-or1 (XNOR) of elements in the Boolean algebra can be defined as:
+
+                                                                                                              𝑝 ⊙ 𝑞 := 𝑝(𝑥)𝑞(𝑥).
+
+The structure (𝑃𝑛 , ⊙, ⊤) is a finite abelian group, with the constant polynomial 𝑝(𝑥) = 1 serving
+as the identity element and each element acting as its own inverse, 𝑝 ⊙ 𝑝 = ⊤. This subtle notion
+allows us to employ the results of Fourier analysis on finite groups (see: Terras (1999)). We restrict
+the remaining analysis to the case where 𝑛 = 2. Define the character homomorphism X : 𝑃2 → R
+as the trivial mapping 𝑝 ↦→ 𝑝(𝑥) for 𝑝 ∈ 𝑃2 , 𝑥 ∈ {−1, 1}2 . Characters satisfy the condition
+
+            1. Typically a Boolean group derived from a Boolean algebra uses symmetric difference (exclusive or) for group multi-
+               plication. If we instead defined TRUE as −1 and FALSE as +1 (intepreted as the square roots of unity), then XOR would
+               be the intuitive choice satisfying 𝑝 ⊕ 𝑞 := 𝑝(𝑥)𝑞(𝑥).
+
+
+                                                                                                                      26
+                                                                  PST FOR DIFFERENTIABLE TERNARY LOGIC GATE NETWORKS
+
+
+
+
+                                                                Table 13: Gate diversity (both architectures, all datasets).
+
+                                                                                             Ternary                                          Binary
+                                                            Dataset             Unique       Eff. Div         Red.%             Unique        Eff. Div             Red.%
+                                                            Moons                1,214          1,051.8       30.1%                   16            15.3           99.1%
+                                                            Circles              1,225          1,065.1       29.4%                   16            15.6           99.1%
+                                                            Spirals              1,224          1,062.2       29.5%                   16            15.3           99.1%
+                                                            Gaussians            1,201          1,037.9       30.8%                   16            15.6           99.1%
+                                                            Ring Sector          1,253          1,089.1       27.8%                   16            15.8           99.1%
+
+                                                                                  Hardening Gap: Binary DLGN vs Ternary PST-DTLGN
+                                                                                             8.31%                                                          Binary DLGN
+                                                        8                                                                                                   Ternary PST-DTLGN
+             Hardening Gap (|soft acc - hard acc|, %)
+
+
+
+
+                                                        7
+
+                                                        6
+
+                                                        5
+                                                                                                                        4.31%
+                                                        4
+                                                                                                           3.19%
+                                                        3
+
+                                                        2
+
+                                                        1                                                                                                           1% threshold
+                                                                                                                                            0.31%                   0.38%
+                                                                0.00%   0.00%      0.00%                                            0.00%                  0.00%
+                                                        0
+                                                                   Moons              Circles                  Spirals                Gaussians             Ring Sector
+                                                                                                              Dataset
+
+
+Figure 13: Hardening gap (all datasets). Both architectures achieve small gaps. The ternary gap is
+elevated on Circles and Spirals.
+
+X( 𝑝 ⊙ 𝑞) = X( 𝑝)X(𝑞) for all 𝑝, 𝑞 ∈ 𝑃2 . Define an inner product on the space of characters as:
+                                           1 Õ
+                                 ⟨𝜑, 𝜓⟩ =               𝜑(𝑥)𝜓(𝑥).                             (D.1)
+                                           4          2
+                                                                                                      𝑥 ∈ { −1, 1}
+
+We are interested in identifying orthonormal functions with respect to (D.1) that form the basis for all
+representations of Boolean functions. Consider the character functions {1, 𝑥 1 , 𝑥 2 , 𝑥 1 𝑥 2 } ⊂ X(𝑃2 ).
+These functions form an orthonormal basis for the characters of 𝑃2 . Enumerating the basis functions
+such that:
+                       𝜑0 (𝑥) = 1, 𝜑1 (𝑥) = 𝑥 1 , 𝜑2 (𝑥) = 𝑥 2 , 𝜑3 (𝑥) = 𝑥 1 𝑥 2 ,
+we have:                                                                                                   (
+                                                                                                                   1,           𝑖 = 𝑗,
+                                                                                           ⟨𝜑𝑖 , 𝜑 𝑗 ⟩ =
+                                                                                                                   0,           𝑖 ≠ 𝑗.
+Furthermore, any 𝑝 ∈ 𝑃2 , X( 𝑝) can be uniquely represented as a linear combination of these basis
+functions. Given 𝑝 ∈ 𝑃2 , the Fourier coefficients are determined by:
+                                                                                                 𝑤 𝑖 = ⟨X( 𝑝), 𝜑𝑖 ⟩,
+and we have then:
+                                                                                                           Õ
+                                                                                                           4
+                                                                                                𝑝(𝑥) =             𝑤 𝑖 𝜑𝑖 (𝑥).
+                                                                                                           𝑖=1
+
+
+                                                                                                             27
+DAMERA MATHEU PURANIC BARAS
+
+
+
+
+            28
+

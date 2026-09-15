@@ -1,0 +1,982 @@
+IEEE TRANSACTIONS ON CIRCUITS AND SYSTEMS FOR ARTIFICIAL INTELLIGENCE, VOL. 1, NO. 1, SEPTEMBER 2024                                                               69
+
+
+
+
+                        Learning Interpretable Differentiable
+                                  Logic Networks
+                                              Chang Yue            and Niraj K. Jha , Fellow, IEEE
+
+
+   Abstract—The ubiquity of neural networks (NNs) in real-                        is connected only to two inputs from its previous layer and then
+world applications, from healthcare to natural language pro-                      employ real-valued logic and relaxed logic operations to find the
+cessing, underscores their immense utility in capturing complex                   role each logic neuron should play. They can extract logic rules
+relationships within high-dimensional data. However, NNs come
+with notable disadvantages, such as their "black-box" nature,                     from the resulting networks, thus making the decision process
+which hampers interpretability, as well as their tendency to                      interpretable. In some classification tasks, their model achieves
+overfit the training data. We introduce a novel method for                        comparable inference accuracies to regular Multi-Layer Percep-
+learning interpretable differentiable logic networks (DLNs) that                  trons (MLPs) while operating at speeds orders of magnitude
+are architectures that employ multiple layers of binary logic op-                 faster. In a DDLGN, the logic gate search part is differentiable;
+erators. We train these networks by softening and differentiating
+their discrete components, e.g., through binarization of inputs,                  however, the network needs a fixed structure initialized at the
+binary logic operations, and connections between neurons. This                    beginning and only accepts binary inputs. We develop methods
+approach enables the use of gradient-based learning methods.                      that overcome all these limitations by making all parts of the
+Experimental results on twenty classification tasks indicate that                 network differentiable. Moreover, we observe further perfor-
+differentiable logic networks can achieve accuracies comparable                   mance improvement and model size reduction.
+to or exceeding that of traditional NNs. Equally importantly,
+these networks offer the advantage of interpretability. Moreover,                    We propose a method that can learn networks consisting of
+their relatively simple structure results in the number of logic                  logic operators, trainable through gradient-based optimization.
+gate-level operations during inference being up to ten thousand                   We present a simplified example of such a network in Fig. 1
+times smaller than NNs, making them suitable for deployment                       and refer to it as a differentiable logic network (DLN) because
+on edge devices.                                                                  it makes decisions based on logic rules. We give examples of
+  Index Terms—Edge computing, interpretability, logic rules,                      post-processed DLNs later. A DLN mainly consists of neurons
+machine learning, neural networks.                                                that perform binary logic operations. Given a sample input, it
+                                                                                  first binarizes continuous features, then passes the binarized
+                            I. INTRODUCTION                                       sample (which includes one-hot encoded versions of categorical
+                                                                                  features) through layers of logic operators, and finally counts
+N      EURAL networks (NNs) have become a cornerstone of
+       modern machine learning, driving advancements in a mul-
+titude of fields. Their impressive performance has catalyzed
+                                                                                  the logic rules that have been triggered to determine which
+                                                                                  class this sample belongs to. Our training method can find
+                                                                                  both the network structure, i.e., connections between layers,
+transformative changes across various sectors, including health-
+                                                                                  and the Boolean function that each neuron should perform. In
+care and finance. Despite their prowess, a key drawback lies in
+                                                                                  summary, we can train interpretable logic rule-based networks
+their incomprehensible decision-making process, often termed
+                                                                                  from scratch.
+the “black-box” problem. This lack of interpretability becomes
+                                                                                     Another advantage that DLNs have is computational effi-
+particularly salient in applications such as medical diagnostics,
+                                                                                  ciency. The models that perform well generally have a small
+where understanding the reasoning behind the NN decisions
+                                                                                  number of neurons. Moreover, connections in DLNs are sparse.
+is very important. We take inspiration from work on Deep
+                                                                                  In contrast, in traditional MLPs, neurons between layers are
+Differentiable Logic Gate Networks (DDLGNs) [1], in which
+                                                                                  fully connected, resulting in links that are quadratic in hidden
+the authors train classification networks consisting of logic
+                                                                                  layer sizes. In addition, operations in our DLNs are also simple:
+operators by relaxing these operations to become differentiable.
+                                                                                  for all neurons, output values are one-bit; ThresholdLayers
+They randomly initialize a network such that each logic neuron
+                                                                                  merely perform comparisons, which can be implemented by a
+                                                                                  fast comparator; LogicLayer neurons only perform basic logic
+   Received 23 June 2024; revised 5 August 2024; accepted 8 September             operations; and SumLayer neurons only perform binary aggre-
+2024. Date of publication 17 September 2024; date of current version              gation, which can also be efficiently implemented.
+8 November 2024. This work was supported by NSF under Grant CNS-
+1907831. The review of this article was arranged by Associate Editor Yang            In this article, we propose a novel method for training DLNs.
+Yi. (Corresponding author: Chang Yue.)                                            The resulting network is accurate, interpretable, and efficient.
+   The authors are with the Department of Electrical and Computer En-             The main contributions are as follows:
+gineering, Princeton University, Princeton, NJ 08544 USA (e-mail: cyue@
+princeton.edu; jha@princeton.edu).                                                   • We develop methodologies to make all components of
+   Digital Object Identifier 10.1109/TCASAI.2024.3462303                                DLNs differentiable, making them trainable from scratch.
+
+
+                       2996-6647 © 2024 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                     See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+   Authorized licensed use limited to: Southern Illinois University Carbondale. Downloaded on July 21,2026 at 00:37:22 UTC from IEEE Xplore. Restrictions apply.
+70                                     IEEE TRANSACTIONS ON CIRCUITS AND SYSTEMS FOR ARTIFICIAL INTELLIGENCE, VOL. 1, NO. 1, SEPTEMBER 2024
+
+
+
+                              TABLE I                                             tions while backpropagating their approximated differentiable
+          LIST OF ALL REAL-VALUED BINARY LOGIC OPERATIONS.                        gradients. It provides an alternative way to estimate gradients;
+                      ADAPTED FROM DDLGN [1]
+                                                                                  we have found it to be helpful in training DLNs.
+     ID     Operator     Real-valued                00    01     10    11         Interpretable Machine Learning: Numerous attempts have
+                                                                                  been made to explain the working mechanisms of black-box
+      0     False        0                           0     0     0      0
+      1     A∧B          A·B                         0     0     0      1         models, such as LIME [7], saliency maps [8], Shapley addi-
+      2   ¬(A ⇒ B)       A − AB                      0     0     1      0         tive explanations [9], and class activation maps [10]. However,
+      3       A          A                           0     0     1      1
+      4   ¬(A ⇐ B)       B − AB                      0     1     0      0
+                                                                                  Rudin [11] demonstrates that these post-hoc approaches are
+      5      B           B                           0     1     0      1         often unreliable and can be misleading. A growing body of work
+      6    A⊕B           A + B − 2AB                 0     1     1      0         is focused on developing inherently interpretable models, such
+      7     A∨B          A + B − AB                  0     1     1      1
+      8   ¬(A ∨ B)       1 − (A + B − AB)            1     0     0      0
+                                                                                  as sparse decision trees [12] and scoring systems [13]. These
+      9   ¬(A ⊕ B)       1 − (A + B − 2AB)           1     0     0      1         methods, in general, face computational challenges because of
+     10      ¬B          1−B                         1     0     1      0         their discrete structure. Neuro-symbolic methods bridge sym-
+     11    A⇐B           1 − B + AB                  1     0     1      1
+     12      ¬A          1−A                         1     1     0      0         bolic and connectionist approaches. Richardson et al. [14] pro-
+     13    A⇒B           1 − A + AB                  1     1     0      1         pose Markov logic networks (MLNs) that combine first-order
+     14   ¬(A ∧ B)       1 − AB                      1     1     1      0         logic with probabilistic graphical models. MLNs employ the
+     15     True         1                           1     1     1      1
+                                                                                  Markov chain Monte Carlo method for inference. However,
+                                                                                  this approach is not scalable to large networks. Riegel et al.
+                                                                                  [15] introduce Logical Neural Networks (LNNs) that build a
+   • We present methodologies to train interpretable DLNs ef-
+     ficiently and to simplify them after training.                               differentiable symbolic logic network first, and then learn the
+   • We conduct experiments and compare our model with                            weights for each node. LNNs require hand-crafted symbolic
+     various machine learning models in terms of inference                        graphs, which may necessitate extensive domain knowledge.
+     accuracy and computation cost.                                               Research efforts are also geared at learning logic rules using
+   The article is structured as follows. Section II discusses re-                 differentiable networks. Wang et al. [16] present the Rule-based
+lated work. Section III presents the methodology. Section IV                      Representation Learner by projecting rules into a continuous
+showcases experimental results. Section V provides a conclu-                      space and propose Gradient Grafting to differentiate the net-
+sion and thoughts about future research directions.                               work. Our methodology, on the other hand, makes all parts of
+                                                                                  the NN differentiable and can be optimized by vanilla gradient
+                                                                                  descent. Payani et al. [17] introduce Neural Logic Networks
+                          II. RELATED WORK                                        (NLNs) to learn Boolean functions and develop several types of
+                                                                                  layers that perform logic operations. Our methodology features
+   In this section, we introduce techniques related to our
+                                                                                  flexible neurons and connections. Shi et al. [18] also proposed a
+methodologies and prior works on logics, differentiability, in-
+                                                                                  method named NLN that learns logic variables as vector repre-
+terpretable machine learning, and efficient machine learning.
+                                                                                  sentations and logic operations as neural modules, regularized
+Logic Representation: Boolean logic rules perform discrete
+                                                                                  by logical rules. Our approach learns the network structure
+operations like AND and XOR on binary inputs to produce
+                                                                                  and logic functions through relaxed differentiation, without any
+binary outputs. They can be described by truth tables. In our de-
+                                                                                  predefined modules. Another work related to our method is the
+signs, we limit the number of inputs to two. To remove reliance
+on just the 0/1 values that are inherent to Boolean logic, fuzzy                  Gumbel-Max Equation Learner [19]. The authors apply contin-
+logic [2] can be employed to enable the truth values of variables                 uous relaxation to the network structure via Gumbel-Max; our
+to be any real number between 0 and 1. This interpretation                        methodology differs in terms of search algorithms. In the Wide
+[3], [4] of logic operations extends traditional binary logic into                & Deep Model [20] work, the authors find that sometimes it is
+the probabilistic realm, enabling differentiability. For exam-                    better to bring the input closer to the output layer; this can also
+ple, P (A ∧ B) can be realized as P (A) × P (B). We employ                        make the decision process more interpretable. We have found
+the same set of real-valued logic operations that DDLGN [1]                       this strategy to be helpful. In summary, our method emphasizes
+uses; thus, we have directly adapted Table I from DDLGN. It                       flexibility and simplicity of use.
+                2
+lists all the 22 = 16 Boolean functions that are possible with                    Efficient Machine Learning: Techniques like pruning [21],
+two inputs.                                                                       [22], quantization [23], [24], [25], and knowledge distillation
+Differentiability: This is a cornerstone of gradient-based op-                    [26], [27] aim to create smaller models that retain the perfor-
+timizations. As discussed earlier, real-valued logics [2] extend                  mance characteristics of larger ones, although these approaches
+binary logic to enable continuity. Softmax is a differentiable                    do not necessarily enhance model interpretability. Application-
+approximation to argmax; it converts logits into probabilities.                   Specific Integrated Circuits and Field-Programmable Gate
+Gumbel-Softmax [5] adds Gumbel noise to the logits before                         Arrays (FPGAs) sometimes offer highly specialized and task-
+applying the Softmax function to enable differentiable sam-                       specific optimizations. Umuroglu et al. [28] demonstrate that
+pling. We employ the Softmax function to determine incoming                       task-specific FPGAs can accelerate inference for binarized
+links and types of logic operators. The Straight-Through Esti-                    NNs. Our logic operation-based models can similarly achieve
+mator (STE) [6] passes the values of non-differentiable func-                     high efficiency on specialized hardware.
+
+ Authorized licensed use limited to: Southern Illinois University Carbondale. Downloaded on July 21,2026 at 00:37:22 UTC from IEEE Xplore. Restrictions apply.
+YUE AND JHA: LEARNING INTERPRETABLE DIFFERENTIABLE LOGIC NETWORKS                                                                                                  71
+
+
+
+
+Fig. 1. A simplified DLN example. It takes input samples and binarizes continuous variables through a ThresholdLayer. It then passes the binary vector to
+layers of two-input Boolean logic operators. Finally, it counts logic rule triggers to determine the sample’s class.
+
+
+                          III. METHODOLOGY
+
+   In this section, we describe our method in detail, beginning
+with an overview, followed by details of each training step.
+   Fig. 1 illustrates a sample DLN. It consists of three types
+of layers: a ThresholdLayer at the input to binarize continuous
+input features into binary 0/1 values using threshold functions,
+multiple LogicLayers consisting of two-input logic operators
+for performing logic operations, and a SumLayer at the end
+to aggregate the output from the last LogicLayer to determine
+the class. We can directly extract logic rules from the network,
+thereby making its predictions interpretable. Our DLN is similar
+to conventional MLPs in terms of input and output: both accept
+samples with continuous and one-hot categorical features and
+output probability predictions for each class. However, a DLN
+differs from MLPs in three major ways: it transforms input
+into binary values at the first step; instead of conducting matrix
+multiplications between MLP hidden layers, it performs logic
+operations within the network; and the connections in Logi-
+cLayers are very sparse, primarily because each neuron accepts                    Fig. 2.   DLN training flowchart.
+only two inputs.
+   Our training objectives are twofold: determining which func-
+tion each neuron should implement and establishing how the                        subsequent subsections; a coarse summary is that we relax
+neurons should be connected. Neuron function optimization and                     discrete search among candidates into a probabilistic mixture
+neuron connection optimization can be divided into two sepa-                      of candidates.
+rate tasks because they optimize different sets of parameters.                       We present a high-level overview of the DLN training work-
+Therefore, we divide the training process into two phases: one                    flow in Fig. 2 and its algorithmic summary in Algorithm 1.
+for optimizing the internals of neurons (referred to as Phase I)                  We iteratively update model parameters in the two phases in
+and another for optimizing the connections between neurons                        an alternating manner. After initialization, we conduct Phase
+(referred to as Phase II). However, both problems are discrete,                   I training for E epochs, followed by Phase II training for E
+making common NN training optimizers like gradient descent                        epochs. We repeat the combination of Phase I and Phase II
+unsuitable for the task. We have developed methodologies that                     training for T iterations. As Algorithm 1 suggests, during one
+relax the discrete search spaces to make them continuous and                      phase, we freeze the trainable parameters of the other phase
+differentiable. We provide details of these methodologies in                      and perform a hard assignment to its related functions. Thus,
+
+   Authorized licensed use limited to: Southern Illinois University Carbondale. Downloaded on July 21,2026 at 00:37:22 UTC from IEEE Xplore. Restrictions apply.
+72                                     IEEE TRANSACTIONS ON CIRCUITS AND SYSTEMS FOR ARTIFICIAL INTELLIGENCE, VOL. 1, NO. 1, SEPTEMBER 2024
+
+
+
+
+Algorithm 1 Skeleton training process for DLNs                                    phases are quite symmetric because they employ the same pro-
+Require: Number of iterations T , epochs per phase E                              cedure; it is just that the layers switch their functions between
+ 1: for t = 1 to T do
+                                                                                  the two modes. For clear illustration, we employ a mini-batch
+ 2:   {Phase I: optimizing neuron functions}                                      size of 1 and showcase the layer output computation at the
+ 3:   Quantize and fix neuron connections.                                        neuron level, i.e., we show how the ith output value is com-
+ 4:   for epoch = 1 to E do                                                       puted. For practical implementation, we use a larger batch size
+ 5:      Apply gradient to logic gate distributions for neurons                   during training and compute the layer output with the help of
+         in LogicLayer and to biases and slopes for neurons in                    vectorization. In the two training algorithms, we emphasize the
+         ThresholdLayer. {Update neuron parameters}                               forward pass to highlight details of how to make the forward
+ 6:   end for                                                                     propagation differentiable. Gradient-based backpropagation is
+ 7:   {Phase II: optimizing neuron connections}                                   conducted automatically as long as the forward steps are dif-
+                                                                                  ferentiable. During the forward pass, the input sample goes
+ 8:   Quantize and fix functions inside neurons.
+                                                                                  through the DLN, layer by layer; each layer takes the output
+ 9:   for epoch = 1 to E do
+                                                                                  of the previous layer as its input. Depending on the type of the
+10:      Apply gradient to find optimal connections between
+                                                                                  layer and the phase it is in, each neuron computes its output
+         neurons. {Update connection parameters}
+                                                                                  based on the equations in the pseudo-code, which we discuss
+11:   end for
+                                                                                  in more detail in the following subsections.
+12: end for
+
+                                                                                  A. Logic Operations
+in Phase I, we fix the neuron connections and take argmax over
+connection parameters; specifically, the link between any two                        Neurons in LogicLayer act as binary logic operators, which
+neurons is either 0 or 1 and nothing in between. In Phase II, we                  are inherently non-differentiable. To overcome this obstacle,
+freeze and hard-assign the neuron functions so that each neuron                   we employ real-valued operations during the training phase,
+performs only one discrete logic operation among all possible                     as outlined in Table I. This approach effectively softens the
+operations. After freezing and quantizing the parameters related                  discrete logic operations, making them both continuous and dif-
+to the other phase, we relax the discrete parts related to the                    ferentiable. For inference, we revert to the standard binary 0/1
+under-training phase to make optimization differentiable. The                     logic operations. We use SoftLogick to denote the real-valued
+algorithm updates relevant parameters solely through gradi-                       version of the k th logic operator in Table I and HardLogick to
+ent descent. Once training is complete, we discretize both the                    denote its binary operation. Consider the example of an AND
+                                                                                  logic gate, which is described first in the table. For this gate,
+functions and connections of neurons to hard binary states, as
+                                                                                  the soft (real-valued) and hard (binary) outputs are obtained as
+Fig. 1 demonstrates. Generally, this discretization leads to a
+                                                                                  follows. For the soft output, the real-valued function is:
+quantization loss; however, this loss is typically small compared
+to the generalization loss because most components converge                                    real-valued AND(a, b) = SoftLogic1 (a, b)
+well. In some cases, discretization even reduces overfitting and                                                     = a · b,
+helps with generalization. In our experiments, we set E to 1 and
+used T as a hyperparameter.                                                       where a, b ∈ [0, 1] are continuous real numbers. For the hard
+   Table II summarizes the trainable parameters for each layer                    output, the discretized function is:
+type and their usages in the two training phases and inference.
+                                                                                                 binary AND(a, b) = HardLogic1 (a, b)
+We present the forward computation equation for each layer
+and, for simplicity, the output function at the neuron level, i.e.,                                                      = 1{a=1} · 1{b=1} ,
+the function to calculate the ith output value yi from the input                  where a, b ∈ {0, 1} are discrete binary numbers, and indicator
+vector x. The parameters involved in training are separated by                    functions are applied to them.
+phases and are applied differently between Phase I, Phase II,                        To ensure gradient flow between layers, we utilize fuzzy logic
+and inference. For the ThresholdLayer, we use the Heaviside                       expressions throughout the training process, regardless of the
+function when its parameters are not under training and use the                   phase type. As shown in line 14 of Algorithm 2 and line 14
+scaled, shifted Sigmoid function when they are under training.                    of Algorithm 3, we use SoftLogic in both training Phase I and
+In LogicLayer, we train weights to search for optimal neuron                      Phase II. Line 9 of Algorithm 4 indicates that we use HardLogic
+functions and connections. Each weight acts as a learnable                        for inference.
+probability logit during its training phase to make the network
+differentiable. During the other phase or inference, the param-
+eter is quantized to its corresponding maximum probability. In                    B. Phase I: Determining Neuron Functions
+SumLayer, weights represent the connection strengths between                        The left-hand side of Fig. 3 illustrates the process of deter-
+the neurons of the last hidden layer and the output neurons.                      mining the functions of neurons. In this phase, the connections
+They are quantized to binary values during inference.                             between neurons are discretized and frozen, allowing us to
+   We present the Phase I training process in Algorithm 2, the                    focus on training the neuron parameters. DLNs consist of three
+Phase II training process in Algorithm 3, and the inference                       types of layers: ThresholdLayer, LogicLayer, and SumLayer.
+process in Algorithm 4. The processes for the two training                        Correspondingly, there are three types of neurons. Neurons in
+
+ Authorized licensed use limited to: Southern Illinois University Carbondale. Downloaded on July 21,2026 at 00:37:22 UTC from IEEE Xplore. Restrictions apply.
+YUE AND JHA: LEARNING INTERPRETABLE DIFFERENTIABLE LOGIC NETWORKS                                                                                                 73
+
+
+
+                                                             TABLE II
+                    SUMMARY OF DLN TRAINABLE PARAMETERS AND FEEDFORWARD FUNCTIONS DURING TRAINING AND INFERENCE.
+                                 WE USE x TO DENOTE INPUT AND y TO DENOTE THE OUTPUT OF EACH LAYER
+
+                   ThresholdLayer                         LogicLayer                                            SumLayer
+                   Phase I:                               Phase I:
+                                                                                                                Phase I:
+                     bias b ∈ Rin_dim                        logic fn weight W ∈ Rout_dim×16
+  Trainable                                                                                                       None
+  parameters         slope s ∈ Rin_dim                    Phase II:
+                                                                                                                Phase II:
+                   Phase II:                                 link a weight U ∈ Rout_dim×in_dim
+                                                                                                                  link weight S ∈ Rin_dim×|C|
+                     None                                    link b weight V ∈ Rout_dim×in_dim
+                                                                
+                                                          yi = 15  k=0 Pk · SoftLogick (xai , xbi )
+  Training                                                P = Softmax(Wi,: )                                    y   =
+                                                                                                                i in_dim−1
+                   yi = Sigmoid(si · (xi − bi ))                                                                              1{Sigmoid(Sj,i )≥θsum-th } · xj
+  Phase I                                                 ai = arg maxj Ui,j                                       j=0
+                                                          bi = arg maxj Vi,j
+                                                          yi = SoftLogick (a, b)
+  Training                                                k = arg maxj Wi,j
+                                                                                                                      in_dim−1
+                   yi = Heaviside(si · (xi − bi ))        a = in_dim−1  [Softmax(Ui,: )]j · xj                  yi =     j=0        Sigmoid(Sj,i ) · xj
+  Phase II                                                    in_dim−1
+                                                                 j=0
+                                                          b = j=0       [Softmax(Vi,: )]j · xj
+                                                          yi = HardLogick (xai , xbi )
+                                                          k = arg maxj Wi,j
+  Inference        Same as Phase II                       ai = arg maxj Ui,j                                    Same as Phase I
+                                                          bi = arg maxj Vi,j
+
+
+Algorithm 2 Phase I training                                                     Algorithm 3 Phase II training
+Require: Training dataset D, SumLayer link threshold θsum-th                     Require: Training dataset D
+Ensure: Trained model parameters b, s, W                                         Ensure: Trained model parameters U, V, S
+ 1: Freeze link parameters U, V, S                                                1: Freeze neuron function parameters b, s, W
+ 2: for epoch = 1, 2, . . . , E do                                                2: for epoch = 1, 2, . . . , E do
+ 3:   for all (x, z) in D do                                                      3:   for all (x, z) in D do
+ 4:      {Forward pass}                                                           4:      {Forward pass}
+ 5:      for layer in model_layers do                                             5:      for layer in model_layers do
+ 6:        if layer = ThresholdLayer then                                         6:        if layer = ThresholdLayer then
+ 7:           {Trainable parameters: b, s}                                        7:           {Trainable parameters: None}
+ 8:           yi = Sigmoid(si · (xi − bi ))                                       8:           yi = Heaviside(si · (xi − bi ))
+ 9:        else if layer = LogicLayer then                                        9:        else if layer = LogicLayer then
+10:           {Trainable parameters: W}                                          10:           {Trainable parameters: U, V}
+11:           P = Softmax(Wi,: )                                                 11:           k = arg maxj Wi,j
+              ai = arg maxj Ui,j                                                                    in_dim−1
+12:                                                                              12:           a = j=0           [Softmax(Ui,: )]j · xj
+13:           bi = arg maxj Vi,j                                                                    in_dim−1
+                    15                                                          13:           b = j=0           [Softmax(Vi,: )]j · xj
+14:           yi = k=0 Pk · SoftLogick (xai , xbi )
+15:        else                                                                  14:           yi = SoftLogick (a, b)
+16:           {Trainable parameters: None}                                       15:        else
+                    in_dim−1                                                    16:           {Trainable parameters: S}
+17:           yi = j=0           1{Sigmoid(Sj,i )≥θsum-th } · xj                                     in_dim−1
+18:        end if                                                                17:           yi = j=0           Sigmoid(Sj,i ) · xj
+19:        x = y {Take preceding layer’s output as input}                        18:        end if
+20:      end for                                                                 19:        x = y {Take preceding layer’s output as input}
+21:      {Backward pass}                                                         20:      end for
+22:      Compute loss L(x, z)                                                    21:      {Backward pass}
+23:      Backpropagate to compute gradients                                      22:      Compute loss L(x, z)
+24:      Update neuron function parameters b, s, W                               23:      Backpropagate to compute gradients
+25:   end for                                                                    24:      Update link parameters U, V, S
+26: end for                                                                      25:   end for
+                                                                                 26: end for
+
+
+
+the SumLayer simply aggregate the outputs from the preceding                     focus on training the parameters for neurons in ThresholdLayer
+LogicLayer that connect to them; therefore, they do not require                  and LogicLayer. In the following subsections, we detail the
+any parameters to describe their function. During this phase, we                 training algorithms for each layer type.
+  Authorized licensed use limited to: Southern Illinois University Carbondale. Downloaded on July 21,2026 at 00:37:22 UTC from IEEE Xplore. Restrictions apply.
+74                                     IEEE TRANSACTIONS ON CIRCUITS AND SYSTEMS FOR ARTIFICIAL INTELLIGENCE, VOL. 1, NO. 1, SEPTEMBER 2024
+
+
+
+
+Algorithm 4 Inference                                                             After forward and backward propagations, gradients suggest
+Require: Input data x                                                             a positive increase in s (which results in steeper scaling) and
+                                 ⎡                      ⎤
+                                  ThresholdLayer                                  a positive increase in b (which results in a rightward shift of
+                                ⎢LogicLayer             ⎥                         the threshold function). When in Phase II, the function of this
+                                ⎢                  1    ⎥
+Require: Model layer list ⎢     ⎢ . . .                 ⎥
+                                                        ⎥
+                                                                                  neuron is quantized and fixed to a Heaviside function and is no
+                                ⎣LogicLayern ⎦                                    longer trainable. We show the Phase I training pseudo-code for
+                                  SumLayer                                        the ThresholdLayer in lines 6 to 8 in Algorithm 2, the Phase
+ 1: {First layer: ThresholdLayer}                                                 II training pseudo-code in lines 6 to 8 in Algorithm 3, and the
+ 2: yi = Heaviside(si · (xi − bi ))                                               inference pseudo-code in line 2 in Algorithm 4.
+ 3: {Middle layers: LogicLayer}                                                      In our experiments, we preprocess the input data by applying
+ 4: for l = 1, 2, . . . , n do                                                    Min-Max Scaling to continuous variables and one-hot encoding
+ 5:    k = arg maxj Wi,j                                                          to categorical variables, ensuring that all input values range
+ 6:    ai = arg maxj Ui,j                                                         between 0 and 1. We allocate four or six neurons to each
+ 7:    bi = arg maxj Vi,j                                                         continuous input and initialize the starting slope to 2, a value not
+ 8:    x = y {Take preceding layer’s output as input}                             too flat but still smooth in the beginning. Inspired by Gorishniy
+ 9:    yi = HardLogick (xai , xbi )                                               et al. [29] who apply decision tree-based binning to transform
+10: end for                                                                       the scalar continuous features to vectors, we initialize b for each
+11: {Last layer: SumLayer}                                                        neuron by the bin edges of calculated decision trees. Hence,
+          in_dim−1                                                               we fit a decision tree using training data, by specifying the
+12: zi =     j=0        1{Sigmoid(Sj,i )≥θsum-th } · yj
+13: {Get predicted label}                                                         maximum number of leaf nodes. We have observed that most
+14: ŷ = arg maxi zi                                                              neurons in the ThresholdLayer converge during training, with
+15: return ŷ                                                                     some converging to values within the 0 and 1 range while others
+                                                                                  do not. Neurons whose biases converge to below 0 or over 1 act
+                                                                                  as constant Boolean False or True. We found that out-of-range
+                                                                                  convergence leads to good feature selection. As we show in Sec.
+   1) ThresholdLayer: The purpose of the ThresholdLayer is
+                                                                                  IV-E, DLNs with fixed (i.e., non-trainable) ThresholdLayers
+to binarize continuous variables using threshold functions. This
+                                                                                  underperform DLNs with trainable ThresholdLayers and are
+layer takes a continuous vector as input and outputs a binary
+                                                                                  larger in size. Fig. 4 shows an example of a neuron’s subsampled
+vector. Each neuron takes one scalar input and outputs a scalar
+                                                                                  training process. It plots the resulting neuron function based
+value. The output binary vector can later be concatenated with
+                                                                                  on the b and s values at the sampled epochs. In the beginning,
+one-hot encoded categorical feature values to form the final
+                                                                                  it starts with a certain cutoff and a small slope, thus initially
+binary vector for the next layer. We connect each continu-
+ous input value to multiple neurons to map it to a finite set                     acting as a smooth function. As the epochs progress, both the
+of values, an approach similar to binning but not limited to                      cutoff and slope converge, with the bias shifting to the left and
+mutually exclusive bins. Each neuron takes in one scalar and                      the slope increasing, making the neuron increasingly resemble
+serves as a threshold function with trainable bias and scale.                     a threshold function. We provide an illustration of the training
+During training, we soften the non-differentiable threshold                       process of one continuous feature in Fig. 5. In this example, we
+function by substituting it with a shifted and scaled sigmoid                     connect the feature to four threshold neurons. Inside the neu-
+function:                                                                         rons, all slopes are initialized to 5, and the initial bias values are
+                                                                                  [0.2, 0.4, 0.7, 0.85], calculated by a decision tree. After train-
+                    f (x) = Sigmoid(s · (x − b))                                  ing, slopes converge to larger values, making the soft thresh-
+                                  1                                               old functions steeper; biases moved to [−0.2, 0.3, 0.8, 1.3],
+                          =                 ,                                     with some still within the range of the feature and some
+                            1 + e−[s·(x−b)]
+                                                                                  outside. During inference, discretized threshold functions are
+where b represents the cutoff and s denotes the slope of the                      adopted.
+input passed to the Sigmoid function. This modification enables                      2) LogicLayer: As indicated in Table I, a two-input neuron
+                                                                                                      2
+gradient flow to both b and s. During Phase I of training, both                   can implement 22 = 16 Boolean functions. Next, our goal is to
+b and s are trainable. During Phase II or inference, we quantize                  determine which of the 16 classes each neuron should belong to.
+the soft threshold function to the normal threshold function:                     This can be treated as a classification problem. We employ the
+                                                                                  method introduced in the DDLGN article [1]. During training,
+                   F (x) = Heaviside(s · (x − b))                                 each neuron is considered a weighted sum of all 16 operators.
+                                                                                  This weight is trainable. To make sure that the weights associ-
+and freeze parameters b and s. In Fig. 3, we illustrate the training              ated with the operators sum to 1, a Softmax function is applied
+mode of the ThresholdLayer on the left and the inference mode                     to the weights. Let a 16-valued weight vector w denote the
+on the right (ThresholdLayer functions the same way in both                       weights for a sample logic neuron. Thus, wi corresponds to the
+Phase II and during inference). In Phase I, the highlighted neu-                  ith Boolean operator. In this phase, connections to neurons are
+ron applies a shifted and scaled Sigmoid function to its input.                   fixed, with each logic neuron receiving inputs from exactly two
+
+ Authorized licensed use limited to: Southern Illinois University Carbondale. Downloaded on July 21,2026 at 00:37:22 UTC from IEEE Xplore. Restrictions apply.
+YUE AND JHA: LEARNING INTERPRETABLE DIFFERENTIABLE LOGIC NETWORKS                                                                                                  75
+
+
+
+
+Fig. 3. Illustration of the two-phase training algorithm. During Phase I, we discretize and fix the connections between neurons while training their parameters
+within ThresholdLayer and LogicLayer. In Phase II, we hold the neuron operations constant and focus on optimizing the connections between them. Key
+details are highlighted for clarification.
+
+
+                                                                                  input neurons. Given scalar inputs a and b, the output y of the
+                                                                                  logic neuron is given by the sum of logic operator mixtures:
+                                                                                                      15
+                                                                                                y=          [Softmax(w)]k · SoftLogick (a, b)
+                                                                                                      k=0
+                                                                                                       15
+                                                                                                             ew k
+                                                                                                  =          w · SoftLogick (a, b).
+                                                                                                              je
+                                                                                                                  j
+                                                                                                      k=0
+
+                                                                                  Lines 11 to 14 of Algorithm 2 calculate the weights and sum
+                                                                                  up the 16 logic function outputs.
+                                                                                     During Phase II or inference, we quantize the summation by
+                                                                                  selecting the one operator that has the largest corresponding
+                                                                                  weight. We find the index of this operator and employ solely
+                                                                                  its operation as the logic neuron’s function:
+Fig. 4.   Example training process of a ThresholdLayer neuron
+                                   .                                                              k = arg max wj ,
+                                                                                                               j
+
+                                                                                                            SoftLogick (a, b),      if training,
+                                                                                                  y=
+                                                                                                            HardLogick (a, b),      otherwise.
+                                                                                  In Algorithm 3, line 11 finds the index, and line 14 performs
+                                                                                  the real-valued logic operation. In the inference algorithm, Al-
+                                                                                  gorithm 4, line 5 finds the index, and line 9 performs the binary
+                                                                                  logic operation. We illustrate in Fig. 3 the training mode of
+                                                                                  the LogicLayer neuron function on the left and the inference
+                                                                                  mode on the right. Neuron function training only occurs in
+                                                                                  Phase I; hence, neurons perform the same function in Phase
+                                                                                  II and during inference. In Phase I, the output of a neuron is
+                                                                                  a weighted sum of all 16 logic functions, and this weight is
+                                                                                  trainable. When not under training, the function of the neuron
+                                                                                  is frozen and attached to one type of operator.
+                                                                                     In practice, with the aid of the search for neuron connec-
+Fig. 5. Illustration of the ThresholdLayer training process for a continuous
+feature.                                                                          tions in Phase II, we find that most neurons can converge to
+
+   Authorized licensed use limited to: Southern Illinois University Carbondale. Downloaded on July 21,2026 at 00:37:22 UTC from IEEE Xplore. Restrictions apply.
+76                                     IEEE TRANSACTIONS ON CIRCUITS AND SYSTEMS FOR ARTIFICIAL INTELLIGENCE, VOL. 1, NO. 1, SEPTEMBER 2024
+
+
+
+                                                                                  the weights sum to 1. The equation for the relaxed a is then a
+                                                                                  probabilistic mixture of x:
+                                                                                                            in_dim−1
+                                                                                                      a=               [Softmax(u)]j · xj
+                                                                                                              j=0
+                                                                                                            in_dim−1
+                                                                                                                        eu j
+                                                                                                        =               u · xj .
+                                                                                                                         ie
+                                                                                                                             i
+                                                                                                              j=0
+
+                                                                                  This approach allows each neuron to be non-uniformly con-
+                                                                                  nected to all neurons from the preceding layer during training.
+                                                                                  In practice, the neuron learns the importance of incoming con-
+                                                                                  nections and typically converges to the most relevant one.
+                                                                                     During Phase I or inference, the connections are quantized by
+                                                                                  selecting the most heavily weighted input neuron, resulting in
+                                                                                                               k = arg maxj uj ,
+Fig. 6. Example training of a LogicLayer neuron. Note that colors are
+displayed on a logarithmic scale.                                                                              a = xk .
+                                                                                  The left side of Fig. 3 illustrates fixed connections to logic
+a single operator. In Fig. 6, we show a typical example of a                      neurons, with a colored in red and b colored in green. Each
+logic neuron’s subsampled training process. The x-axis displays                   neuron takes only one input as a and one as b. Connections are
+the epoch number and the y-axis shows the softmaxed weight                        discretized and fixed during both Phase I training and inference.
+distribution of the 16 operators on a logarithmic color scale.                    Lines 12 and 13 in Algorithm 2 show discrete link selection
+As illustrated in the figure, this neuron rapidly converges to the                during Phase I training. Lines 6 and 7 in Algorithm 4 show the
+fourth (index no. 3, shown in yellow) logic operator.                             same argmax selections during inference. On the right side of
+                                                                                  Fig. 3, we highlight an example of a connection weight matrix
+                                                                                  during training. In this phase, the neuron’s incoming a is con-
+C. Phase II: Determining Connections                                              nected to all its inputs, and the value of the final a is a weighted
+   The right-hand side of Fig. 3 illustrates the training process                 sum of all these candidates. We expect gradient descent steps
+for determining the connections between neurons. In this phase,                   to make the weight concentrate on one link in the end. Lines
+we fix the functions of neurons; that is, the parameters of the                   12 and 13 in Algorithm 3 show the relaxed, differentiable link
+threshold functions for threshold neurons and the selection of                    search for logic neurons during Phase II training.
+logic operators for logic neurons. For the ThresholdLayer, the                       2) SumLayer: The SumLayer has a number of neurons equal
+input connections are fixed after initialization. In our setup, each              to the number of classes, |C|, with each neuron representing
+                                                                                  a class. This setup is similar to the output layer of an MLP.
+continuous input feature is connected to several threshold neu-
+                                                                                  Each neuron in the SumLayer connects to a subset of neurons
+rons, and each neuron takes only one input feature. Therefore,
+                                                                                  from the previous layer and sums up their output scores. These
+the ThresholdLayer does not have trainable parameters in Phase
+                                                                                  scores are normalized, then used as logits, and later passed
+II. Next, we describe how connections to the LogicLayers and
+                                                                                  to the Cross-Entropy Loss function for training. To maximize
+SumLayer are determined.
+                                                                                  the expressiveness of the network, we allow nodes in the last
+   1) LogicLayer: Each neuron in a LogicLayer has two inputs,
+                                                                                  hidden layer to connect to multiple neurons in the SumLayer.
+denoted as a and b. The objective is to determine which two
+                                                                                  Consequently, this setup translates to a classification problem
+input values, among in_dim input values from the previous
+                                                                                  for each (input, output) neuron pair: determine whether they
+layer’s output, should be linked to a and b. We divide this task
+                                                                                  should connect or not. We train a matrix S ∈ Rin_dim×|C| and
+into two sub-goals: determining the source of a and determining
+                                                                                  treat Sigmoid(Sj,i ) as the probability that the j th input neuron
+the source of b. During training, we soften the connections by
+                                                                                  should connect with the ith output class. In this training phase,
+representing them as weighted sums of all inputs. We showcase
+                                                                                  for any output neuron, we sum up probabilistic connections
+our method for finding the first input, a, to the logic neuron. The
+                                                                                  from all inputs to enable differentiability, as illustrated on the
+method for finding a connection to b is the same. Let x ∈ Rin_dim
+                                                                                  right side of Fig. 3.
+represent the input of the logic neuron under study. In a Logi-
+                                                                                     Suppose we pick the ith output neuron to study. Mathemati-
+cLayer, there are out_dim neurons; suppose we pick a random
+                                                                                  cally, we compute its output yi from input x ∈ Rin_dim using:
+neuron for study. By design, the input a of this neuron must be
+                                                                                                            in_dim−1
+one of the elements in x. Hence, the goal is to find the index of
+that element. This is a discrete optimization problem. During                                        yi =              Sigmoid(Sj,i ) · xj .
+                                                                                                               j=0
+Phase II training, we relax the problem through weighted con-
+nections to all elements in x and reduce the problem to training                  Line 17 of Algorithm 3 implements this equation.
+a weight vector u ∈ Rin_dim to learn the weights linking the logic                  When not in training mode, i.e., in Phase I or in inference, the
+neuron to its input. We use a Softmax function to make sure that                  output logit yi is the binary sum of inputs that have connection
+
+ Authorized licensed use limited to: Southern Illinois University Carbondale. Downloaded on July 21,2026 at 00:37:22 UTC from IEEE Xplore. Restrictions apply.
+YUE AND JHA: LEARNING INTERPRETABLE DIFFERENTIABLE LOGIC NETWORKS                                                                                                 77
+
+
+
+probability above a threshold, namely θsum-th , as illustrated on                backward pass, it bypasses the non-differentiable function by
+the left side of Fig. 3. Mathematically,                                         treating its derivative as 0, allowing gradients from the subse-
+                    in_dim−1
+                                                                                 quent layer to pass through unchanged. Mathematically, assume
+             yi =              1{Sigmoid(Sj,i )≥θsum-th } · xj .                 f is the discretized output value and g is the soft value; the final
+                       j=0
+                                                                                 output h then is
+
+We show the pseudo-code for this equation in line 17 of                                                   h = detach(f − g) + g,
+Algorithm 2 and in line 12 of Algorithm 4. We impose binary                      where detach is an operator that detaches the value from the
+connections to SumLayers to maximize interpretability. We                        backpropagation graph. Thus, the value f is passed to h but
+found that setting θsum-th to 0.8 works well, in general.                        only g is counted for calculating gradients. This enables the
+                                                                                 output to attain the same value as the discrete function during
+D. Searching Over Subspaces                                                      the forward pass, and the same gradient as the soft function
+                                                                                 during the backward pass.
+   In LogicLayers, for each neuron, the full search space has                       In practice, we find STE useful for DLN training and have
+a size of 16 for the neuron type and a size of in_dim for the                    set its use as the default. We provide results for the case when
+incoming link. However, full search is often not necessary.                      STE is not used in Sec. IV-E.
+For example, any logic circuit can be constructed using just
+NAND gates. Selecting a subset of gates simplifies the training                  F. Concatenating Inputs
+objective and helps with the vanishing gradient problem, as
+it reduces the weight dimension in Softmax layers. We could                         The Wide & Deep Model [20] work demonstrates the ef-
+select only logic gates that exhibit good gradient flow. From                    fectiveness of bringing some inputs closer to the output layer.
+Table I, we can see that the OR gate has better gradient flow                    We adopt this method by concatenating the ThresholdLayer
+than the AND gate because inputs A and B are between 0                           to every intermediate LogicLayer, i.e., from the second layer
+and 1. A similar situation applies to link search: there are many                to the second last. The concatenated ThresholdLayer may ei-
+paths in a network that can yield good local optima. Fortunately,                ther be the same layer reused at multiple places or different
+searching over a subspace can be flexibly implemented, thanks                    ThresholdLayers in each place. Experimental results show that
+to the properties of the Softmax function. We just need to assign                using different input layers is better than using the same layer,
+−∞ to the weight entries that we want to turn off the search                     and both approaches are better than not concatenating. We set
+for; their Softmax probabilities will then be zero. Thus, they                   multiple input concatenations as the default and present the
+will never be active during training and inference, and there is                 results of other mentioned methods in Sec. IV-E.
+no gradient flow to them.
+   We sort the gate types by logic completeness and gradient                     G. Model Simplification
+flow, from high to low: NOR, NAND, XOR, XNOR, OR, AND,                              After training, we obtain logic expressions from the network
+A, B, NOT A, NOT B, B IMPLIES A, A IMPLIES B, NOT (A                             and simplify them using SimPy [30]. We have found that this
+IMPLIES B), NOT (B IMPLIES A), False, True. We can just                          step is generally beneficial for reducing model size because
+include the first k candidates from the list and mask out the                    our trainable ThresholdLayer acts as a feature selector. We
+others. To obtain a subset of the link space, we randomly select                 also explore other simplification methods such as pruning and
+k incoming candidates and mask out the weights of the other                      present the results in the ablation studies section, Sec. IV-E.
+candidates by assigning them −∞. In practice, we found that                      Based on the results, we find that SimPy is sufficient for model
+using a subset of 8 logic operators and a subset of 8 links works                simplification.
+the best. Thus, we use this setting as the default. We present the
+results of not using subsets, using a subset size of 16 for link                                              IV. EXPERIMENTS
+search, and using a subset size of 4 for both gates and links
+                                                                                    We test our method and compare it with seven other meth-
+search in Sec. IV-E.
+                                                                                 ods on 20 tabular datasets. The seven methods we test are k-
+                                                                                 nearest neighbors (KNN), decision tree (DT), random forest
+E. Using Straight-Through Estimators                                             (RF), Gaussian Naive Bayes (NB), AdaBoost (AB), MLP, and
+   By design, every layer in a DLN employs either a Sigmoid or                   tree-initialized DDLGN (abbreviated to LGN in our tables).
+Softmax function. This enables differentiability of the network.                 We list the characteristics of the datasets after preprocessing in
+However, although Sigmoid and Softmax functions soften the                       Table III. Their sample sizes range from hundreds to thousands,
+                                                                                 and their number of classes ranges from two to 26, which is
+step and argmax functions, they also weaken output activations.
+                                                                                 typical for tabular datasets.
+After encountering layers of Sigmoid and Softmax functions,
+the layer outputs tend towards the average and become more
+uniform, making the gradient descent method harder to work                       A. Experimental Setup
+with. To sharpen the function outputs while enabling backprop-                     We first preprocess the datasets. This involves removing
+agation of gradients at the same time, we employ the STE.                        samples with too many missing values, one-hot encoding cat-
+During the forward pass, STE applies the non-differentiable                      egorical features, and scaling continuous features using Min-
+function (e.g., threshold, argmax, etc.) normally, but during the                Max scalers to ensure they range between 0 and 1. For each
+
+  Authorized licensed use limited to: Southern Illinois University Carbondale. Downloaded on July 21,2026 at 00:37:22 UTC from IEEE Xplore. Restrictions apply.
+78                                     IEEE TRANSACTIONS ON CIRCUITS AND SYSTEMS FOR ARTIFICIAL INTELLIGENCE, VOL. 1, NO. 1, SEPTEMBER 2024
+
+
+
+                                                                  TABLE III
+                            CHARACTERISTICS OF THE POST-PROCESSED DATASETS AND THE AVERAGE BALANCED-CLASS TEST
+                                                      ACCURACY PERCENTAGE OF MODELS
+
+                                       #        #        #        #       #
+                                                                                 KNN       DT      RF      NB      AB      MLP      LGN      DLN
+                   Dataset           train     test    class    cont.   cate.
+                 BankChurn          7500      2500       2        6       5       65.1    69.5    71.6     64.4    70.7     74.9     75.6    75.8
+                BreastCancer          214       72       2        0      34       61.4    62.1    66.1     57.1    56.6     60.2     62.4    65.1
+              Cardiotocography      1594      532        3       19      22       97.5    95.9    96.0     96.1    87.8     97.2     97.5    97.7
+                    CKD               300     100        2       12       9       99.2    96.7    97.8     96.6    100      99.4     99.5    99.1
+                  Cirrhosis           203       68       3       10       5       46.8    50.7    51.5     45.7    46.9     50.9     47.5    54.0
+                  Compas            3958      1320       2        5       8       65.5    63.7    64.9     62.5    68.1     66.6     67.1    67.6
+                CreditFraud         1107      369        2       30       0       93.3    92.0    93.1     91.0    94.0     93.0     94.1    94.3
+                  Diabetes            292       98       2       13       1       71.3    85.6    86.1     80.8    80.2     78.7     83.0    88.0
+               EyeMovements         8202      2734       3       20       3       58.1    44.3    45.4     45.2    53.9     52.1     54.2    55.0
+                    HAR             7352      2947       6       63       0       78.1    70.3    75.6     81.4    72.4     90.8     81.8    87.1
+                    Heart             219       74       2        5      14       80.1    71.8    81.0     83.2    80.5     80.2     74.6    81.5
+                HeartFailure          224       75       2        6       5       50.9    65.2    68.6     65.3    64.4     59.7     62.6    68.4
+                 HepatitisC           461     154        2       11       1       86.6    90.7    93.2     88.8    93.9     91.3     86.8    91.1
+                    Letter          15000     5000      26       16       0       94.9    39.7    33.6     64.1    41.2     94.7     42.2    69.1
+                    Liver             434     145        2        9       1       57.4    63.9    66.2     69.2    55.5     69.1     66.5    66.5
+                 Mushroom           5898      1966       2        0      67       100     97.6    98.6     97.9    100      100      100     100
+                   PDAC               516     172        2       31       0       49.5    52.6    60.9     62.1    57.7     58.4     54.4    59.6
+                    SatIm           4435      2000       6       36       0       89.1    79.5    81.9     78.9    71.9     89.0     84.9    86.4
+                   Stroke           3831      1278       2        3      11       52.4    73.4    75.9     69.8    50.5     62.3     73.4    76.2
+                 TelcoChurn         5262      1754       2        2      21       70.2    73.3    75.0     74.6    70.9     68.7     74.5    75.9
+               Average Rank                                                       5.2      6.1     4.0      5.3     5.1     4.2      3.9     2.3
+
+
+
+(dataset, model) pair, we conduct four experiments, each with a                   the number of high-level operations (OPs) and the correspond-
+different random seed. Each experiment consists of three steps:                   ing number of basic logic gate-level operations in Table IV.
+hyperparameter search, training, and evaluation. We sample 32                     High-level operations include addition, comparison, multipli-
+parameter sets for every hyperparameter search and select the                     cation, division, logarithm, etc. For each high-level operation,
+set with the best cross-validated balanced-class test accuracy.                   depending on the input type (e.g., float32, int64), we can com-
+The number of folds ranges from two to four, with datasets                        pute its total number of operations in basic hardware logic gates.
+containing fewer samples having more folds. We employ the                         For example, to perform addition of two n-bit inputs, the least
+Optuna search algorithm [31] for neural network-based mod-                        significant bit (LSB) is fed to a half-adder and the other bits
+els (i.e., MLP, DDLGN, DLN) and use random sampling for                           to full-adders. A half-adder can be implemented with 5 NAND
+traditional methods (i.e., KNN, DT, RF, NB, AB). We use the                       gates and a full-adder with 9 NAND gates. Hence, adding two
+scikit-learn package [32] for data processing and experiments                     n-bit inputs requires 5 + 9 ∗ (n − 1) NAND operations. We
+with traditional methods. We train NN models using PyTorch                        can similarly convert all high-level operations to basic 2-input
+[33]. We use Ray [34] to run parallel hyperparameter searches.                    logic operations. We count AND/OR/NAND/NOR as one logic
+                                                                                  operation, XOR/XNOR as three, and NOT as 0. We used the
+                                                                                  default number types when training models, i.e., float32 for
+                                                                                  NNs and float64 for most traditional models. Since most models
+B. Accuracy
+                                                                                  can maintain inference accuracy even after downgrading the
+   We measure the predictive power of the models using                            datatype to float16, we assume that floating-point numbers have
+balanced-class accuracy. Table III presents the average results.                  a data type of float16 and integers have a data type of int16
+DLN achieved the best average rank of 2.3 and NN-based meth-                      when presenting the counts in Table IV. DLN would have a
+ods generally outperform traditional methods. Another obser-                      higher advantage with larger datatypes because the only place it
+vation is that bagging and boosting help, as random forest and                    needs floating-point operations is when comparing continuous
+AdaBoost outperform the decision tree, as expected. DDLGN                         features with threshold values in the ThresholdLayer. Thus, this
+requires binary inputs; hence, continuous features need to be                     advantage of DLN is muted in Table IV. The table shows that
+binned before passing to the network. In the original work                        decision trees are the most computationally efficient method
+[1], DDLGN bins are selected manually for tabular data and                        and DLN is the second best. Logic-based networks are orders of
+uniformly for image data. We found that, compared to uniform                      magnitude more efficient than multiplication-based networks.
+thresholds, tree-based binning [29] improves DDLGN accu-                             DLNs can be implemented on an ASIC or FPGA easily be-
+racy by a significant margin. Thus, we present results for tree-                  cause they only consist of comparators, logic operators, and ag-
+initialized DDLGNs.                                                               gregators. They also have an advantage in inference speed and
+                                                                                  energy efficiency. Take MLPs as an example for comparison.
+                                                                                  From Table IV, the geometric mean of the number of high-level
+C. Efficiency
+                                                                                  OPs for MLPs is 3.83K, and the majority of them are FLOPs. If
+  We measure efficiency from two perspectives: inference cost                     we assume an edge device with 10 GFLOPS, then, in an ideal
+and disk space cost. For inference computation cost, we provide                   case that does not take into account the forward propagation
+
+ Authorized licensed use limited to: Southern Illinois University Carbondale. Downloaded on July 21,2026 at 00:37:22 UTC from IEEE Xplore. Restrictions apply.
+YUE AND JHA: LEARNING INTERPRETABLE DIFFERENTIABLE LOGIC NETWORKS                                                                                                 79
+
+
+
+                                                             TABLE IV
+                AVERAGE NUMBER OF OPERATIONS FOR INFERENCE, ASSUMING FLOAT16 FOR FLOATING-POINT AND INT16 FOR INTEGER
+
+                                       High-level OPs                                                      Basic logic gate-level OPs
+               KNN      DT      RF      NB     AB     MLP         LGN       DLN      KNN        DT      RF       NB       AB        MLP       LGN       DLN
+    Bank       316K      2      515     72     300    1.1K        251        52      106M      366     68.3K 323K 143K             696K        3.8K      1.9K
+   Breast      21.5K     3      578    210     378    6.7K        126        61      8.2M      503     81.2K 386K 180K             4.1M        545       256
+   Cardio      162K      5      836    378     478 10.3K          721       211      37.4M     915     129K     608K 227K          6.3M       10.6K      6.1K
+    CKD        21.1K     3      614    132     426    3.2K        351        91      9.0M      412     86.2K 350K 203K             1.9M       7.4K       4.4K
+  Cirrhosis     9.0K     3      157    144     389    1.7K        324       120      2.7M      412     7.8K     501K 185K          1.0M       5.6K       6.0K
+  Compas       185K      2      404     84     419    1.1K        179        60      64.1M     229     48.0K 328K 200K             647K       2.8K       2.7K
+   Credit      76.5K     2      636    186     437    5.9K        755       169      10.1M     366     87.5K 375K 208K             3.6M       17.0K     10.5K
+  Diabetes     14.4K     1      150     90     328    1.1K        369        44      6.0M      183     10.5K 331K 156K             667K       5.8K       3.2K
+  EyeMove      476K      2      417    216     478    9.6K        545       297      65.3M     366     51.8K 534K 227K             5.9M       10.7K     10.2K
+    HAR        1.4M      4      730    1.1K    542 40.5K          1.9K      392      520M      686     108K     1.4M     258K      25.1M      29.2K     31.4K
+   Heart       10.8K     3      394    120     457    1.9K        167        80      2.5M      412     48.3K 345K 218K             1.2M       2.8K       1.3K
+  HeartFail     7.7K     3      189     72     376    754         149        48      2.3M      458     13.7K 323K 179K             458K       2.9K       2.4K
+  Hepatitis    14.7K     3      486     78     527    1.7K        190        57      2.1M      549     66.7K 326K 251K             1.1M       6.2K       4.1K
+   Letter      853K      6      524    1.3K    523 15.6K          599       189      297M      1.0K    71.4K    4.4M     249K      9.6M       8.7K      22.4K
+    Liver      14.2K     2      179     66     438    606         192        39      4.2M      366     13.5K 320K 209K             366K       4.6K       3.2K
+   Mush.       1.1M      3      779    408     509 25.5K          350       320      332M      458     117K     476K 242K          15.8M      1.2K       1.5K
+   PDAC        52.1K     1      130    192     368    7.4K        496        59      22.7M     137     3.0K     378K 175K          4.6M       18.9K      5.0K
+   SatIm       448K      6      880    666     435 14.6K          858       422      138M      1.0K    135K     1.2M     207K      9.0M       16.2K     25.9K
+   Stroke      176K      2      612     90     522    1.9K        194        40      51.2M     229     86.1K 331K 249K             1.1M       1.9K       1.6K
+   Telco       362K      3      551    144     384    3.3K        182        67      109M      503     74.8K 356K 183K             2.0M       1.6K       1.3K
+    Rank         8.0    1.0     5.0     3.4    4.9     7.0         4.7       2.1      8.0       1.1     3.9      6.0       5.0      7.0         2.8       2.3
+
+
+
+                                                          TABLE V
+    AVERAGE NUMBER OF MODEL PARAMETERS AND DISK SPACE IN BYTES, ASSUMING FLOAT16 FOR NUMERICAL VALUES AND INT16 FOR INDICES
+
+                                       Number of parameters                                                      Disk space in Bytes
+                KNN       DT       RF     NB      AB     MLP         LGN      DLN      KNN       DT       RF         NB      AB      MLP      LGN      DLN
+     Bank       90.0K      13     3.0K     46    702      598        586      129      180K      25      5.9K        92     1.4K     1.2K     1.2K     258
+    Breast      7.5K       16     3.6K    138    886     3.4K        271      156      15.0K     32      7.2K       276     1.8K     6.8K     542      313
+    Cardio      66.9K      29     5.2K    249 1.1K       5.2K        1.7K     582      134K      57      10.3K      498     2.2K 10.4K        3.4K     1.2K
+     CKD        6.6K       14     3.1K    86     998     1.6K        834      232      13.2K     27      6.1K       172     2.0K     3.2K     1.7K     465
+   Cirrhosis    3.2K       24     290     93     910      880        767      298       6.5K     47       580       186     1.8K     1.8K     1.5K     596
+   Compas       55.4K      8      1.8K    54     980      554        414      136      111K      15      3.6K       108     2.0K     1.1K     828      271
+    Credit      34.3K      14     3.8K    122 1.0K       3.0K        1.8K     413      68.6K     27      7.5K       244     2.0K     6.0K     3.7K     826
+   Diabetes     4.4K       6      354     58     766      568        872       99       8.8K     12       708       116     1.5K     1.1K     1.7K     196
+   EyeMove      197K       11     1.9K    141 1.1K       4.8K        1.3K     989      394K      22      3.7K       282     2.2K     9.7K     2.6K     2.0K
+     HAR        471K       39     6.2K    762 1.3K 20.4K             4.5K     1.1K     941K      77      12.5K      1.5K    2.5K 40.8K        9.1K     2.3K
+    Heart       4.4K       19     1.6K    78     1.1K     978        391      209       8.8K     37      3.2K       156     2.1K     2.0K     782      418
+   HeartFail    2.7K       14     451     46     878      392        354      111       5.4K     27       902        92     1.8K     784      708      222
+   Hepatitis    6.0K       21     2.7K    50     1.2K     900        475      127      12.0K     42      5.4K       100     2.5K     1.8K     950      254
+    Letter      255K      101     6.1K    858 1.2K       7.9K        1.4K     1.3K     510K      202     12.2K      1.7K    2.5K 15.9K        2.7K     2.6K
+     Liver      4.8K       15     440     42     1.0K     318        468       98       9.6K     30       880        84     2.0K     635      936      196
+    Mush.       401K       18     4.9K    270 1.2K 12.9K             766      1.3K     802K      35      9.8K       540     2.4K 25.7K        1.5K     2.5K
+    PDAC        16.5K      5      158     126    861     3.7K        1.3K     131      33.0K     10       316       252     1.7K     7.5K     2.5K     262
+    SatIm       164K       48     6.4K    438 1.0K       7.4K        2.0K     1.2K     328K      95      12.8K      876     2.0K 14.8K        4.1K     2.5K
+    Stroke      57.5K      8      3.6K    58     1.2K     964        444       99      115K      15      7.3K       116     2.4K     1.9K     888      197
+    Telco       126K       18     3.0K    94     900     1.7K        410      167      253K      35      6.1K       188     1.8K     3.4K     820      334
+     Rank        8.0      1.0      6.1    2.0     5.2     5.9         4.7      3.3       8.0     1.0      6.1        2.0     5.2      5.9      4.7      3.3
+
+
+
+delays, it would take an average of 383 ns to perform inference.                   needs 16 bits. On an average, decision trees are the smallest in
+For DLNs, even without considering the fact that the majority                      size and naive Bayes the second smallest. The average rank of
+of the OPs are binary, the average would be 37 times smaller: 10                   DLNs is 3.3, which is the smallest among NNs and substantially
+ns. To estimate the energy consumption, we can use the number                      smaller than vanilla MLPs.
+of basic logic gate operations. The geometric means for MLPs
+and DLNs are 2.35M and 3.94K, respectively. For devices that
+need 10 pJ per basic logic operation, MLPs require 23.5 μJ                         D. Interpretability
+while DLNs only need about 600 times less, i.e., 39.4 nJ.                             DLNs are interpretable by nature and their interpretability is
+   Table V presents the number of parameters and the required                      reinforced by the feature selection power of ThresholdLayers.
+disk space for storage. Trees need to store threshold values and                   Figs. 7–9 illustrate the decision-making process of DLNs. Take
+indices of features and child nodes. DLNs need to store the                        the DLN in Fig. 7 as an example. It achieves a balanced-class
+functionality of neurons and indices of their incoming links. We                   test accuracy of 59.3% on the Cirrhosis dataset and makes
+assumed that each float/int requires 16 bits and each index also                   decisions based on 6 continuous features and 4 categorical
+
+  Authorized licensed use limited to: Southern Illinois University Carbondale. Downloaded on July 21,2026 at 00:37:22 UTC from IEEE Xplore. Restrictions apply.
+80                                     IEEE TRANSACTIONS ON CIRCUITS AND SYSTEMS FOR ARTIFICIAL INTELLIGENCE, VOL. 1, NO. 1, SEPTEMBER 2024
+
+
+
+
+Fig. 7. Visualization of the decision-making process of a DLN for predicting cirrhosis disease. It achieves a balanced-class test accuracy of 59.3%. The
+DLN uses 6 continuous features and 4 categorical features, selected from an original set of 10 continuous features and 5 categorical features.
+
+
+
+
+Fig. 8. Visualization of the decision-making process of a DLN for predicting heart failure disease. It achieves a balanced-class test accuracy of 70.5%. The
+DLN uses 4 continuous features and 2 categorical features, selected from an original set of 6 continuous features and 5 categorical features.
+
+
+
+
+Fig. 9. Visualization of the decision-making process of a DLN for predicting liver disease. It achieves a balanced-class test accuracy of 72.5%. The DLN
+uses 5 continuous features, selected from an original set of 9 continuous features and 1 categorical feature.
+
+
+features, chosen from 10 continuous and 5 categorical fea-                        and the number of basic logic gate-level operations. Rank is
+tures. Class0 , Class1 , and Class2 represent the three class types.              derived based on placing the corresponding column in Tables
+Yellow boxes represent features and diamonds represent logic                      III and IV. The DLN results are reproduced in the first column
+operators. The DLN binarizes inputs based on comparisons for                      from those two tables. These original DLN results are derived
+continuous features and equality checks for categorical features.                 under subsetting both gate and link search space to 8, using STE
+Logic operators receive binary inputs and output binary values.                   in all layers, and concatenating different ThresholdLayers to all
+Class nodes receive binary scores from either feature boxes                       middle LogicLayers. In the other columns, we list differences
+or logic operators and aggregate the scores. A link to a class                    relative to the original setting. For freezing and pruning, we run
+node represents a logic rule. The multiplier ∗ on the right                       a 32-sample hyperparameter search based on the hyperparame-
+of the link to the class node represents the strength of the                      ters of the original model. We search over only the parameters
+associated rule. The class with the highest score is the final                    related to freezing and pruning: starting epoch for freezing,
+prediction.                                                                       starting and ending epochs, and convergence threshold for
+                                                                                  pruning. For other cases, we perform hyperparameter search,
+                                                                                  training, and evaluation similar to the one performed for the
+E. Ablation Studies                                                               original model.
+   Next, we present ablation studies based on subsetting of                       Subset Search Space: We present results of searching over the
+the search space, use of STE, concatenation of input and                          full space, using a link subspace of size 16 for inputs of each
+LogicLayers, simultaneous optimization of neurons and links,                      neuron, and using both a link and gate subspace of size 4. We
+application of fixed thresholds, use of Gumbel-Softmax,                           found that size 8 represents a local optimum.
+progressive freezing, and pruning. In Table VI, we show the                       STE: We show the results of when STE is not applied. On
+average DLN accuracy and rankings based on both accuracy                          average, these results are worse.
+
+ Authorized licensed use limited to: Southern Illinois University Carbondale. Downloaded on July 21,2026 at 00:37:22 UTC from IEEE Xplore. Restrictions apply.
+YUE AND JHA: LEARNING INTERPRETABLE DIFFERENTIABLE LOGIC NETWORKS                                                                                                 81
+
+
+
+                                                             TABLE VI
+                     AVERAGE BALANCED-CLASS TEST ACCURACY PERCENTAGE OF DIFFERENT METHODS AND THEIR RANKS BASED
+                                            ON THE NUMBER OF BASIC LOGIC-GATE OPERATIONS
+
+                                                Subspace               STE             Concat         Phase     Fixed
+                             Orig                                                                                          Gumbel      Freeze      Prune
+                                        w/o        16          4       w/o        w/o       same       w/o      Thresh
+         BankChurn           75.8       75.7      76.4       76.4      76.9       75.3      74.1       77.1      76.5         76.1       75.2      76.7
+        BreastCancer         65.1       63.8      63.6       64.1      59.5       63.9      65.0       63.8      64.7         62.6       66.8      65.0
+      Cardiotocography       97.7       97.3      97.6       97.1      97.7       97.8      97.8       97.7      97.7         97.4       97.6      97.7
+            CKD              99.1       99.6      99.6       98.3      99.2       99.1      99.1       99.6      98.5         99.6       99.8      99.0
+          Cirrhosis          54.0       51.7      51.3       52.6      51.6       49.7      54.2       53.8      49.6         56.0       53.4      54.9
+           Compas            67.6       67.5      67.6       67.2      67.2       67.2      67.2       66.6      68.0         67.1       67.5      67.4
+        CreditFraud          94.3       93.7      93.6       93.9      94.1       94.5      94.5       93.1      93.0         94.1       95.0      94.1
+          Diabetes           88.0       84.5      81.1       85.5      84.7       85.1      83.5       83.2      86.8         85.6       85.0      80.5
+       EyeMovements          55.0       55.2      55.5       55.2      51.2       54.5      54.0       53.3      56.9         55.0       54.8      55.3
+            HAR              87.1       85.7      87.2       87.6      86.7       84.0      85.4       87.2      87.5         87.1       86.8      86.8
+            Heart            81.5       80.0      79.7       81.2      82.3       79.0      81.9       82.0      78.3         77.5       83.1      80.2
+        HeartFailure         68.4       69.8      69.9       71.9      68.5       71.7      65.8       71.0      66.8         76.0       67.4      67.3
+         HepatitisC          91.1       92.1      90.9       91.5      89.0       93.4      92.4       91.2      88.5         94.4       93.3      91.7
+            Letter           69.1       68.2      66.6       68.7      67.2       63.5      65.3       63.9      71.5         67.6       69.8      68.1
+            Liver            66.5       68.1      67.7       68.2      68.5       67.5      68.0       66.5      65.9         67.9       68.0      66.3
+         Mushroom            100        100       100        99.9      100        99.9       100       100       100          100        100       99.8
+            PDAC             59.6       59.5      56.3       57.1      58.1       59.0      59.9       58.6      54.9         58.7       57.7      58.7
+            SatIm            86.4       85.7      85.7       86.2      82.5       84.6      85.1       86.9      86.5         86.0       86.4      85.5
+            Stroke           76.2       75.4      75.3       74.3      73.9       75.6      75.6       74.7      74.5         73.1       75.0      74.7
+         TelcoChurn          75.9       75.2      75.7       74.9      75.1       75.5      74.7       75.0      75.9         75.1       75.4      75.7
+       Accuracy Rank          2.3        2.6       2.7        2.7       2.9        2.8        2.6       2.6       3.2          2.5        2.3       2.7
+          OPs Rank           2.3         2.1      2.2        2.5        2.2       2.0         2.1      2.5        2.9         2.2         2.3      2.1
+
+
+
+Input Concatenation: We test not concatenating the Thresh-                       F. Limitations
+oldLayer with the LogicLayer and concatenating the same                             A shortcoming of a DLN is its training cost. To train a logic
+ThresholdLayer to every middle LogicLayer. We conclude that                      network, gradient descent must traverse layers of Softmax func-
+using different ThresholdLayers is better than using the same                    tions, which results in both slower backpropagation and vanish-
+ThresholdLayer, and that itself is better than not concatenating.                ing gradients. Techniques like subsetting the search space and
+Unified Phase: The results indicate that optimizing neuron                       breaking the optimization problem into two phases help with
+functionalities and link connections in an alternating fashion is                training but do not solve the problem completely. Another limi-
+better in terms of both accuracy and model size than optimizing                  tation is that a DLN does not always perform well. For example,
+them together.                                                                   in Table III, on the Letter dataset, DLN underperforms MLP and
+Fixed ThresholdLayer: We present results when the Thresh-                        some traditional models by a large margin. This may be due to
+oldLayers are initialized and frozen, i.e., only LogicLayers and                 the fact that rule-based approaches are not suitable for the Letter
+SumLayers are trained. This not only reduces model accuracy                      dataset since tree-based models also do not perform well.
+but also results in larger models. Thus, it is better to train the
+ThresholdLayers.
+Gumbel-Softmax: We replace Softmax activations with                                           V. CONCLUSION AND FUTURE DIRECTIONS
+Gumbel-Softmaxes, using a Gumbel noise scale of 0.5.                                We introduced a methodology for training DLNs whose in-
+However, this does not improve the model.                                        ference processes can be explained through logic rules. The
+Progressive Freezing: Based on the observation that layers                       training methodology involves two iterative phases: one for de-
+closer to inputs perform more pattern extraction and layers                      termining neuron functions and another for determining neuron
+closer to outputs perform more abstract pattern aggregation,                     connections. We demonstrated that DLNs learned using this
+we experiment with progressively freezing layer parameters to                    methodology are accurate, interpretable, and efficient. In the
+enable better gradient flow as training progresses. Results show                 future, we plan to explore DLNs in the context of ensemble
+that progressive freezing does not significantly improve model                   frameworks such as bagging and boosting. This would involve
+performance.                                                                     adding aggregation sources for class nodes. We will also ex-
+Progressive Pruning: Some neurons are not helpful in making                      plore incorporation of prior rule-based knowledge into DLNs
+predictions, e.g., a neuron ANDed with an always False neu-                      through addition of logic paths from class nodes to the rules or
+ron. Neurons that do not converge well may be redundant or                       representing these rules using trainable neurons.
+even harmful to prediction accuracy. Hence, we test pruning
+out neurons that do not converge well (i.e., probabilities do
+not concentrate on one type of gate) in a progressive manner.                                                    REFERENCES
+However, this does not improve model accuracy. One reason                          [1] F. Petersen, C. Borgelt, H. Kuehne, and O. Deussen, “Deep differen-
+may be that a larger DLN architecture search space is needed                           tiable logic gate networks,” in Proc. Adv. Neural Inf. Process. Syst.,
+                                                                                       vol. 35, 2022, pp. 2006–2018.
+when applying pruning. Another reason may be that a non-                           [2] L. A. Zadeh, “Fuzzy sets as a basis for a theory of possibility,” Fuzzy
+useful neuron is already ignored in the link search phase.                             Sets Syst., vol. 1, no. 1, pp. 3–28, 1978.
+
+  Authorized licensed use limited to: Southern Illinois University Carbondale. Downloaded on July 21,2026 at 00:37:22 UTC from IEEE Xplore. Restrictions apply.
+82                                      IEEE TRANSACTIONS ON CIRCUITS AND SYSTEMS FOR ARTIFICIAL INTELLIGENCE, VOL. 1, NO. 1, SEPTEMBER 2024
+
+
+
+ [3] K. Menger, “Statistical metrics,” Selecta Math., vol. 2, pp. 433–435,        [26] G. Hinton, O. Vinyals, and J. Dean, “Distilling the knowledge in a neural
+     May 2003.                                                                         network,” 2015, arXiv:1503.02531.
+ [4] B. Goertzel, M. Iklé, I. F. Goertzel, and A. Heljakka, Probabilistic Logic   [27] J. Gou, B. Yu, S. J. Maybank, and D. Tao, “Knowledge distillation:
+     Networks: A Comprehensive Framework for Uncertain Inference. New                  A survey,” Int. J. Comput. Vis., vol. 129, no. 6, pp. 1789–1819, 2021.
+     York, NY, USA: Springer, 2008.                                               [28] Y. Umuroglu et al., “FINN: A framework for fast, scalable binarized
+ [5] E. Jang, S. Gu, and B. Poole, “Categorical reparameterization with                neural network inference,” in Proc. ACM/SIGDA Int. Symp. FPGA, 2017,
+     Gumbel-Softmax,” in Proc. Int. Conf. Learn. Representations, 2017, pp.            pp. 65–74.
+     1–13.                                                                        [29] Y. Gorishniy, I. Rubachev, and A. Babenko, “On embeddings for
+ [6] Y. Bengio, N. Léonard, and A. Courville, “Estimating or propagating               numerical features in tabular deep learning,” in Proc. Adv. Neural Inf.
+     gradients through stochastic neurons for conditional computation,” 2013,          Process. Syst., vol. 35, 2022, pp. 24991–25004.
+     arXiv:1308.3432.                                                             [30] A. Meurer et al., “SymPy: Symbolic computing in Python,” PeerJ
+ [7] M. T. Ribeiro, S. Singh, and C. Guestrin, “‘Why should I trust you?’              Comput. Sci., vol. 3, Jan. 2017, Art. no. e103, doi: 10.7717/peerj-cs.103.
+     Explaining the predictions of any classifier,” in Proc. ACM SIGKDD           [31] T. Akiba, S. Sano, T. Yanase, T. Ohta, and M. Koyama, “Optuna:
+     Conf. Knowl. Discov. Data Mining, 2016, pp. 1135–1144.                            A next-generation hyperparameter optimization framework,” in Proc.
+ [8] K. Simonyan, A. Vedaldi, and A. Zisserman, “Deep inside convolutional             ACM SIGKDD Int. Conf. Knowl. Discovery Data Mining, 2019, pp.
+     networks: Visualising image classification models and saliency maps,”             2623–2631.
+     2013, arXiv:1312.6034.                                                       [32] F. Pedregosa et al., “Scikit-learn: Machine learning in Python,” J. Mach.
+ [9] S. M. Lundberg and S.-I. Lee, “A unified approach to interpreting model           Learn. Res., vol. 12, pp. 2825–2830, Nov. 2011.
+     predictions,” in Proc. Adv. Neural Inf. Process. Syst., vol. 30, 2017, pp.   [33] A. Paszke et al., “Pytorch: An imperative style, high-performance deep
+     4768–4777.                                                                        learning library,” in Proc. Adv. Neural Inf. Process. Syst., vol. 32, 2019,
+[10] B. Zhou, A. Khosla, A. Lapedriza, A. Oliva, and A. Torralba, “Learning            pp. 8026–8037.
+     deep features for discriminative localization,” in Proc. IEEE Conf.          [34] P. Moritz et al., “Ray: A distributed framework for emerging AI
+     Comput. Vis. Pattern Recognit., 2016, pp. 2921–2929.                              applications,” in Proc. USENIX Symp. Oper. Syst. Des. Implement., 2018,
+[11] C. Rudin, “Stop explaining black box machine learning models for high             pp. 561–577.
+     stakes decisions and use interpretable models instead,” Nature Mach.
+     Intell., vol. 1, no. 5, pp. 206–215, 2019.
+[12] J. Lin, C. Zhong, D. Hu, C. Rudin, and M. Seltzer, “Generalized and
+     scalable optimal sparse decision trees,” in Proc. Int. Conf. Mach. Learn.,
+     2020, pp. 6150–6160.                                                                                    Chang Yue received the B.S. degree from the Uni-
+[13] B. Ustun and C. Rudin, “Supersparse linear integer models for optimized                                 versity of Illinois at Urbana-Champaign, in 2016,
+     medical scoring systems,” Mach. Learn., vol. 102, no. 3, pp. 349–391,                                   and the M.S. degree from Stanford University, in
+     2016.                                                                                                   2018, both in electrical engineering. She is currently
+[14] R. Riegel et al., “Logical neural networks,” 2020, arXiv:2006.13155.                                    working toward the Ph.D. degree in electrical and
+[15] M. Richardson and P. Domingos, “Markov logic networks,” Mach.                                           computer engineering with Princeton University.
+     Learn., vol. 62, no. 1–2, pp. 107–136, 2006.                                                            Her research interests include artificial intelligence
+[16] Z. Wang, W. Zhang, N. Liu, and J. Wang, “Scalable rule-based repre-                                     and its applications to various domains.
+     sentation learning for interpretable classification,” in Proc. Adv. Neural
+     Inf. Process. Syst., vol. 34, 2021, pp. 30479–30491.
+[17] A. Payani and F. Fekri, “Learning algorithms via neural logic networks,”
+     2019, arXiv:1904.01554.
+[18] S. Shi, H. Chen, M. Zhang, and Y. Zhang, “Neural logic networks,”
+     2019, arXiv:1910.08629.
+[19] G. Chen, “Learning symbolic expressions via Gumbel-Max equation                                       Niraj K. Jha (Fellow, IEEE) received the B.Tech.
+     learner networks,” 2020, arXiv:2012.06921.                                                            degree in electronics and electrical communication
+[20] H.-T. Cheng et al., “Wide & deep learning for recommender systems,”                                   engineering from Indian Institute of Technology,
+     in Proc. 1st Workshop Deep Learn. Recommender Syst., 2016, pp. 7–10.                                  Kharagpur, India, in 1981, and the Ph.D. degree
+[21] S. Han, J. Pool, J. Tran, and W. Dally, “Learning both weights and                                    in electrical engineering from the University of
+     connections for efficient neural network,” in Proc. Adv. Neural Inf.                                  Illinois at Urbana-Champaign, IL, in 1985. He
+     Process. Syst., vol. 28, 2015, pp. 1135–1143.                                                         is a Professor with the Department of Electrical
+[22] T. Hoefler, D. Alistarh, T. Ben-Nun, N. Dryden, and A. Peste, “Sparsity                               and Computer Engineering, Princeton University.
+     in deep learning: Pruning and growth for efficient inference and training                             His research interests include smart healthcare and
+     in neural networks,” J. Mach. Learn. Res., vol. 22, no. 1, pp. 10882–                                 machine learning algorithms/architectures. He has
+     11005, 2021.                                                                                          served as an Associate Director for the Andlinger
+[23] M. Courbariaux, I. Hubara, D. Soudry, R. El-Yaniv, and Y. Bengio,            Center for Energy and the Environment. He is a Co-Founder of two startup
+     “Binarized neural networks: Training deep neural networks with weights       companies, NeuTigers and Illumia AI, that are, respectively, commercializ-
+     and activations constrained to + 1 or -1,” 2016, arXiv:1602.02830.           ing edge analytics/smart healthcare and language model research from his
+[24] I. Hubara, M. Courbariaux, D. Soudry, R. El-Yaniv, and Y. Bengio,            laboratory. He has served as the Editor-in-Chief of IEEE TRANSACTIONS ON
+     “Quantized neural networks: Training neural networks with low preci-         VLSI SYSTEMS and an Associate Editor of several IEEE Transactions. He
+     sion weights and activations,” J. Mach. Learn. Res., vol. 18, no. 1, pp.     has co-authored five widely used books and 480 papers, among which are 16
+     6869–6898, 2017.                                                             award-winning papers. He has also received 28 patents. He has given several
+[25] A. Gholami, S. Kim, Z. Dong, Z. Yao, M. W. Mahoney, and K.                   keynote speeches in the areas of nanoelectronic design/test, smart healthcare,
+     Keutzer, “A survey of quantization methods for efficient neural network      and cybersecurity. He is a fellow of ACM, and was given the Distinguished
+     inference,” in Low-Power Computer Vision, Boca Raton, FL, USA:               Alumnus Award by I.I.T., Kharagpur, in 2014. He has received the Princeton
+     Chapman and Hall/CRC, 2022, pp. 291–326.                                     Graduate Mentoring Award.
+
+
+
+
+ Authorized licensed use limited to: Southern Illinois University Carbondale. Downloaded on July 21,2026 at 00:37:22 UTC from IEEE Xplore. Restrictions apply.
+

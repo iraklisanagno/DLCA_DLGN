@@ -1,0 +1,586 @@
+3390                                                  IEEE TRANSACTIONS ON CIRCUITS AND SYSTEMS—I: REGULAR PAPERS, VOL. 72, NO. 7, JULY 2025
+
+
+
+
+                       Logic Neural Networks for Efficient
+                             FPGA Implementation
+              Iván Ramírez , Francisco J. Garcia-Espinosa , David Concha , and Luis Alberto Aranda
+
+
+
+   Abstract— Logic Neural Networks (LNNs) represent a new                     effectively; however, a set of constraints arises when putting
+paradigm for implementing neural networks in hardware devices                 these models into production, including real-time process-
+such as Field-Programmable Gate Arrays (FPGAs). These net-                    ing requirements, low power consumption, and simplicity of
+work architectures exhibit unique attributes that can leverage
+the inherent parallelism of FPGAs, enabling the development                   network architecture. As a result, there is growing interest
+of networks characterized by low power consumption and fast                   in developing reduced and efficient neural networks that
+inference capabilities. Despite their potential advantages, the               address these challenges. Approaches to reduce inference costs
+relative novelty of LNNs poses a challenge, as there are cur-                 and improve energy efficiency are being actively explored,
+rently no established guidelines for defining their architectures.            including Binary Neural Networks (BNNs), Quantized Neural
+In this paper, we present a comprehensive study of LNNs,
+aiming to address the existing gap in understanding and guide                 Networks (QNNs), pruning techniques, knowledge distil-
+decision-making during the design phase. Through systematic                   lation, and low-rank factorization. These methods aim to
+experimentation and analysis, we explore various aspects of                   simplify network architectures while maintaining performance,
+logic networks, including their impact on inference time, power               making them particularly suitable for deployment in resource-
+consumption, and overall simplicity. The findings derived from                constrained environments.
+these experiments provide valuable insights for the creation
+of improved networks, thereby paving the way for further                         In view of this, we investigate the design of Logic Neural
+advancements in this field.                                                   Networks (LNNs), a renewed version of algebraic circuits [4]
+                                                                              applied to machine learning tasks and programing logic [5],
+  Index Terms— Field-programmable gate array (FPGA), hard-
+ware implementation, logic neural network (LNN), network                      [6] which substantially differs from previous mentioned
+architectures.                                                                approaches. In fact, LNNs are a type of Weightless Neural
+                                                                              Networks (WNNs) [7], contributing to a growing body of
+                      I. I NTRODUCTION                                        research that offers alternative models for improved efficiency.
+                                                                                 In particular, LNNs leverage logic gates instead of using
+T     HE hardware of neural networks is currently designed to
+      offer a maximum number of resources, primarily focusing
+on enabling a multitude of neurons that may potentially reach
+                                                                              parameters, which makes them suitable for deployment on
+                                                                              Field-Programmable Gate Array (FPGA)-like hardware.
+into the billions [1], [2]. While the development of neu-                        In contrast to existing post-hoc strategies as proposed in
+ral network-specific hardware accelerators, such as Graphics                  frameworks as FINN [8], this co-design approach offers two
+Processing Units (GPUs) with their specialized tensor cores                   key advantages due to the utilization of operational compo-
+and Tensor Processing Units (TPUs), has enabled significant                   nents native to the target device:
+progress across a wide range of fields in Artificial Intel-                     1) It avoids approximations that often lead to accuracy loss.
+ligence (AI), the design of these models often disregards                       2) The resulting model is well-suited to the target device,
+the underlying hardware. The prevailing approach is to ini-                        enhancing its performance.
+tially design a neural network and subsequently adapt the
+hardware platform if necessary [3]. Nowadays, AI attracts                     Additionally, in the specific case of interest, namely FPGAs,
+significant interest not only from the academic world but,                    the target applications often involve processing tasks in
+more prominently, from the industry. Companies are eager to                   extreme environments, such as space or radioactive settings,
+leverage neural networks to enhance their production processes                where power consumption and available resources are highly
+                                                                              constrained, as well as scenarios where high-speed pro-
+  Received 10 July 2024; revised 27 September 2024; accepted 27 October       cessing is crucial, such as in real-time autonomous vehicle
+2024. Date of publication 7 November 2024; date of current version 1 July     control.
+2025. This work was supported in part by the Recovery and Resilience
+Facility Program from the NextGenerationEU Plan of European Union and            LNNs are constituted of neurons implemented by logic
+Spanish Research Agency under Project TED2021-129162B-C22 and in part         gates, each typically having two inputs and one output. Each
+by Spanish Plan for Scientific and Technical Research and Innovation of the   neuron is, in fact, one logic gate selected optimally from an
+Spanish Research Agency under Project PID2021-128362OB-I00. This article
+was recommended by Associate Editor Y. Tang. (Corresponding author:           available set of gates. Due to the non-differentiable nature of
+Iván Ramírez.)                                                                such logic functions, we build upon the work of [9], where the
+  The authors are with the CAPO Research Group, Universidad Rey               authors proposed a differentiable version of the logic functions
+Juan Carlos, Móstoles, 28933 Madrid, Spain (e-mail: ivan.ramirez@urjc.es;
+franciscojose.garcia@urjc.es; david.concha@urjc.es; luis.aranda@urjc.es).     and a framework for end-to-end training of an LNN, however,
+  Digital Object Identifier 10.1109/TCSI.2024.3488119                         offering only software-based implementations. In this work,
+             © 2024 The Authors. This work is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 License.
+                                    For more information, see https://creativecommons.org/licenses/by-nc-nd/4.0/
+RAMÍREZ et al.: LOGIC NEURAL NETWORKS FOR EFFICIENT FPGA IMPLEMENTATION                                                           3391
+
+
+
+we take an additional step by fully implementing a pre-trained        For such a reason, the approach considered in this paper
+differentiable LNN on an FPGA.                                     is based on Logic Neural Networks (LNNs), where, as men-
+   The main contributions of our work can be outlined as:          tioned previously, artificial multi-input neurons in a network
+   1) We describe how to implement a LNN into an FPGA.             are replaced by two-input logic gates. Unlike QNNs, BNNs
+       To our knowledge, this is the first attempt to accomplish   and pruning methods, LNNs are weightless networks that
+       this task.                                                  consider specific hardware characteristics from the beginning,
+   2) We conducted an ablation study on the set of logic gates     promoting a co-design strategy. In other words, whereas QNNs
+       used in LNN models, aiming to elucidate their relative      and BNNs work to compress standard neural networks, LNNs
+       importance in achieving high accuracy scores.               focus on algebraic circuits, thus, without relying on weights.
+   3) We performed a series of experiments to bring clarity to     As a result, they are particularly well-suited for implementa-
+       the different trade-offs present in developing an LNN.      tion on FPGAs.
+   The paper is organized as follows: this Introduction sets          Nonetheless, LNNs face a challenge due to the non-
+the research problem and objectives. In Section II, existing       differentiability of their logic gates, which inhibits their train-
+literature is reviewed. Section III provides context on how        ing with gradient-based algorithms like back-propagration.
+LNN are conceived. Sections IV and V detail the main               To address this issue, the authors in [9] introduce a modified
+procedure and results of our study, examining both the model       differentiable variant of a set of logic gates, enabling end-to-
+and hardware perspectives. Lastly, Sections VI and VII explore     end training of LNNs. In a broad sense, non-differentiability is
+the findings and discuss their implications.                       highly significant in neural network research, especially con-
+                                                                   cerning optimization methods such as gradient descent, which
+                                                                   depend on derivative calculations. Extensively studied, this
+                     II. R ELATED W ORK
+                                                                   challenge deeply affects model convergence and training effi-
+   Aligned with the objective of reducing the number of            ciency. Different approaches have been investigated to address
+weights in neural networks, efforts have been made to com-         non-differentiability, ranging from specialized optimization
+press these models while maintaining their performance. Some       algorithms like subgradient methods, commonly employed in
+approaches focus on pruning methods [10], where it is crucial      variational calculus, to utilizing differentiable approximations
+to discriminate between relevant and uninformative weights.        of activation functions to manage the inherent nonlinearities in
+The pruning techniques can be applied before the training          neural networks. In the latter approach, certain studies utilize
+stage [11], [12], during training (online) [13], [14], or after    the Gumbel-max trick [27]. For instance, in [28], the authors
+training [15], [16], with the latter being the most com-           use a Gumbel-softmax approach by introducing noise in the
+monly used approach. Classic regularization techniques are         selection process of optimal functions from a given set. In [29],
+often included in the optimization of neural networks, as the      the authors propose a Gumbel-Max-based equation to learn
+L1-regularization, well-known for promoting a spare set of         optimal arithmetic functions within layers of neural networks.
+optimal parameters, which can be seen as part of a pruning            The lack of differentiability is also at the root of the limita-
+technique during training. Quantization of parameters has also     tions of conventional neural networks. Despite their success in
+been explored, leading to the development of Quantized Neural      approximating tasks, neural networks fail when interpretable
+Networks (QNNs). QNNs offer reduced memory and compu-              predictions are required. Recent efforts in this direction include
+tational requirements, outperforming pruning methods in many       differentiable deep neural logic networks [30], where the
+architectures [17], and making them suitable for development       authors propose a new learning paradigm for inductive logic
+on resource-constrained devices, but may suffer from loss          programming, aiming to enhance the explainability of neural
+of accuracy compared to full-precision networks [18], [19].        network predictions.
+Additionally, adapting the training stage to reduced precision
+                                                                                         III. BACKGROUND
+has also been investigated to account for this loss of accuracy
+[20], [21].                                                          In this section, we provide a detailed background on Logic
+   Another approach involves Binary Neural Networks                Neural Networks and recall the approach proposed in [9] to
+(BNNs), where activations and weights are represented as 1-bit     make them differentiable.
+values. This extreme compression allows for the reduction of
+matrix computations in each neural network layer to XNOR           A. Logic Neural Networks
+operations [22], [23], [24], [25]. BNNs can be seen as an             LNNs are essentially Directed Acyclic Graphs (DAGs)
+extreme instance of QNNs and, as a consequence, the loss of        where each node, or neuron, operates as a binary logic gate.
+accuracy is dramatically high. Hence, hybrid models integrat-      Although they share a similar structure with conventional
+ing varying levels of quantization across layers have emerged      neural networks, such as multi-layer perceptrons (MLPs), they
+in response to this challenge. A recent, slightly different but    differ significantly. In MLPs, multiple inputs are processed
+successful approach in the field of large language models          using nonlinear activation functions, multiplicative weights,
+(LLMs) is presented in [26], where parameters are not binary       and additive biases.However, in LNNs, inputs to logic gates
+but ternary {−1, 0, 1}. Although the attempts with QNNs to         are reduced to two, and traditional neural network components
+simplify neural networks may achieve significant success, their    like activation functions and parameters are absent (see Fig. 1).
+effectiveness is still constrained by the inherent challenge of       Consequently, while neural networks are parametric models
+adapting hardware principles to software implementations.          capable of approximating any function, LNNs lack parameters
+3392                                                    IEEE TRANSACTIONS ON CIRCUITS AND SYSTEMS—I: REGULAR PAPERS, VOL. 72, NO. 7, JULY 2025
+
+
+
+                                                                                expected value across all potential logic gates: each differen-
+                                                                                tiable logic gate is multiplied by a probability derived from
+                                                                                the softmax value of a weight vector. Let f i be each logic
+                                                                                gate’s output. Then, the expected value of a logic neuron is
+                                                                                given by:
+
+                                                                                                 out = Ep { f i |i = 0, . . . , 15}          (1)
+
+                                                                                where
+                                                                                                                            eω
+                                                                                                 p = So f tmax(ω) =                   ,      (2)
+                                                                                                                          15
+                                                                                                                                eωi
+                                                                                                                          X
+
+                                                                                                                          i=0
+
+                                                                                is a probability distribution function computed through
+                                                                                So f tmax. Note that, in order to provide a probabilistic inter-
+                                                                                pretation of the relative importance of each differentiable logic
+                                                                                gate, different normalizing functions may be considered.
+                                                                                   During training, the ω weights are optimized for a given
+                                                                                loss function using back-propagation algorithm (see Fig. 2).
+                                                                                Once the LNN is trained, inference is performed by replacing
+Fig. 1.    Visualization of a conventional neuron (a) and a logic neuron        the approximating logic gate with the highest probability by
+(b) interconnected in a neural network. The dashed lines represent the          its original logic function.
+back-propagration process for error minimization during training. Logic
+neurons differ from conventional ones due to the absence of differentiability
+and parameters.                                                                 C. Network Architecture
+                                                                                   To establish the final architecture of a LNN, it’s necessary
+to optimize and the logic functions implemented by the                          to predefine the connections between layers. This is because
+gates are non-differentiable. This non-differentiability poses                  each node is restricted to having only two inputs, making fully
+a challenge for gradient-based optimization algorithms like                     connected LNNs unattainable. The authors, [9], proposed two
+back-propagration, making it unsuitable for direct application                  manners for the selection of gates connections: 1) a random
+to LNNs.                                                                        selection and 2) a deterministic algorithm that provides a set of
+   Additionally, neural networks are universal approxima-                       connections for a given number of logic neurons. In this work,
+tors [31], particularly, given a sufficient number of neurons,                  we have considered the first selection methods to initialize
+they can approximate any continuous function up to an arbi-                     each logic neural layer, for the same reason given by the
+trary error. Conversely, LNNs are equipped with a functionally                  authors: simplicity and no significant differences with respect
+complete set of logical gates, ensuring the ability to express                  to the second method are found when tested over several
+all possible combinations, i.e., truth tables. More formally,                   datasets common datasets as MNIST.
+while the domain and codomain/image of a neural network                            Furthermore, the authors set 16 logic gates with their
+are dom(NN), img(NN) ∈ R, LNNs operate with discrete and                        differentiable approximations (see Table I), enabling back-
+binary elements, dom(LNN), img(LNN) ∈ {0, 1}. This implies                      propagation during training. As previously mentioned, unlike
+that both the input and output of an LNN are binary variables                   the standard training of MLPs, training LNNs is significantly
+and, thus, for a given machine learning problem, LNNs must                      more expensive due to the necessity of maintaining 16 logic
+be appropriately adjusted based on whether they are used in a                   gates for each neuron. During inference, only one logic gate
+classification or regression task.                                              - with the highest probability pi - is computed through the
+                                                                                actual logic gate (rather than its differentiable version), which
+B. Differentiable LNNs                                                          substantially alters the final architecture.
+   The non-differentiability of the logic gates is addressed
+by replacing them with differentiable functions that approx-                             IV. N ETWORK A RCHITECTURE A NALYSIS
+imate their behavior. In [9], the authors suggest employing                        This section presents the systematic experimentation and
+16 approximating differential functions to convert binary val-                  analysis conducted to investigate the logic network archi-
+ues into the [0, 1] range. These gates cover all two-input                      tecture described in the previous section. Two types of
+logic functions, each with 4 outputs, making a total of 24 =                    experiments are outlined in this section: 1) a neuron analysis
+16 unique functions.                                                            that involves the step-by-step removal of individual logic
+  Furthermore and contrary to a neural network, to optimize                     functions within the network to identify their relative impor-
+the LNN means to find the optimal logic gates for a given                       tance; and 2) an architecture analysis focused on varying the
+neuron and architecture, i.e., to select from the 16 logic gates,               number of neurons and layers employed in the architecture.
+the most appropriated to reduce training error. To this end,                    In particular, the architecture analysis is subdivided into three
+the output of a logic neuron is determined by calculating the                   sets of experiments, wherein three distinct architectures are
+RAMÍREZ et al.: LOGIC NEURAL NETWORKS FOR EFFICIENT FPGA IMPLEMENTATION                                                                                    3393
+
+
+
+
+Fig. 2. Diagram depicting a differentiable logic neuron incorporating back-propagration for training. It is noteworthy that, unlike conventional logic neurons,
+this model enables weight learning allowing selection of differentiable logic gates. Thus, each approximating out is aggregated in a single output that computes
+the expected value of the neuron. At inference time, only the logic differentiable gate (blue) with highest probability (pi∗ ) is replaced by the original one
+(Fig. 1).
+
+
+                                  TABLE I                                        Procedure 1 Logic Function Removal Procedure
+  L IST OF 16 R EAL -VALUED B INARY L OGIC G ATES P ROPOSED BY [9]                1: model ← init_model()
+                                                                                  2: for i = 1 to N f unc − 2 do
+                                                                                  3:     func_to_remove ← find_min_impact(model)
+                                                                                  4:     model.remove_func(func_to_remove)
+                                                                                  5:     model.train()
+                                                                                  6:     update_accuracy(model)
+                                                                                  7: end for
+                                                                                  8: model.display_accuracy_in_each_step()
+
+
+
+                                                                                    Results in Table II indicate that the NOT, NOR and NAND
+                                                                                 logic functions are the most significant contributors to the
+                                                                                 overall accuracy of the network. The removal of these logic
+                                                                                 functions causes the loss of crucial functionalities within
+                                                                                 the network. This observation is consistent with the fact
+                                                                                 that NAND and NOR functions are universal logic gates,
+                                                                                 meaning that any logic function can be represented using
+tested: the baseline architecture comprising the 16 logic func-                  only one of these functions (including the NOT function).
+tions outlined by [9], an architecture incorporating half of the                 From the industrial point-of-view, these findings offer an
+original logic functions, and an architecture composed of the                    additional perspective, as an Application-Specific Integrated
+two most significant logic functions identified in the neuron                    Circuit (ASIC) containing the architecture of a LNN based
+analysis.                                                                        solely on NOR gates, for example, could be manufactured.
+                                                                                 This approach could potentially increase circuit integration,
+                                                                                 and reduce complexity and costs by using homogeneous gates.
+A. Neuron Analysis
+                                                                                    Upon examining in detail the accuracy values highlighted
+   As previously stated, the baseline model for the MNIST                        in bold in Table II, it can be observed that the network’s
+dataset consists of 16 logic functions, ranging from a simple                    accuracy experiences a substantial drop from iteration 13 to
+NOT operation (F = A) to a more complex two-input                                iteration 14, specifically by 96.98% − 96.27% = 0.71%. This
+logic function (F = A · B). The objective of this first                          drop is equivalent to the cumulative decrease observed in the
+study is to systematically eliminate, one by one, the logic                      preceding iterations, amounting to 97.71%−96.98% = 0.73%.
+functions that contribute the least to the overall test accu-                    For better visualization, the variation in model accuracy is
+racy of the network. In each iteration, the logic function                       depicted in Fig. 3.
+causing the smallest decrease in overall accuracy is removed.                       In Table II, at iteration 13, the remaining logic functions are
+Subsequently, the network is retrained using the remaining                       NOR, NAND, and NOT. However, by iteration 14, eliminating
+functions, and the process is repeated until only two functions                  the NAND function results in the mentioned accuracy drop
+remain. The procedure stops at this point since the training                     of 0.71%. This result is interesting and can be explained as
+of the model with only one logic function to choose from                         follows: if the NAND gate is removed, the NOT and the NOR
+would become trivial. The detailed steps of this procedure are                   functions must be utilized to achieve the lost functionality.
+outlined in Procedure 1 for clarity.                                             A NAND gate can be synthesized using three levels of
+   Following this procedure, the results presented in Table II                   NOR gates, thus necessitating additional layers. Consequently,
+are obtained.                                                                    an architecture comprising NAND and NOR gates would
+3394                                                     IEEE TRANSACTIONS ON CIRCUITS AND SYSTEMS—I: REGULAR PAPERS, VOL. 72, NO. 7, JULY 2025
+
+
+
+                                                                           TABLE II
+T EST ACCURACY (%) OF THE LNN A FTER R EMOVING E ACH L OGIC F UNCTION AT E VERY S TEP. I N E ACH I TERATION , THE L OGIC F UNCTION
+    C AUSING THE S MALLEST D ECREASE IN OVERALL ACCURACY I S R EMOVED ( IN B OLD ). T HE I NITIAL LNN ACCURACY VALUE I S 97.71 %.
+                                                       S EE P ROCEDURE 1
+
+
+
+
+                                                                                                             TABLE III
+                                                                                  ACCURACY (%) VARIATION W ITH THE N UMBER OF L AYERS AND THE
+                                                                                         N UMBER OF N EURONS P ER L AYER (BASELINE M ODEL
+                                                                                                   W ITH 16 L OGIC F UNCTIONS )
+
+
+
+
+Fig. 3. Model accuracy variation (MNIST). In each iteration, the logic
+function causing the smallest decrease in overall accuracy is removed.
+                                                                                                            TABLE IV
+                                                                                  ACCURACY (%) VARIATION W ITH THE N UMBER OF L AYERS AND THE
+                                                                                       N UMBER OF N EURONS P ER L AYER (M ODEL W ITH 8 L OGIC
+                                                                                                           F UNCTIONS )
+
+
+
+
+Fig. 4. Architecture of a logic neural network (LNN). The inputs are boolean         As expected, the accuracy of the network increases with
+vectors, with each element pairwise connected to logic gates. Multiple logic      both the number of layers and the number of neurons per layer.
+layers, potentially containing different numbers of logic neurons, are stacked.
+The final class prediction is determined through majority voting.
+                                                                                  However, the accuracy value experiences a greater increase
+                                                                                  when moving horizontally in Table III. This suggests that
+                                                                                  these logic gate-based architectures tend to prioritize width
+require fewer layers than an architecture composed of NOR                         over depth. To further support this hypothesis, an architecture
+and NOT gates, since implementing the remaining NAND                              employing half of the initial 16 logic functions was trained
+function would pose greater difficulty for the network than                       using the same methodology. Table IV displays the results of
+implementing the NOT function. This observation will be fur-                      this architecture.
+ther investigated in the next subsection during the architecture                     It can be observed that the accuracy value again increases
+analysis.                                                                         more noticeably when moving horizontally rather than ver-
+                                                                                  tically, suggesting the validity of the hypothesis. This
+                                                                                  observation aligns with the fact that neurons in the LNN
+B. Architecture Analysis
+                                                                                  are not fully connected, meaning they only have two inputs.
+   For the architectural analysis of LNNs, we trained various                     Therefore, it seems that establishing more connections and
+LNN architectures, systematically increasing the number of                        making wider layers can enhance the network’s functionalities.
+layers and neurons per layer to observe trends in network                            However, the previous statement does not hold true when
+accuracy. A general scheme of the architecture used in all                        only two logic functions are employed in the architecture.
+subsequent experiments is illustrated in Figure 4.                                Table V illustrates the accuracy results of architectures con-
+   Let us first analyze the baseline LNN architecture compris-                    structed solely from two logic functions. It can be seen in
+ing 16 logic functions. The test accuracy achieved by this                        this table that the network exhibits better performance as
+model is presented in Table III.                                                  the number of layers increases. This is because the network
+RAMÍREZ et al.: LOGIC NEURAL NETWORKS FOR EFFICIENT FPGA IMPLEMENTATION                                                                        3395
+
+
+
+                            TABLE V
+ACCURACY (%) VARIATION W ITH THE N UMBER OF L AYERS AND THE
+        N UMBER OF N EURONS P ER L AYER (M ODELS W ITH
+                     2 L OGIC F UNCTIONS )
+
+
+
+
+has limited functionalities so, to perform more complex logic
+operations, more logic gate levels are required. In the previous
+subsection, NOR and NOT logic functions were identified as
+the pivotal gates in the network. Nonetheless, it was also stated
+that an architecture comprising NAND and NOR gates would
+require fewer layers to achieve a similar accuracy level than
+an architecture composed of NOR and NOT gates. As can               Fig. 5. Zoomed-in view of the accuracy variation with the number of layers
+be seen in this table, with three or fewer layers, the NAND-        for each architecture.
+NOR architecture surpasses the NOR-NOT one, but with more
+than three layers, the accuracy levels are similar, meaning that
+the lost functionality can be implemented by the network by
+combining the NOR-NOT gates. When the lost functionality is
+recovered (more than 3 layers) the width over depth hypothesis
+holds true again.
+   Finally, the accuracy variations with the number of layer
+for the 16, 8, and 2 (NAND-NOR) architectures are depicted
+together in Fig. 5 to compare trends.
+   As expected, the accuracy values for the architectures using     Fig. 6. The proposed pipeline is implemented as follows. First, an LNN
+fewer number of logic functions are usually lower than the          model is trained on the training data using the differentiable approach outlined
+other architectures. In fact, it can be seen that the accuracy      in [9], leveraging the PyTorch framework. Once trained, the optimized,
+                                                                    weightless LNN is converted into VHDL code via the VHDL generator. This
+levels tend to stabilize at 5-6 layers. This means that more        VHDL code is then processed on the Vivado platform for simulation and
+neurons per layer are required to increase the overall accuracy     bitstream generation. Finally, the bitstream is deployed onto the FPGA, which
+of the network. For example, to achieve a 96% of accuracy           is then ready for validation on the test data.
+the 16-functions architecture requires at least 4,000 neurons
+per layer and 4 layers. However, to achieve this value the             The resource usage reports generated for the different
+8-functions architecture requires 6,000 neurons per layer,          architectures indicate that only Look-Up Tables (LUTs) are
+while the 2-functions architecture necessitates 8,000 neurons       utilized. This is due to the fact that logic neural networks
+per layer and 6 layers.                                             are pure combinational circuits comprised of logic gates,
+   In the next section, we have implemented these designs on        thereby obviating the need for additional flip-flops, RAM,
+a hardware platform to compare resource usage, throughput,          or digital signal processing blocks. By exclusively utilizing
+and power consumption, offering a different perspective for         LUTs, LNNs can achieve inference times on the order of
+further discussions.                                                nanoseconds. Inference time or throughput for each design
+                                                                    has been evaluated by estimating the worst total delay, which
+             V. H ARDWARE I MPLEMENTATION                           is calculated as the sum of the logic delay and the routing
+   The hardware platform used to measure the performance            delay. Besides, the fact LUTs are used to implement logic
+of the designs discussed in the previous section is the Zynq        gates, as LNNs do not require weights, helps alleviate storage
+UltraScale+ MPSoC ZCU102 Evaluation Kit from Xilinx. The            limitations. The number of LUTs and the throughput of each
+resource usage, throughput, and power consumption values            model are summarized in Tables VI, VII, and VIII.
+have been estimated using Xilinx Vivado utilization, timing            It is noticeable that the LUT count and throughput exhibit
+and power reports respectively. The detailed pipeline diagram       slight variations across different models. Interestingly, the
+followed for these experiments are depicted in Figure 6.            model employing two logic functions appears to demand
+3396                                          IEEE TRANSACTIONS ON CIRCUITS AND SYSTEMS—I: REGULAR PAPERS, VOL. 72, NO. 7, JULY 2025
+
+
+
+                          TABLE VI                                                            TABLE IX
+LUT C OUNT AND T HROUGHPUT ( IN NANOSECONDS ) VARIATIONS W ITH    ACCURACY AND I NFERENCE T IME (T HROUGHPUT ) FOR D IFFERENT
+ THE N UMBER OF L AYERS AND THE N UMBER OF N EURONS P ER L AYER    S TATE - OF - THE -A RT A PPROACHES FOR MNIST DATASET. B EST AND
+         (BASELINE M ODEL W ITH 16 L OGIC F UNCTIONS )               S ECOND B EST A RE D EPICTED IN B OLD AND I TALIC , R ESPEC -
+                                                                       TIVELY. *T IME R EPORTED FOR T HIS M ETHOD I S C OMPUTED
+                                                                           AS : #L AYERS × R EPORTED L ATENCY. T HIS I S , 6 × 16ns
+
+
+
+
+                                                                     In terms of power consumption, the designs show subtle
+                                                                  variations once more. The estimated overall power consump-
+                                                                  tion by Vivado falls within the range of 2 to 3 milliwatts.
+                          TABLE VII                               This indicates that these designs offer promising attributes
+LUT C OUNT AND T HROUGHPUT ( IN NANOSECONDS ) VARIATIONS W ITH    for applications where power consumption is a significant
+ THE N UMBER OF L AYERS AND THE N UMBER OF N EURONS P ER L AYER
+               (M ODEL W ITH 8 L OGIC F UNCTIONS )                concern.
+                                                                     Finally, during the behavioral simulation in Vivado and the
+                                                                  deployment on the FPGA of the different network models,
+                                                                  it was observed that there is no degradation of accuracy. This
+                                                                  indicates that the accuracy achieved in testing (see Tables III,
+                                                                  IV, and V) will remain consistent as the network model is
+                                                                  implemented on the FPGA. This consistency arises from the
+                                                                  fact that LNNs are comprised of logic gates, obviating the
+                                                                  necessity for rounding, quantization, or similar techniques.
+                                                                     In summary, our proposed FPGA implementation of LNNs
+                                                                  offers the following key benefits:
+                                                                     • Resource Efficiency: Utilizes only Look-Up Tables
+                                                                       (LUTs), avoiding flip-flops, RAM, and DSP blocks.
+                                                                     • High Throughput: Achieves inference times in nanosec-
+                          TABLE VIII                                   onds due to exclusive LUT usage.
+LUT C OUNT AND T HROUGHPUT ( IN NANOSECONDS ) VARIATIONS W ITH       • Storage Optimization: No weights required, alleviating
+ THE N UMBER OF L AYERS AND THE N UMBER OF N EURONS P ER L AYER        storage limitations.
+               (M ODEL W ITH 2 L OGIC F UNCTIONS )                   • Low Power Consumption: Power consumption ranges
+                                                                       from 2 to 3 milliwatts.
+                                                                     • No Accuracy Loss: Test accuracy remains consistent
+                                                                       during FPGA deployment.
+
+
+                                                                  A. Comparison With Other Approaches
+                                                                     In the following, we present two sets of results, focusing
+                                                                  on accuracy and inference time (throughput), for our proposed
+                                                                  implementation of Logic Neural Networks (LNNs). We com-
+                                                                  pare our approach against various state-of-the-art methods,
+                                                                  including BNNs, QNNs, and LUT-based Neural Networks,
+                                                                  using two datasets: MNIST and Jet Substructure Classification
+                                                                  (JSC). Results are summarized in Tables IX and X. For fair
+fewer resources while attaining superior throughput. This         comparisons, we adopted the same methodology as in [32],
+phenomenon could be due to the increased efficiency in            where the approach is implemented on a Virtex UltraScale+
+processing such models through the Vivado place-and-route         xcvu9p-flgb2104-2-i FPGA, using Vivado’s Flow PerfOpti-
+optimization algorithm, resulting in more optimized designs.      mized high strategy.
+However, it is worth noting that these disparities are not           Our proposed LNN implementations demonstrate strong
+particularly significant, as the optimization strategies within   competitiveness across both datasets, outperforming other
+Vivado can be adjusted to enhance the standard results outlined   methods that focus on reducing conventional neural networks,
+in our tables.                                                    rather than using a co-design strategy as employed in LNNs.
+RAMÍREZ et al.: LOGIC NEURAL NETWORKS FOR EFFICIENT FPGA IMPLEMENTATION                                                                            3397
+
+
+
+                              TABLE X                                    as an adaptive convolution, functioning like a kernel with a
+ACCURACY AND I NFERENCE T IME (T HROUGHPUT ) FOR D IFFERENT              2-bit receptive field, moving across the data. While this is not
+ S TATE - OF - THE -A RT A PPROACHES FOR JSC DATASET. B EST AND S EC -
+   OND B EST A RE D EPICTED IN B OLD AND I TALIC , R ESPECTIVELY.
+                                                                         a true convolution since the translation-invariant property is
+     *T IME R EPORTED FOR T HIS M ETHOD I S C OMPUTED AS : #L AY-        absent, which is fundamental for specific image processing
+                ERS × R EPORTED L ATENCY. T HIS I S , 3 × 5ns            applications, the reduced receptive field of an LNN provides
+                                                                         locality properties suitable for data where information is
+                                                                         inherently local.
+
+                                                                                                   VII. C ONCLUSION
+                        VI. D ISCUSSION                                     In this paper, we explored Logic Neural Networks (LNNs)
+   In this section, we give a brief summary of the findings from         as a novel paradigm for efficient FPGA implementation of
+the previous software and hardware experiments, a scalability            neural networks.We have addressed the lack of established
+discussion of LNNs and some insights on other architectures.             guidelines for implementing LNN architectures in FPGAs by
+                                                                         conducting a comprehensive study. Our experiments inves-
+                                                                         tigated the impact of logic gates on inference time, power
+A. Experimental Findings
+                                                                         consumption, and simplicity of LNNs.
+  • Importance of certain logic functions: From the com-
+                                                                            Key findings include the importance of certain logic func-
+    plete set of 16 logic functions employed in LNNs, NOR                tions, such as NOR and NAND, in maintaining network
+    and NAND are crucial for maintaining network accuracy                accuracy. We observed that wider layers tend to enhance
+    because they form the basic building blocks of such                  network performance, with architectures prioritizing width
+    architectures.                                                       over depth. However, architectures with fewer logic functions
+  • Reduced set of logic functions: LNNs can be exclu-
+                                                                         require more neurons per layer to achieve comparable accuracy
+    sivelly constructed utilizing NAND and NOR gates,                    levels. This fact also implies that LNNs can be created from a
+    simplifying the design and potentially reducing costs.               reduced set of logic functions such as NAND and NOR gates
+    This provides two key benefits:                                      for example, enabling the development of ad-hoc Application-
+      1) Speeds up the training time as the number of logic              Specific Integrated Circuits (ASICs) exclusively using NAND
+          gates to process per neuron is reduced.                        or NOR technology.
+      2) It enables the creation of ASICs using only NAND                   Our hardware implementation on the Zynq UltraScale+
+          or NOR technology.                                             MPSoC ZCU102 Evaluation Kit revealed that LNNs utilize
+  • Wider layers enhance performance: Networks with
+                                                                         Look-Up Tables (LUTs) exclusively, resulting in fast infer-
+    wider layers (more neurons per layer) tend to perform                ence times on the order of nanoseconds and minimal power
+    better, as they can process more information simultane-              consumption in the milliwatt range.
+    ously, improving overall network efficiency. A possible                 In summary, our study provides valuable insights into
+    explanation is the limited fan-in of 2-input logic gates,            designing efficient LNN architectures for FPGA implemen-
+    unlike neural networks where each neuron processes all               tation, facilitating further advancements in this field. Future
+    (fully-connected) inputs.                                            directions include the study and development of more complex
+  • Architectures with fewer logic functions: When fewer
+                                                                         LNN architectures to face more challenging problems.
+    types of logic functions are used, more neurons per layer
+    are needed to achieve similar accuracy levels, indicating
+    a trade-off between the variety of logic functions and the                                         R EFERENCES
+    number of neurons.                                                    [1] M. Dehghani et al., “Scaling vision transformers to 22 billion param-
+                                                                              eters,” in Proc. 40th Int. Conf. Mach. Learn., vol. 202, A. Krause,
+                                                                              E. Brunskill, K. Cho, B. Engelhardt, S. Sabato, and J. Scarlett,
+B. Scalability Issues                                                         Eds., Jul. 2023, pp. 7480–7512. [Online]. Available: https://proceedings.
+                                                                              mlr.press/v202/dehghani23a.html
+  During training stage, each logic neuron needs 16 real-
+                                                                          [2] M. Shoeybi, M. Patwary, R. Puri, P. LeGresley, J. Casper, and
+valued surrogate functions. This is because 2-input logic                     B. Catanzaro, “Megatron-LM: Training multi-billion parameter lan-
+                                 2
+gates can implement up to 22 = 16 boolean functions.                          guage models using model parallelism,” 2019, arXiv:1909.08053.
+As fan-in increases, the number of surrogate functions grows              [3] N. Jouppi et al., “In-datacenter performance analysis of a tensor pro-
+                          k                                                   cessing unit,” in Proc. 44th Annu. Int. Symp. Comput. Architect., 2017,
+double-expotentially at 22 [9], making training impractical.                  pp. 1–12.
+Additionally, stacking many layers leads to vanishing gradi-              [4] A. Darwiche and P. Marquis, “A knowledge compilation map,” J. Artif.
+ents, which typically become problematic around 8-10 layers,                  Intell. Res., vol. 17, pp. 229–264, Sep. 2002.
+                                                                          [5] R. Riegel et al., “Logical neural networks,” 2020, arXiv:2006.13155.
+similar to conventional neural networks.                                  [6] P. Sen, B. W. de Carvalho, R. Riegel, and A. Gray, “Neuro-symbolic
+                                                                              inductive logic programming with logical neural networks,” in Proc.
+                                                                              AAAI Conf. Artif. Intell., 2022, vol. 36, no. 8, pp. 8212–8219.
+C. Other Architectures
+                                                                          [7] Z. Susskind et al., “Weightless neural networks for efficient edge
+  Exploring alternative architectures using LNNs is a future                  inference,” in Proc. Int. Conf. Parallel Architectures Compilation Techn.,
+goal not covered in this work. However, we highlight some                     Oct. 2022, pp. 279–290.
+                                                                          [8] Y. Umuroglu et al., “FINN: A framework for fast, scalable binarized
+connections between logical convolutions [38] and LNNs.                       neural network inference,” in Proc. ACM/SIGDA Int. Symp. Field-
+Specifically, an LNN with 2-input logic gates can be viewed                   Programmable Gate Arrays, Feb. 2017, pp. 65–74.
+3398                                                      IEEE TRANSACTIONS ON CIRCUITS AND SYSTEMS—I: REGULAR PAPERS, VOL. 72, NO. 7, JULY 2025
+
+
+
+ [9] F. Petersen, C. Borgelt, H. Kuehne, and O. Deussen, “Deep differentiable      [35] M. Ghasemzadeh, M. Samragh, and F. Koushanfar, “ReBNet: Residual
+     logic gate networks,” in Proc. Adv. Neural Inf. Process. Syst., vol. 35,           binarized neural network,” in Proc. IEEE 26th Annu. Int. Symp. Field-
+     2022, pp. 2006–2018.                                                               Programmable Custom Comput. Mach. (FCCM), Apr. 2018, pp. 57–64.
+[10] P. Molchanov, A. Mallya, S. Tyree, I. Frosio, and J. Kautz, “Importance       [36] J. Ngadiuba et al., “Compressing deep neural networks on FPGAs to
+     estimation for neural network pruning,” in Proc. IEEE/CVF Conf.                    binary and ternary precision with hls4ml,” Mach. Learn., Sci. Technol.,
+     Comput. Vis. Pattern Recognit. (CVPR), Jun. 2019, pp. 11264–11272.                 vol. 2, no. 1, Dec. 2020, Art. no. 015001.
+[11] Y. Wang et al., “Pruning from scratch,” in Proc. AAAI Conf. Artif. Intell.,   [37] Y. Umuroglu, Y. Akhauri, N. J. Fraser, and M. Blott, “LogicNets:
+     Apr. 2020, vol. 34, no. 7, pp. 12273–12280.                                        Co-designed neural networks and circuits for extreme-throughput appli-
+                                                                                        cations,” in Proc. 30th Int. Conf. Field-Program. Log. Appl. (FPL),
+[12] Y. Bai, H. Wang, Z. Tao, K. Li, and Y. Fu, “Dual lottery ticket
+                                                                                        Aug. 2020, pp. 291–297.
+     hypothesis,” 2022, arXiv:2203.04248.
+                                                                                   [38] G. Robinson, “Logical convolution and discrete Walsh and Fourier
+[13] S. Liu et al., “Sparse training via boosting pruning plasticity with               power spectra,” IEEE Trans. Audio Electroacoust., vol. AU-20, no. 4,
+     neuroregeneration,” in Proc. Adv. Neural Inf. Process. Syst. (NIPS),               pp. 271–280, Oct. 1972.
+     vol. 34, 2021, pp. 9908–9922.
+[14] S. Liu et al., “Deep ensembling with no overhead for either train-
+     ing or testing: The all-round blessings of dynamic sparsity,” 2021,
+     arXiv:2106.14568.                                                                                       Iván Ramírez received the B.Sc. degree in telecom-
+[15] X. Ma, G. Fang, and X. Wang, “LLM-Pruner: On the structural pruning                                     munication engineering from Universidad de Sevilla,
+     of large language models,” in Proc. Adv. Neural Inf. Process. Syst.,                                    Seville, in 2014, and the M.Sc. and Ph.D. degrees in
+     vol. 36, 2023, pp. 21702–21720.                                                                         computer vision from Universidad Rey Juan Carlos,
+[16] X. Men et al., “ShortGPT: Layers in large language models are more                                      Madrid, in 2016 and 2019, respectively.
+     redundant than you expect,” 2024, arXiv:2403.03853.                                                       Following that, he was a Post-Doctoral Associate
+[17] A. Kuzmin, M. Nagel, M. Van Baalen, A. Behboodi, and T. Blankevoort,                                    with the DAI-Laboratory, Massachusetts Institute of
+     “Pruning vs quantization: Which is better?” in Proc. Adv. Neural Inf.                                   Technology (MIT), Boston, in 2021. Currently, he is
+     Process. Syst., vol. 36, 2024, pp. 1–14.                                                                an Assistant Professor with Rey Juan Carlos Univer-
+[18] J. Wu, C. Leng, Y. Wang, Q. Hu, and J. Cheng, “Quantized convolutional                                  sity, where he is associated with the CAPO Research
+     neural networks for mobile devices,” in Proc. IEEE Conf. Comput. Vis.                                   Group. His research interests include machine learn-
+     Pattern Recognit. (CVPR), Jun. 2016, pp. 4820–4828.                           ing for computer vision, deep learning, representation learning, and variational
+                                                                                   methods for image processing.
+[19] I. Hubara, M. Courbariaux, and D. Soudry, “Quantized neural networks:
+     Training neural networks with low precision weights and activations,”
+     J. Mach. Learn. Res., vol. 18, pp. 1–30, Jan. 2018.
+[20] Y. Guo, “A survey on methods and theories of quantized neural net-                                      Francisco J. Garcia-Espinosa received the M.Sc.
+     works,” 2018, arXiv:1808.04752.                                                                         degree in computer vision from Universidad Rey
+[21] B. Moons, K. Goetschalckx, N. Van Berckelaer, and M. Verhelst,                                          Juan Carlos in 2016 and the Ph.D. degree in informa-
+     “Minimum energy quantized neural networks,” in Proc. 51st Asilomar                                      tion technology from Universidad Rey Juan Carlos
+     Conf. Signals, Syst., Comput., Oct. 2017, pp. 1921–1925.                                                in 2022. He is currently a member of the CAPO
+[22] M. Rastegari, V. Ordonez, J. Redmon, and A. Farhadi, “XNOR-Net:                                         Research Group, Department of Computer Science.
+     ImageNet classification using binary convolutional neural networks,”                                    His research interests include image processing,
+     in Computer Vision—ECCV 2016: 14th European Conference,                                                 computer vision, and deep learning.
+     Amsterdam, The Netherlands, October 11–14, 2016, Proceedings,
+     Part I. Springer, 2016, pp. 525–542. [Online]. Available:
+     https://link.springer.com/chapter/10.1007/978-3-319-46493-0_32
+[23] M. Courbariaux, I. Hubara, D. Soudry, R. El-Yaniv, and Y. Bengio,
+     “Binarized neural networks: Training deep neural networks with weights
+     and activations constrained to +1 or −1,” 2016, arXiv:1602.02830.                                       David Concha received the B.Sc. degree in com-
+[24] M. Kim and P. Smaragdis, “Bitwise neural networks,” 2016,                                               puter engineering and the M.Sc. degree in computer
+     arXiv:1601.06071.                                                                                       vision and the Ph.D. degree (Hons.) in information
+                                                                                                             technologies from Universidad Rey Juan Carlos,
+[25] C. Yuan and S. S. Agaian, “A comprehensive review of binary neural net-
+                                                                                                             Spain, in 2011 and 2021, respectively. His research
+     work,” Artif. Intell. Rev., vol. 56, no. 11, pp. 12949–13013, Nov. 2023.
+                                                                                                             interests include high-performance computing, com-
+[26] S. Ma et al., “The era of 1-bit LLMs: All large language models are in                                  puter vision, machine learning, GPU computing, and
+     1.58 bits,” 2024, arXiv:2402.17764.                                                                     hardware implementation.
+[27] I. A. M. Huijben, W. Kool, M. B. Paulus, and R. J. G. van Sloun,
+     “A review of the Gumbel-max trick and its extensions for discrete
+     stochasticity in machine learning,” IEEE Trans. Pattern Anal. Mach.
+     Intell., vol. 45, no. 2, pp. 1353–1371, Feb. 2023.
+[28] Y. Kim, “Deep stochastic logic gate networks,” IEEE Access, vol. 11,
+     pp. 122488–122501, 2023.                                                                                  Luis Alberto Aranda received the B.Sc. degree
+[29] G. Chen, “Learning symbolic expressions via gumbel-max equation                                           in industrial engineering and the M.Sc. degree in
+     learner networks,” 2020, arXiv:2012.06921.                                                                robotics from Universidad Carlos III de Madrid,
+[30] A. Payani and F. Fekri, “Inductive logic programming via differentiable                                   Spain, in 2012 and 2015, respectively, and the
+     deep neural logic networks,” 2019, arXiv:1906.03523.                                                      Ph.D. degree (Hons.) in industrial engineering from
+[31] G. Cybenko, “Approximation by superpositions of a sigmoidal function,”                                    Universidad Antonio de Nebrija, Madrid, Spain,
+                                                                                                               in 2018.
+     Math. Control, Signals, Syst., vol. 2, no. 4, pp. 303–314, Dec. 1989.
+                                                                                                                 From 2013 to 2014, he was a Project Engineer with
+[32] M. Andronic and G. A. Constantinides, “PolyLUT: Learning piecewise                                        Zeus Creative Technologies S.L., developing various
+     polynomials for ultra-low latency FPGA LUT-based inference,” in Proc.                                     computer vision projects. Subsequently, he was a
+     Int. Conf. Field Program. Technol. (ICFPT), Dec. 2023, pp. 60–68.                                         Professor and a Researcher with Universidad Anto-
+[33] J. Zhan, X. Zhou, and W. Jiang, “Field programmable gate array-based          nio de Nebrija from 2015 to 2021. Currently, he is with the CAPO Research
+     all-layer accelerator with quantization neural networks for sustain-          Group, Universidad Rey Juan Carlos, Madrid. He has actively participated
+     able cyber-physical systems,” Softw., Pract. Exper., vol. 51, no. 11,         in several research projects in collaboration with the National Institute of
+     pp. 2203–2224, Nov. 2021.                                                     Aerospace Technology (INTA), European Space Agency (ESA), Cobham
+[34] P. Jokic, S. Emery, and L. Benini, “BinaryEye: A 20 kfps streaming            Gaisler AB, and QinetiQ Space NV. He is the author of several technical
+     camera system on FPGA with real-time on-device image recognition              publications both in journals and international conferences. His research
+     using binary neural networks,” in Proc. IEEE 13th Int. Symp. Ind.             interests include reliability in reconfigurable computing for space applications
+     Embedded Syst. (SIES), Jun. 2018, pp. 1–7.                                    and hardware implementation of vision and artificial intelligence circuits.
+

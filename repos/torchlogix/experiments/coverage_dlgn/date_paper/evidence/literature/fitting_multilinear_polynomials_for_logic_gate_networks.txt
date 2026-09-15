@@ -1,0 +1,2129 @@
+                                                Fitting Multilinear Polynomials for Logic Gate
+                                                                   Networks
+
+
+                                                                                   Youngsung Kim
+                                                                       Department of AI; and Department of ECE,
+                                                                                    Inha University
+                                                                      y.kim@inha.ac.kr;yskim.ee@gmail.com
+arXiv:2605.08657v1 [cs.LG] 9 May 2026
+
+
+
+
+                                                                                        Abstract
+                                                    We study learnable logic gate networks that stack layers of 2-input Boolean gates
+                                                    to build combinational circuits. Every 2-input gate has a unique multilinear poly-
+                                                    nomial with 4 coefficients, so the 16 Boolean gates form a codebook of prototypes
+                                                    in a 4-dimensional space, reducing training to a vector-quantization problem. The
+                                                    baseline method, Soft-Mix, learns a 16-dimensional softmax over gate identities,
+                                                    but the codebook has rank 4: 11 of 15 simplex directions carry nullspace gradi-
+                                                    ent, and at uniform initialization the backward signal vanishes exactly. We prove
+                                                    that no affine product reparameterization fixes the resulting interaction-coefficient
+                                                    starvation under STE, and show that the covariance Jacobian of soft-VQ selection
+                                                    bypasses it by coupling the starved coefficient to the always-active constant channel.
+                                                    Working in the 4-dimensional polynomial space reduces each neuron from 16 to 4
+                                                    parameters. On seven datasets, at least one 4-parameter method matches or exceeds
+                                                    Soft-Mix on every dataset; the CovJac advantage over STE grows monotonically
+                                                    with interaction demand across all seven datasets. At depth, Soft-Mix collapses
+                                                    (−37.3pp on CIFAR-10 at 12 layers) while CovJac holds (−0.5pp on CIFAR-10,
+                                                    stable on MNIST).
+
+
+                                        1    Introduction
+                                        Learnable logic gate networks build combinational circuits by assigning a Boolean gate to every
+                                        neuron [1, 2]. These networks sit at the extreme efficiency end of the neural network spectrum:
+                                        the deployed model is a combinational circuit requiring no floating-point arithmetic and no weight
+                                        storage in the hidden layers [3, 4], with inherent interpretability since each neuron computes a named
+                                        logic function (AND, XOR, etc.) [5]. The challenge is training: selecting the right gate per neuron is
+                                        a discrete optimization problem with structural gradient pathologies. For 2-input gates (the setting
+                                        studied here), training must choose one of 16 possible gates per neuron, a discrete selection problem
+                                        typically relaxed via continuous surrogates (§2).
+
+                                        Observation: the 16 gates live in a 4-dimensional space. Every 2-input Boolean function has a
+                                        unique multilinear polynomial with 4 coefficients (§2.2) [6, 7], so the 16 gates are 16 integer points in
+                                        a 4-dimensional space. The softmax operates in 15 dimensions, but only 4 of those directions actually
+                                        change the neuron’s output; the remaining 11 carry gradient that does no work (§3). This suggests
+                                        training directly in the 4-dimensional coefficient space instead, learning c ∈ R4 and snapping to the
+                                        nearest valid gate.
+
+                                        Two gradient pathologies in this space. Working in 4 dimensions eliminates the redundancy
+                                        but exposes two problems. (i) The soft mixture used by the existing method suffers from exact
+                                        gradient cancellation: at the standard uniform initialization, the backward signal through each neuron
+                                        is provably zero for every input (Proposition 2). This worsens with depth. (ii) Under the straight-
+
+                                        Preprint.
+                               11/15 simplex directions → nullspace
+
+                                                               π ⊤G               c⊤ψ
+               (a) Soft-Mix            π               G                  c              z        ∂z/∂a = 0 at uniform π
+                                         15           16×4
+                                     ∈∆             Z
+                                    16 params        rank 4                       ψ = [1, a, b, ab]
+                                                              snap to G           ĉ⊤ψ
+      (b) Multilinear (ours)                           c                  ĉ             z        ∂z/∂a = ca +cab b
+                                                                                                          ̸= 0 after snap
+                                                      ∈ R4              ∈G
+                                                    4 params          quantized
+
+Figure 1: Both methods differ in how the coefficient vector c is obtained. Colored blocks are
+learnable parameters (red: Soft-Mix, blue: ours); gray blocks are fixed or derived. (a) Soft-Mix
+learns π ∈ ∆15 (16 params) and projects through the rank-4 codebook G: 11 of 15 simplex directions
+carry nullspace gradient, and at uniform π the input derivative vanishes exactly (Prop. 2). (b) Our
+method learns c ∈ R4 (4 params) and quantizes to the nearest codebook entry ĉ ∈ G; the output is
+z = ĉ⊤ψ, and after snapping |ca + cab b| ≥ 1 always (Prop. 3).
+
+
+through estimator (STE), the interaction coefficient cab , which distinguishes AND from OR and
+XOR from XNOR, receives gradient on only 25% of training samples. We prove that no affine
+reparameterization of the polynomial basis can fix this (Proposition 5).
+
+Solution: covariance Jacobian coupling. Our second method, Multilinear-CovJac, uses the
+Jacobian of a soft vector-quantization step to couple cab to the always-active constant channel,
+routing gradient to it on every sample (Proposition 4). Both resulting methods, Multilinear-STE and
+Multilinear-CovJac, use 4 parameters per neuron (Figure 1).
+
+Contributions. (1) We identify the rank-4 structure of the Boolean gate codebook and show that
+11 of 15 softmax gradient directions are wasted; at uniform initialization the gradient vanishes
+exactly. (2) We prove that the interaction coefficient cab is inherently starved under STE, and that
+no affine product basis can simultaneously fix coverage, coherence, and bias. (3) We propose two
+4-parameter gate layers: Multilinear-STE (hard snap + polynomial STE) and Multilinear-CovJac
+(soft-VQ with input-independent Jacobian coupling to cab ). (4) We validate on seven datasets that
+at least one 4-parameter method matches or exceeds 16-parameter Soft-Mix on every dataset; the
+CovJac advantage grows monotonically with task interaction demand; at L=12, Soft-Mix collapses
+(−37.3pp on CIFAR-10) while CovJac holds (−0.5pp).
+
+2      Background
+2.1     Training logic gate networks
+
+Selecting one of 16 known operations per neuron is a discrete optimization problem analogous to
+operator selection in neural architecture search [8], but over a small, fully enumerable set. The
+standard approach is continuous relaxation: replace the discrete gate choice with a differentiable sur-
+rogate so the network can be trained end-to-end with backpropagation, then discretize at deployment.
+Differentiable logic gate networks (DLGNs) [1], the architecture we study, implement this with L
+hidden layers of width k. Each neuron in layer l receives two inputs from layer l−1 via fixed random
+wiring; the first layer draws from the input features. The final layer’s k outputs are partitioned into C
+equal groups (one per class), summed within each group, and passed through softmax to produce
+class probabilities (GroupSum readout).
+
+Soft mixture over all 16 gates. In the approach of Petersen et al. [1], each neuron learns a distribu-
+                                                                                    P15
+tion π ∈ ∆15 over the 16 gates; the training output is the weighted mixture z = j=0 πj gj (a, b),
+and the deployed gate is g ∗ = arg maxg πg . Because training uses a soft mixture of all 16 gates
+while deployment uses a single selected gate, there is a potential train-to-deploy mismatch [9]. Kim
+[10] further analyzed the generalization gap and introduced logical skip connections to narrow it.
+
+Single-gate selection via Gumbel-Softmax. Keeps 16 logits per neuron but samples a one-hot gate
+via Gumbel-Softmax [11, 12] during training (hard argmax at deployment), with straight-through
+
+
+                                                              2
+gradients [13]. Only one gate is active per forward pass, avoiding the backward cancellation (§4.1).
+Kim [14] introduced Gumbel-Softmax with STE to logic gate networks to reduce the discretization
+gap. Yousefi et al. [15] further analyze the discretization gap in DLGNs and propose methods to
+reduce it.
+
+Input-wise Parametrization (IWP). Rüttgers et al. [16] reduce to 4 parameters per neuron in
+the corner basis ϕij (a, b) = ai (1−a)1−i bj (1−b)1−j and identifies that complementation symmetry
+(g 7→ 1−g) causes pairwise gradient cancellation at symmetric initialization, stalling optimization at
+depth.
+
+2.2   The multilinear extension
+
+Every 2-input Boolean function has a unique multilinear polynomial [6, 7, 17, 5]. In the canonical
+monomial basis this is
+                g(a, b) = c0 + ca a + cb b + cab ab,       c = [c0 , ca , cb , cab ]⊤ ∈ R4 ,         (1)
+where c0 is the constant output, ca and cb are linear effects, and cab is the interaction term, zero
+for separable gates, nonzero for interactive gates. Since the inputs are Boolean, all 16 gates
+have integer coefficients, e.g. AND=[0, 0, 0, 1], OR=[0, 1, 1, −1], XOR=[0, 1, 1, −2], A=[0, 1, 0, 0],
+FALSE=[0, 0, 0, 0] (full table in Appendix A.1).
+The same polynomial can be written in the corner basis ϕij (a, b)=ai (1−a)1−i bj (1−b)1−j , where
+each basis function isolates one input combination; this is the parameterization used by IWP [16].
+The two bases are related by an invertible linear map (Appendix C) and span the same function
+space; the critical difference is the gradient structure under discrete training constraints, analyzed in
+§4. Since the canonical basis has the sparsest monomials under STE (§4), we train directly in this
+4-dimensional coefficient space. Connections to fuzzy logic, probabilistic circuits, and degree as
+logical complexity are in Appendix B.
+
+3     Method
+We collect the 16 integer coefficient vectors into a codebook G ∈ Z16×4 of rank 4 (Gj : row j, a
+4-vector; Gjk : scalar entry), and observe that the Soft-Mix output can be written as z = c⊤
+                                                                                           eff ψ(a, b)
+with ceff = π ⊤ G and ψ = [1, a, b, ab]⊤ . Since G has rank 4, the map π 7→ π ⊤ G projects the
+15-dimensional simplex onto a 4-dimensional space: only 4 of 15 simplex directions change the
+neuron’s output; the remaining 11 carry gradient that does no work.
+We therefore train directly in the 4-dimensional coefficient space. Each neuron stores c =
+[c0 , ca , cb , cab ]⊤ ∈ R4 (4 learnable parameters). Because the deployed circuit requires a valid
+Boolean gate, c must be quantized to the nearest codebook entry:
+                              ĉ = Gj ∗ ,     j ∗ = argminj ∥c − Gj ∥22 .                            (2)
+
+By Eq. 1, z = ĉ⊤ ψ(a, b) agrees with the Boolean truth table on {0, 1}2 . The two methods below
+share this quantization and differ only in when it is applied and how gradients flow through it.
+
+3.1   Multilinear–Straight-Through Estimator (STE)
+
+Forward. Each neuron snaps c to the nearest gate ĉ via Eq. 2 and evaluates z = ĉ⊤ ψ(a, b) =
+ĉ0 + ĉa a + ĉb b + ĉab ab. The same quantized gate is used in both training and deployment, so there
+is no train-to-deploy mismatch (Appendix A.1).
+
+Backward. The quantization c 7→ ĉ (Eq. 2) maps every c in a region of R4 to the same codebook
+vector, so small perturbations of c leave ĉ unchanged and ∂ĉ/∂c = 0 almost everywhere. The
+straight-through estimator (STE; Bengio et al. [13]) bypasses this by approximating ∂ĉ/∂c ≈ I
+in the backward pass. Let L denote the network loss and δ = ∂L/∂z the upstream error signal
+backpropagated to this neuron’s output z = ĉ⊤ ψ. Then by the chain rule:
+                      ∂L   ∂L    ∂L ∂z
+                         ≈     =   ·    = δ · ψ(a, b) = δ · [1, a, b, ab]⊤ ,                         (3)
+                      ∂c   ∂ĉ   ∂z ∂ĉ
+
+                                                   3
+The gradient for each coefficient ck is scaled by the corresponding basis monomial [1, a, b, ab]k ,
+which is nonzero only when all its input arguments equal 1. This creates a hierarchical coverage
+pattern: under i.i.d. Bernoulli(1/2) inputs (idealized; confirmed empirically in §5), c0 receives
+gradient 100% of the time (its monomial is 1), ca and cb at 50% (active when a=1 or b=1), and cab at
+only 25% (active only when a=b=1). The expected active-component count is 1+ 12 + 21 + 14 = 2.25,
+versus 4× 14 = 1.0 for the corner basis, a 2.25× ratio (Lemma 6; full table in Appendix A.2). The
+empirical consequence (a 17pp accuracy gap) is in §5.
+However, this hierarchy has a cost. The interaction coefficient cab , the interaction term (second-
+order Sobol index [18, 19]) that distinguishes AND from OR and XOR from XNOR, receives
+gradient on only 1 in 4 samples. This is not an implementation artifact: it is intrinsic to the
+multilinear basis under STE, and no affine reparameterization of the basis can fix it without introducing
+bias or losing coherence (Proposition 5, §4.4). The cab starvation motivates the second variant below.
+
+3.2   Multilinear–Covariance Jacobian (CovJac)
+
+Under STE, the interaction coefficient cab learns from only 25% of training samples while c0 learns
+from all of them. We seek a gradient mechanism that couples cab to the always-active dimensions,
+routing gradient to it on every sample.
+
+Idea: soft vector quantization. Instead of hard-quantizing c to the nearest codebook entry (as in
+STE), we relax the quantization during training by computing a proximity-weighted average over all
+codebook entries [20, 21]:
+                                                                   X
+                    ωj = softmax −∥c − Gj ∥2 /τ j ,
+                                                    
+                                                           csoft =    ωj Gj .                  (4)
+                                                                        j
+
+Here ωj are proximity weights (not the Soft-Mix gate distribution π): codebook entries closer to c
+receive higher weight. During training the neuron evaluates z = c⊤soft ψ(a, b); at deployment it uses
+the hard-quantized ĉ as before. We fix τ =1 throughout. The codebook is the fixed set of 16 Boolean
+gates, not learned.
+
+Why this helps: the covariance Jacobian. The key property of soft-VQ is that gradients flow
+through the Jacobian ∂csoft /∂c. Since ωj ∝ exp(−∥c − Gj ∥2 /τ   P), the derivative of each weight is
+∂ωj /∂c = (2/τ ) ωj (Gj − csoft ); substituting into ∂csoft /∂c = j (∂ωj /∂c) G⊤  j gives
+
+                                          ∂csoft   2
+                                     J=          = Covω (G),                                      (5)
+                                            ∂c     τ
+                                                          P
+the ω-weighted covariance of the codebook, Covω (G)ik = j ωj (Gji −(csoft )i )(Gjk −(csoft )k ) (full
+proof in Appendix A.4; see also Huh et al. [22] for STE failure modes motivating soft alternatives).
+This matrix is symmetric PSD, strictly positive on the diagonal, and and, crucially, independent
+of the input (a, b) (Proposition 4, §4.3). Because J is a covariance matrix over the codebook, its
+off-diagonal entries couple different coefficient dimensions. Writing Jik for the (i, k) entry of J
+(0-indexed: i=0 for c0 , i=3 for cab ) and δ = ∂L/∂z for the upstream scalar gradient, the gradient
+reaching cab is:
+                         ∂L                                              
+                             = δ · 1 · J03 +a · J13 + b · J23 + ab · J33 .                        (6)
+                        ∂cab           | {z }
+                                     always active
+
+The leading term J03 multiplies the constant monomial 1, which is active on every sample. Since
+J03 = (2/τ ) Covω (G·0 , G·3 ) ̸= 0 generically, cab receives a non-zero gradient on every training
+sample, not just the 25% where a=b=1.
+
+Comparison of the two mechanisms. Both methods reduce each neuron from 16 to 4 parameters.
+The two gradient mechanisms are complementary: STE is support-weighted (gradient fires when
+the relevant input is active) and quantizes in both phases (no train-deploy mismatch); CovJac is
+codebook-coupling-weighted (gradient fires via J03 regardless of input) and uses soft-VQ during
+training, quantizing only at deployment. The price of CovJac is a small train-deploy gap (≤ 0.2%
+on all main datasets; ≤ 1% on MONK’s-2 with k=136). The 4× parameter reduction yields a 4×
+reduction in Adam optimizer state. A full method comparison is in Appendix C.
+
+
+                                                     4
+4     Theoretical Analysis
+Section 3 claimed that Soft-Mix gradient cancels at uniform π, that Multilinear-STE avoids this
+cancellation, and that CovJac couples cab to an always-active channel. We now prove these claims.
+We also address whether a different polynomial basis could fix the cab starvation. We show that the
+answer is no: no affine product basis can simultaneously achieve full coverage, coherent direction,
+and unbiased updates for cab under STE. This is why CovJac (a different gradient mechanism, not a
+different basis) is needed.
+
+4.1   Soft-Mix backward cancellation
+
+We denote ca,j , cb,j , cab,j for the coefficients of gate j (i.e. the entries of Gj from §3).
+Lemma 1 (Zero-sum gate derivative symmetry; elementary). For the 16 Boolean coefficient vectors,
+                                 15
+                                 X              15
+                                                X              15
+                                                               X
+                                       ca,j =         cb,j =         cab,j = 0.                       (7)
+                                 j=0            j=0            j=0
+
+
+Proof sketch. Boolean functions are closed under pointwise complementation g 7→ ḡ = 1 − g,
+which is an involution with no fixed points; the set B of 16 Boolean functions therefore splits into 8
+complementary pairs. By Eq. 1, ḡ = 1 − g = (1−c0 ) − ca a − cb b − cab ab, so c̄a = −ca , c̄b = −cb ,
+c̄ab = −cab . Each complementary pair sums to zero in the non-constant coefficients. Summing
+pair-by-pair gives the claim. (Attribution: the complementation pairing is the same observation
+used by Rüttgers et al. [16, Eq. 7] in the corner basis. The zero-sum follows from standard Boolean
+function symmetry [23, 17, Ch. 1].)
+Proposition 2 (Soft-Mix backward vanishes at uniform π). Rüttgers et al. [16, Eq. 7] showed that
+this complementation symmetry causes approximate gradient cancellation at symmetric initialization.
+We sharpen this to an exact identity that holds for all inputs, not only at initialization: for z =
+P15
+    j=0 πj gj (a, b) and πj = 1/16 for all j,
+
+                        ∂z          ∂z
+                           (a, b) =    (a, b) = 0           for every (a, b) ∈ [0, 1]2 .              (8)
+                        ∂a          ∂b
+                                                                            P
+Proof sketch. Substituting the multilinear form and differentiating, ∂z/∂a = j πj (ca,j + cab,j b).
+                                    P            P
+At πj = 1/16, this equals (1/16)[ j ca,j + b j cab,j ] = 0 by Lemma 1. The same holds for
+∂z/∂b.
+
+Dynamical interpretation (Observation 1; informal, not a theorem). A near-uniform bound
+(proved in Appendix A.3) gives |∂z/∂a| ≤ ∥π − u∥1 where u = (1/16, . . . , 1/16) is the uniform
+distribution, so if ∥π (l) − u∥1 ≤ ϵ at layer l, the per-layer signal attenuation is at most ϵ. At
+initialization with logit std σ=1.0, the expected ∥π − u∥1 ≈ 0.72, giving per-layer signal ≤ 0.72;
+over L layers the product is O(0.72L ), which at L=12 is ≈ 0.019. What is rigorous: the per-neuron
+bound ∥π − u∥1 . What is not: that neurons remain near-uniform throughout training rather than
+committing quickly; this is confirmed empirically (§5.4, Figure 4).
+
+Single-gate-forward corollary. Proposition 2’s cancellation requires summing over all 16 gates:
+only then do the Lemma 1 zero-sums cancel inside ∂z/∂a. Any method committing to a single
+gate in the forward pass (whether by hard quantization or stochastic sampling [11, 12]) avoids the
+cancellation by construction, regardless of parameter count. This prediction is confirmed by the depth
+experiments (§5.2, Figure 2).
+
+4.2   Multilinear-STE avoids the cancellation
+
+Proposition 3 (Multilinear-STE backward non-cancellation). In Multilinear-STE with committed
+gate ĉ = (c0 , ca , cb , cab ), the STE backward derivative is ∂z/∂a = ca + cab b, and for every Boolean
+gate depending on input a, maxb∈{0,1} |ca + cab b| ≥ 1.
+Proof sketch. The STE rule treats ĉ as a parameter; differentiating the polynomial gives ca + cab b.
+The gate depends on a iff (ca , cab ) ̸= (0, 0); case analysis on ca ̸= 0 and ca = 0, cab ̸= 0 evaluated
+
+
+                                                        5
+at b = 0 or b = 1 respectively each yields a value of magnitude ≥ 1 since the integer coefficients are
+in {−2, . . . , 2}. Full proof and a 12-row enumeration of all a-dependent gates are in Appendix A.4.
+
+4.3   CovJac selection Jacobian
+
+Proposition 3 shows that STE avoids cancellation but still starves cab (25% coverage). We now show
+that the CovJac Jacobian has three properties that together guarantee cab receives gradient on every
+sample.
+                                                                                          P
+Proposition 4 (CovJac input-independence, PSD, positive diagonal). For c 7→ csoft (c) = j ωj Gj ,
+the Jacobian is
+                                                2
+                                      J(c) = Covω (G),                                           (9)
+                                                τ
+i.e. (i) input-independent (depends only on c, not (a, b)); (ii) symmetric PSD; (iii) strictly positive
+diagonal for every coordinate throughout training at τ >0 on the 16-Boolean codebook.
+
+Proof sketch. The softmax Jacobian is a standard covariance matrix (see e.g. Bishop [24, Eq. 4.106]
+for the softmax
+           P      case). Here the chain rule gives ∂ωj /∂cm = (2/τ )ωj (Gjm −     (csoft )m ). Since
+                                                                                 P
+(csoft )i = j ωj Gji , differentiating by cm and substituting yields Jim = (2/τ ) j ωj Gji Gjm −
+( j ωj Gji )( j ωj Gjm ) = (2/τ ) Covω (G·i , G·m ), completing (i). For any v, v⊤ Jv =
+ P            P            
+            P
+(2/τ )Varω ( i vi G·i ) ≥ 0 gives PSD. The diagonal Jmm = (2/τ )Varω (G·m ) > 0 since every
+coordinate takes at least two distinct values on the 16-Boolean codebook and softmax at finite τ has
+full support. Full proof in Appendix A.4.
+The cross-coefficient coupling consequence (cab receives gradient on every sample via J03 , Eq. 6)
+follows directly from Proposition 4’s positive diagonal and input-independence.
+
+4.4   Basis futility
+
+A natural question is whether a different polynomial basis could fix the cab starvation without
+changing the gradient mechanism. The following proposition shows that the answer is no: any affine
+reparameterization of the basis trades one desirable property for another.
+Proposition 5 (No affine product basis simultaneously fixes STE). Let ϕ(x) = α+βx with β ̸= 0 and
+ψ̃(a, b) = (1, ϕ(a), ϕ(b), ϕ(a)ϕ(b))⊤ . Define: coverage ρ = P(ψ̃3 (a, b) ̸= 0) (fraction of samples
+where the interaction component receives gradient), coherence κ = |E[ψ̃3 ]|/E[|ψ̃3 |] (alignment of
+the gradient direction), and STE bias B = inf D E[∥ψ̃ − Dψ can ∥2 ] where D ranges over positive
+diagonal matrices (distance to the canonical basis modulo positive rescaling). Full definitions in
+Appendix A.5. Then no affine product basis simultaneously attains ρ = 1, κ = 1, and B = 0. In
+particular: the canonical basis ϕ(x)=βx (β>0) is the unique B=0 case, with ρ = 1/4, κ = 1; all
+other affine bases give ρ = 1 but either κ < 1 or B > 0 (or both).
+
+Proof sketch. Parameterize (p, q) = (ϕ(0), ϕ(1)). The canonical basis (p=0, ϕ(x)=βx) gives
+(ρ, κ, B) = (1/4, 1, 0): low coverage but no bias. All other choices have ρ=1 but introduce either
+coherence loss (κ<1, e.g. Walsh basis with p=−q gives κ=0) or STE bias (B>0, e.g. smoothed
+basis with p, q>0). Full case-split in Appendix A.5; empirical confirmation in Appendix D.
+
+
+5     Experiments
+
+We validate the theoretical predictions on seven binary-input datasets: Adult, Splice [25], MNIST [26],
+SVHN [27], CIFAR-10/100 [28], and MONK’s-2 [29]. All experiments use the DLGN architecture [1]
+with L=6 layers, GroupSum readout, Adam [30] (lr= 0.01), batch 512, and 3 seeds. We report
+last-10 accuracy (mean of final 10 evaluation checkpoints). We compare Soft-Mix (16p), Gumbel-ST
+(16p), Multilinear-STE (ours, 4p), and Multilinear-CovJac (ours, 4p); CovJac uses τ =1 except Adult
+(τ =0.1; Appendix E.12). Full setup details in Appendix E.1; additional results including depth tables,
+width scaling, architecture baselines, and temperature sensitivity in Appendix E.
+
+
+                                                  6
+Table 1: Cross-dataset comparison (last-10 accuracy ± std, 3 seeds; best-checkpoint accuracy in
+Appendix Table 10). Bold = best per column. L=6; k: MNIST 64k, Adult/Splice 4k, SVHN/CIFAR-
+10 128k, CIFAR-100 256k, MONK’s-2 136 (100k iters for CIFAR-100; 10k for MONK’s-2; rest
+50k).
+               Method                      #p/n        Adult               Splice        MONK’s-2             MNIST             SVHN            CIFAR-10        CIFAR-100
+               Soft-Mix                    16       84.68±.07             97.01±.11     81.32±1.09          98.29±.04         68.21±.08         58.13±.12       27.92±.43
+               Gumbel-ST                   16       84.69±.06             96.81±.30     81.46±.89           98.17±.07         66.12±.38         58.24±.25       27.72±.40
+               M-STE (ours)                 4       84.91±.01             97.07±.00     78.53±1.25          98.09±.02         66.69±.11         56.02±.23       24.02±.17
+               M-CovJac (ours)             4       84.93±.03†             97.20±.23     86.06±2.17          98.30±.04         68.91±.13         58.97±.26       28.37±.22
+                                                               †
+                                                                   Adult: τ =0.1 (all other datasets: τ =1.0; Appendix E.12).
+
+
+
+                                                                               Table 2: Ablation on MNIST (k=64k, L=6, 3 seeds). Each
+Accuracy (%)
+
+
+
+
+               95        Soft-Mix                                              row differs from the one above by exactly one design choice.
+                         Gumbel-ST
+               90        M-STE (ours)
+                                                                               The +17.25pp IWP-STE→M-STE gap isolates the basis ef-
+               85        M-CovJac (ours)               15.4pp                  fect (Appendix F); the +0.21pp M-STE→M-CovJac gap iso-
+                                           MNIST                               lates the gradient mechanism. Bold = best. Last-10 accuracy.
+               80
+               60                                                                     Method                          Acc (%)            Design change               ∆
+Accuracy (%)
+
+
+
+
+                                                                0.5pp                 IWP-STE†                     80.84±2.62            corner + STE                 –
+               40                                                                     M-STE (ours)                 98.09±0.02            → multilinear           +17.25
+                                                        37.3pp                        M-CovJac (ours)              98.30±0.04            → CovJac                 +0.21
+               20                    CIFAR-10                                         Soft-Mix                     98.29±0.04            → 16p softmax           −0.01
+                     3              6              9                 12               IWP‡                         77.95±2.60            continuous                   –
+                                        Depth L                                       M-free§                      98.06±0.11            continuous                   –
+Figure 2: Accuracy vs depth (3                                                                         †
+                                                                                                           Our ablation. ‡ [16]. § Italic: not Boolean gates.
+seeds). Soft-Mix collapses on both
+MNIST and CIFAR-10; CovJac holds
+(−0.5pp on CIFAR-10 at L=12).
+
+
+
+5.1                 Cross-dataset comparison
+
+Table 1 shows that CovJac matches or exceeds all baselines on every dataset using 4× fewer
+parameters. The CovJac advantage over Soft-Mix is small on easy tasks (+0.01pp on MNIST) but
+grows on harder ones (+0.84pp on CIFAR-10, +0.45pp on CIFAR-100 with the tightest variance). On
+Adult, the default τ =1.0 causes CovJac’s cab coupling to add overhead on this low-interaction task;
+lowering τ to 0.1 reduces the coupling and recovers M-STE-level accuracy (84.93%).
+The most informative comparison is CovJac vs STE, since both use 4 parameters and differ only in
+the gradient mechanism. This gap widens monotonically with task interaction demand: +0.02pp
+(Adult) → +0.13pp (Splice) → +0.21pp (MNIST) → +2.22pp (SVHN) → +2.95pp (CIFAR-10)
+→ +4.35pp (CIFAR-100) → +7.53pp (MONK’s-2; Table 16 and Figure 6 in Appendix E.9). On the
+most interaction-dense tasks (CIFAR-10/100), STE underperforms even Soft-Mix (56.02% / 24.02%
+vs 58.13% / 27.92%), confirming that cab starvation is the binding constraint. CovJac is the best
+method on all seven datasets; under a null of equal performance, a sign test gives p = 2−7 < 0.01
+(Appendix E.1).
+
+
+5.2                 Depth stability
+
+Depth (Figure 2). As predicted by Proposition 2 and Observation 1, Soft-Mix collapses at depth
+because its gradient cancellation compounds across layers. On MNIST, Soft-Mix drops −15.4pp
+from L=6 to L=12; on CIFAR-10, the collapse reaches −37.3pp. In contrast, all single-gate-forward
+methods survive: CovJac is the most depth-stable (−0.5pp on CIFAR-10, essentially zero on MNIST),
+followed by STE and Gumbel-ST. On Adult with τ =0.1, CovJac degrades only −0.04pp from L=6
+to L=12 (Appendix Table 20). Doubling the training budget to 100k iterations partially recovers
+Soft-Mix but still leaves a 6.0pp gap to single-gate methods (Appendix Table 19), confirming that the
+penalty is structural, not a training-speed lag. Full depth tables for all datasets are in Appendix E.10.
+
+
+                                                                                              7
+Ablation (Table 2). The +17.25pp IWP-STE → M-STE gap is purely from the basis change (both
+span the same function space; Appendix C); the effect is even larger on CIFAR-10 (+22.65pp) and
+present on Adult (+8.50pp). The 2×2 basis×constraint factorial (Appendix F) confirms: the gap
+appears only under STE, not under continuous training. At L=12, Multilinear-free drops to 92.95%
+while IWP-free holds at 97.80% (Appendix Table 25), reversing the ranking: the multilinear basis’s
+degree hierarchy becomes a liability without the snap constraint.
+
+5.3   Cost, width scaling, and interaction-demand scaling
+
+Computational cost. At deployment all methods evaluate a single hard gate (∼7 ops). M-STE is
+25× cheaper at training (one polynomial vs 16); all 4-parameter methods save 4× optimizer memory
+(Appendix Table 6).
+
+Width scaling (empirical). At L=1 on MNIST (isolating the per-layer effect), CovJac achieves
+61% faster error decay with width: fitting A(k) = 100 − Bk −α (3 seeds) gives α=0.42 vs Soft-Mix’s
+0.26, likely because the J03 coupling makes more neurons effectively trainable per width unit. At
+matched parameter budget (4× wider CovJac), the gap is +3.3pp, costing only 1/6 the inference
+FLOPs (Appendix E.4).
+
+Interaction-demand scaling. The CovJac advantage over STE scales monotonically with task
+interaction demand: from +0.02pp on separable Adult to +7.53pp on interaction-dense MONK’s-2
+(Appendix Figure 6). The intuition is that STE’s 25% cab coverage (Lemma 6) is sufficient when a
+task can be solved with mostly separable gates, but becomes the binding constraint when interactive
+gates (AND, XOR) are needed. We formalize this as the cab starvation severity (the Soft-Mix − STE
+accuracy deficit) and find Pearson r=0.85 correlation with the CovJac advantage (Appendix E.9,
+Table 17). The advantage persists at larger scale: on CIFAR-100 at k=1280k and Tiny-ImageNet at
+k=2560k, CovJac remains the best method with growing gaps (Appendix E.6).
+
+5.4   Diagnostic experiments
+
+Commitment dynamics (Figure 3). Figure 3 tracks three quantities on CIFAR-10 over training.
+Panel (b) shows the gradient-norm ratio ∥∇cab ∥/∥∇c0 ∥: for STE this stabilizes at 0.227 (matching
+the theoretical E[ab]=1/4 from Lemma 6), while for CovJac it reaches 14.27, confirming that the
+J03 coupling (Proposition 4) amplifies the cab gradient by ∼60× relative to STE. Panel (c) measures
+gate commitment via std(cab ) across neurons: STE commits quickly (std=50.7) but to suboptimal
+gates (56.02% final accuracy); CovJac commits slowly (std=5.9) but accurately (58.97%); Soft-
+Mix never commits (std=1.1). Panel (d) reveals the mechanism: STE locks into gates early before
+learning which ones are correct, while CovJac explores first and commits only after accuracy plateaus
+(Appendix E.7).
+
+Signal survival (Figure 4). To directly test Proposition 2, we measure per-layer signal survival
+sl = ∥∂zl /∂hl−1 ∥/∥∂zl /∂hl−1 ∥max , the fraction of gradient signal not cancelled. At initialization
+on MNIST (L=12, logit std σ=1.0), Soft-Mix has sl ≈ 0.29 (71% of gradient cancelled at each
+layer), while M-STE has sl = 1.0 and CovJac has sl = 0.993. This directly confirms the theory:
+Soft-Mix cancels because it sums over all 16 gates (Proposition 2); single-gate methods do not
+(Proposition 3).
+
+Gate selection at convergence (Figure 5). The gate type distribution at convergence reveals how
+each method uses the 16-gate codebook. CovJac selects the highest fraction of strong-interaction
+gates (|cab |≥2): 25.7% on CIFAR-10, 27.2% on MNIST, 36.2% on Adult, compared to 16–21% for
+all other methods. CovJac also has the fewest constant gates (<0.5% vs 4–10%), indicating almost
+no wasted neurons. This is a direct consequence of the J03 coupling: gradient flows to cab on every
+sample, pushing neurons toward interactive gates (Appendix E.11).
+
+Controls. Hard-ST (16p, argmax + STE) confirms single-gate-forward suffices for depth stability
+(98.11% MNIST, 57.39% CIFAR-10) but does not fix cab starvation: it has 16 parameters and still
+suffers the 25% coverage limitation. Walsh and smoothed bases also fail, as predicted by Proposition 5:
+Walsh achieves full coverage (ρ=1) but exact coherence cancellation (κ=0, 94.92%); the smoothed
+basis has ρ=1 and κ=1 but non-zero STE bias (B>0), collapsing to 10.14% (Appendix D).
+
+
+                                                  8
+                                                         (a) Test Accuracy                                                                                             (b) cab Gradient Ratio
+                                                                                                                                              15.0
+                                     58
+
+
+
+
+                                                                                                                       grad(cab) / grad(c0)
+                                                                                                                                              12.5
+
+
+            Test accuracy (%)
+                                     56                                                                                                       10.0                                    Multilinear-STE (ours)
+                                     54                                                                                                                                               Multilinear-CovJac (ours)
+                                                                                                                                               7.5                                    Theoretical (i.i.d.): 0.25
+                                     52                                                                                                                                               Equal gradient (ratio = 1)
+                                                                                                                                               5.0
+                                     50                                     Multilinear-STE (ours)
+                                                                            Multilinear-CovJac (ours)                                          2.5
+                                     48                                     Soft-Mix
+                                                                                                                                               0.0
+                                          0       10000 20000 30000 40000 50000                                                                        0     10000 20000 30000 40000 50000
+                                                         Training iteration                                                                                             Training iteration
+                                                  (c) Commitment Trajectory                                                                                 (d) Commitment vs Accuracy
+                                     50                                                                                                       60.0      learn, then commit
+           std(cab) across neurons
+
+
+
+
+                                                  Multilinear-STE (ours)
+                                                  Multilinear-CovJac (ours)
+
+
+
+
+                                                                                                                        Test accuracy (%)
+                                     40                                                                                                       57.5
+                                                  Soft-Mix
+                                                                                                                                              55.0
+                                     30
+                                                                                                                                              52.5 no commit           commit fast, stall
+                                     20                                                                                                       50.0
+                                     10                                                                                                       47.5                  Multilinear-STE (ours)
+                                                                                                                                                                    Multilinear-CovJac (ours)
+                                     0                                                                                                        45.0                  Soft-Mix
+                                          0       10000 20000 30000 40000 50000                                                                             10  0               101                          102
+                                                         Training iteration                                                                                std(cab)            commitment level
+Figure 3: CIFAR-10 (k=128k, L=6, 3 seeds). (a) Accuracy over training. (b) cab gradient ratio:
+CovJac reaches 14×, STE stays at theoretical 0.25. (c) Commitment (std(cab )): STE commits fast,
+CovJac slow, Soft-Mix never. (d) Commitment vs accuracy: STE commits to wrong gates and stalls;
+CovJac learns first, then commits; Soft-Mix improves without committing.
+
+                                                                                                                        Adult                                             MNIST                           CIFAR-10
+                                                                                                        100
+                                                                                                                      18%               16%                      15%     14%   16%                 18%    18%      21%
+ 1.0                                                                                                          22%                                                                       27%                              26%
+                                                                                                        80                                         36%
+ 0.8
+                                                                                        Gate type (%)
+
+
+
+
+                                                                                                                                                                         38%
+                                                                                                                                          39%                    41%            40%
+ 0.6                                                                                                    60            40%                                                                          44%     42%     37%
+                                                                                                              45%
+                                                                                                                                                                                         41%                             44%
+    0.4
+                                                                                                                                                     38%
+    0.2                                                                                                 40
+                                                                                                                                          35%                            39%    35%
+    0.0                                                                                                               34%                                        38%                                               33%
+                                                                                   50                   20    29%                                                                        31%
+                                                                                                                                                                                                   34%     36%
+          10                                                                  40                                                                     26%                                                                 30%
+
+                   Laye 5
+                                                                        30
+                                                                               1k)
+                                                                         on (×
+                                                                20                                       0
+                       r                                  10           ti                                     SM G-ST STE                            CJ          SM G-ST STE             CJ        SM G-ST STE           CJ
+                                              0      0         Itera                                                                                                      Weak (|cab| = 1)          Strong (|cab| = 2)
+                                                                                                                    Constant                         Separable
+Figure 4: Signal survival sl per Figure 5: Gate type distribution (3 seeds). SM=Soft-Mix, G-
+layer on MNIST (L=12, 3 seeds). ST=Gumbel-ST, STE=M-STE (ours), CJ=M-CovJac (ours).
+Soft-Mix (red): sl ≈ 0.3 (71% can- CovJac: highest strong-interaction fraction (darkest, 26–36%),
+celled), confirming Proposition 2. fewest constant (<0.5%, not visible in bars).
+Ours (blue, teal): sl ≈ 1.0 (no can-
+cellation).
+
+
+6         Conclusion
+
+The 16 two-input Boolean gates are 16 points in a 4-dimensional polynomial space. Training in this
+space rather than the 16-dimensional softmax eliminates 11 nullspace gradient directions, avoids
+exact gradient cancellation at uniform initialization, and reduces each neuron from 16 to 4 parameters.
+The CovJac gradient mechanism further bypasses interaction-coefficient starvation by coupling cab
+to the always-active constant channel. Empirically, CovJac matches or exceeds Soft-Mix on all
+seven datasets using 4× fewer parameters. The CovJac-vs-STE gap grows monotonically with task
+interaction demand (r=0.85 correlation with starvation severity; Appendix E.9), from +0.02pp
+on separable Adult to +7.53pp on interaction-dense MONK’s-2. At depth, Soft-Mix collapses
+(−37.3pp on CIFAR-10 at L=12) while CovJac holds (−0.5pp on CIFAR-10), directly confirming
+
+
+                                                                                                                       9
+the backward-cancellation theory. The three pathologies identified here arise from structural properties
+of the codebook, not from Boolean gates specifically: nullspace redundancy appears whenever a
+codebook has rank less than its size; backward cancellation appears under complementation symmetry;
+and starvation appears whenever monomial-degree ordering creates hierarchical coverage under STE.
+The CovJac coupling (Proposition 4) applies to any fixed codebook. We demonstrate these effects
+on 2-input Boolean gates; whether they arise in other codebook-based selection problems (NAS
+operation sets, MoE expert assignments) is an empirical question for future work, alongside k-input
+gates and learnable input wiring (Appendix E.1).
+
+Acknowledgments
+The author thanks Oliver and Guy at StarAI Lab, UCLA, for constructive discussions on (probabilistic)
+logic circuits and the lab members (Benjie, Poorva, Daniel, Renato, Zoe, Gwen) for their kind
+interactions during a research visit.
+
+References
+ [1] Felix Petersen, Christian Borgelt, Hilde Kuehne, and Oliver Deussen. Deep differentiable logic
+     gate networks. In Advances in Neural Information Processing Systems, volume 35, 2022.
+ [2] Felix Petersen, Hilde Kuehne, Christian Borgelt, Julian Welzel, and Stefano Ermon. Convo-
+     lutional differentiable logic gate networks. In Advances in Neural Information Processing
+     Systems, 2024. arXiv:2411.04732.
+ [3] Marta Andronic and George A. Constantinides. PolyLUT: Learning piecewise polynomials
+     for ultra-low latency FPGA LUT-based inference. In International Conference on Field
+     Programmable Technology (ICFPT), pages 60–68, 2023.
+ [4] Alan T. L. Bacellar, Zachary Susskind, Mauricio Breternitz Jr, Eugene John, Lizy Kurian John,
+     Priscila Machado Vieira Lima, and Felipe M. G. França. Differentiable weightless neural
+     networks. In International Conference on Machine Learning (ICML), 2024. Differentiable
+     training of k-input weightless lookup tables on FPGA-targeted classifiers.
+ [5] Stasys Jukna. Boolean Function Complexity: Advances and Frontiers, volume 27 of Algorithms
+     and Combinatorics. Springer, 2012. doi: 10.1007/978-3-642-24508-4.
+ [6] Peter L. Hammer and Sergiu Rudeanu. Boolean Methods in Operations Research and Related
+     Areas. Springer, Berlin, Heidelberg, 1968. doi: 10.1007/978-3-642-85823-9.
+ [7] Guillermo Owen. Multilinear extensions of games. Management Science, 18(5-Part-2):P64–P79,
+     1972. doi: 10.1287/mnsc.18.5.64.
+ [8] Hanxiao Liu, Karen Simonyan, and Yiming Yang. DARTS: Differentiable architecture search.
+     In International Conference on Learning Representations, 2019.
+ [9] Youngsung Kim. Align forward, adapt backward: Closing the discretization gap in logic gate
+     networks. arXiv preprint arXiv:2603.14157, 2026.
+[10] Youngsung Kim. Towards narrowing the generalization gap in deep boolean networks. arXiv
+     preprint arXiv:2409.05905, 2024.
+[11] Eric Jang, Shixiang Gu, and Ben Poole. Categorical reparameterization with Gumbel-Softmax.
+     In International Conference on Learning Representations, 2017.
+[12] Chris J. Maddison, Andriy Mnih, and Yee Whye Teh. The concrete distribution: A continuous re-
+     laxation of discrete random variables. In International Conference on Learning Representations,
+     2017.
+[13] Yoshua Bengio, Nicholas Léonard, and Aaron Courville. Estimating or propagating gradients
+     through stochastic neurons for conditional computation, 2013.
+[14] Youngsung Kim. Deep stochastic logic gate networks. IEEE Access, 11:122488–122501, 2023.
+     doi: 10.1109/ACCESS.2023.3328622.
+
+
+                                                  10
+[15] Shakir Yousefi, Andreas Plesner, Till Aczel, and Roger Wattenhofer. Mind the gap: Removing
+     the discretization gap in differentiable logic gate networks. In Advances in Neural Information
+     Processing Systems, 2025. arXiv:2506.07500.
+[16] Lukas Rüttgers, Till Aczel, Andreas Plesner, and Roger Wattenhofer. Light differentiable
+     logic gate networks. In International Conference on Learning Representations, 2026.
+     arXiv:2510.03250.
+[17] Ryan O’Donnell. Analysis of Boolean Functions. Cambridge University Press, Cambridge, UK,
+     2014. doi: 10.1017/CBO9781139814782.
+[18] Ilya M. Sobol’. Sensitivity estimates for nonlinear mathematical models. Mathematical
+     Modelling and Computational Experiments, 1(4):407–414, 1993.
+[19] Art B. Owen. Variance components and generalized Sobol’ indices. SIAM/ASA Journal on
+     Uncertainty Quantification, 1(1):19–41, 2013. doi: 10.1137/120876782.
+[20] Aäron van den Oord, Oriol Vinyals, and Koray Kavukcuoglu. Neural discrete representation
+     learning. In Advances in Neural Information Processing Systems, volume 30, 2017.
+[21] Eirikur Agustsson, Fabian Mentzer, Michael Tschannen, Lukas Cavigelli, Radu Timofte, Luca
+     Benini, and Luc Van Gool. Soft-to-hard vector quantization for end-to-end learning compressible
+     representations. In Advances in Neural Information Processing Systems, volume 30, 2017.
+[22] Minyoung Huh, Brian Cheung, Pulkit Agrawal, and Phillip Isola. Straightening out the straight-
+     through estimator: Overcoming optimization challenges in vector quantized networks. In
+     International Conference on Machine Learning, 2023.
+[23] Yves Crama and Peter L. Hammer. Boolean Functions: Theory, Algorithms, and Applications,
+     volume 142 of Encyclopedia of Mathematics and its Applications. Cambridge University Press,
+     2011. doi: 10.1017/CBO9780511852008.
+[24] Christopher M. Bishop. Pattern Recognition and Machine Learning. Springer, 2006.
+[25] Dheeru Dua and Casey Graff. UCI machine learning repository, 2019.
+[26] Yann LeCun, Léon Bottou, Yoshua Bengio, and Patrick Haffner. Gradient-based learning
+     applied to document recognition. Proceedings of the IEEE, 86(11):2278–2324, 1998.
+[27] Yuval Netzer, Tao Wang, Adam Coates, Alessandro Bissacco, Bo Wu, and Andrew Y. Ng.
+     Reading digits in natural images with unsupervised feature learning. In NIPS Workshop on
+     Deep Learning and Unsupervised Feature Learning, 2011.
+[28] Alex Krizhevsky. Learning multiple layers of features from tiny images. Technical report,
+     University of Toronto, 2009.
+[29] Sebastian B. Thrun et al. The MONK’s problems: A performance comparison of different
+     learning algorithms. Technical Report CMU-CS-91-197, Carnegie Mellon University, 1991.
+[30] Diederik P. Kingma and Jimmy Ba. Adam: A method for stochastic optimization. In Interna-
+     tional Conference on Learning Representations, 2015.
+[31] Erich Peter Klement, Radko Mesiar, and Endre Pap. Triangular Norms, volume 8 of Trends in
+     Logic. Kluwer Academic Publishers, Dordrecht, 2000. doi: 10.1007/978-94-015-9540-7.
+[32] Emile van Krieken, Erman Acar, and Frank van Harmelen. Analyzing differentiable fuzzy logic
+     operators. Artificial Intelligence, 302:103602, 2022. doi: 10.1016/j.artint.2021.103602.
+[33] Luc De Raedt, Angelika Kimmig, and Hannu Toivonen. ProbLog: A probabilistic Prolog and
+     its application in link discovery. In International Joint Conference on Artificial Intelligence
+     (IJCAI), pages 2462–2467, 2007.
+[34] YooJung Choi, Antonio Vergari, and Guy Van den Broeck. Probabilistic circuits: A unifying
+     framework for tractable probabilistic models. 2020.
+
+
+                                                11
+[35] Itay Hubara, Matthieu Courbariaux, Daniel Soudry, Ran El-Yaniv, and Yoshua Bengio. Binarized
+     neural networks. In Advances in Neural Information Processing Systems, volume 29, 2016.
+[36] Mohammad Rastegari, Vicente Ordonez, Joseph Redmon, and Ali Farhadi. XNOR-Net: Ima-
+     geNet classification using binary convolutional neural networks. In European Conference on
+     Computer Vision (ECCV), pages 525–542, 2016.
+[37] Ya Le and Xuan Yang. Tiny ImageNet visual recognition challenge. 2015. CS231N Course
+     Report, Stanford University.
+
+
+A     Full Proofs
+Notation. For each of the 16 Boolean functions gj : {0, 1}2 → {0, 1} (indexed j = 0, . . . , 15 by
+the truth-table bit pattern), we write its unique multilinear representation
+                             gj (a, b) = c0,j + ca,j a + cb,j b + cab,j ab,
+with coefficient vector Gj = (c0,j , ca,j , cb,j , cab,j )⊤ ∈ Z4 . Collect these as rows of the codebook
+G ∈ Z16×4 . The canonical polynomial basis is ψ(a, b) = (1, a, b, ab)⊤ . A continuous learned
+coefficient vector is denoted c ∈ R4 , and under Multilinear-STE the forward “hard” gate is Ghard =
+Gj ∗ with j ∗ = argminj ∥c − Gj ∥2 . Under Multilinear-CovJac the soft coefficient is csoft =
+                                              2
+P
+   j ωj Gj with ωj = softmax(−∥c − Gj ∥ /τ )j (we write ωj for the CovJac proximity weights and
+reserve πj for the Soft-Mix gate distribution, following §3).
+
+A.1   Zero Discretization Gap (Identity 1)
+
+Identity 1 (Polynomial collapse) Every function g : {0, 1}2 → R admits a unique multilinear
+polynomial representation
+                             g(a, b) = c0 + ca a + cb b + cab ab,
+with coefficients
+c0 = g(0, 0), ca = g(1, 0)−g(0, 0), cb = g(0, 1)−g(0, 0), cab = g(1, 1)−g(1, 0)−g(0, 1)+g(0, 0).
+For the 16 Boolean-valued functions g : {0, 1}2 → {0, 1}, the resulting coefficient vectors Gj =
+(c0 , ca , cb , cab )⊤ lie in Z4 , with entries in the ranges c0 ∈ {0, 1}, ca , cb ∈ {−1, 0, 1}, cab ∈
+{−2, −1, 0, 1, 2}.
+Proof. (Direct corner-value expansion / dimension argument.) Let V be the vector space of functions
+{0, 1}2 → R, which has dimension 4 since a function is determined by its four corner values
+g(0, 0), g(1, 0), g(0, 1), g(1, 1). Consider the four monomials {1, a, b, ab} as elements of V . Their
+corner-value vectors are
+                1 ↔ (1, 1, 1, 1), a ↔ (0, 1, 0, 1), b ↔ (0, 0, 1, 1), ab ↔ (0, 0, 0, 1),
+where entries are ordered (a, b) = (0, 0), (1, 0), (0, 1), (1, 1). The 4 × 4 matrix formed by these
+vectors,
+                                              1 0 0 0
+                                                            
+                                            1 1 0 0
+                                    M =                        ,
+                                              1 0 1 0
+                                              1 1 1 1
+is lower triangular with unit diagonal, hence det M = 1 ̸= 0. The four monomials are therefore
+linearly independent in V , and since dim V = 4, they form a basis. Uniqueness of the representation
+is immediate from basis uniqueness.
+To obtain the explicit formulae, solve M c = (g(0, 0), g(1, 0), g(0, 1), g(1, 1))⊤ by forward substitu-
+tion:
+
+       • Row 1: c0 = g(0, 0).
+       • Row 2: c0 + ca = g(1, 0) ⇒ ca = g(1, 0) − g(0, 0).
+       • Row 3: c0 + cb = g(0, 1) ⇒ cb = g(0, 1) − g(0, 0).
+
+
+                                                  12
+       • Row 4: c0 + ca + cb + cab = g(1, 1) ⇒ cab = g(1, 1) − g(1, 0) − g(0, 1) + g(0, 0).
+For Boolean-valued g (i.e. g ∈ {0, 1}), the four corner values are each in {0, 1}, so c0 ∈ {0, 1},
+ca , cb ∈ {−1, 0, 1}, and cab ∈ {−2, −1, 0, 1, 2}. Enumerating the 24 = 16 Boolean-valued corner
+assignments gives 16 distinct integer coefficient vectors, one per Boolean gate.                □
+Attribution: [6, 7, 23]. The {−1, +1} Fourier reformulation is in O’Donnell [17, Proposition 1.1].
+Elementary; proved here for self-containedness.
+
+Zero discretization gap.       For any Multilinear-STE layer with binary inputs (a, b) ∈ {0, 1}2 ,
+                                          ztrain (a, b) = zeval (a, b).
+
+Proof. Let ĉ = Gj ∗ be the committed Boolean gate (the codebook entry nearest to c in squared
+Euclidean distance, ties broken by lexicographic order). The training-time forward pass of Multilinear-
+STE emits
+                               ztrain (a, b) = ĉ⊤ ψ(a, b) = G⊤
+                                                              j ∗ ψ(a, b).
+The evaluation-time forward pass emits the Boolean gate value itself, zeval (a, b) = gj ∗ (a, b). By
+Identity 1, the multilinear polynomial with coefficient vector Gj ∗ equals gj ∗ on {0, 1}2 , i.e. precisely
+gj ∗ (a, b) = G⊤                                   2                                ⊤
+                j ∗ ψ(a, b) for all (a, b) ∈ {0, 1} . Substituting, zeval (a, b) = Gj ∗ ψ(a, b) = ztrain (a, b).
+□
+
+Remark. Multilinear-CovJac does not satisfy the zero-gap property as a pointwise identity (since
+csoft ̸= Gj ∗ during training), yet empirically the discretization gap is ≤ 0.2% on all main datasets
+because the trained π concentrates on Gj ∗ strongly enough that c⊤   soft ψ(a, b) rounds to gj ∗ (a, b) at
+every Boolean input.
+
+A.2    Gradient Utilization (Lemma 6)
+
+Lemma 6 (Gradient coverage hierarchy). Under i.i.d. Bernoulli(1/2) binary inputs (a, b) ∈ {0, 1}2 ,
+                               
+                  E ∥ψ(a, b)∥0 = 2.25 (Multilinear / polynomial basis),
+                                     
+                        E ∥ϕ(a, b)∥0 = 1.0 (Corner / IWP basis).
+Proof. (Component-wise expectation.)
+Polynomial basis. We have ψ(a, b) = (1, a, b, ab)⊤ . The ℓ0 norm counts non-zero entries, so by
+linearity of expectation
+                               
+                    E ∥ψ(a, b)∥0 = E[11̸=0 ] + E[1a̸=0 ] + E[1b̸=0 ] + E[1ab̸=0 ].
+Compute each term: E[11̸=0 ] = 1; E[1a̸=0 ] = Pr[a = 1] = 1/2; E[1b̸=0 ] = 1/2; E[1ab̸=0 ] =
+Pr[a = 1 ∧ b = 1] = 1/4 (independence). Sum: 1 + 1/2 + 1/2 + 1/4 = 9/4 = 2.25.
+Corner basis. The corner basis ϕ(a, b) is the one-hot indicator of (a, b) over the four corners of
+{0, 1}2 , i.e. ϕi (a, b) = 1(a,b)=vi where vi ranges over (0, 0), (1, 0), (0, 1), (1, 1). For any input (a, b),
+exactly one component of ϕ equals 1 and the others equal 0, so ∥ϕ(a, b)∥0 = 1 deterministically.
+Hence E∥ϕ∥0 = 1.                                                                                            □
+
+Interpretation. The polynomial basis distributes the learning load across degrees: the degree-
+d monomial has coverage (1/2)d . The four components c0 , ca , cb , cab receive gradient on
+100%, 50%, 50%, 25% of samples respectively, giving the natural degree-ordered curriculum dis-
+cussed in Section 3. The corner basis, by contrast, has a flat 25% coverage per coordinate but only
+one non-zero coordinate per sample, yielding the same 1.0 expected ℓ0 norm.
+
+A.3    Backward Gradient Cancellation in Soft-Mix (Lemma 1, Proposition 2, Observation 1)
+
+Lemma 1 (Zero-sum gate derivative symmetry)
+                                 15
+                                 X              15
+                                                X              15
+                                                               X
+                                       ca,j =         cb,j =         cab,j = 0.
+                                 j=0            j=0            j=0
+
+
+                                                       13
+Consequently, for every (a, b) ∈ [0, 1]2 ,
+                             15                    15
+                             X  ∂gj                X
+                                        (a, b) =      (ca,j + cab,j b) = 0,
+                             j=0
+                                   ∂a               j=0
+
+and symmetrically for ∂b .
+Proof. (Complementation pairing.) The set B of Boolean functions {0, 1}2 → {0, 1} is closed under
+pointwise complementation g 7→ ḡ := 1 − g. This map is an involution on B (ḡ¯ = g) and has no
+fixed points: g = ḡ would imply g ≡ 1/2, which is not Boolean-valued. Hence B partitions into
+16/2 = 8 complementary pairs (gj , gj̄ ).
+Compute the multilinear coefficients of ḡj . Using the identity 1 − gj (a, b) = 1 − c0,j − ca,j a −
+cb,j b − cab,j ab:
+                      ḡj (a, b) = (1 − c0,j ) + (−ca,j ) a + (−cb,j ) b + (−cab,j ) ab.
+By uniqueness of the multilinear representation (Identity 1) applied to ḡj , the coefficient vector
+of ḡj is (1 − c0,j , −ca,j , −cb,j , −cab,j ). In particular, the three non-constant coefficients satisfy
+ca,j̄ = −ca,j , cb,j̄ = −cb,j , cab,j̄ = −cab,j , so that ca,j + ca,j̄ = 0, and likewise for cb and cab .
+Summing over all 16 gates by grouping them into the 8 complementary pairs,
+                               15
+                               X                 X
+                                     ca,j =               (ca,j + ca,j̄ ) = 0.
+                               j=0            pairs (j,j̄)
+                        P               P
+The same argument gives j cb,j = 0 and j cab,j = 0. The partial derivative identity is then
+immediate:
+                       15
+                      X   ∂gj          X         X      
+                              (a, b) =    ca,j + b    cab,j = 0.
+                      j=0
+                          ∂a            j           j
+                                                                                                       □
+Attribution. Elementary from the complementation symmetry of Boolean functions; the closely
+related Fourier-basis zero-sum identity is in O’Donnell [17]. We do not claim it as a contribution.
+The novelty is its application in Proposition 2.
+
+Proposition 2 (Soft-Mix backward gradient vanishes at uniform π) Let z(a, b) =
+P15                            15
+   j=0 πj gj (a, b) for π ∈ ∆ . If πj = 1/16 for all j, then ∂z/∂a(a, b) = ∂z/∂b(a, b) = 0
+                         2
+for every (a, b) ∈ [0, 1] . Hence for any scalar loss L, ∂L/∂a|through z = 0.
+Proof. Substituting the multilinear form into z and differentiating,
+                                                 15
+                                   ∂z           X
+                                      (a, b) =      πj (ca,j + cab,j b).
+                                   ∂a           j=0
+                                      P             P
+At πj = 1/16, this equals (1/16)[ j ca,j + b j cab,j ] = 0 by Lemma 1. This holds for every
+(a, b) ∈ [0, 1]2 because the algebraic cancellation is independent of a and holds for every fixed b. The
+∂z/∂b statement follows by the identical computation with a, b swapped. The loss-gradient statement
+is the chain rule.                                                                                    □
+
+Near-uniform
+    P        regime. If π deviates from uniform u = (1/16, . . . , 1/16), write πj = 1/16 + δj
+with j δj = 0. Then
+                               ∂z     X
+                                   =     δj (ca,j + cab,j b),
+                               ∂a      j
+since the 1/16-term vanishes by Lemma 1. On Boolean inputs b ∈ {0, 1}, every gate satisfies
+|ca,j + cab,j b| ≤ 1 (verified by enumeration, Table 3). Hölder’s inequality gives
+                                        ∂z
+                                             ≤ ∥π − u∥1 ,
+                                        ∂a
+so the backward signal grows only as π departs from uniformity. This will be important for Observa-
+tion 1.
+
+
+                                                       14
+Connection     to Petersen et al. [1]. The forward-pass analogue of this identity is z(a, b) =
+1
+   P
+16   j gj (a, b) = 1/2 for all (a, b), because exactly 8 of the 16 gates output 1 at each corner.
+Both cancellations share the same root: complementation symmetry.
+
+Observation 1 (Dynamical depth attenuation). In a DLGN without residual connections, trained
+with Soft-Mix from near-uniform gate-logit initialization:
+
+      1. At initialization, every neuron has π (l) near uniform, so by the near-uniform bound after
+         Proposition 2, its input Jacobian ∂z (l) /∂(a(l) , b(l) ) has small norm.
+      2. A layer l can commit (move its π (l) away from uniform) only if it receives a non-trivial π-
+         gradient, which requires ∂L/∂z (l) to be non-trivial, which in turn requires layers l+1, . . . , L
+         to already have non-trivial input Jacobians.
+      3. Hence commitment proceeds greedily from the output layer toward the input layer. At
+         sufficient depth, early layers may never commit within a finite training budget.
+
+Assumptions used. (a) No residual/skip connections; (b) near-uniform initialization of gate logits;
+(c) the analysis is dynamical, not a static worst-case bound; (d) the gradient path of interest is the
+loss-to-input path through layer input Jacobians.
+
+What we do NOT claim. We do not claim a bound of the form |∂L/∂x| ≤ CεL−l as a theorem,
+because the hypothesis “all intermediate layers are simultaneously near-uniform throughout training”
+is effectively the conclusion restated. Proposition 2 is the per-layer pointwise fact; Observation 1 is
+the dynamical interpretation; Section 5.2 is the empirical confirmation. Together they explain the
+depth penalty; none is a worst-case depth-decay theorem.
+
+Single-gate-forward corollary (remark). The cancellation argument in Proposition 2 is specific
+                                       P15                                                P
+to the forward expression z = j=0 πj gj (a, b): it is only because ∂z/∂a = j πj (ca,j + cab,j b)
+contains the Lemma 1 zero-sums inside a 16-term sum that those zero-sums can collapse the derivative
+to 0 at uniform π. Any forward pass that commits to a single gate j ⋆ , writing z = gj ⋆ (a, b) =
+c0,j ⋆ + ca,j ⋆ a + cb,j ⋆ b + cab,j ⋆ ab, gives ∂z/∂a = ca,j ⋆ + cab,j ⋆ b, a derivative of a single committed
+polynomial with no sum in which to cancel; Proposition 3 then guarantees magnitude ≥ 1 for
+every a-dependent gate. This corollary applies uniformly to:        P (i) Multilinear-STE (hard L2 snap;
+Proposition 3); (ii) Multilinear-CovJac (soft-VQ with csoft = j ωj Gj : the forward pass evaluates a
+single polynomial z = c⊤      soft ψ(a, b), not a mixture over 16 polynomials); (iii) Gumbel-ST (Gumbel
+noise + argmax samples a one-hot π = ej ⋆ per forward, reducing to case (i) with a stochastic j ⋆ ).
+Soft-Mix is the only method in the comparison whose forward does compute a full 16-term sum,
+and is therefore the only one to which Proposition 2 applies. The depth sweep (Appendix E.10)
+confirms this cleanly: at L=12, k=64k, Multilinear-STE (98.03%), Multilinear-CovJac (98.23%),
+and Gumbel-ST (97.81%) all remain above 97.8%, while Soft-Mix stalls at 84.92%. Gumbel-ST
+has the same 16-parameter count as Soft-Mix, so the dichotomy is about forward-pass structure, not
+parameter count. This is an empirical corollary of the proof structure above, not a separate theorem.
+
+A.4   Multilinear-STE and CovJac Eliminate Cancellation (Propositions 3, 4)
+
+Proposition 3 (Multilinear-STE backward non-cancellation) In Multilinear-STE, the forward
+pass at a neuron with committed gate ĉ = (c0 , ca , cb , cab ) is z = ĉ⊤ ψ(a, b), and the STE backward
+derivative is ∂z/∂a = ca + cab b. For every non-trivial Boolean gate depending on input a (i.e. every
+Boolean gate with (ca , cab ) ̸= (0, 0)), maxb∈{0,1} |ca + cab b| ≥ 1.
+Proof. The STE rule treats ĉ as if it were the free parameter for the backward pass, so ∂z/∂a =
+ca + cab b. Since ĉ is a Boolean-gate coefficient vector, Identity 1 gives ca ∈ {−1, 0, 1} and
+cab ∈ {−2, −1, 0, 1, 2}. A Boolean gate depends on a iff ca ̸= 0 or cab ̸= 0.
+Case 1: ca ̸= 0. At b = 0, |ca + cab · 0| = |ca | ≥ 1.
+Case 2: ca = 0 and cab ̸= 0. At b = 1, |ca + cab · 1| = |cab | ≥ 1.
+These two cases exhaust all gates depending on a.                                                           □
+
+
+                                                     15
+Table 3: STE backward derivative ∂z/∂a = ca + cab b for all 12 a-dependent Boolean gates. Every
+row satisfies maxb∈{0,1} |ca + cab b| ≥ 1.
+                       Gate                      ca    cab   at b=0    at b=1
+                       a                         1      0        1              1
+                       ¬a                       −1      0       −1             −1
+                       AND ab                    0      1        0              1
+                       NAND 1 − ab               0     −1        0             −1
+                       OR a + b − ab             1     −1        1              0
+                       NOR 1 − a − b + ab       −1      1       −1              0
+                       XOR a + b − 2ab           1     −2        1             −1
+                       XNOR 1 − a − b + 2ab     −1      2       −1              1
+                       a ∧ ¬b                    1     −1        1              0
+                       ¬a ∧ b                    0     −1        0             −1
+                       a ∨ ¬b                    0      1        0              1
+                       ¬a ∨ b                   −1      1       −1              0
+
+
+Enumeration. For completeness, here are (ca , cab ) and (∂z/∂a|b=0 , ∂z/∂a|b=1 ) for the 12
+Boolean gates that depend on a:
+Every row has maxb | · | ≥ 1, confirming the bound.
+
+Key structural contrast with Soft-Mix. The Multilinear-STE backward derivative is the derivative
+of one committed polynomial, not a convex combination of 16 gate derivatives. The zero-sum of
+Lemma 1 therefore has no avenue to manifest. The per-layer signal magnitude is O(1), and a depth-L
+product of such factors is O(1)L = O(1), not exponentially decaying.
+
+Pre-commitment remark. During training, the learned c is continuous and may lie near a Voronoi
+boundary, in which case the STE derivative ca + cab b (using the continuous ca , cab ) can be small.
+The content of Proposition 3 is structural: unlike Soft-Mix, structural cancellation across gates
+cannot occur, so any smallness of the backward signal is a property of a single neuron’s continuous
+parameter state, not a systematic symmetry that affects all neurons at initialization.
+
+Proposition 4 (CovJac selection Jacobian:     input-independence, PSD, positive diagonal) For
+the soft-selection map c 7→ csoft (c) = j ωj (c)Gj , with ωj (c) = softmax(−∥c − Gj ∥2 /τ )j , the
+                                        P
+
+Jacobian Jik (c) = ∂(csoft )i /∂ck equals
+                   2                      2 X                X          X       
+           Jik = Covω (G·i , G·k ) =            ωj Gji Gjk −     ωj Gji     ωj Gjk ,
+                   τ                      τ j                  j          j
+
+and satisfies (i) input-independence, (ii) symmetric PSD, (iii) strictly positive diagonal for every
+coordinate at τ >0 on the 16-Boolean codebook.
+Proof. Throughout this proof, ωj denotes the CovJac proximity weights from Eq. 4.
+(a) Derivation of J. Let dj (c) = ∥c − Gj ∥2 . Then ωj = e−dj /τ /Z where Z =
+                                                                                       P −dℓ /τ
+                                                                                          ℓe     .
+Compute ∂ωj /∂ck via the softmax chain rule. First, ∂dj /∂ck = 2(ck − Gjk ). By the standard
+softmax derivative (∂ωj /∂lm = ωj (δjm − ωm ) applied to logits lj = −dj /τ via the chain rule),
+                              ∂ωj      1  ∂dj X ∂dℓ 
+                                   = − ωj         −      ωℓ        .
+                              ∂ck      τ     ∂ck            ∂ck
+                                                        ℓ
+Substituting ∂dj /∂ck = 2(ck − Gjk ):
+                       ∂ωj      2 h                X                   i
+                            = − ωj (ck − Gjk ) −        ωℓ (ck − Gℓk )
+                       ∂ck      τ
+                                                     ℓ
+                                2 h                 P          P          i
+                            = − ωj    k − Gjk − 
+                                      c         c
+                                                  k    ℓ ωℓ +    ℓ ωℓ Gℓk
+                                τ                   | {z } | {z }
+                                                        =1       = (csoft )k
+                               2                  
+                              = ωj Gjk − (csoft )k .                                             (∗)
+                               τ
+
+
+                                                16
+                                P
+Now differentiate (csoft )i =       j ωj Gji by ck :
+                                    X ∂ωj        (∗) 2 X                        
+                        Jik =               Gji =             ωj Gjk − (csoft )k Gji .
+                                ∂ck j
+                                           τ j
+                                  P
+Expanding Gjk − (csoft )k = Gjk − ℓ ωℓ Gℓk and distributing:
+                        2 X                        X        
+               Jik =         ωj Gji Gjk − (csoft )k   ωj Gji
+                        τ       j        P
+                                          | {z }
+                                                                  j
+                                                       ℓ ωℓ Gℓk
+
+                          2                                     2
+                      =      Eω [G·i G·k ] − Eω [G·i ] Eω [G·k ] = Covω (G·i , G·k ).
+                          τ                                       τ
+(b) Input-independence. Both G (a fixed codebook) and ω(c) (a function of c alone) are independent
+of (a, b), so J(c) is input-independent.
+(c) PSD. For any v ∈ R4 , v⊤ Jv = (2/τ )Varω ( i vi G·i ) ≥ 0. Symmetry Jik = Jki is immediate.
+                                              P
+
+(d) Positive diagonal. Jkk = (2/τ )Varω (G·k ) > 0 iff G·k is not ω-almost-surely constant. For each
+coordinate k ∈ {0, 1, 2, 3} on the 16-Boolean codebook, G·k takes at least two distinct values, and
+softmax at finite τ >0 assigns ωj > 0 for every j. Therefore Jkk > 0 throughout training.         □
+
+Gradient toPcab on every sample. The parameter gradient through the soft coefficient is ∂L/∂ck =
+(∂L/∂z) · i ψi (a, b) Jik . For k = 3:
+                        ∂L       ∂L                                         
+                              =     · 1 · J03 + a · J13 + b · J23 + ab · J33 .
+                        ∂cab     ∂z
+The leading term involves the constant basis element ψ0 = 1, which is non-zero on every input. Since
+J03 is input-independent and generically non-zero, cab receives a non-zero gradient on every training
+sample, in contrast to Multilinear-STE where ∂L/∂cab = δ · ab vanishes on 75% of Boolean inputs.
+
+A.5   Basis Optimality (Proposition 5)
+
+Proposition 5 (No affine basis modification improves STE) Goal. An ideal STE basis for the
+interaction coefficient should satisfy three properties simultaneously: (a) full coverage: the gradient
+fires on every training sample (ρ=1); (b) coherence: the gradient consistently points in the correct
+direction (κ=1); (c) zero STE bias: the basis is equivalent to the canonical one up to positive rescaling
+(B=0). We show no affine product basis achieves all three.
+Statement. Let ϕ(x) = α + βx with β ̸= 0, and let ψ̃(a, b) = (1, ϕ(a), ϕ(b), ϕ(a)ϕ(b))⊤ .
+Under uniform (a, b) ∈ {0, 1}2 , define the following three properties of the interaction component
+ψ̃3 (a, b) = ϕ(a)ϕ(b) (the 4th entry of ψ̃, corresponding to cab ): coverage ρ := Pr[ψ̃3 (a, b) ̸= 0];
+coherence κ := |E[ψ̃3 ]|/E[|ψ̃3 |] ∈ [0, 1]; STE bias B := inf D E[∥ψ̃ − Dψ can ∥2 ] where D ranges
+over positive diagonal matrices. Then: (i) If ϕ(0) = 0 or ϕ(1) = 0: ρ = 1/4, κ = 1, B = 0. (ii) If
+ϕ(0) ̸= 0 and ϕ(1) ̸= 0: ρ = 1, but either κ < 1 or B > 0 (or both). (iii) No affine product basis
+simultaneously attains ρ = 1, κ = 1, and B = 0.
+Proof. Under STE with Boolean inputs (a, b) ∈ {0, 1}2 , the gradient ∂L/∂ck is scaled by ψ̃k (a, b),
+so the properties ρ, κ, B depend only on the four corner values of ψ̃3 . Since ϕ(x) = α + βx,
+define p := ϕ(0) = α and q := ϕ(1) = α + β (so p ̸= q since β ̸= 0). The interaction basis
+function is ψ̃3 (a, b) = ϕ(a)ϕ(b), which at the four corners evaluates to: ψ̃3 (0, 0) = ϕ(0)ϕ(0) = p2 ,
+ψ̃3 (0, 1) = ϕ(0)ϕ(1) = pq, ψ̃3 (1, 0) = ϕ(1)ϕ(0) = pq, ψ̃3 (1, 1) = ϕ(1)ϕ(1) = q 2 .
+Part (i): p = 0 (i.e. α = 0, ϕ(x) = βx, β > 0). Substituting p = 0: the corner values become
+(0, 0, 0, q 2 ) = (0, 0, 0, β 2 ). Three of four corners are zero, so ρ = Pr[ψ̃3 ̸= 0] = 1/4. The
+one non-zero value is β 2 > 0, so |E[ψ̃3 ]| = β 2 /4 and E[|ψ̃3 |] = β 2 /4, giving κ = 1. The full
+basis evaluates to ψ̃(a, b) = (1, ϕ(a), ϕ(b), ϕ(a)ϕ(b)) = (1, βa, βb, β 2 ab) = Dψ can with
+D = diag(1, β, β, β 2 ), a positive diagonal matrix (since β > 0). Hence B = 0.
+Part (i’): q = 0 (i.e. ϕ(1) = 0, so α + β = 0, ϕ(x) = α(1 − x)). The corner values become
+(p2 , 0, 0, 0) = (α2 , 0, 0, 0), so ρ = 1/4 and κ = 1 (same reasoning as Part (i)). However, ψ̃1 =
+
+
+                                                        17
+                 Table 4: Monomial degree as logical complexity for n = 2 inputs.
+                Degree Term          Logical meaning          Example gates
+                   0         c0        Unconditional output          FALSE, TRUE
+                   1        ca a     Independent input-a effect      A, ¬A
+                   1        cb b     Independent input-b effect      B, ¬B
+                   2       cab ab       Pairwise interaction         AND, XOR, NAND
+
+
+
+ϕ(a) = α − αa = α(1 − a). For B = 0 we need ψ̃1 = d1 · a for some d1 > 0, but α(1 − a) has
+value α at a = 0 and 0 at a = 1, which is not proportional to a = (0, 1). Hence B > 0.
+Part (ii): p ̸= 0 and q ̸= 0. All four corner values (p2 , pq, pq, q 2 ) are non-zero (since neither p nor q
+is zero), so ρ = Pr[ψ̃3 ̸= 0] = 1.
+Sub-case (ii-a): pq > 0 (same sign). All four values p2 , pq, pq, q 2 > 0, so |E[ψ̃3 ]| = E[|ψ̃3 |]
+and κ = 1. However, expanding ϕ(a)ϕ(b) = (α + βa)(α + βb) = α2 + αβ(a + b) + β 2 ab =
+p2 + pβ(a + b) + β 2 ab, the interaction component ψ̃3 contains a constant term p2 and linear terms
+pβ · a, pβ · b. For ψ̃ = Dψ can we need ψ̃1 = d1 · a; but ψ̃1 = ϕ(a) = p + βa evaluates to p at a = 0
+and p + β at a = 1. Since p ̸= 0, this is not proportional to a = (0, 1) for any d1 > 0. Hence B > 0.
+Sub-case (ii-b): pq < 0 (opposite signs). The four corner values (p2 , pq, pq, q 2 ) have mixed signs:
+p2 , q 2 > 0 but pq < 0. Under uniform (a, b) ∈ {0, 1}2 :
+                                                                                  2
+               E[ψ̃3 ] = 14 (p2 + pq + pq + q 2 ) = 14 (p2 + 2pq + q 2 ) = (p+q)
+                                                                             4   ,
+                                                                                      2     2
+             E[|ψ̃3 |] = 14 (p2 + |pq| + |pq| + q 2 ) = 41 (p2 − 2pq + q 2 ) = (p−q)
+                                                                                 4   = β4 ,
+
+where the last step uses p − q = α − (α + β) = −β. Therefore κ = |E[ψ̃3 ]|/E[|ψ̃3 |] = (p +
+q)2 /(p − q)2 = (2α + β)2 /β 2 . The Walsh/Hadamard basis maps {0, 1} to symmetric ± values:
+ϕ(0) = −ϕ(1), i.e. p = −q. In our parameterization this requires α = −(α + β), giving α = −β/2.
+At this choice, p + q = 0, so κ = 0: exact cancellation. Since p ̸= 0 (because pq < 0), the same
+diagonal-rescaling argument as (ii-a) gives B > 0: ψ̃1 = p + βa cannot equal d1 a for any d1 > 0.
+Part (iii). Combining all cases: B = 0 requires p = 0 (Part (i)), which gives ρ = 1/4. Every
+basis with ρ = 1 (Parts (ii-a) and (ii-b)) has B > 0. Therefore no affine product basis achieves
+(ρ, κ, B) = (1, 1, 0) simultaneously.                                                         □
+
+Empirical confirmation. The Walsh basis (α = −β/2, sub-case (ii-b) with κ = 0) achieves 86.86%
+vs canonical 96.65%; smoothed ϵ = 0.2 (sub-case (ii-a), B > 0) achieves 76.95%; expected-value
+and uniform bases (degenerate cases with β = 0) achieve 13.30% and 12.42%. See Appendix D.
+
+Interpretation. The 25% interaction-coverage “starvation” of Multilinear-STE is a fundamental
+property of every affine product basis, not a deficiency fixable by reparameterization. The correct
+response is to bypass basis-dependent gradients via Multilinear-CovJac (§4.4).
+
+Scope. Proposition 5 restricts to affine product bases. Non-affine and non-product bases are outside
+our scope; we flag them as an open question.
+
+
+B     Background: Fuzzy Logic, WMC, and SPN View
+
+B.1   Degree as logical complexity
+
+The table below relates each monomial degree to its logical meaning. For n = 2, maximum degree 2
+forces exactly 4 terms and exactly 4 parameters; the 4-parameter design of the Multilinear layer is
+determined by the MLE structure, not chosen (Table 4).
+
+
+                                                    18
+Table 5: Summary of all methods compared. Params = learnable parameters per neuron. DG =
+discretization gap (structural, not empirical).
+       Method                      Params        Train fwd     Eval fwd      Backward      DG
+       Soft-Mix [1]                  16       soft mixture      argmax       autograd      >0
+       Gumbel-ST [11]                16      hard (Gumbel)      argmax      Gumbel-ST     small
+       IWP [16]                       4         bilinear        bilinear       exact       >0
+       IWP-STE (ablation)             4           snap           snap       corner STE       0
+       Multilinear-STE (ours)         4           snap           snap        poly STE        0
+       Multilinear-CovJac (ours)      4         soft-VQ          snap         CovJac     0 (emp.)
+
+
+
+B.2   Fuzzy logic and the product t-norm
+
+Under the product t-norm [31] (probabilistic fuzzy logic), fuzzy connective evaluation is identical to
+MLE evaluation:
+        a ∧ b = ab,        a ∨ b = a + b − ab,          ¬a = 1 − a,        a ⊕ b = a + b − 2ab.
+These are not approximations. The MLE is the fuzzy truth-degree function under the product t-
+norm [32]. Łukasiewicz (min) and Gödel (max) fuzzy logics yield piecewise-linear extensions
+instead.
+
+B.3   Probabilistic circuit and WMC interpretation
+
+If inputs are independent, X ∼ Ber(a) and Y ∼ Ber(b), then
+                      F (a, b) = Pr[g(X, Y ) = 1 | X ∼ Ber(a), Y ∼ Ber(b)].
+This is the Weighted Model Count (WMC) [33] of gate g under independent Bernoulli atoms, the
+same computation used in ProbLog and probabilistic circuits [34]. For a single 2-input gate, WMC
+and MLE evaluation are the same operation.
+
+B.4   Corner basis as a sum-product network
+
+The corner basis functions ϕij (a, b) = ai (1 − a)1−i bj (1 − b)1−j used by IWP [16] are exactly the
+jointPprobability mass function of two independent Bernoullis. Evaluating the IWP forward pass
+z = ij sij ϕij (a, b) is equivalent to running a shallow sum-product network with 4 product nodes
+(one per corner) and a single sum node. The multilinear basis {1, a, b, ab} and the corner basis span
+the same space and are related by the invertible linear map of §3 / Appendix C.
+
+B.5   Unifying principle
+
+The three views (symbolic Boolean logic, probabilistic WMC, and differentiable Multilinear learning)
+compute the same quantity under different conventions:
+                {0, 1} inputs (Boolean logic) ←→ [0, 1] inputs (WMC / Bayes net)
+                      ←→ gradient flows (Multilinear layer).
+The Multilinear layer (instantiated as Multilinear-STE or Multilinear-CovJac; §3) makes this explicit:
+it directly parameterizes the MLE coefficients and snaps to the nearest Boolean gate, so gradient-based
+training and Boolean inference are unified within a single algebraic object.
+
+C     Computational Cost and Corner-Polynomial Bijection
+
+C.1   Method comparison
+
+Table 5 summarizes all methods compared in this paper, including parameter counts, for-
+ward/backward semantics, and discretization-gap properties.
+
+
+                                                   19
+      Table 6: Per-neuron computational cost. All methods deploy the same hard Boolean gate.
+         Method              Params/neuron         Train (ops/sample)          Deploy (ops/sample)          Memory (floats)
+         Soft-Mix                   16                     ∼175                           7                          48
+         Gumbel-ST                  16                     ∼175                           7                          48
+         M-STE (ours)                4                      7                             7                          12
+         M-CovJac (ours)             4                      7                             7                          12
+                   All methods have small batch-independent overhead (<0.4 ops/sample at B=512; see §C.3 summary).
+
+
+
+
+C.2    Per-neuron cost summary
+
+Table 6 compares the per-neuron computational cost of all four methods. At deployment, all methods
+evaluate a single hard Boolean gate (∼7 ops: compute ab, multiply by 4 coefficients, sum). The
+training cost differs: Soft-Mix and Gumbel-ST evaluate all 16 gate outputs and compute a softmax
+mixture (174 ops); M-STE evaluates only the snapped polynomial (7 ops, the same as deployment);
+M-CovJac computes the soft-VQ proximity weights over 16 codebook entries (174 ops, similar to
+Soft-Mix). The 4× parameter reduction (16→4 per neuron) reduces the Adam optimizer state from
+48 to 12 floats per neuron (4 parameters × 3: value + first-moment + second-moment).
+
+C.3    Computational cost: full op counts
+
+Per-sample forward (Soft-Mix).               Soft-Mix evaluates all 16 gate polynomials per sample:
+
+       • Softmax over 16 logits: 16 exp + 15 add + 16 div = 47 ops.
+       • Compute ab: 1 multiply (shared across all 16 gates).
+       • 16 gate evaluations gj (a, b) = c0,j + ca,j a + cb,j b + cab,j ab: each needs 3 multiply (ca,j a,
+         cb,j b, cab,j · ab) + 3 add = 6 ops; 16 × 6 + 1 = 97 ops.
+                               P
+       • Weighted sum z = j πj gj : 16 multiply + 15 add = 31 ops.
+       • Total: 47 + 97 + 31 = 175 ops/sample/neuron.
+
+Backward: ∂L/∂πj = δ · gj (a, b) for each j, plus softmax Jacobian: ≈ 100 ops/neuron.
+
+Per-sample forward (Gumbel-ST).                   Same 16-gate evaluation as Soft-Mix, plus Gumbel noise:
+
+       • Sample 16 Gumbel variables (− log(− log u)): 16 × 3 = 48 ops.
+       • Add to logits and take argmax: 16 + 15 = 31 ops.
+       • Evaluate the selected gate polynomial: 7 ops.
+       • Total: 48 + 31 + 7 = 86 ops (hard forward); ∼174 ops with soft backward (Gumbel-
+         softmax).
+
+The hard forward is cheaper than Soft-Mix (one gate, not 16), but the Gumbel-softmax backward still
+requires all 16 gate values, bringing the effective training cost to ∼174 ops.
+
+Per-sample forward (Multilinear-STE).                     Evaluates one committed polynomial per sample:
+
+       • z = c0 + ca a + cb b + cab ab: 1 multiply (ab) + 3 multiply (ck · basisk ) + 3 add = 7
+         ops/sample/neuron.
+       • Gate selection (snap) is computed once per layer, amortized across the batch (§C.3 below).
+
+Backward STE: ∇c L = δ · [1, a, b, ab]⊤ = [δ, δa, δb, δ · ab]: 3 multiply (δ is free for c0 ) = 3
+ops/neuron.
+
+        P forward (Multilinear-CovJac). The soft-VQ weights ωj and the soft coefficient
+Per-sample
+csoft = j ωj Gj depend only on c and the fixed codebook G, not on the input (a, b). They are
+therefore computed once per neuron per batch: distances ∥c − Gj ∥2 for 16 gates (∼120 ops, using
+∥c∥2 − 2c⊤ Gj + ∥Gj ∥2 with ∥Gj ∥2 precomputed), softmax (47 ops), weighted sum (∼30 ops);
+
+
+                                                                20
+total batch overhead ∼200 ops/neuron. Per sample, each neuron evaluates z = c⊤soft ψ(a, b) = ∼7
+ops (same as STE). Amortized over batch B=512: 200/512 ≈ 0.4 extra ops/sample, giving an
+effective per-sample cost of ∼7.4 ops. The CovJac backward adds a 4×4 Jacobian–vector product
+(∼28 ops/neuron, also batch-independent). At deployment, CovJac uses the same hard gate as STE
+(∼7 ops).
+
+Summary. Per sample at training: STE ∼7 ops; CovJac ∼7 ops; Soft-Mix ∼175 ops. STE and
+CovJac are both ∼25× cheaper than Soft-Mix per sample. All methods also incur a small batch-
+independent overhead per neuron: M-STE ∼120 ops (snap distances ∥c − Gj ∥2 ), M-CovJac ∼200
+ops (distances + softmax + weighted sum), Soft-Mix ∼47 ops (softmax on logits). At B=512 these
+amortize to <0.4 ops/sample for all methods. At deployment all methods evaluate a single hard gate:
+∼7 ops.
+
+Layer-level L2 snap. The L2 snap is computed once per layer and shared across the batch, so its
+O(N · 64) cost is batch-independent (approximately 5% of total at B=512). Using the identity
+
+                              ∥c − Gj ∥2 = ∥c∥2 − 2cG⊤ + ∥Gj ∥2 ,
+the snap reduces to a single cuBLAS matmul.
+
+Optimizer state. Adam stores per parameter: value + first-moment + second-moment = 3 floats.
+Multilinear: 4 × 3 = 12 floats/neuron. Soft-Mix: 16 × 3 = 48 floats/neuron. 4× reduction in
+optimizer memory.
+
+C.4   Corner–polynomial bijection (explicit matrices)
+
+Proposition (Bijection). The multilinear parameterization c = [c0 , ca , cb , cab ] and the corner
+parameterization s = [s00 , s10 , s01 , s11 ] are related by the invertible linear map c = M s where
+                             1      0       0 0                         1 0 0 0
+                                                                                  
+                        −1 1               0 0                     1 1 0 0
+                  M =                                ,     M −1 =                    .
+                            −1 0            1 0                        1 0 1 0
+                             1 −1 −1 1                                  1 1 1 1
+Both parameterizations span the same function space and represent the same 16 Boolean gates.
+Consequences: (a) the 17pp IWP-STE vs Multilinear-STE accuracy gap at k=64k (§5.2) cannot arise
+from function class or expressive capacity; it must arise from optimization dynamics, specifically
+the STE gradient structure (verified by the 2×2 experiment in Appendix F and by Lemma 6 in
+Appendix A.2).
+
+C.5   Voronoi geometry of the L2 snap
+
+The Voronoi cells of the 16 gate vectors are convex polyhedra in R4 ; nearest-gate
+                                                                         √         distances between
+pairs of gates range from 1 (adjacent gates, e.g. AND to a ∧ ¬b) to 11 (XOR (0, 1, 1, −2) to
+AND (0, 0, 0, 1)). No geometric uniformity is required: what matters is that every boundary of
+the continuous c space lies in the interior of some Voronoi cell, so the snap is well-defined almost
+everywhere.
+
+
+D     STE Basis Failure Catalogue
+
+D.1   Alternative STE bases tested
+
+All experiments below use the Multilinear-STE forward pass (L2 snap to the nearest Boolean gate)
+and swap only the backward basis ψ̃(a, b) used in the STE gradient δ · ψ̃(a, b). Results at k=64k,
+L=6, 3 seeds, last-10 hard accuracy (Table 7).
+∗
+ Single seed, k=8k (degenerate bases collapse to near-random regardless of scale; re-run at k=64k
+not informative).
+
+
+                                                21
+Table 7: STE basis failure catalogue on MNIST (k = 64k, L = 6, 3 seeds unless noted). Bold =
+reference (canonical basis).
+    Basis                       Description                          Acc (%)      Interpretation
+  Canonical (1, a, b, ab)       Multilinear-STE (reference)        98.11 ± 0.03   (ρ, κ, B) = (1/4, 1, 0), Part (i)
+  Walsh           {−1, +1}:     α= − 1, β=2, centered              94.92 ± 0.01   Sub-case (ii-b), p= − q, κ=0, coherence can-
+  ϕ(x)=2x−1                                                                       cellation
+  Smoothed             ϵ=0.2:   ϕ(x)=x+0.2                         10.14 ± 2.63   Sub-case (ii-a), p, q>0, B>0, collapses at
+  (1, a+ϵ, b+ϵ, (a+ϵ)(b+ϵ))                                                       k=64k
+  Expected-value                β=0; basis is constant               13.30∗       Degenerate, β=0 excluded in Prop. 5
+  (1, 0.5, 0.5, 0.25)
+  Uniform (1, 1, 1, 1)          α=1, β=0                             12.42∗       Degenerate
+
+
+
+D.2         Walsh cancellation is the cleanest predicted failure
+
+Setting α= − β/2 (Walsh basis) gives p= − q, so the corner values of ψ̃3 =ϕ(a)ϕ(b) are
+(p2 , −p2 , −p2 , p2 ). The expectation under uniform Boolean (a, b) is E[ψ̃3 ] = (1/4)(p2 − p2 −
+p2 + p2 ) = 0, producing exact coherence cancellation κ = 0. Proposition 5 predicts this basis cannot
+deliver a coherent cab update; the 94.92% accuracy (3.2pp below canonical at k=64k) is the empirical
+consequence.
+
+D.3         Smoothed basis fails for a different reason
+
+With ϕ(x)=x + ϵ, ϵ=0.2, we have p=0.2, q=1.2>0, so κ=1 but the basis components differ from
+canonical: specifically, ψ̃3 =(0.2+a)(0.2+b) = 0.04 + 0.2(a+b)+ab contains a non-removable
+constant and linear term, making B>0 in the Proposition 5 sense. The 10.14% accuracy at k=64k
+(near random chance on 10-class MNIST) is a catastrophic failure (far worse than Walsh), confirming
+that STE bias (B>0) is more destructive than coherence loss (κ=0).
+
+D.4         Degenerate β = 0 bases
+
+The expected-value and uniform bases have β=0, meaning ψ̃k no longer depends on (a, b) in the
+linear coordinates. These are outside the scope of Proposition 5 (which assumes β ̸= 0), but we
+include them for completeness. Both collapse to random-guess-level accuracy (12–13% on 10-
+class MNIST-bin), confirming that non-informative backward bases simply stop learning. They are
+instructive negative controls but not interesting counterexamples.
+
+E      Experimental Details and Additional Results
+This appendix contains: training protocol and hyperparameters (§E.1); binarization analysis and
+architecture baselines (§E.1); discretization gap (§E.2); gate-entropy diagnostic (§E.3); width scaling
+(§E.4); CIFAR-10 full table (§E.5); scaling to larger datasets (§E.6); gradient-norm diagnostic
+(§E.7); interaction-task scaling (§E.9); depth scaling (§E.10); gate codebook distribution (§E.11);
+and temperature sensitivity (§E.12).
+
+E.1         Hyperparameters and training protocol
+
+All methods are trained with Adam (lr = 0.01, β1 = 0.9, β2 = 0.999) for 50,000 iterations with
+batch size 512. Gate logits are initialized i.i.d. N (0, σ 2 ) with σ = 1.0 (the standard deviation of the
+initialising normal distribution for each 16-dim Soft-Mix logit vector and each 4-dim Multilinear
+coefficient vector). We report mean ± std over 3 independent seeds. Primary metric: last-10 hard
+accuracy, the mean hard-evaluation accuracy over the last 10 evaluation checkpoints, each spaced
+1,000 iterations apart, which reduces noise from the final checkpoint. The best-checkpoint accuracy
+differs from last-10 by up to 1.1pp (M-CovJac on MONK’s-2). Method rankings are preserved on
+most datasets; on Splice, the M-STE/M-CovJac ordering reverses under best-checkpoint, confirming
+last-10 as the more stable ranking metric.
+
+Statistical significance. With n=3 seeds, paired t-tests have only 2 degrees of freedom (critical
+t=4.30 for p<0.05), limiting the power of per-dataset significance tests. On CIFAR-10, the CovJac-
+
+
+                                                              22
+vs-STE gap (+2.95pp) is significant (t=8.70, p=0.013); other individual comparisons do not reach
+p<0.05 at n=3, including the large MONK’s-2 gap (+7.53pp, p=0.052) due to high variance. The
+stronger evidence is the consistency of CovJac’s advantage across all seven datasets: the probability
+that a method wins on all 7 datasets by chance (under a null of equal performance) is 2−7 < 0.01, a
+non-parametric sign test at p<0.01.
+Evaluation is performed every 1,000 iterations on a held-out test split. Binary MNIST is threshold-
+binarized at 0.5; CIFAR-10 binary uses the cifar-10-31-thresholds protocol (31 per-channel thresholds
+producing a 95,232-dim binary input).
+
+Wiring. Each neuron receives exactly two distinct inputs from the previous layer. We use a
+stride-based locality-preserving scheme: the term “stride” refers to the pixel-wise shift when sam-
+pling input pairs, analogous to convolutional stride in CNNs. Stride = 2 (non-overlapping): pairs
+(x0 , x1 ), (x2 , x3 ), . . ., yielding d/2 pairs. Stride = 1 (overlapping): pairs (x0 , x1 ), (x1 , x2 ), . . ., yield-
+ing d−1 pairs. If m gates require more pairs than adjacent elements provide, we extend to larger
+gaps while preserving locality. For gap g=1, we first use even-indexed pairs (x0 , x1 ), (x2 , x3 ), . . .,
+then odd-indexed pairs (x1 , x2 ), (x3 , x4 ), . . .. When these are exhausted, we consider pairs with gap
+g=2: (x0 , x2 ), (x2 , x4 ), . . ., then (x1 , x3 ), (x3 , x5 ), . . ., and so on for increasing g. The wiring is
+fixed across seeds within a configuration but re-sampled across configurations.
+
+Architecture. L hidden layers of width k followed by a GroupSum readout (10 equal groups
+summed within, producing 10 class logits). Softmax cross-entropy loss. Primary (k, L) is (64k, 6)
+on MNIST and (128k, 6) on CIFAR-10. For the depth sweep (§5.2), L ∈ {3, 6, 9, 12} at k=64k on
+MNIST binary.
+
+Compute resources. All experiments were run on a single NVIDIA B200 GPU (192 GB HBM3e)
+per run.
+
+Datasets. MNIST [26]: binarized at threshold 0.5, 784-dim, 10 classes. SVHN [27] and CIFAR-
+10/100 [28]: each channel binarized at 31 equally spaced thresholds, yielding 95,232-dim binary
+inputs. Adult and Splice [25]: binary-encoded tabular features (116-dim and 4,095-dim respectively).
+MONK’s-2 [29]: 17-dim binary encoding of 6 categorical attributes; the target function requires all
+pairwise interactions.
+
+Binarization information loss. Input binarization discards sub-threshold resolution. For CIFAR-
+10/100, 31 equally spaced thresholds per channel produce a thermometer code with 32 possible states
+per pixel-channel, encoding log2 32 = 5 effective bits out of the original 8, a 37.5% information loss
+per pixel-channel. For MNIST (threshold at 0.5), each pixel is reduced from 8 bits to 1, a 87.5% loss
+in principle, though MNIST pixel values are near-binary and the lost bits carry little signal. Table 8
+compares DLGNs to standard MLPs and CNNs on the same binarized inputs, isolating the effect of
+the Boolean gate constraint from the binarization bottleneck.
+MLP architecture. Fully connected: input → L hidden layers of width h with ReLU activations
+→ linear output. Trained with Adam (lr= 0.001), batch 512, 50k iterations. The flat binarized input
+(784-dim for MNIST, 95,232-dim for CIFAR-10) is fed directly.
+CNN architecture. The binarized input is reshaped to a multi-channel image (MNIST: 1×28×28;
+CIFAR-10: 93×32×32, i.e. 3 RGB channels × 31 thresholds). L convolutional layers (zero-padding,
+ReLU) with 2× max-pooling every 2 layers, followed by global average pooling and a linear classifier.
+Channels: 32 → 64 → 128 (L=3) or 32 → 64 → 128 → 256 → 256 → 256 (L=6). Kernel size:
+3×3 or 2×2 as noted. Same optimizer and budget as MLP.
+
+Where do the accuracy gaps come from? The accuracy gap between a CNN and a DLGN on
+the same binarized input has two sources: (1) the Boolean gate constraint: each DLGN neuron
+outputs a Boolean function of two binary inputs, whereas CNN neurons compute continuous multiply-
+accumulate; and (2) the readout bottleneck: GroupSum partitions the k gate outputs into C equal
+groups and sums within each, a fixed non-learned projection. A natural question is whether adding a
+small number of floating-point operations could close the gap while preserving the Boolean hidden
+layers.
+
+
+                                                          23
+Table 8: Binarized-input baselines on the same binary inputs as DLGN. Last-10 accuracy ± std, 3
+seeds. DLGNs deploy as Boolean circuits with zero floating-point operations; the accuracy gap vs
+CNN/MLP reflects the Boolean gate constraint, not binarization.
+             Model            Config              Train params      Deploy params           Inference          MNIST           CIFAR-10
+             MLP              L=3, h=64                     59k            59k float      59k MACs           96.95±0.04       12.28±1.68
+             MLP              L=6, h=128                   184k           184k float     184k MACs           97.63±0.07       28.26±1.63
+             CNN 3×3          L=3                           94k            94k float     ∼2M MACs            98.86±0.06           —
+             CNN 2×2          L=6                          712k           712k float     ∼10M MACs           98.90±0.07       75.13±0.83
+             CNN 3×3          L=6                        1.60M          1.60M float      ∼30M MACs           99.43±0.00       79.75±0.90
+
+             M-CovJac         L=6                      1.54M∗               0 float†       0 MACs†           98.30±0.04       58.97±0.26
+∗                                                       †
+    MNIST k=64k (1.54M); CIFAR-10 k=128k (3.07M). Deployed as a combinational Boolean circuit with zero float parameters and zero MACs. The circuit
+        stores gate type (4 bits/neuron; ≈192 KB for MNIST k=64k, L=6) plus wiring indices. All training parameters are discarded after gate selection.
+
+
+
+
+Table 9: Wiring sensitivity: CovJac with 5 different random wiring seeds. Same gate-init seed, same
+training protocol. Last-10 accuracy.
+                                        Dataset                           Mean ± std               Range
+                                        CIFAR-10 (k=128k)                 58.56±0.28           58.04–58.90
+
+
+
+
+Learned readout (replacing GroupSum). Replacing GroupSum with a trainable linear layer
+Rk → RC adds k × C MACs (e.g., 640k for MNIST at k=64k, C=10), negligible compared to the
+millions of MACs in a CNN. The Boolean hidden layers remain pure combinational logic; only the
+final readout uses arithmetic, which can be implemented via DSP slices or LUTs on FPGA. This
+is the lowest-cost intervention because GroupSum assigns each gate to exactly one class with unit
+weight, which is a highly restricted readout.
+Learned input embedding. Replacing hard binarization with a learned linear projection would
+recover some of the 37.5% information lost per pixel-channel, but would require multiply-accumulate
+hardware at the input.
+Comparison to quantized CNNs on FPGA. Modern quantized CNNs (INT8, binary neural net-
+works [35]) also map efficiently to FPGAs via XNOR+popcount [36] or DSP slices. The unique
+advantage of DLGNs is not FPGA-compatibility per se, but the extreme end of the efficiency spectrum:
+fully combinational evaluation (no clock, no weight storage, no multiply hardware), relevant for
+applications where even DSP blocks or BRAM are too expensive (IoT sensors, in-pixel processing).
+The accuracy gap is the cost of this constraint; this paper’s contribution (CovJac) narrows the gap
+within the DLGN family.
+Both readout and input-embedding directions are orthogonal to the gate-selection mechanism studied
+here and are left to future work.
+
+
+Wiring sensitivity. This paper uses fixed random wiring (each neuron connects to 2 randomly
+chosen inputs from the previous layer). To quantify the impact of wiring topology, we test CovJac
+with 5 different random wiring seeds on CIFAR-10 (k=128k, L=6, Table 9). The wiring-induced
+variance is only ±0.28pp (range 0.86pp), while the gap to a CNN 2×2 on the same binarized input
+is +16.2pp (Table 8). This indicates that wiring topology is not the bottleneck: different random
+wirings perform similarly, and learnable wiring [4] is unlikely to close the CNN gap. The dominant
+bottleneck is the 2-input Boolean gate constraint itself: each DLGN neuron computes a discrete
+function of 2 binary inputs, while each CNN 2×2 neuron computes a continuous multiply-accumulate
+over 4 real-valued inputs. Closing this gap requires increasing the number of inputs per gate (k-input
+generalization) or relaxing the Boolean constraint at selected layers.
+
+
+Best-checkpoint accuracy (Table 10). Table 1 reports last-10 accuracy as the primary metric. Ta-
+ble 10 reports the corresponding best-checkpoint accuracy (maximum over all evaluation checkpoints,
+averaged across 3 seeds). Method rankings are identical under both metrics on all datasets.
+
+
+                                                                          24
+Table 10: Best-checkpoint accuracy ± std (3 seeds). Same configurations as Table 1. Bold = best per
+column.
+      Method              Adult                          Splice    MONK’s-2           MNIST         SVHN       CIFAR-10    CIFAR-100
+      Soft-Mix           85.01±.03                     97.40±.09   82.20±.96         98.32±.03     68.37±.07   58.32±.05   28.21±.38
+      Gumbel-ST          85.01±.08                     97.20±.09   82.46±1.07        98.21±.08     67.06±.28   58.08±.19   28.08±.33
+      M-STE (ours)       85.11±.04                     97.72±.09   79.34±1.05        98.15±.02     67.01±.18   56.95±.06   25.02±.16
+      M-CovJac (ours)   85.13±.03†                     97.53±.24   87.15±1.92        98.36±.03     69.19±.18   59.18±.26   28.91±.14
+                                                                     †
+                                                                         Adult: τ =0.1.
+
+
+
+                                                              interaction demand increases
+                                                  8                                                     +7.5
+                            CovJac STE gap (pp)
+                                                          STE: cab on 25% of samples
+                                                  6       CovJac: cab on 100%
+                                                                                                 +4.3
+                                                  4
+                                                                                          +3.0
+                                                                               +2.2
+                                                  2
+                                                        +0.0 +0.1 +0.2
+                                                  0
+                                                         lt    e    T            0     0      2
+                                                      Adu Splic MNIS SVHCNIFAR-1IFAR-10 ONK's-
+                                                                              C       M
+Figure 6: CovJac−STE gap grows monotonically with interaction demand across 7 datasets. cab
+starvation (25% coverage) hurts more as tasks require more interactive gates.
+
+
+E.2   Discretization gap
+
+The discretization gap (DG) measures the accuracy difference between the training-time forward
+pass and the deployed hard Boolean circuit: DG = Atrain − Ahard . For Multilinear-STE, DG=0
+by construction (both phases use the quantized gate). For Multilinear-CovJac, the soft-VQ training
+forward may differ from the hard deployment gate; empirically DG ≤ 0.2% on all main datasets
+(≤ 1% on MONK’s-2, which has the smallest k=136). The generalization gap is Gen = Ahard, train −
+Ahard, test .
+
+E.3   Gate-entropy diagnostic (Observation 1)
+                                                                                  P (l)          (l)
+For each training run we log the per-layer gate-distribution entropy H(π (l) ) = − j πj log πj at
+every evaluation checkpoint. For Soft-Mix, π (l) is the softmax over the 16 gate logits at layer l; for
+Multilinear methods, π (l) is derived from the L2 distances to the 16 codebook entries.
+
+Expected pattern (Observation 1). In Soft-Mix runs that successfully train at moderate depth,
+entropy should drop first in the output-adjacent layers and only later in the input-adjacent layers. In
+stalling runs (L=12), deep layers should retain near-maximum entropy log 16 ≈ 2.77 nats throughout
+training, consistent with greedy output-to-input commitment failing to reach them.
+
+E.4   Width-scaling tables
+
+Width sweep on MNIST binary: k ∈ {8k, 16k, 32k, 64k}, L ∈ {1, 3, 6}, 3 seeds each, 50k iterations
+(Table 11).
+
+Observation. At L=1, Multilinear-CovJac overtakes Soft-Mix starting at k=16k and the gap
+widens with width: +0.26pp at k=16k, +0.58pp at k=32k, +1.27pp at k=64k. Multilinear-STE
+tracks CovJac closely at L=1 (gap <0.1pp), consistent with the cab starvation effect being mild at
+shallow depth. At L=3, CovJac matches Soft-Mix exactly at k=16k while STE lags by 0.67pp,
+consistent with the coverage gap accumulating over layers.
+
+
+                                                                             25
+ Table 11: Width scaling on MNIST (L = 1, 3, 6, 3 seeds). Last-10 accuracy. Bold = best per row.
+               Width       Soft-Mix      Gumbel-ST      M-STE (ours)     M-CovJac (ours)
+                                                 L=1
+               k=8k      91.89 ± 0.03    91.73 ± 0.03   91.39 ± 0.10      91.62 ± 0.13
+               k=16k     93.22 ± 0.10    93.15 ± 0.13   93.25 ± 0.05      93.48 ± 0.02
+               k=32k     94.56 ± 0.15    94.72 ± 0.08   95.10 ± 0.08      95.14 ± 0.05
+               k=64k     95.24 ± 0.13    95.98 ± 0.15   96.46 ± 0.08      96.51 ± 0.09
+                                                 L=3
+               k=8k      95.96 ± 0.05    95.90 ± 0.11   95.33 ± 0.06      96.12 ± 0.02
+               k=16k     97.06 ± 0.08    96.87 ± 0.13   96.39 ± 0.05      97.09 ± 0.07
+               k=32k     97.43 ± 0.16    97.45 ± 0.05   97.32 ± 0.04      97.72 ± 0.04
+               k=64k     97.66 ± 0.09    97.41 ± 0.07   97.69 ± 0.04      97.91 ± 0.09
+                                                 L=6
+               k=8k      97.31 ± 0.01    97.09 ± 0.05   96.59 ± 0.09      97.37 ± 0.01
+               k=16k     97.77 ± 0.09    97.63 ± 0.06   97.35 ± 0.04      97.68 ± 0.03
+               k=32k     97.94 ± 0.06    97.89 ± 0.05   97.57 ± 0.10      98.13 ± 0.07
+               k=64k     98.07 ± 0.04    98.02 ± 0.12   98.00 ± 0.04      98.21 ± 0.07
+
+
+Table 12: Power-law scaling exponents A(k) = 100 − Bk −α fitted on MNIST L = 1. Bold = highest
+α (steepest scaling).
+                       Method              α      B     Predicted error at k=256k
+                       Soft-Mix          0.262    85             3.25%
+                       Gumbel-ST         0.350   196             2.52%
+                       M-STE (ours)      0.431   424             1.98%
+                       M-CovJac (ours)   0.422   378             1.98%
+
+
+
+Power-law fit. Fitting A(k) = 100 − Bk −α at L=1 (log-linear regression on error vs width,
+R2 > 0.99 for all methods; Table 12):
+Multilinear methods achieve scaling exponent α ≈ 0.42 versus Soft-Mix’s α = 0.26, a 61% faster
+error decay with width. The practical consequence: to reach 1% error, the power law predicts
+Multilinear needs ∼230k neurons while Soft-Mix needs ∼2.1M, a 9× width gap, compounded by
+the 4× parameter-per-neuron efficiency.
+
+Parameter-budget comparison. At matched parameter budget (4 params/neuron for CovJac vs 16
+for Soft-Mix), CovJac can be 4× wider (Table 13):
+CovJac outperforms Soft-Mix at every matched budget: +3.3pp at L=1, +1.2pp at L=3, +0.4–
+0.8pp at L=6. The gap narrows at greater depth because accuracy approaches ceiling, but CovJac
+wins at every operating point.
+
+Width scaling results. Multilinear methods achieve α > αSoft-Mix at L=1 (0.42 vs 0.26, R2 >
+0.99). The CovJac–Soft-Mix gap widens monotonically with width, from −0.27pp at k=8k to
++1.27pp at k=64k, and the power-law fit predicts continued divergence.
+
+E.5   CIFAR-10 binary: full table
+
+Table 14 reports the full CIFAR-10 results including gap decomposition.
+
+Headline. Multilinear-CovJac beats Soft-Mix by 0.84pp with 4× fewer parameters and near-zero
+discretization gap. Multilinear-STE is the worst-performing method on CIFAR-10; this is the
+empirical signature of cab starvation at task scale (see §E.9). All methods have essentially zero DG on
+binary inputs, so accuracy differences reflect optimization quality, not the train-to-deploy transition.
+
+
+                                                  26
+Table 13: Parameter-budget comparison on MNIST at matched total parameters. CovJac uses 4×
+wider networks than Soft-Mix at the same total parameter count.
+                   Total params   CovJac (k)   Soft-Mix (k)    CovJac     Soft-Mix
+                                               L=1
+                   128k              32k          8k           95.14%     91.89%
+                   256k              64k         16k           96.51%     93.22%
+                                               L=3
+                   128k              32k          8k           97.72%     95.96%
+                   256k              64k         16k           98.21%     97.06%
+                                               L=6
+                   128k              32k          8k           98.13%     97.31%
+                   256k              64k         16k           98.21%     97.77%
+
+
+Table 14: CIFAR-10 gap decomposition (k = 128k, L = 6, 3 seeds). DG = discretization gap
+(train-deploy mismatch); Gen = generalization gap (train-test on hard gates).
+               Method             Params/n Hard Acc (%) DG (%) Gen (%)
+               Soft-Mix [1]           16        58.13 ± 0.12      0.000        41.85
+               Gumbel-ST              16        57.91 ± 0.28      0.000        42.08
+               M-STE (ours)            4        56.02 ± 0.23      0.000        43.33
+               M-CovJac (ours)         4        58.97 ± 0.26      0.071        40.96
+
+
+E.6   Scaling to larger datasets and widths
+
+Table 15 extends the comparison to CIFAR-100 at larger width (k=1280k, 100k iters) and to Tiny-
+ImageNet [37] (200 classes, 64×64 images binarized with 31 thresholds per channel, yielding
+380,928-dim binary inputs). CovJac remains the best method at every scale. The CovJac-vs-STE gap
+grows with width on both datasets: on CIFAR-100 from +4.35pp (k=256k) to +5.02pp (k=1280k);
+on Tiny-ImageNet from +1.52pp (k=512k) to +1.86pp (k=2560k). This is consistent with the
+starvation mechanism becoming more consequential as the network has more capacity to exploit
+interactive gates.
+
+E.7   Gradient-norm diagnostic
+
+For each method we record, at every evaluation checkpoint, the per-coefficient gradient L2 norm
+averaged over the training minibatches within that evaluation window. For Multilinear methods
+the four components are (∥∂L/∂c0 ∥, ∥∂L/∂ca ∥, ∥∂L/∂cb ∥, ∥∂L/∂cab ∥). We then compute the
+coverage ratio r = ∥∂L/∂cab ∥/∥∂L/∂c0 ∥.
+
+Result. Multilinear-STE: ratio in [0.19, 0.25] throughout training, mean 0.227, consistent with
+Lemma 6’s E[ab] = 1/4 prediction up to ∼10% downward correction from cross-layer correlations
+between the upstream error δ and the input bits (a, b). Multilinear-CovJac: at uniform π the closed-
+form prediction is r = 4 (because under uniform π only the (a=b=0) row of R0 is non-zero while
+all four rows of R3 are non-zero); empirically the ratio is ∼ 1 at iter 1k and grows monotonically
+to a network-average plateau of approximately 7.3 by iteration 25k, then stabilizes. The growth is
+driven by the diagonal entry J00 = (2/τ )Varπ (c0 ) collapsing as π concentrates onto gates with
+cab ̸= 0, while the off-diagonal J03 remains comparable in magnitude and keeps cab fed through the
+always-active ψ0 =1 channel; on neurons that commit to cab =0 gates the same mechanism drives the
+ratio to a floor near 0.8.
+
+E.8   Method semantics: additional notes
+
+CovJac derivation and VQ mapping. We derive J = (2/τ )Covω (G) as the standard soft-VQ
+Jacobian [21]; Proposition 4’s input-independence analysis is novel. Mapping: Multilinear-STE =
+VQ-VAE hard quantize + STE [20]; Multilinear-CovJac = soft-to-hard VQ. Codebook (16 Boolean
+gates) and analysis are novel; quantization techniques are established.
+
+
+                                                27
+Table 15: Scaling to larger datasets and widths (L=6, 3 seeds). Last-10 accuracy (best-checkpoint
+in parentheses). Bold = best. CIFAR-100: 100k iters; Tiny-ImageNet: 50k iters (may benefit from
+longer training).
+      Dataset     k             Soft-Mix               Gumbel-ST              M-STE (ours)          M-CovJac (ours)
+      CIFAR-100   256k    27.92±.43 (28.21±.38)   27.72±.40 (28.08±.33)   24.02±.17 (25.02±.16)   28.37±.22 (28.91±.14)
+      CIFAR-100   1280k   30.56±.31 (30.87±.26)   31.65±.20 (31.88±.17)   27.70±.31 (29.77±.13)   32.72±.09 (32.88±.08)
+      Tiny-Im.    512k     7.46±.20 (7.74±.12)     7.41±.05 (7.67±.08)     6.49±.08 (7.57±.10)     8.01±.13 (8.25±.17)
+      Tiny-Im.    2560k    9.18±.04 (9.43±.06)     9.10±.21 (9.44±.29)     8.57±.02 (9.26±.13)    10.43±.12 (10.64±.13)
+
+
+
+Table 16: Splice and MONK’s-2 cross-dataset comparison (last-10 accuracy ± std, 3 seeds). Bold =
+best per dataset. CovJac−STE gap shown for interaction-density scaling.
+ Dataset                    Soft-Mix         Gumbel-ST       M-STE (ours)        M-CovJac (ours)        CovJac−STE
+ Splice (k=4095)          97.01±0.11        96.81±0.30          97.07±0.00          97.20±0.23             +0.13pp
+ MONK’s-2 (k=136)         81.32±1.09        81.46±0.89          78.53±1.25          86.06±2.17             +7.53pp
+
+
+
+Skip connection and identity gate analysis. Identity gates (a, b) act as implicit skip connections.
+They can, in principle, carry gradient past a committed layer, but in Soft-Mix the π-routing for
+identity gates is itself subject to the Proposition 2 cancellation at uniform π.
+
+E.9      Interaction-task scaling
+
+Claim. The Multilinear-CovJac vs Multilinear-STE accuracy gap reflects the density of interactive
+(cab ̸= 0) gates needed to fit the task. The gap scales monotonically with task interaction density
+across seven datasets.
+All rows are L=6, 3-seed means ± std (10k iters for MONK’s-2). MONK’s-2 uses unique wiring (k=136 is the
+maximum for 17 input features).
+The gap is monotonically increasing with interaction density: on Adult (τ =0.1) the gap is negligible
+(+0.02pp), CovJac overtakes on images (+2.22pp on SVHN, +2.95pp on CIFAR-10), the advantage
+widens to +4.35pp on CIFAR-100, and reaches +7.53pp on the synthetic MONK’s-2 benchmark
+(which requires all pairwise interactions). Splice (+0.13pp, 3 seeds) slots between Adult and MNIST,
+consistent with moderate interaction density in DNA sequence patterns. All datasets use binary inputs,
+the same architecture (L=6, GroupSum readout), and the same training protocol (Adam, 3 seeds).
+The only controlled difference is the task.
+
+Why interaction-dense tasks amplify the gap. The 16 Boolean gates partition by |cab |: 6 gates
+have cab =0 (constants, projections, negations, i.e. functions linear in individual inputs on the Boolean
+cube), 8 have |cab |=1 (AND/OR family, implications), and 2 have |cab |=2 (XOR, XNOR). The non-
+cab gates suffice for near-linearly-separable problems like MNIST binary. Natural-image classification
+requires many XOR/implication-like compositions; a network whose cab coordinate is under-trained
+cannot express these gates efficiently. On Adult, the overhead of CovJac’s coupling outweighs the
+benefit because few neurons need interactive gates.
+
+Three concrete numerical signatures. (1) Multilinear-CovJac beats Soft-Mix with 4× fewer
+parameters on CIFAR-10 (+0.84pp) and CIFAR-100 (+0.45pp). On MNIST both are tied (98.30%).
+The advantage only emerges when the task stresses the cab coordinate. (2) Multilinear-STE is the
+worst method on CIFAR-10/100 (56.02% / 24.02%), underperforming even Soft-Mix. (3) Cross-
+coefficient coupling scales with task demand. Proposition 4’s J03 off-diagonal routes gradient into
+cab on every sample. On MNIST the baseline STE coverage (25%) is enough, so CovJac yields only
++0.21pp; on CIFAR-100 it is not, so CovJac yields +4.35pp; on MONK’s-2 the gap reaches +7.53pp.
+
+Formalizing interaction demand. The “interaction demand” of a task can be operationalized as
+the cab starvation severity: the accuracy deficit that Multilinear-STE suffers relative to Soft-Mix, i.e.
+∆starv = ASM −ASTE . This measures how much the 25% cab coverage (Lemma 6) hurts on a given task,
+using only baseline methods (independent of CovJac). The CovJac advantage ∆CJ = ACJ − ASTE
+
+
+                                                           28
+Table 17: Starvation severity vs CovJac advantage across 7 datasets. ∆starv : Soft-Mix − M-STE
+(baseline deficit). ∆CJ : M-CovJac − M-STE (our advantage). Pearson r=0.85. Ratio undefined (—)
+when ∆starv ≤ 0.
+                                    Dataset           ∆starv        ∆CJ       Ratio
+                                    Adult            −0.23         +0.02         —
+                                    Splice           −0.06         +0.13         —
+                                    MNIST            +0.20         +0.21     1.05×
+                                    SVHN             +1.52         +2.22     1.46×
+                                    CIFAR-10         +2.11         +2.95     1.40×
+                                    CIFAR-100        +3.90         +4.35     1.12×
+                                    MONK’s-2         +2.79         +7.53     2.70×
+
+
+Table 18: Depth scaling on MNIST (k = 64k, 50k iters, 3 seeds). Last-10 accuracy (best-checkpoint
+in parentheses). Bold = best per column.
+       Method             L=3                     L=6                       L=9                     L = 12
+       Soft-Mix    97.80±.03 (97.88±.02)   98.29±.04 (98.33±.03)     97.34±.16 (97.49±.10)   82.94±2.85 (86.58±2.16)
+       Gumbel-ST   97.80±.01 (97.86±.01)   98.22±.04 (98.27±.03)     98.19±.03 (98.24±.04)    97.89±.03 (97.98±.06)
+       M-STE       97.68±.04 (97.77±.04)   98.04±.06 (98.15±.05)     98.01±.06 (98.13±.03)    97.99±.05 (98.08±.04)
+       M-CovJac    97.84±.03 (97.89±.05)   98.29±.04 (98.36±.04)     98.31±.06 (98.35±.05)    98.28±.06 (98.34±.08)
+
+
+
+
+should correlate with ∆starv if CovJac’s mechanism (coupling cab to the always-active channel)
+specifically addresses the starvation bottleneck.
+Table 17 confirms the correlation (r=0.85): on datasets where starvation severity is negative or near
+zero (Adult, Splice), CovJac provides no benefit; where the severity is positive and large (CIFAR-
+10/100, MONK’s-2), CovJac’s advantage scales proportionally. The outlier is MONK’s-2 (ratio
+2.70×), where the target function provably requires all pairwise interactions; CovJac’s 100% cab
+coverage has outsized benefit on this maximally interactive task.
+
+E.10   Depth scaling
+
+Claim. Multilinear methods (and, more generally, any single-gate-forward method) scale to L=12
+where Soft-Mix stalls. The backward-cancellation theory (Proposition 2 + Observation 1) predicts
+the slowdown (Table 18).
+
+Headline. At L=12, Soft-Mix stalls at 82.94% ± 2.85, a 15.4pp drop from its L=6 value of
+98.29%. All three single-gate-forward methods (Multilinear-CovJac 98.28%, Multilinear-STE
+97.99%, Gumbel-ST 97.89%) remain above 97.8% at L=12. Multilinear-CovJac is the best method
+at every depth tested. The Multilinear-STE → Multilinear-CovJac gap is depth-stable at ≈ 0.3pp.
+
+Extended training at L=12. To verify that Soft-Mix’s depth penalty is persistent rather than a
+transient lag, we double the training budget to 100k iterations at L=12, k=64k on MNIST (Table 19).
+Soft-Mix recovers from 82.94% to 92.08% but remains 6.0pp below all single-gate-forward methods,
+confirming that the backward cancellation imposes a persistent accuracy ceiling, not a training-speed
+penalty.
+
+Single-gate-forward dichotomy. The three methods that commit to a single gate per forward pass
+all survive at depth; the one method that sums over 16 gates during forward is the only one that
+stalls. Gumbel-ST is particularly diagnostic: it has the same 16-parameter count as Soft-Mix, yet its
+Gumbel-noise sampling produces a one-hot selection per forward, avoiding the Lemma 1 zero-sums
+inside ∂z/∂a. Its survival at L=12 (97.89%) is direct empirical confirmation that the Proposition 2
+backward cancellation, not parameter count, is the operative mechanism behind Soft-Mix’s depth
+penalty.
+
+Cross-dataset: Adult depth sweep. Adult (k=4096, L ∈ {3, 6, 9, 12}, 50k iters, 3 seeds; Ta-
+ble 20):
+
+
+                                                         29
+Table 19: MNIST depth L=12 at 100k iterations (k = 64k, 3 seeds). Last-10 accuracy. Bold = best.
+                              Method                       50k iters            100k iters
+                              Soft-Mix                 82.94 ± 2.85            92.08 ± 0.45
+                              Gumbel-ST                97.89 ± 0.03            98.04 ± 0.05
+                              M-STE (ours)             97.99 ± 0.05            98.05 ± 0.11
+                              M-CovJac (ours)          98.30 ± 0.07            98.26 ± 0.07
+
+
+Table 20: Adult depth scaling (k = 4096, τ =0.1 for CovJac, 3 seeds). Last-10 accuracy (best-
+checkpoint in parentheses). Bold = best per column.
+       Method             L=3                       L=6                          L=9                   L = 12
+       Soft-Mix    84.80±.04 (84.90±.01)   84.68±.05 (85.01±.03)         84.65±.05 (84.96±.02)   82.36±.84 (83.37±.79)
+       Gumbel-ST   84.83±.02 (84.97±.05)   84.75±.02 (85.01±.01)         84.70±.07 (84.97±.02)   84.57±.10 (84.93±.09)
+       M-STE       84.99±.03 (85.08±.03)   84.90±.05 (85.13±.03)         84.70±.06 (85.08±.03)   84.58±.02 (85.07±.06)
+       M-CovJac†   84.47±.02 (84.51±.02)   84.93±.03 (84.96±.02)         84.98±.04 (85.10±.05)   84.91±.08 (85.04±.06)
+                                               †
+                                                   τ =0.1 (same as Table 1).
+
+
+
+
+On Adult, Soft-Mix shows the largest depth penalty (−2.44pp from L=3 to L=12), though milder
+than on MNIST (−15.4pp). With τ =0.1, CovJac is the most depth-stable method (−0.02pp from
+L=6 to L=12), reversing the degradation observed at τ =1.0 (−1.08pp). The reduced coupling
+strength at low τ eliminates the overhead that accumulates with depth on this low-interaction dataset.
+
+Cross-dataset: CIFAR-10 depth sweep.                CIFAR-10 (k=128k, L ∈ {3, 6, 9, 12}, 50k iters, 3 seeds;
+Table 21):
+On CIFAR-10, Soft-Mix collapses to 20.79% at L=12 (−37.3pp from L=6), confirming that the
+MNIST depth penalty generalizes to harder tasks. Multilinear-CovJac degrades by only −0.53pp,
+and is the only method that holds above 58% across all depths tested. Multilinear-STE degrades
+modestly (−2.68pp), consistent with cab starvation accumulating over depth on an interaction-dense
+task.
+
+Cross-dataset: CIFAR-100 depth sweep. CIFAR-100 (k=256k, L ∈ {3, 6, 9, 12}, 100k iters, 3
+seeds; Table 22):
+On CIFAR-100, the Soft-Mix depth collapse is catastrophic: from 27.92% at L=6 to 4.59% at L=12
+(−23.3pp), approaching random chance for 100 classes (1%). CovJac holds at 27.61% (−0.76pp from
+L=6). M-STE degrades more severely on CIFAR-100 than on CIFAR-10 (−3.19pp vs −2.68pp),
+consistent with the interaction-demand scaling: the 100-class task requires more interactive gates,
+amplifying the cab starvation effect.
+
+E.11   Gate codebook and per-neuron coefficient distribution
+
+Figure 7 shows the 16-gate codebook in 3D coefficient space. The per-neuron density plots are in the
+main text (Figure 5).
+
+Snapped gate assignments. Figure 8 shows the per-neuron gate selection at convergence on
+CIFAR-10. Each method learns continuous coefficients c ∈ R4 that are snapped to the nearest
+codebook entry ĉ ∈ G via Eq. 2. The key observation: M-STE continuous coefficients drift far
+from the codebook (std(cab )=52.6, range ±240) because STE provides no force pulling c back; the
+snapping operation simply picks the nearest of 16 fixed integer points regardless of distance. CovJac’s
+soft-VQ proximity weighting creates an implicit restoring force, keeping coefficients closer to the
+codebook (std=5.9). Despite the drift, M-STE’s snapped gate distribution is well-distributed: 20.7%
+of neurons select strong interaction gates (|cab |≥2), vs 25.7% for CovJac and 17.8% for Soft-Mix.
+
+Gate type distribution across datasets. The gate type composition (constant, separable, weak
+interaction |cab |=1, and strong interaction |cab |=2) for all four methods across Adult, MNIST, and
+CIFAR-10 is shown in Figure 5 (main text). The 16 Boolean gates partition into: 2 constant (FALSE,
+
+
+                                                            30
+Table 21: CIFAR-10 depth scaling (k = 128k, 50k iters, 3 seeds). Last-10 accuracy (best-checkpoint
+in parentheses). Bold = best per column.
+       Method             L=3                     L=6                     L=9                    L = 12
+       Soft-Mix    57.37±.19 (57.60±.24)   58.13±.12 (58.31±.09)   54.76±.20 (55.06±.18)   20.79±.21 (22.98±.18)
+       Gumbel-ST   57.00±.41 (57.29±.35)   58.24±.25 (58.47±.33)   56.42±.05 (56.92±.13)   51.66±.18 (53.49±.52)
+       M-STE       56.51±.21 (56.85±.25)   56.02±.23 (56.53±.12)   54.66±.08 (55.64±.20)   53.34±.21 (55.08±.25)
+       M-CovJac    57.44±.26 (57.75±.25)   58.97±.26 (59.18±.26)   58.41±.12 (58.88±.13)   58.44±.18 (58.75±.29)
+
+
+
+Table 22: CIFAR-100 depth scaling (k = 256k, 100k iters, 3 seeds). Last-10 accuracy (best-
+checkpoint in parentheses). Bold = best per column.
+       Method             L=3                     L=6                     L=9                    L = 12
+       Soft-Mix    27.33±.17 (27.58±.20)   27.92±.43 (28.21±.38)   24.83±.24 (25.13±.17)    4.59±.46 (5.25±.74)
+       Gumbel-ST   27.11±.23 (27.40±.17)   27.72±.40 (28.08±.33)   27.16±.07 (27.54±.14)   26.20±.27 (26.44±.25)
+       M-STE       25.30±.21 (25.71±.22)   24.02±.17 (25.02±.16)   22.60±.09 (24.29±.12)   20.83±.13 (23.97±.13)
+       M-CovJac    26.98±.22 (27.24±.20)   28.37±.22 (28.91±.14)   27.74±.18 (28.30±.15)   27.61±.19 (28.15±.18)
+
+
+
+
+TRUE), 4 separable (A, B, ¬A, ¬B), 8 weak interaction (AND, OR, NAND, NOR, implications),
+and 2 strong interaction (XOR, XNOR).
+CovJac consistently selects the most strong interaction gates: 36.2% on Adult, 27.2% on MNIST,
+25.7% on CIFAR-10, compared to 16–21% for other methods. This confirms that the J03 coupling
+enables neurons to learn cab and reach XOR/XNOR gates that STE neurons cannot access due to
+25% gradient coverage.
+CovJac also has the fewest constant gates (<0.5% vs 4–10% for others), indicating almost no wasted
+neurons. The reason is structural: the J03 off-diagonal couples cab to the constant channel on every
+sample, so neurons receive gradient that actively pushes them away from the constant region of the
+codebook (ca =cb =cab =0). Under STE, the 25% coverage for cab means some neurons never receive
+enough signal to move away from their initial nearest gate, which is often constant or separable;
+Soft-Mix’s gradient cancellation has a similar effect. On Adult (separable task), CovJac’s high strong-
+interaction fraction (36%) explains its slight accuracy gap at τ =1: the network assigns interactive
+gates where separable ones would suffice.
+
+E.12   Temperature sensitivity (τ )
+
+Multilinear-CovJac uses a temperature parameter τ in the softmax that converts distances to selection
+weights (Section 3). Low τ sharpens the distribution toward a hard one-hot selection; high τ flattens
+it toward uniform. We sweep τ over two orders of magnitude on MNIST binary (k=64k, L=6, 50k
+iterations, 3 seeds each; Table 23).
+
+Robustness. Across the range τ ∈ [0.3, 5.0], all accuracies fall within 0.22pp of the peak (98.33%
+at τ =2.0), confirming that Multilinear-CovJac is not brittle with respect to this hyperparameter. Only
+the extreme value τ =0.1 underperforms meaningfully (−1.34pp versus peak): at this temperature
+the softmax is nearly hard, so early training receives very sparse gradients and the network converges
+to a weaker local minimum.
+
+Default choice. We use τ =1.0 throughout all experiments in this paper. The sweep validates this
+default: τ =1.0 achieves 98.30%, only 0.03pp below peak, and sits comfortably in the middle of the
+robust plateau. No per-dataset tuning of τ is necessary.
+
+τ sensitivity on Adult. On the separable Adult task (k=4096, L=6, 3 seeds), low τ recovers
+M-STE-level performance: τ =0.1 achieves 84.93%, matching M-STE (84.91%) and surpassing fixed
+τ =1.0 CovJac (84.57%). This confirms that τ controls the coupling strength: low τ reduces the J03
+coupling that adds overhead on separable tasks.
+
+Learnable τ (negative result). We test whether τ can be learned per layer, adapting coupling
+strength to task demands, by making τ a learnable parameter (initialized via log τ , optimized jointly
+with Adam). On Adult (k=4096), learnable τ (init 1.0) achieves 84.90%, matching M-STE. However,
+
+
+                                                        31
+                               c0 = 0
+                               c0 = 1
+                               |cab| = 0
+                               |cab| = 1
+                               |cab| = 2
+
+
+
+                                                                                                                                    2
+
+                                                                                                                                   1
+
+
+
+
+                                                                                                                                    cab
+                                                                                                                                   0
+
+                                                                                                                                    1
+
+                                                                                                                                   2
+
+                                    1                                                                                   1
+
+                                              ca 0                                                     0
+                                                                                                           cb
+                                                                     1                1
+
+
+Figure 7: The 16-gate codebook in (ca , cb , cab ) space. Blue (c0 =0): FALSE, A, B, AND, OR, XOR
+and variants. Red (c0 =1): TRUE, ¬A, ¬B, NAND, NOR, XNOR and variants. Lines connect
+complementary pairs (g ↔ 1−g). Shape indicates |cab |: ◦ separable, □ weak, ⋄ strong interaction.
+
+                    M-STE (ours)                                     M-CovJac (ours)                                               Soft-Mix
+      2                        10% NOR                                              12% NOR                                                   9% NOR
+
+      1      AND    10%        9% {XNOR,A B,B A}              AND        11%        11% {XNOR,A B,B A}                 AND    6%             16% {XNOR,A B,B A}
+
+      {FALSE,A,B}
+       0            27%        16% {TRUE,¬A,¬B}        {FALSE,A,B}       19%        12% {TRUE,¬A,¬B}            {FALSE,A,B}   19%            19% {TRUE,¬A,¬B}
+cab
+
+
+
+
+    {OR,A
+       1 B,B A}     12%        6% NAND               {OR,A B,B A}        16%        6% NAND                 {OR,A B,B A}      16%             6% NAND
+
+      2      XOR    10%                                       XOR        14%                                           XOR    9%
+
+
+                    0           1                                        0           1                                        0               1
+                          c0                                                   c0                                                       c0
+Figure 8: Snapped gate assignments on CIFAR-10 (k=128k, L=6). Bubble size ∝ fraction of
+neurons selecting each gate. CovJac selects more XOR/XNOR (strong interaction) gates; Soft-Mix
+clusters near separable gates.
+
+
+on MNIST (k=64k) accuracy drops to 98.03% (vs 98.30% fixed), and on CIFAR-10 (k=128k)
+it drops to 56.12±0.84% (vs 58.97% fixed, 3 seeds). The learned τ collapses to ∼0.01–0.03 per
+layer, with high seed variance (some layers sporadically retain τ ≈0.4 but most collapse), effectively
+reducing CovJac to STE and losing the cab coupling. The collapse occurs because the gradient signal
+favors sharper soft-VQ (lower noise), but this simultaneously removes the cross-coefficient coupling
+that makes CovJac effective. Fixed τ =1 remains the robust default.
+
+F       Basis–Constraint Factorial Experiment
+F.1       Design
+
+Factorial over:
+
+           • basis ∈ {canonical polynomial (1, a, b, ab), corner ϕij (a, b)},
+
+
+                                                                               32
+  Table 23: Temperature sensitivity of Multilinear-CovJac on MNIST (k = 64k, L = 6, 3 seeds).
+                                              τ          Last-10 Hard Acc. (%)
+                                              0.1                    96.99
+                                              0.3                    98.11
+                                              0.5                    98.17
+                                              1.0                    98.30
+                                              2.0                    98.33
+                                              5.0                    98.23
+                                              10.0                   98.08
+
+
+Table 24: Basis–constraint factorial (L = 6, k = 64k, MNIST, 3 seeds). Bold = best per group (STE
+/ free).
+                        Cell                               Hard Acc (%)
+                         Multilinear-STE (poly_snap)                                   97.98 ± 0.11
+                         IWP-STE (iwp_ste, our ablation)                               82.94 ± 1.59
+                         Multilinear-free∗ (poly_free)                                 98.11 ± 0.04
+                         IWP-free∗ (iwp_free)                                          98.37 ± 0.04
+                         IWP [16] original (reference)                                 77.95 ± 2.60
+                        ∗
+                            Free methods use sigmoid activations and are not Boolean logic gates at deployment.
+
+
+
+
+       • constraint ∈ {free (sigmoid, no snap), STE (L2 snap + straight-through gradient)},
+
+yielding four cells: Multilinear-free, Multilinear-STE, IWP-free, IWP-STE. Depths L ∈ {1, 6, 12},
+k=64k, MNIST-bin, 3 seeds, standard Adam protocol from Appendix E.1. Results are reported in
+Table 24.
+
+F.2   Main result table (L = 6, k = 64k)
+
+Reading the table. (i) Under the STE constraint, the basis matters enormously: Multilinear-STE
+beats IWP-STE by 15.04pp (97.98 vs 82.94; the main-text ablation Table 2 reports 17.25pp from
+independent seeds). (ii) Without the STE constraint (free methods, italic in the table), the two
+bases are comparable: IWP-free 98.37% vs Multilinear-free 98.06%, confirming they span the
+same function space (Appendix C.4). Note that free methods use sigmoid activations and produce
+continuous outputs; they are not Boolean logic gates and cannot be deployed as combinational circuits.
+Their role here is purely as an ablation control: by removing the discrete constraint, we isolate the
+basis effect from the STE effect. The significant basis × constraint interaction confirms that the
+multilinear advantage is STE-specific, not a function-class property.
+
+F.3   Depth sweep (across L ∈ {1, 6, 12})
+
+The STE-specific gap is stable across depths and widens dramatically at L=12. All results k=64k, 3
+seeds, last-10 hard accuracy.
+
+Results. Three observations emerge from Table 25. (1) The STE-specific basis gap widens with
+depth: at L=1 the two STE methods differ by only 0.28pp (95.59 vs 95.31), but at L=12 the gap
+reaches 55.27pp (98.03 vs 42.76) as IWP-STE collapses entirely. (2) Without the STE constraint
+(free methods, italic rows), the ranking reverses at L=12: IWP-free (97.80%) holds steady while
+Multilinear-free drops to 92.95%. The multilinear basis’s degree hierarchy becomes a liability without
+the snap constraint, since the cab component’s higher polynomial degree causes faster gradient decay
+through many layers of sigmoid activations. (3) At L=1 (no depth interaction), all four cells cluster
+within 0.6pp, confirming that the basis effect is depth-amplified.
+
+F.4   Connection to theory
+
+The 15pp STE-specific gap is consistent with:
+
+
+                                                                  33
+Table 25: Basis–constraint depth sweep (k = 64k, MNIST, 3 seeds). Last-10 accuracy. Bold = best
+per column within each group (STE / free).
+                Cell                   L=1           L=6            L = 12
+                 Multilinear-STE            95.59 ± 0.09              97.98 ± 0.11               98.03 ± 0.10
+                 IWP-STE                    95.31 ± 0.13              82.94 ± 1.59               42.76 ± 2.73
+                 Multilinear-free∗          95.03 ± 0.11              98.11 ± 0.04               92.95 ± 0.27
+                 IWP-free∗                  95.40 ± 0.10              98.37 ± 0.04               97.80 ± 0.13
+                              ∗
+                                  Not Boolean logic gates at deployment (sigmoid, no quantization).
+
+
+
+
+       • Lemma 6 (Appendix A.2): polynomial basis has E∥ψ∥0 =2.25 vs corner ∥ϕ∥0 =1.0 per
+         sample, a 2.25× more components updated on average, with a degree-ordered curriculum.
+       • Proposition 3 (Appendix A.4): single-polynomial Multilinear-STE backward has O(1)
+         per-layer signal, whereas IWP-STE with 25% corner activation has uniform coverage but no
+         curriculum.
+       • Proposition 5 (Appendix A.5): no affine product reparameterization of the basis can fix
+         the corner case: the multilinear (1, a, b, ab) is a corner case of Proposition 5 Part (i) with
+         (p, q)=(0, 1) and is the only “good” STE configuration up to rescaling and coordinate
+         permutation.
+
+F.5   Caveats
+
+       • IWP-STE is our construction for this ablation; Rüttgers et al. [16] do not propose or report
+         it. The 17pp gap is not a claim of improvement over a published method; it is an ablation
+         demonstrating that basis matters under STE.
+       • At k=8k the basis effect was ∼ 22pp; at k=64k it is 15.04pp.
+
+
+
+
+                                                               34
+

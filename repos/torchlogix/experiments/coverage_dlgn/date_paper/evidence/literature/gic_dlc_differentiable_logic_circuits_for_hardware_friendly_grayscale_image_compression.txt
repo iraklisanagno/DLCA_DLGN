@@ -1,0 +1,433 @@
+                                                                       GIC-DLC: Differentiable Logic Circuits
+                                                                 for Hardware-Friendly Grayscale Image Compression
+
+                                           Till Aczel, David F. Jenny, Simon Bührer, Andreas Plesner, Antonio Di Maio, Roger Wattenhofer
+                                                                                      ETH Zurich
+
+
+
+                                                                    Abstract                               ratio of learned codecs. To this end, we focus on train-
+arXiv:2601.14130v1 [cs.CV] 20 Jan 2026
+
+
+
+
+                                                                                                           able architectures operating closer to hardware, enabling
+                                           Neural image codecs achieve higher compression ratios than      direct deployment on edge devices for low-latency, low-
+                                           traditional hand-crafted methods such as PNG or JPEG-XL,        power operation. Differentiable Logic Circuits (DLCs) of-
+                                           but often incur substantial computational overhead, limit-
+                                           ing their deployment on energy-constrained devices such as
+                                                                                                           fer a natural solution. By training lookup tables or logic
+                                           smartphones, cameras, and drones. We propose Grayscale          circuits, DLCs combine the flexibility of neural networks
+                                           Image Compression with Differentiable Logic Circuits            with hardware-friendly computation that is fast yet remains
+                                           (GIC-DLC), a hardware-aware codec where we train lookup         energy-efficient. They can be optimized end-to-end using
+                                           tables to combine the flexibility of neural networks with the   gradient-based methods for task-specific objectives, yet re-
+                                           efficiency of Boolean operations. Experiments on grayscale      main directly deployable on devices such as FPGAs.
+                                           benchmark datasets show that GIC-DLC outperforms tra-              Leveraging DLCs, we propose Grayscale Image Com-
+                                           ditional codecs in compression efficiency while allowing        pression with Differentiable Logic Circuits (GIC-DLC),
+                                           substantial reductions in energy consumption and latency.       a neural codec that predicts per-pixel probability distribu-
+                                           These results demonstrate that learned compression can be       tions in a hardware-aware manner. Replacing conventional
+                                           hardware-friendly, offering a promising direction for low-
+                                           power image compression on edge devices.
+                                                                                                           floating-point networks with trainable lookup tables and
+                                                                                                           logic gates, GIC-DLC achieves high compression efficiency
+                                                                                                           while maintaining low-latency, low-power inference, mak-
+                                                             1    Introduction                             ing it particularly suitable for energy-constrained devices.
+                                                                                                              We show that GIC-DLC achieves higher compression ra-
+                                         Learned image compression has demonstrated superior               tio, processing speed, and energy efficiency than traditional
+                                         compression ratios compared to traditional hand-crafted           codecs on EMNIST (Cohen et al. 2017) images. These re-
+                                         codecs by optimizing the compression objective in an end-         sults demonstrate that differentiable logic offers a promising
+                                         to-end manner on datasets of images, predicting per-pixel         path toward trainable, hardware-friendly image compres-
+                                         distributions, and leveraging data-driven structure to min-       sion, particularly for energy-constrained devices, and lay the
+                                         imize storage requirements (Ballé, Laparra, and Simon-           foundation for future extensions to more complex natural
+                                         celli 2016). However, high compression performance often          images.
+                                         comes at a cost. Large neural networks perform many unnec-
+                                         essary operations, resulting in increased latency and energy
+                                         consumption. This is particularly problematic for edge de-
+                                                                                                                              2    Related Work
+                                         vices such as smartphones, cameras, or drones, which have         Classical image compression algorithms rely on hand-
+                                         limited battery, weaker processors, and stricter thermal con-     crafted pipelines that exploit simple statistical properties
+                                         straints than desktop or cloud hardware.                          of natural images. Early formats such as JPEG (Wallace
+                                            Traditional codecs such as PNG (Boutell et al. 2003),          1991) and PNG (Boutell et al. 2003) achieve compression
+                                         WebP (Google Inc. 2021), or JPEG-XL (Alakuijala et al.            through linear transforms, quantization, and entropy coding.
+                                         2019) remain fast and energy-efficient. They achieve this         Lightweight formats such as QOI (Szablewski 2021) omit
+                                         through hand-designed algorithms optimized for simplicity         entropy coding and use simple predictors, enabling fast,
+                                         and speed, often supported by dedicated hardware units that       low-cost lossless compression. Modern successors such as
+                                         accelerate key operations. However, these methods lack the        WebP (Google Inc. 2021) and JPEG-XL (Alakuijala et al.
+                                         adaptability of learned models, which limits their compres-       2019) introduce advanced predictors and context-adaptive
+                                         sion performance compared to modern learned approaches.           entropy models, improving compression ratios while main-
+                                            This trade-off motivates the search for methods that have      taining low latency and energy efficiency. Many devices
+                                         the efficiency of traditional codecs with the compression         have been designed to accelerate traditional codecs such as
+                                                                                                           JPEG through dedicated hardware. However, hand-crafted
+                                         Copyright © 2026, Association for the Advancement of Artificial   codecs rely on heuristic algorithms and, without data-driven
+                                         Intelligence (www.aaai.org). All rights reserved.                 learning, can only approach optimal compression.
+                Header            Resolution                 Resolution                    Resolution
+               (C, H, W)           Module                     Module                        Module
+ bitstream
+
+   Resolution Module
+
+              Upsampling
+              Upsampling                               Autoregressive                         Entropy
+                Model
+                 Model                                    Model                 μ, σ          Decoding
+
+
+
+Figure 1: Overview of the decoding architecture. Top: the image is upsampled L = 2 times, with each higher-resolution level
+decoded conditioned on the lower-resolution one. Bottom: at each resolution, an upsampling model (UPS) and an autoregressive
+model (ARM), both implemented as NeuraLUT networks, produce predictions used for entropy decoding. The UPS model
+outputs point estimates for the upsampled pixels (conditioned on the lower-resolution reconstruction), which serve as priors
+for pixels that are not yet decoded. The ARM predicts per-pixel, Laplace parameters conditioned on the local, already-decoded
+context; when a pixel is not yet decoded, the ARM uses the UPS point estimate as its prior. Decoding proceeds from the coarsest
+to the finest resolution; encoding follows the reverse order.
+
+
+   Learned image compression replaces hand-crafted trans-         energy-efficient. They follow MLP-like structural principles
+forms with trainable neural networks optimized end-to-end         but replace continuous arithmetic with differentiable logic or
+for rate–distortion performance (Ballé, Laparra, and Simon-      lookup operations. During training, a continuous “soft” ap-
+celli 2016; Mentzer et al. 2020b; He et al. 2022). While most     proximation is used, which is discretized after convergence
+research focuses on lossy compression, neural approaches          to produce a deployable “hard” circuit. Multiple frameworks
+have also been applied to lossless or near-lossless settings      have been proposed demonstrating different design choices
+by modeling the full pixel distribution and compressing it        and capabilities (Petersen et al. 2022; Rüttgers et al. 2025;
+using entropy coding (Mentzer et al. 2020a; Cao, Wu, and          Bacellar et al. 2025). For instance, NeuraLUT (Andronic
+Krähenbühl 2020). Autoregressive models are commonly            and Constantinides 2024) uses a neural network to imple-
+used to predict the distribution of image data. Raster-based      ment the soft approximation of the lookup table, improving
+architectures, such as PixelCNN (Van den Oord et al. 2016),       scalability and expressiveness. DLCs have been applied to
+sequentially predict pixels. Hierarchical codecs, like SReC       tasks such as image classification (Petersen et al. 2024) and
+(Cao, Wu, and Krähenbühl 2020), capture dependencies            natural language processing (Bührer et al. 2025), illustrat-
+across latent levels in a structured residual framework.          ing their versatility. Despite remaining challenges in train-
+   Overfitted codecs, such as Cool-Chic (Ladune et al. 2023)      ing and scalability (Yousefi et al. 2025), DLCs have been
+and C3 (Kim et al. 2024), are designed to lower the decod-        shown to achieve lower latency and energy efficiency than
+ing cost learned codecs while preserving their high com-          MLPs and CNNs while maintaining comparable accuracy
+pression performance. They encode by overfitting an en-           (Petersen et al. 2022; Bacellar et al. 2025), highlighting their
+tire network to the image and decode via inference. FN-           potential for hardware-oriented neural compression.
+LIC (Zhang, Chen, and Liu 2025) extends this approach as
+a lossless codec. Despite fast decoding, encoding remains                                 3    Method
+computationally expensive, requiring substantial per-image        Following other learned compression methods, we perform
+optimization and limiting the methods’ use in scenarios de-       lossless image compression by predicting per-pixel proba-
+manding efficient encoding. Although recent work has re-          bility distributions and encoding them into a bitstream with
+duced encoding time from over ten minutes on a GPU to a           Asymmetric Numeral Systems (ANS) (Duda 2013). This en-
+few seconds on a CPU (Blard et al. 2024; Borrell-Tatché          sures likely pixels use fewer bits and unlikely ones more,
+et al. 2025), these methods still achieve worse compres-          producing a compact, lossless representation. Encoding and
+sion ratio than traditional codecs. A key limitation is that      decoding are exact inverses using ANS.
+these methods rely on neural networks using floating-point
+computation, which are energy-intensive and involve re-           3.1     Hierarchical Compression Framework
+dundant operations, restricting their applicability in energy-    To capture image structure across scales, each image is de-
+constrained environments.                                         composed into L + 1 resolution levels for hierarchical en-
+  Differentiable Logic Circuits (DLCs) provide a frame-           coding and decoding (see Figure 1), similar to the approach
+work to learn from data while remaining hardware- and             used in SReC (Cao, Wu, and Krähenbühl 2020). Given an
+image x ∈ {0, . . . , 255}H×W ×C , with height H, width W ,        Table 1: Actual coded bits per pixel for different datasets.
+and C channels, we iteratively apply 2 × 2 average pooling         Our DLC-based method (GIC-DLC) outperforms the best
+to halve the spatial resolution at each level:                     traditional method (JPEG-XL) on the training distribution
+                                                                   (EMNIST) while remaining fast and energy-efficient. IC-
+       x(ℓ) = avgpool2(x(ℓ−1) ),         ℓ = 1, . . . , L,         MLP is shown in gray for reference; the MLP-based learned
+                                                                   image compression method achieves better compression but
+with x(0) = x being the original image. After pooling, pixel       is orders of magnitude slower.
+values at each level are rounded to integers.
+   Decoding begins at the coarsest resolution, which is first                   in-distribution (EMNIST)    out-of-distribution
+reconstructed to provide an initial image approximation.                         all letters      digits   KMNIST FMNIST
+Finer levels are then decoded in two stages: upsampling fol-
+lowed by autoregressive refinement, capturing both global           QOI         6.14       6.02   6.20        7.56       8.50
+                                                                    PNG         4.18       4.13   4.16        4.45       5.18
+and local dependencies. In contrast, SReC performs these
+                                                                    WebP        3.34       3.31   3.34        3.56       4.62
+two operations in a single stage.                                   JPEG-XL     3.20       3.18   3.23        3.66       4.29
+Upsampling Model (UPS) The UPS predicts the upsam-                  GIC-DLC     2.74       2.78   2.71        4.16       6.27
+pled image x̃(i) independently of the bitstream. For each           IC-MLP      2.34       2.34   2.30        3.67       6.04
+pixel in the lower-resolution image x(i+1) , it simultaneously
+predicts a 2 × 2 block of pixels, conditioned only on a local
+neighborhood of size K × K. This design efficiently prop-          τnode , which is annealed during training. When converting
+agates coarse structural information to higher resolutions.        the network into a lookup table, all 26 = 64 input combina-
+The network is implemented as a Differentiable Logic Cir-          tions (for 6 binary inputs) are tested and stored, so inference
+cuit (DLC), and it is trained using a mean squared error loss.     reduces to a simple lookup.
+Autoregressive Model (ARM) The ARM refines the up-                    Connections between inputs and nodes are learned via a
+sampled image by predicting per-pixel Laplace distribution         softmax over the learnable connection weights, with a tem-
+parameters µ and σ. For pixels that have already been de-          perature parameter τconnections annealed during training to en-
+coded, the ARM conditions on the local K × K context               courage harder selections. For evaluation, the final connec-
+within the current resolution level. For pixels not yet de-        tions are fixed using an argmax over the learned weights.
+coded, it relies on the upsampled predictions x̃(i) as a prior.       The network’s final output is the average of the last layer
+The ARM predicts individual Laplace parameters for all C           binary outputs, producing a float in [0, 1]. For µ, this is
+channels in parallel, allowing efficient multi-channel model-      scaled to [0, 255], while σ is transformed via a log inverse-
+ing. At the coarsest level (i = L), no upsampling is required,     sigmoid to expand its range.
+and decoding starts from an empty initialization. The ARM
+is also implemented as a DLC network.                                              4       Experiment Setup
+   Following (Ladune et al. 2023), the ARM works in a sim-
+                                                                   The compression model is trained on the EMNIST ByClass
+ilar way and predicts per-pixel Laplace parameters (µ, σ).
+                                                                   dataset (Cohen et al. 2017), which contains grayscale images
+These continuous distributions are converted into probabili-
+                                                                   of digits as well as lowercase and uppercase letters. Evalu-
+ties over integer pixel values by integrating the Laplace den-
+                                                                   ation is performed on the EMNIST test set and additionally
+sity over each pixel’s quantization interval (e.g., from x−0.5
+                                                                   on KMNIST (Clanuwat et al. 2018) and Fashion-MNIST
+to x + 0.5). The expected number of bits required to encode
+                                                                   (FMNIST) (Xiao, Rasul, and Vollgraf 2017) to assess gen-
+a pixel is then estimated as the negative log-probability of
+                                                                   eralization beyond the training distribution. Both the ARM
+the true pixel value under this discrete distribution. This pro-
+                                                                   and UPS networks consist of two layers with 1,024 lookup
+vides a differentiable proxy for the actual bitrate and serves
+                                                                   tables each. Training is carried out on 128,000 samples. Fur-
+as the training objective to improve compression efficiency.
+                                                                   ther details on the dataset and hyperparameters are provided
+3.2   Differentiable Logic Circuits (DLCs)                         in Appendix A.
+DLCs replace dense matrix multiplications with lightweight,
+trainable lookup tables, reducing computational overhead                               5    Results Analysis
+compared to standard MLPs. Inputs are binarized using              Table 1 shows coded bits per pixel for different methods
+thermometer encoding with 255 levels: for a pixel value            across datasets. Our method, GIC-DLC, outperforms tradi-
+v ∈ [0, 255], each level generates a binary indicator specify-     tional codecs on EMNIST, which matches the training distri-
+ing whether v exceeds the corresponding threshold, allowing        bution, surpassing even the best traditional method, JPEG-
+DLCs to process continuous intensities via lookup tables.          XL. The model is particularly effective on simpler digits,
+   For the learnable nodes, we use NeuraLUT (Andronic and          while letters are slightly harder to compress. On out-of-
+Constantinides 2024), which replaces the static lookup table       distribution data, the performance advantage decreases. On
+with a small neural network during training. The last layer of     KMNIST, containing Korean characters, the model gener-
+this network uses a sigmoid to constrain outputs to [0, 1]. To     alizes reasonably well, while on FMNIST, with more com-
+help the network learn binary outputs, we add logistic noise       plex grayscale items, the bpp increases. This reflects the rel-
+before the sigmoid, controlled by a temperature parameter          atively narrow training distribution, suggesting that expand-
+                                                                                           Table 2: Estimated energy consumption and latency per
+                  1.5                                                                      pixel for PNG and our method. Our approach drastically re-
+bpp-theoretical
+
+                                                                  10
+                                                                                           duces both energy and latency, achieving near-instant encod-
+
+
+
+
+                                                           RMSE
+                   1                                                                       ing and decoding with minimal power, while PNG is orders
+                                                                   5                       of magnitude more expensive.
+                  0.5
+
+                   0                                               0                         Method          Energy [nJ/pixel]    Latency [ns/pixel]
+                         level 0   level 1       level 2               level 1   level 2
+
+                             IC-MLP      GIC-DLC                       Bicubic   GIC-DLC
+                                                                                                             Encode    Decode     Encode     Decode
+                                                                                             PNG             322.58     39.19      44.99       5.17
+Figure 2: Comparison of theoretical bits per pixel (bpp-                                     Our Method       ≈4         ≈4         <5         <5
+theoretical) across resolution levels (left) and root mean
+squared error (RMSE) of upsampling (right) on the EM-
+NIST test set. The left plot shows that most bits are con-                                 6.2   Potential Applications
+centrated in the highest resolution, while the right plot high-                            The high cost of neural codecs has limited their industrial
+lights the superior accuracy of the learned upsampling.                                    adoption, despite superior compression performance. GIC-
+                                                                                           DLC addresses this by providing a hardware-aware, low-
+                                                                                           power alternative, making learned compression practical for
+ing the training set to cover more diverse images is a promis-                             energy- and latency-constrained applications.
+ing direction for future research.                                                            Edge devices, such as smartphones, tablets, cameras,
+   The multi-resolution design concentrates most informa-                                  and drones, frequently perform image and video compres-
+tion in the finest level, with coarser levels providing global                             sion tasks. While decoding latency must meet real-time re-
+context (Figure 2 left). Each finer level has four times more                              quirements, energy consumption and efficiency directly im-
+pixels, so most bits are naturally allocated to the highest                                pact battery life, thermal performance, and device usabil-
+resolution. This structure allows the ARM and UPS to ef-                                   ity. By replacing floating-point networks with differentiable
+ficiently model both local and global dependencies, improv-                                logic circuits, GIC-DLC reduces computation, enabling high
+ing compression without increasing computational cost.                                     compression ratios with low-latency, low-power operation.
+   Learned upsampling is crucial: the UPS network reduces                                     This efficiency makes GIC-DLC particularly suitable for
+reconstruction error compared to bicubic interpolation (Fig-                               edge devices. Its low computational footprint also enables
+ure 2 right), capturing subtle structural details that standard                            integration of learned compression in large-scale industrial
+upsampling misses. This improvement in prediction accu-                                    systems without the prohibitive energy and hardware costs
+racy translates into lower bpp.                                                            of traditional neural codecs, providing a practical path to
+   Overall, these results demonstrate that Differentiable                                  high-performance, hardware-friendly image compression.
+Logic Circuits (DLCs) can be effectively applied to image
+compression. They achieve strong compression performance                                   6.3   Future Work
+comparable to larger learned models (Table 1), while re-                                   While our method has been demonstrated on grayscale
+maining fast and energy-efficient (Table 2). This addresses a                              datasets, it remains to be tested on RGB images with nat-
+significant limitation of traditional learned codecs, which of-                            ural image distributions to evaluate its performance on more
+ten require substantial computation and are orders of magni-                               complex, real-world data. Additionally, compiling the net-
+tude slower. By combining upsampling with autoregressive                                   work and deploying it on an FPGA board will be essential to
+refinement, DLC-based compression provides a practical so-                                 measure practical efficiency, including throughput, latency,
+lution for real-time and resource-constrained applications.                                and energy consumption in a hardware setting.
+
+                                             6      Discussion                                                 7    Conclusion
+                                                                                           We have presented a compression framework that leverages
+6.1                     Energy Usage and Latency                                           multi-resolution priors, staged upsampling, and autoregres-
+We estimate the energy usage and latency of PNG and our                                    sive refinement, implemented with Differentiable Logic Cir-
+proposed method. Table 2 summarizes the estimated energy                                   cuits (DLCs). Our approach achieves high compression per-
+consumption and latency per pixel. Even under conserva-                                    formance on small, grayscale image datasets while remain-
+tive assumptions, compared to PNG, our method is roughly                                   ing fast and energy-efficient, highlighting the potential of
+100 times more energy-efficient for encoding and 10 times                                  lightweight, trainable logic for learned compression.
+for decoding compared. Both encoding and decoding re-                                         Although this study focuses on relatively simple toy
+main below 5ns per pixel, making them competitive in la-                                   datasets, the observed benefits of DLCs in balancing perfor-
+tency as well. These values are derived from literature-based                              mance and efficiency provide strong motivation to explore
+estimates and analytical extrapolations, as detailed in Ap-                                their application to larger and more complex image distribu-
+pendix C, rather than from direct hardware measurements.                                   tions. This work thus serves as a stepping stone toward prac-
+Thus, they should be interpreted as indicative of expected                                 tical, fast, and low-energy learned compression methods for
+efficiency rather than empirical measurements.                                             a wider range of images.
+                       References                                Kim, H.; Bauer, M.; Theis, L.; Schwarz, J. R.; and Dupont,
+Alakuijala, J.; Sneyers, J.; Szabadka, Z.; et al. 2019. JPEG     E. 2024. C3: High-performance and low-complexity neural
+XL Next-Generation Image Compression Architecture and            compression from a single image or video. In Proceedings of
+Coding Tools. In Applications of Digital Image Processing        the IEEE/CVF Conference on Computer Vision and Pattern
+XLII. SPIE.                                                      Recognition, 9347–9358.
+Andronic, M.; and Constantinides, G. A. 2024. NeuraLUT:          Ladune, T.; Philippe, P.; Henry, F.; Clare, G.; and Leguay, T.
+Hiding Neural Network Density in Boolean Synthesizable           2023. Cool-chic: Coordinate-based low complexity hierar-
+Functions. ArXiv:2403.00849.                                     chical image codec. In Proceedings of the IEEE/CVF Inter-
+                                                                 national Conference on Computer Vision, 13515–13522.
+Bacellar, A. T. L.; Susskind, Z.; Jr, M. B.; John, E.; John,
+                                                                 Mentzer, F.; Agustsson, E.; Tschannen, M.; Timofte, R.; and
+L. K.; Lima, P. M. V.; and França, F. M. G. 2025. Differen-
+                                                                 Gool, L. V. 2020a. Practical Full Resolution Learned Loss-
+tiable Weightless Neural Networks. ArXiv:2410.11112.
+                                                                 less Image Compression. ArXiv:1811.12817 [eess].
+Ballé, J.; Laparra, V.; and Simoncelli, E. P. 2016. End-        Mentzer, F.; Toderici, G. D.; Tschannen, M.; and Agusts-
+to-end optimized image compression.           arXiv preprint     son, E. 2020b. High-fidelity generative image compres-
+arXiv:1611.01704.                                                sion. Advances in neural information processing systems,
+Blard, T.; Ladune, T.; Philippe, P.; Clare, G.; Jiang, X.; and   33: 11913–11924.
+Déforges, O. 2024. Overfitted image coding at reduced com-      Petersen, F.; Borgelt, C.; Kuehne, H.; and Deussen, O. 2022.
+plexity. In 2024 32nd European Signal Processing Confer-         Deep Differentiable Logic Gate Networks. In Advances in
+ence (EUSIPCO), 927–931. IEEE.                                   Neural Information Processing Systems 35 (NeurIPS 2022).
+Borrell-Tatché, P.; Aczel, T.; Ladune, T.; and Watten-          Petersen, F.; Kuehne, H.; Borgelt, C.; Welzel, J.; and Ermon,
+hofer, R. 2025. HyperCool: Reducing Encoding Cost in             S. 2024. Convolutional differentiable logic gate networks. In
+Overfitted Codecs with Hypernetworks. arXiv preprint             Globerson, A.; Mackey, L.; Belgrave, D.; Fan, A.; Paquet,
+arXiv:2509.18748.                                                U.; Tomczak, J.; and Zhang, C., eds., Advances in neural in-
+Boutell, T.; et al. 2003. PNG (Portable Network Graphics)        formation processing systems, volume 37, 121185–121203.
+Specification, Version 1.2. https://www.w3.org/TR/PNG/.          Curran Associates, Inc.
+W3C Recommendation.                                              Rasoulinezhad, S.; Zhou, H.; Wang, L.; and Leong, P. H.
+Bührer, S.; Plesner, A.; Aczel, T.; and Wattenhofer, R.         2019. PIR-DSP: An FPGA DSP block architecture for
+2025. Recurrent Deep Differentiable Logic Gate Networks.         multi-precision deep neural networks. In 2019 IEEE 27th
+ArXiv:2508.06097.                                                Annual International Symposium on Field-Programmable
+                                                                 Custom Computing Machines (FCCM), 35–44. IEEE.
+Cao, S.; Wu, C.-Y.; and Krähenbühl, P. 2020. Loss-
+less Image Compression through Super-Resolution.                 Rüttgers, L.; Aczel, T.; Plesner, A.; and Wattenhofer,
+ArXiv:2004.02872 [eess].                                         R. 2025.      Light Differentiable Logic Gate Networks.
+                                                                 ArXiv:2510.03250.
+Clanuwat, T.; Bui, A.; Lim, Y.; Tran, K.; Shimoda, A.;
+Niwa, K.; Yamasaki, T.; and Aihara, K. 2018. Deep                Szablewski, D. 2021. The “Quite OK Image Format” (QOI):
+learning for classical Japanese literature. arXiv preprint       Fast, Lossless Image Compression in O(n) Time. https://
+arXiv:1812.01718.                                                qoiformat.org/. Accessed: 2025-10-30.
+                                                                 Van den Oord, A.; Kalchbrenner, N.; Espeholt, L.; Vinyals,
+Cohen, G.; Afshar, S.; Tapson, J.; and van Schaik, A. 2017.
+                                                                 O.; Graves, A.; et al. 2016. Conditional image generation
+EMNIST: an extension of MNIST to handwritten letters. In
+                                                                 with pixelcnn decoders. Advances in neural information
+2017 International Joint Conference on Neural Networks
+                                                                 processing systems, 29.
+(IJCNN), 2921–2926. IEEE.
+                                                                 Wallace, G. K. 1991. The JPEG Still Picture Compression
+De Magistris, G.; Rametta, C.; Capizzi, G.; Napoli, C.; et al.   Standard. Technical Report 4, Communications of the ACM.
+2021. Fpga implementation of a parallel dds for wide-
+band applications. In CEUR Workshop Proceedings, volume          Xiao, H.; Rasul, K.; and Vollgraf, R. 2017. Fashion-MNIST:
+3092, 12–16. CEUR-WS.                                            a novel image dataset for benchmarking machine learning
+                                                                 algorithms. arXiv preprint arXiv:1708.07747.
+Duda, J. 2013. Asymmetric numeral systems: entropy cod-
+                                                                 Yousefi, S.; Plesner, A.; Aczel, T.; and Wattenhofer, R. 2025.
+ing combining speed of huffman coding with compression
+                                                                 Mind the Gap: Removing the Discretization Gap in Differ-
+rate of arithmetic coding. arXiv preprint arXiv:1311.2540.
+                                                                 entiable Logic Gate Networks. ArXiv:2506.07500 [cs].
+Google Inc. 2021.         WebP Lossless Bitstream Speci-         Zhang, Z.; Chen, Z.; and Liu, S. 2025. Fitted Neural Loss-
+fication. https://developers.google.com/speed/webp/docs/         less Image Compression. In Proceedings of the Computer
+webp lossless bitstream specification. Accessed: 2025-10-        Vision and Pattern Recognition Conference, 23249–23258.
+29.
+He, D.; Yang, Z.; Yu, H.; Xu, T.; Luo, J.; Chen, Y.; Gao, C.;
+Shi, X.; Qin, H.; and Wang, Y. 2022. Po-elic: Perception-
+                                                                           A    Experiment Setup Detailed
+oriented efficient learned image coding. In Proceedings of       A.1    Datasets
+the IEEE/CVF Conference on Computer Vision and Pattern           The compression model is trained on the training split of
+Recognition, 1764–1769.                                          EMNIST ByClass, which includes grayscale images of dig-
+its as well as lowercase and uppercase letters. Evaluation is             B     Compression Difficulty of EMNIST
+performed on the EMNIST test set and on two additional                                      Images
+datasets: KMNIST and Fashion-MNIST.
+                                                                    Figure 3 illustrates examples from the EMNIST ByClass
+   KMNIST contains grayscale images of handwritten Ko-              test set, highlighting the variation in compression difficulty
+rean characters. Although it shares the same structure and          across images. Some images are easier to encode due to
+resolution as EMNIST, the symbol set differs, making it an          their simple and regular structure; for example, the letter I is
+out-of-distribution dataset that is still relatively close in na-   straight and uniform, which allows the model to predict per-
+ture. In contrast, Fashion-MNIST consists of grayscale im-          pixel distributions with high confidence. In contrast, other
+ages of clothing items. These images exhibit much higher            images are more challenging to compress, such as the num-
+visual complexity, with curved and textured regions rather          ber 8 or characters with irregular or complex shapes. These
+than simple line strokes, representing a significantly differ-      images contain intricate details or unusual patterns, making
+ent data distribution.                                              accurate probability estimation harder and requiring more
+                                                                    bits to represent losslessly.
+A.2    Baselines
+We compare our approach against several traditional loss-
+                                                                      C       Energy and Latency Estimation Details
+less compression methods: QOI, PNG, WebP, and JPEG-                 We estimate the energy usage of PNG and our method by
+XL. QOI (Quite OK Image) is a simple and fast lossless im-          combining direct measurements and literature-based extrap-
+age codec optimized for minimal computational overhead.             olations. For PNG, we measure the per-pixel energy con-
+PNG is a classic, widely adopted format that uses DEFLATE           sumption by timing the encoding and decoding operations
+compression with Huffman coding. WebP and JPEG-XL are               and recording the corresponding increase in CPU power rel-
+more modern formats that employ advanced prediction and             ative to idle. For our method, we do not have access to an
+entropy coding schemes, achieving higher compression effi-          FPGA implementation, so we base our estimates on reported
+ciency at the cost of complexity.                                   measurements from related works. Specifically, we use pub-
+   We additionally evaluate SREC, a learned super-                  lished energy figures for small LUT-based neural networks
+resolution-based compression method that relies on a large          of comparable size and assume similar energy characteris-
+convolutional network. Finally, we include a variant of our         tics for our model.
+method where the discrete lookup components (DLCs) are
+                                                                    C.1       PNG
+replaced with MLP layers of comparable parameter count, to
+examine how representational capacity affects compression           For PNG, we encode 1024 × 1024 grayscale images. We
+efficiency. These learned baselines are considerably slower         measure the average CPU power increase relative to idle and
+and not optimized for low-latency or energy-efficient opera-        the time required to encode and decode a single pixel. Im-
+tion.                                                               ages are stored in RAM to avoid I/O overhead. Multiplying
+                                                                    the measured power by the time per pixel yields the energy
+                                                                    per pixel. Encoding takes 44.99 ns and decoding 5.17 ns.
+A.3    Training Details                                             CPU power usage is 5.21 J/s when idle, 12.38 J/s during en-
+Both the ARM and UPS networks consist of two layers with            coding, and 12.79 J/s during decoding. The additional en-
+1024 lookup tables each. They are trained on 128,000 sam-           ergy per pixel is 322.58 nJ for encoding and 39.19 nJ for
+ples drawn from the EMNIST training set.                            decoding. This configuration favors PNG, since idle power
+   The following summarizes the main hyperparameters                is excluded and I/O latency is eliminated, allowing efficient
+used for training the ARM and UPS networks. During train-           bulk processing.
+ing, data augmentation was applied using random horizontal
+flips and random rotations of 0°, 90°, 180°, or 270°.               C.2       Our Method
+                                                                    DWN (Bacellar et al. 2025) measures 2.5 nJ of energy con-
+ • Networks: ARM and UPS, 2 layers of 1024 lookup ta-               sumption in a Xilinx Zynq Z-7045 FGPA for inferencing
+   bles each                                                        a 2.1k-LUT network. Our network is smaller (1024 LUTs),
+ • Kernel size: 5 for both ARM and UPS                              but we conservatively assume the same energy per inference.
+                                                                    For level 0, the network is executed 28×28 times; for level 1,
+ • Upsampling levels: 2                                             2 × 14 × 14 times; and for level 2, 2 × 7 × 7 times. Normal-
+ • Learning rate: 0.01                                              izing by pixel yields
+ • Batch size: 16                                                                   282 + 2 · 142 + 2 · 72
+                                                                                                           = 1.625,
+                                                                                             282
+ • Training iterations: 8,000                                       meaning the network runs on average 1.625 times per pixel.
+ • Connection temperature τconnections : 1 → 0.0001, expo-          This results in approximately 4.06 nJ per pixel for both en-
+   nential decay by factor 10 every 2,000 iterations                coding and decoding, which have roughly equal cost.
+                                                                       The asymmetric numerical system can be realized effi-
+ • Node temperature τnode : 10 → 1, exponential decay by            ciently in hardware. tANS (table-based Asymmetric Nu-
+   factor 10 every 2,000 iterations                                 meral System) requires no DSPs, since it performs only ta-
+ • Total samples seen: 128,000                                      ble lookups for encoding and decoding. Even if we choose
+Figure 3: Examples from the EMNIST ByClass test set illustrating compression difficulty. Left: images that are easy to encode,
+such as the letter I, which are straight and simple. Right: images that are hard to encode, such as the number 8 and other
+characters with unusual or complex shapes.
+
+
+to use rANS (range-based ANS), the computation remains
+lightweight and can be implemented with only a few DSPs
+per symbol.
+   In rANS, each symbol s with probability P [s] and cu-
+mulative frequency C[s] updates an internal integer state x.
+The normalization factor F defines the range of valid states.
+During encoding, the current state is divided by the symbol
+probability to obtain the quotient and remainder:
+                        
+                    x
+            q=             ,    r = x mod P [s].
+                   P [s]
+The next state is then computed as
+                   x′ = qF + C[s] + r.
+  Decoding performs the inverse operations. From the en-
+coded state x′ , the decoder first computes
+                      m = x′ mod F,
+then identifies the symbol s such that C[s] ≤ m < C[s + 1].
+Finally, it reconstructs the previous state as
+                       ′
+                        x
+            x = P [s]        + (x′ mod F ) − C[s].
+                        F
+   Both encoding and decoding involve only integer oper-
+ations per symbol, mostly additions, multiplications, and
+modulo, with a single integer division per symbol. Assuming
+an energy cost of approximately 0.1 nJ per operation (Ra-
+soulinezhad et al. 2019; De Magistris et al. 2021), the total
+energy expenditure is negligible compared to LUT network
+inference.
+   Timing estimation depends on the FPGA layout. Neu-
+raLUT (Andronic and Constantinides 2024) reports a 3 ns
+latency for a small 4000-LUT network. Upsampling could
+be performed in parallel, but even with sequential upsam-
+pling, both encoding and decoding remain below 5 ns, mak-
+ing them faster than PNG encoding and comparable in de-
+coding latency.
+

@@ -40,10 +40,10 @@ F.~Petersen, H.~Kuehne, C.~Borgelt, J.~Welzel, and S.~Ermon, ``Convolutional
   differentiable logic gate networks,'' in \emph{Advances in Neural Information
   Processing Systems}, vol.~37, 2024.
 
-\bibitem{buehrer2026}
-S.~B{\"u}hrer, A.~Plesner, T.~Aczel, and R.~Wattenhofer, ``{BitLogic}: A
-  framework for gradient-based {LUT}-native neural networks,''
-  \emph{Transactions on Machine Learning Research}, 2026.
+\bibitem{yousefi2025}
+S.~Yousefi, A.~Plesner, T.~Aczel, and R.~Wattenhofer, ``Mind the gap: Removing
+  the discretization gap in differentiable logic gate networks,'' in
+  \emph{Advances in Neural Information Processing Systems}, 2025.
 
 \bibitem{ruttgers2025}
 L.~R{\"u}ttgers, T.~Aczel, A.~Plesner, and R.~Wattenhofer, ``Light
@@ -52,6 +52,20 @@ L.~R{\"u}ttgers, T.~Aczel, A.~Plesner, and R.~Wattenhofer, ``Light
 \bibitem{gerlach2026}
 L.~Gerlach, T.~Gerlach, L.~V{\aa}ge, E.~Kauffman, and I.~Ojalvo, ``{WARP} logic
   neural networks,'' arXiv:2602.03527, 2026.
+
+\bibitem{kim2026}
+Y.~Kim, ``Fitting multilinear polynomials for logic gate networks,''
+  arXiv:2605.08657, 2026.
+
+\bibitem{buehrer2026}
+S.~B{\"u}hrer, A.~Plesner, T.~Aczel, and R.~Wattenhofer, ``{BitLogic}: A
+  framework for gradient-based {LUT}-native neural networks,''
+  \emph{Transactions on Machine Learning Research}, 2026.
+
+\bibitem{brandle2025}
+S.~Br{\"a}ndle, T.~Aczel, A.~Plesner, and R.~Wattenhofer, ``From {MNIST} to
+  {ImageNet}: Understanding the scalability boundaries of differentiable logic
+  gate networks,'' arXiv:2509.25933, 2025.
 
 \bibitem{lee2026}
 S.~Lee, J.~Sun, and J.~Chung, ``Two-stage unit tying for simplifying

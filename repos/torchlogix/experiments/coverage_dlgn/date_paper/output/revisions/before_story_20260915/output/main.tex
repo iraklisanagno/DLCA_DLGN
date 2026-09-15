@@ -1,0 +1,48 @@
+% Generated section files and tables are built by ../scripts/render_paper.py.
+% Official DATE IEEEtran class; anonymous review manuscript.
+\documentclass[conference,10pt,a4paper]{IEEEtran}
+\usepackage[a4paper,total={184mm,239mm}]{geometry}
+\usepackage{cite}
+\usepackage{amsmath,amssymb}
+\usepackage{newtxtext,newtxmath}
+\usepackage{graphicx,booktabs,array,tabularx}
+\usepackage{xcolor,tikz,pgfplots}
+\usepackage{algorithm,algorithmic}
+\usepackage[font=normalsize]{caption}
+\usepackage[hidelinks]{hyperref}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\pgfplotsset{compat=1.18}
+\definecolor{methodblue}{HTML}{216A85}
+\definecolor{controlgray}{HTML}{555555}
+\definecolor{accentorange}{HTML}{A64B1D}
+\newcommand{\tabfont}{\normalsize}
+\newcommand{\NA}{\textnormal{--}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+% DATE minimum text size also applies to the abstract and bibliography.
+\makeatletter
+\def\@IEEEabskeysecsize{\normalsize}
+\makeatother
+\patchcmd{\thebibliography}{\footnotesize}{\normalsize}{}{}
+\author{}
+\pagestyle{empty}
+\raggedbottom
+\hypersetup{pdfauthor={},pdftitle={LogicConnect: Structured Connectivity Design for Differentiable Logic Gate Networks}}
+\begin{document}
+\bstctlcite{paperbibcontrol}
+\input{title}
+\maketitle
+\thispagestyle{empty}
+\begin{abstract}
+\input{00_abstract}
+\end{abstract}
+\input{01_introduction}
+\input{02_related_work}
+\input{03_methodology}
+\input{04_experiments}
+\input{05_conclusion}
+% Keep the reference heading with the bibliography in the final column.
+\newpage
+\newcommand{\BIBdecl}{\raggedright}
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+\end{document}

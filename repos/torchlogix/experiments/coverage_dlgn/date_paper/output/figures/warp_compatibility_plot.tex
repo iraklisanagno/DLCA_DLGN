@@ -1,0 +1,23 @@
+\documentclass[10pt]{article}
+\usepackage[paperwidth=198mm,paperheight=59mm,margin=1mm]{geometry}
+\usepackage{newtxtext,newtxmath,tikz,pgfplots}
+\pgfplotsset{compat=1.18}
+\definecolor{methodblue}{HTML}{216A85}
+\definecolor{controlgray}{HTML}{555555}
+\definecolor{accentorange}{HTML}{A64B1D}
+\pagestyle{empty}
+\begin{document}\noindent\begin{tikzpicture}
+\begin{axis}[width=89mm,height=50mm,axis lines=left,tick align=outside,grid=major,grid style={gray!15},scaled ticks=false,tick label style={font=\fontsize{11}{13}\selectfont},label style={font=\fontsize{11}{13}\selectfont},title style={font=\fontsize{11}{13}\selectfont},legend style={font=\fontsize{11}{13}\selectfont,draw=none,fill=white,inner sep=1pt},title={(a) Adapted WARP: LC minus random},xmin=-2,xmax=6,ymin=-.5,ymax=1.5,ytick={0,1},yticklabels={{Conv. S},{Dense M}},xlabel={Accuracy difference (pp)}]
+\draw[dashed,gray] (axis cs:0,-.5)--(axis cs:0,1.5);
+\addplot+[color=methodblue,mark=*,mark size=2pt,line width=0.9pt,mark options={solid,fill=methodblue,draw=methodblue},only marks,error bars/.cd,x dir=both,x explicit] coordinates {(4.7000002,1) +- (0.78088873,0)};
+\addplot+[color=methodblue,mark=*,mark size=2pt,line width=0.9pt,mark options={solid,fill=methodblue,draw=methodblue},only marks,error bars/.cd,x dir=both,x explicit] coordinates {(0.086666667,0) +- (1.3298366,0)};
+\end{axis}
+\begin{axis}[width=89mm,height=50mm,axis lines=left,tick align=outside,grid=major,grid style={gray!15},scaled ticks=false,tick label style={font=\fontsize{11}{13}\selectfont},label style={font=\fontsize{11}{13}\selectfont},title style={font=\fontsize{11}{13}\selectfont},legend style={font=\fontsize{11}{13}\selectfont,draw=none,fill=white,inner sep=1pt},at={(9.25cm,0)},anchor=south west,title={(b) Adapted WARP accuracy (V)},xmin=-.5,xmax=1.5,ymin=40,ymax=61,xtick={0,1},xticklabels={Dense M,Conv. S},ylabel={Accuracy (\%)},legend pos=north east]
+\addplot+[color=controlgray,mark=*,mark size=2pt,line width=0.9pt,mark options={solid,fill=controlgray,draw=controlgray},only marks,error bars/.cd,y dir=both,y explicit] coordinates {(-0.1,53.246665) +- (0,0.37753595)};
+\addlegendentry{Random}
+\addplot+[color=methodblue,mark=*,mark size=2pt,line width=0.9pt,mark options={solid,fill=methodblue,draw=methodblue},only marks,error bars/.cd,y dir=both,y explicit] coordinates {(0.1,57.946666) +- (0,0.1665334)};
+\addlegendentry{LC}
+\addplot+[color=controlgray,mark=*,mark size=2pt,line width=0.9pt,mark options={solid,fill=controlgray,draw=controlgray},only marks,error bars/.cd,y dir=both,y explicit] coordinates {(0.9,44.32) +- (0,0.90354856)};
+\addplot+[color=methodblue,mark=*,mark size=2pt,line width=0.9pt,mark options={solid,fill=methodblue,draw=methodblue},only marks,error bars/.cd,y dir=both,y explicit] coordinates {(1.1,44.406667) +- (0,1.3123008)};
+\end{axis}
+\end{tikzpicture}\end{document}

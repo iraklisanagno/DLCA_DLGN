@@ -1,11 +1,119 @@
 {
+  ".tools/compiler_source.json": {
+    "sha256": "693df052326e35b7e738d3ad877ca072515746cb39f3d05fd12e05560ab15c52",
+    "bytes": 324
+  },
   "README.md": {
-    "sha256": "d1254ec98633636a66cd88e3c1f44598cf4a78e06b0c859488538c3d16c44197",
-    "bytes": 3960
+    "sha256": "6ab5ea57632e23d021b049bd70ea8c214031df898c95f8b9971643d7d6e504cb",
+    "bytes": 4096
+  },
+  "evidence/atlas_tables.json": {
+    "sha256": "72f6194ce7d89cb666074c955957d35ba63c550ca1c65fa472898cb2033a7272",
+    "bytes": 19412
+  },
+  "evidence/figure_registry.json": {
+    "sha256": "e05091a16d1805f97402688818b0b65156a2bcca5684b3b739d33a1ab9712140",
+    "bytes": 6018
   },
   "evidence/historical_comparison_tables.md": {
     "sha256": "1adddf8074d3d36aedf6ecb4667bf1a3ec98616a66d91d0d6791814baae943de",
     "bytes": 56022
+  },
+  "evidence/literature/a_method_for_optimizing_connections_in_differentiable_logic_gate_networks.txt": {
+    "sha256": "3f55c656ee767a96c318b81ac0c33adae794727fb16b93d2e1246cd4e6b09407",
+    "bytes": 33468
+  },
+  "evidence/literature/a_scalable_interpretable_verifiable_differentiable_logic_gate_convolutional_neural_network_architecture_from_truth_tables.txt": {
+    "sha256": "76a79dfe4c5b3fe6ea620be1d2481a1b5585f0092efe32cea5b3d07822dc30c7",
+    "bytes": 168901
+  },
+  "evidence/literature/bitlogic_a_framework_for_gradient_based_lut_native_neural_networks.txt": {
+    "sha256": "b3fd8ebb8d24895c3cd8394c3a67b8f86fac56dc4c6c2f24db7e327b9b59fec0",
+    "bytes": 93877
+  },
+  "evidence/literature/convolutional_differentiable_logic_gate_networks.txt": {
+    "sha256": "10b29d30c24c7d12506fb7b42f811ce72de6d08a58de4b8226b1eedc66dfb21f",
+    "bytes": 78675
+  },
+  "evidence/literature/deep_differentiable_logic_gate_networks.txt": {
+    "sha256": "d6271ab53707f5b110e184bafb1099f2463415ba4ca5dcf15e7da6d6d960e87e",
+    "bytes": 87411
+  },
+  "evidence/literature/et_an_energy_eficient_edge_transformer_architecture.txt": {
+    "sha256": "6c1a3cec09aec2e835dfea8230ce8a2b94831184958925600673bd21421db344",
+    "bytes": 111869
+  },
+  "evidence/literature/fitting_multilinear_polynomials_for_logic_gate_networks.txt": {
+    "sha256": "492e0fe211028a5a5381c8ab28d3967e120f314ff863ffebf25fcc744ff36ee9",
+    "bytes": 148720
+  },
+  "evidence/literature/from_mnist_to_imagenet_understanding_the_scalability_boundaries_of_differentiable_logic_gate_networks.txt": {
+    "sha256": "f9f98e1b5409905d044e77ca480b99d837d63aa0661dd9f58c1218e4410ef103",
+    "bytes": 82228
+  },
+  "evidence/literature/gic_dlc_differentiable_logic_circuits_for_hardware_friendly_grayscale_image_compression.txt": {
+    "sha256": "eb75f00ca4f3946cfd12ccba0e801e8937b0aa708b9468ec76c38a1de5737eee",
+    "bytes": 45495
+  },
+  "evidence/literature/inter_patient_ecg_arrhythmia_classification_with_lgns_and_lutns.txt": {
+    "sha256": "36a5e6d3f465a2f5d4539ed1edf4852bc16ed0cb7fb24f0a3c238767878dfe4b",
+    "bytes": 75000
+  },
+  "evidence/literature/learning_interpretable_differentiable_logic_networks.txt": {
+    "sha256": "11f72acb86bfa21254520bf68d813c33f68c5c22075bec47cb83f4cdd012219f",
+    "bytes": 110144
+  },
+  "evidence/literature/light_differentiable_logic_gate_networks.txt": {
+    "sha256": "2f87856d6e5e9e182f3f9d06e6e85a4fc6c63bca4ebe7a1d5188c5a9066890ae",
+    "bytes": 125125
+  },
+  "evidence/literature/lightweight_in_network_flow_classification_with_deep_differentiable_logic_gate_networks.txt": {
+    "sha256": "31aa93b5d143204daa574a5972d509045a42271f59aa8818eb7200d51c6cdf21",
+    "bytes": 95123
+  },
+  "evidence/literature/lilogic_net_compact_logic_gate_networks_with_learnable_connectivity_for_efficient_hardware_deployment.txt": {
+    "sha256": "4e41a1e32aa7957e5de22387059e9f944ced78b4787fa6bb27fe432cda3a61ad",
+    "bytes": 100899
+  },
+  "evidence/literature/local_corpus_20260915.json": {
+    "sha256": "7a2d7dcbd37ebc2427d54fea37709509e30a888827e4602c7b75eddec6b9f1e2",
+    "bytes": 5960
+  },
+  "evidence/literature/logic_neural_networks_for_efficient_fpga_implementation.txt": {
+    "sha256": "bb39f93e12e39bbfc2f2e27638d4072a4737b669269effd685b62aaa9974a41c",
+    "bytes": 64137
+  },
+  "evidence/literature/mind_the_gap_removing_the_discretization_gap_in_differentiable_logic_gate_networks.txt": {
+    "sha256": "698ef4db73bc9e70701600695e5e2c04e5a4b14ad955951ac54773b5e7af0f28",
+    "bytes": 122575
+  },
+  "evidence/literature/polynomial_surrogate_training_for_differentiable_ternary_logic_gate_networks.txt": {
+    "sha256": "6d249eb1c895e4d07fee9819879374be3b05f93974240c3d53a3f7fe33b845d2",
+    "bytes": 107726
+  },
+  "evidence/literature/recurrent_deep_differentiable_logic_gate_networks.txt": {
+    "sha256": "94211c7cc47c490ab8c799c5a9048cd03f88030ac2a9745d73135abf72937e12",
+    "bytes": 84907
+  },
+  "evidence/literature/silicon_aware_neural_networks.txt": {
+    "sha256": "2ddcfd728c3fc2bc113ba827551b12578bbc373bc14a586291ff36428ea421d8",
+    "bytes": 29897
+  },
+  "evidence/literature/source_pdfs.json": {
+    "sha256": "3bc3cc019189d9ac2f21c89aa07db76634e64ae9534b0b920dbe056b50271940",
+    "bytes": 2070
+  },
+  "evidence/literature/two-stage_unit_tying_for_simplifying_differentiable_logic_gate_networks.txt": {
+    "sha256": "fd9c5b42761b3d3999376f02c3ccfaccbd7729c4a084640e1f38debf565de91e",
+    "bytes": 76843
+  },
+  "evidence/literature/warp_logic_neural_networks.txt": {
+    "sha256": "d6499b255eef05b878535603b96dbf35d592c0e01f3baf38da16ac7a5f3b35ac",
+    "bytes": 101661
+  },
+  "evidence/literature_review_20260915.md": {
+    "sha256": "b9818c657d1db7d946cea378790573b5a60a1873d59882082cb025ba0b44655a",
+    "bytes": 4403
   },
   "evidence/paper_evidence.json": {
     "sha256": "2d785dc24b80012928f91828654b8e100e8571aa50242998f848311abff53627",
@@ -18,6 +126,30 @@
   "evidence/reported_sources.md": {
     "sha256": "ffdb97da14bc8bf587613d2cbf66cc16b1555315582535b78c6c9a2e21495663",
     "bytes": 2929
+  },
+  "evidence_atlas.md": {
+    "sha256": "f014ded9ca6dbb4c38c10f5b3542b14802599b6ef81a7d94b5aab54e811c1960",
+    "bytes": 13389
+  },
+  "latex_templates/ieee/conference-template-A4-latex/IEEEtran.cls": {
+    "sha256": "c972aca108fda004c3514d63658e02816da2e54d9a1451e870b9bd970e003f55",
+    "bytes": 288304
+  },
+  "latex_templates/ieee/conference-template-A4-latex/IEEEtran_HOWTO.pdf": {
+    "sha256": "462b4d99a973a5433ffa42de4d96e25c90e87fc44c2ebe598270af8cfd932922",
+    "bytes": 671626
+  },
+  "latex_templates/ieee/conference-template-A4-latex/template-A4.pdf": {
+    "sha256": "95bf4e2c7348e8339163256022c3febaf1a0ca87bee7a74935ff5a2ab7868964",
+    "bytes": 124600
+  },
+  "latex_templates/ieee/conference-template-A4-latex/template-A4.tex": {
+    "sha256": "4e805d3f27096898a5055ba9eabcce1af0d4f1b99c1aa7974e46d801ba20df31",
+    "bytes": 15369
+  },
+  "latex_templates/ieee/source.json": {
+    "sha256": "2220d88d43aaffe6585750671e3c89215ca28b2b80bf2f2b757ba898ffa6476b",
+    "bytes": 190
   },
   "notes/00_abstract.md": {
     "sha256": "f6ea51d7d458ef6930d7ed0b0b22d95b11249cf71d82cd9aa25de35269dba1c4",
@@ -44,83 +176,227 @@
     "bytes": 1095
   },
   "notes/claims_and_budget.md": {
-    "sha256": "9080f866cff98750d8a9f92ecd549df0ba1fbd512e9cb2ccef343f2e5c902a88",
-    "bytes": 3835
+    "sha256": "d4c582c51c99de6b0cda4ede23da2ef9a0edb691441a7defc6d658cd45c8335c",
+    "bytes": 1472
   },
   "output/00_abstract.tex": {
-    "sha256": "f95f22d354bf86d015bb001c984a31f4ce2e436028efc7802cc04950474dc515",
-    "bytes": 1230
+    "sha256": "e4c3d0e136d6f0fc44a0d20d3d7eb71c6d5218e2dc89a099853b3aff377d5715",
+    "bytes": 1392
   },
   "output/01_introduction.tex": {
-    "sha256": "9a5025d543a7c8954937863ac1da6681db57d353ac4d91445dc350d656792b7f",
-    "bytes": 3379
+    "sha256": "a766b6e7e1aabe30809cdc35bcf144d5896d3042b597a8a93cc99241005430b4",
+    "bytes": 3515
   },
   "output/02_related_work.tex": {
-    "sha256": "f2999e3d30e958ee394bfd17a31572ed3cabdbb10b21978670dc1e5ff8b49f9d",
-    "bytes": 3715
+    "sha256": "c74431c50427bea0d43ff10d9ca82e7ba66fc33d509818c75a42718d1c0fdd4d",
+    "bytes": 2712
   },
   "output/03_methodology.tex": {
-    "sha256": "2bfa25652659e400e7999e4f5378d78f18af38486467df0ce6d7947c5b5e93da",
-    "bytes": 6793
+    "sha256": "7d588605e5b6ccd591ac91c74c00912c39c2efd5691da2c9e5a2b703dabc7e91",
+    "bytes": 6822
   },
   "output/04_experiments.tex": {
-    "sha256": "3ae6e7409f3b476e5aa74cd4c41bc7138c2ffb73bea52596a91b175ea9e328e2",
-    "bytes": 5117
+    "sha256": "6d51f811ecb061d70eff24d5bc1f336fb885d3b9f740f79404c50a29753522d1",
+    "bytes": 7140
   },
   "output/05_conclusion.tex": {
-    "sha256": "e71c6dc5cde59ca3259489a38c7a9acd6b2c6026b20212d66bfff5533ce15aa7",
-    "bytes": 2493
+    "sha256": "926d4fa49ccc7d063f52d85536f0cc325696ccbd80847221e5673d6748910334",
+    "bytes": 945
+  },
+  "output/IEEEtran.cls": {
+    "sha256": "c972aca108fda004c3514d63658e02816da2e54d9a1451e870b9bd970e003f55",
+    "bytes": 288304
+  },
+  "output/evidence_atlas.pdf": {
+    "sha256": "13a34e2d31c4797a786615b0deb164e8e3c4deff70143690f8fa45824181f369",
+    "bytes": 147401
+  },
+  "output/evidence_atlas.tex": {
+    "sha256": "a7df2f15efa6f66c99c58c3262dec8c1c4ef66a173cb21d64eed111116ff3772",
+    "bytes": 19000
   },
   "output/figures/construction.tex": {
     "sha256": "9f35817b9d5cc1a4437855f36268e63834bc2eb7707de3eff07ce185a59a221f",
     "bytes": 757
+  },
+  "output/figures/construction_cost.tex": {
+    "sha256": "6106682faae9879501a62fefcac9ec1b2d57c1991c3ff8d7f70a3a94f100fcc2",
+    "bytes": 350
+  },
+  "output/figures/construction_cost_plot.pdf": {
+    "sha256": "c63055f96b5397dcc3b9a91e2a8a25100e77f2743e9427b2a8dd43109583f486",
+    "bytes": 11224
+  },
+  "output/figures/construction_cost_plot.tex": {
+    "sha256": "e2fca0ab7c1c61dcd6aa075e9c7d056b224126fa24c6d40302c4c02c1d3933cb",
+    "bytes": 1936
+  },
+  "output/figures/conv_factorial.tex": {
+    "sha256": "7a2f4d7dac62cbd7e9a1940e7e9a566e8e84739f14b5b59469b223b9cb23c99c",
+    "bytes": 405
+  },
+  "output/figures/conv_factorial_plot.pdf": {
+    "sha256": "98cb10fd2af28f64ce57cd7dcd082238aad882346fa4b6044adf8bd33aa17ab4",
+    "bytes": 11509
+  },
+  "output/figures/conv_factorial_plot.tex": {
+    "sha256": "ccc2155550104311dc3dcea840942fbc9c2aa2cddf8b6be4ba1b94636147ea89",
+    "bytes": 3507
+  },
+  "output/figures/conv_replication.tex": {
+    "sha256": "88fb8604a4120fef7bb78090f624509ca5d62b87147c2e3886d562acd893e334",
+    "bytes": 399
+  },
+  "output/figures/conv_replication_plot.pdf": {
+    "sha256": "9053156df0e205579100a2fd218a14319dafb7f258dc58498186c41483b8ec88",
+    "bytes": 11426
+  },
+  "output/figures/conv_replication_plot.tex": {
+    "sha256": "9ee55bc4ae6b8c7f4da9d5cd6d1ec054fca787d8ca929e95d5db65c3e69a3545",
+    "bytes": 2431
+  },
+  "output/figures/dense_results.tex": {
+    "sha256": "c6d830be8f2de8aab2100fb817096aa4a3c3149eda223e68eb38766f0c1f6c11",
+    "bytes": 367
+  },
+  "output/figures/dense_results_plot.pdf": {
+    "sha256": "5710a6d703dc0fee254069a6f2ce0fa9eb7ff78ebae50596f9bca9093396bb28",
+    "bytes": 12649
+  },
+  "output/figures/dense_results_plot.tex": {
+    "sha256": "c8fa73101b4754368856b1f44069e548b73ccd8d1ee861976b11586b552bcc13",
+    "bytes": 3567
+  },
+  "output/figures/dense_seed_gains.tex": {
+    "sha256": "63cdf26fe1facce208a0a4a6127714e99b99b5b13cc0494a665b672ae3252ee9",
+    "bytes": 426
+  },
+  "output/figures/dense_seed_gains_plot.pdf": {
+    "sha256": "fbfeee2cea32fbac9372e458282e9480fd008c82f861510b25994e142664ae3b",
+    "bytes": 12498
+  },
+  "output/figures/dense_seed_gains_plot.tex": {
+    "sha256": "2cad523dbfe1fd0a5cba53cfd760fc659a968f1a8e7754567fec0988f73dfb85",
+    "bytes": 2989
   },
   "output/figures/effects.tex": {
     "sha256": "e4e58249a6a9fa4bac885cff955ec4dfed461e90f6f213b07af1c3496667ac9f",
     "bytes": 387
   },
   "output/figures/factorial_effects.pdf": {
-    "sha256": "75d6ad8f2947d0477017f844fee5d427b3930d6ba7dbc69603fcfb96f2e1e574",
-    "bytes": 9278
+    "sha256": "29eff745c854b8fcf2e5f1caee4a2a4c8430f7e718e4c5519b5dcd793c39ba78",
+    "bytes": 9277
   },
   "output/figures/factorial_effects.tex": {
     "sha256": "28c75b3a85c88e6f9487e33c54f9ba744acd5d72b5cc382c96b8f31c224bb856",
     "bytes": 2303
   },
+  "output/figures/mechanism_controls.tex": {
+    "sha256": "717fb2ba9ecfb33751b49c3422caefd6e2ac30ab535f98848756b205b23f4d04",
+    "bytes": 403
+  },
+  "output/figures/mechanism_controls_plot.pdf": {
+    "sha256": "72b90b661922f281fa76372c429b25e7d51943cb2f1705f8f83571dc9bf188a3",
+    "bytes": 9670
+  },
+  "output/figures/mechanism_controls_plot.tex": {
+    "sha256": "650150d5a2204f8bf4d32d3f8d8f64ca85fccad7735690481f183f002e39df6d",
+    "bytes": 2850
+  },
   "output/figures/overview.tex": {
     "sha256": "05f7d4b246f098f519c61d707c3ff38c3c65bcfe68457fae473ba6a143110776",
     "bytes": 1574
   },
+  "output/figures/routing_tradeoff.tex": {
+    "sha256": "70756318db85097b4c56498d661a0fb29e562ee3c089fb363d22c61c8b136a33",
+    "bytes": 415
+  },
+  "output/figures/routing_tradeoff_plot.pdf": {
+    "sha256": "9ab5efd89277ac2120a93095faaf131e5f2d801da726fe8415d11d94456dd52b",
+    "bytes": 12647
+  },
+  "output/figures/routing_tradeoff_plot.tex": {
+    "sha256": "6b004f620fb144d6685453b9b39c36d3aa6aa9f226ecae3f59b9909eed2c51ed",
+    "bytes": 4482
+  },
+  "output/figures/structural_ablation.tex": {
+    "sha256": "dc828af29639af284b3878d8a611daac781752ada58b41db4f60a96eb75f2d75",
+    "bytes": 476
+  },
+  "output/figures/structural_ablation_plot.pdf": {
+    "sha256": "9baad51e28b5a12591e1ac30efbd825f9b9064893da43d630ed6070c21527b55",
+    "bytes": 11584
+  },
+  "output/figures/structural_ablation_plot.tex": {
+    "sha256": "5bc0d3ad7043e19727ff14ba61c53d265854b57d3d9604a5050d15a41ff500ab",
+    "bytes": 4289
+  },
+  "output/figures/transfer.tex": {
+    "sha256": "df161e8ec634e448044793e8c229b8dd7675b326a99c1b9302bcc1c902e756c5",
+    "bytes": 336
+  },
+  "output/figures/transfer_plot.pdf": {
+    "sha256": "ca6121a0e25868d8629041689faa35dcd0b3d7ec13953832b063152581b8fce2",
+    "bytes": 10805
+  },
+  "output/figures/transfer_plot.tex": {
+    "sha256": "6af12624c2c729b79d29a68dcfe34cbf9630086d3b2391ac7782b998b6d6acc3",
+    "bytes": 2546
+  },
+  "output/figures/warp_compatibility.tex": {
+    "sha256": "8ce99d822492344572ca2f463e09c5a8d93999dfac6d83d83951532d84bf88cb",
+    "bytes": 452
+  },
+  "output/figures/warp_compatibility_plot.pdf": {
+    "sha256": "ad56f0e417a0ea60ddc4c5784e5f932ad7a0c708737420a07ff3b78ed005573b",
+    "bytes": 10851
+  },
+  "output/figures/warp_compatibility_plot.tex": {
+    "sha256": "fa096e70c53c358a02d37c3bfa3951addccb7131a89a026cdd8f9d74fcb506fc",
+    "bytes": 2859
+  },
   "output/main.pdf": {
-    "sha256": "af3a3cb73dd5ac39ae2e2be770918016bb2f4c887a6e2f51cde9062ba87d0acb",
-    "bytes": 91496
+    "sha256": "1f3f3c23dda74e3446a0121e38af1c6585ed18fb42eb6dcad8238df4da4ec49c",
+    "bytes": 118691
   },
   "output/main.tex": {
-    "sha256": "d4877fc37a21c1f2e800df063a95328b8f999908aacb631d082abeb1ef97ba80",
-    "bytes": 1610
+    "sha256": "bfc4e060f69c8f2518c1ef75ee6278991aa0aed7ff058352dc4570c9015fba1c",
+    "bytes": 1717
+  },
+  "output/pdffonts.txt": {
+    "sha256": "388deb69fdfe77088f6d1235160483f0fc9ac6dffd182558d12101a5084e63b8",
+    "bytes": 2095
+  },
+  "output/pdfinfo.txt": {
+    "sha256": "a6099b3dd50d6e59ad795346d92f7b08be4788f2b1e2637bc4dc7fe32bdac4f7",
+    "bytes": 530
   },
   "output/quality_metrics.json": {
-    "sha256": "ced64df7e1e2abf9d4887e552fcea6272f338a61994edc14b010b5c5bef98dd4",
-    "bytes": 1442
+    "sha256": "a36ba72000be49b4bdd53d31a1063eff9abc6d71158c3802e5eb472397bb15a3",
+    "bytes": 2205
   },
   "output/quality_report.md": {
-    "sha256": "71167d77ff3b82de43031dd8e427ba474ba40584e726909516c9f52884426444",
-    "bytes": 11242
+    "sha256": "d434ec609e63858672d617865c16e3f79f57a015a3496ae9907a0edbb624177c",
+    "bytes": 11287
   },
   "output/references.bib": {
-    "sha256": "cb2598b277fd7cb583d0bca86e216f5923a334265b80899e2a9b467e35fe8fe7",
-    "bytes": 3578
+    "sha256": "a421e842c88043ddfa48f7bd0e91113cbdce3cc6279b30e1924d6e3df79fe5bc",
+    "bytes": 4421
+  },
+  "output/section_review_log.md": {
+    "sha256": "2702a1639328c2cf547e4b249f6277dd4587f700b42738248d11bf3d4139e06e",
+    "bytes": 7690
   },
   "output/tables/conv.tex": {
-    "sha256": "2fa1db62c636e34f6d119f76dc5a6415d5a1040bbb2c73d23695d43cbc6befaf",
-    "bytes": 1139
+    "sha256": "38cb1b2c15917d50849a4e91798e321cd34bde80eda84ac199d35ff8f038fc5d",
+    "bytes": 1039
   },
   "output/tables/dense.tex": {
-    "sha256": "3779994bf4038b63f04c53feb00e59bc6f2b1b2761adad49ae037beac764477d",
-    "bytes": 1349
+    "sha256": "cf9d5474e0f7c37376b03f1ace65955a6cf8a605aceb4b2dce6c5349168d3806",
+    "bytes": 1336
   },
   "output/tables/factorial.tex": {
-    "sha256": "bd6383845b6158639115e22dc4ee07d04e4ea5b0ba6fa9b89b1c9b83979926b3",
+    "sha256": "a39334042feac7e9a6de17051e0f820d7a3c51db232e48e4508a17df6336a5ec",
     "bytes": 834
   },
   "output/tables/protocol.tex": {
@@ -128,24 +404,28 @@
     "bytes": 1263
   },
   "output/tables/routing.tex": {
-    "sha256": "8e57922f5d2063fa6b59fcc61ad62662c2f1ac6b00988ba211f12528cfefce44",
-    "bytes": 1377
+    "sha256": "09d7825bd915d8b95e9c60f103ecc95003492c97272e5be8754dbee5e78a7fe9",
+    "bytes": 1223
   },
   "output/title.tex": {
-    "sha256": "0e3eb34dc0aea842acd00973e1103e560ade081018bee2f29e2cfaa63a15ad60",
-    "bytes": 87
+    "sha256": "33b561dcfe98b09fa41860cd01138dbb63587ec933a921c37be0b2c0ec0d1a0d",
+    "bytes": 92
   },
   "output/validation.json": {
-    "sha256": "3f647d588234eab35f059344874aba10fc22362063d791b0a78d418eec824212",
-    "bytes": 845
+    "sha256": "cb46266dbd001bd8efaa7baeea655655b52cc6186f8c0f4dead3c94bd7b42b2a",
+    "bytes": 26681
+  },
+  "paper_story.md": {
+    "sha256": "e34189feeec8ac5002349cca08bc573c8830bf1bdc63bc700e77b33e5822a7f5",
+    "bytes": 13587
   },
   "project.yaml": {
-    "sha256": "d9b23e41372e554a2638a7f274fdee2d0a130c330d61897482eb737c7108067c",
-    "bytes": 454
+    "sha256": "127296e4b59ccba05bc3d5739953c9a97b140838ed5c27c988ec7925d063efe3",
+    "bytes": 459
   },
   "scripts/build.sh": {
-    "sha256": "17c989dd48a68df499a0c61c6b471d2716d125e19609c1cecfda87017d12ae44",
-    "bytes": 924
+    "sha256": "3046dd2a8086f1bab2dcfbcd9a36a17401d0ca4793a084adfe9fe89988a7767b",
+    "bytes": 1373
   },
   "scripts/collect_evidence.py": {
     "sha256": "b3c9c09b00b6b2ecc0de95c1ee8c2cb5612e3ace455e90357459ee9da81afb8b",
@@ -155,36 +435,48 @@
     "sha256": "9193d5798bc273d0e86b322d90b96fdd3066c9a07ed7aac2361be4e5631fd897",
     "bytes": 1985
   },
+  "scripts/render_evidence_atlas.py": {
+    "sha256": "42863f668df91c63c1ccf744d18511b41e5be5098f409ad3f7b33109c2c6e0af",
+    "bytes": 11486
+  },
   "scripts/render_paper.py": {
-    "sha256": "cbe1a21a2af7a10df9b123196715c41ea076a901a9cc4e701de47400e946a540",
-    "bytes": 9506
+    "sha256": "542c312cc6e96225e29bc328832317168e8e100bf3dd3959075afdd2c909e1fe",
+    "bytes": 10246
+  },
+  "scripts/render_research_figures.py": {
+    "sha256": "2de8574e5e858546c3e6d2c28082c02df74bbfc9348afe5256cb67a1cea237f1",
+    "bytes": 15118
+  },
+  "scripts/validate_paper.py": {
+    "sha256": "d4715f8b6aa3db43a2135becfac0c4dfa1da5d891348608a8672a375125405db",
+    "bytes": 8165
   },
   "sections/00_abstract.md": {
-    "sha256": "13c651e78a6f4fa7cd3ae8e6e49832d274d41d1bff0a08133eb24a06c43aff6e",
-    "bytes": 1242
+    "sha256": "60f325abe15ab1868f4185d4610e1cba815af2ac6f5ba6048838945edf74c885",
+    "bytes": 1402
   },
   "sections/01_introduction.md": {
-    "sha256": "826ba73baae6a68c2e52b4941463b47fea0296b35ec68676dfc6d9ab7547b5fb",
-    "bytes": 3318
+    "sha256": "8a73ecbc689b69a5427a927aa18c87e08407fede49ac33d92b8d4c5a24f4f934",
+    "bytes": 3458
   },
   "sections/02_related_work.md": {
-    "sha256": "5aafb0c5955cdbbf1ead2f3d6973726d5a8156c1473dfc183720a4c3b84ef487",
-    "bytes": 3655
+    "sha256": "6e857d165173c136873c969567b416c90f70dce4d862333d813cb133ebe907fb",
+    "bytes": 2645
   },
   "sections/03_methodology.md": {
-    "sha256": "db682c4dc06a6b0ebd01e1d40dcdbc6310ba09949521eb7b1d79112f96b62d0b",
-    "bytes": 6720
+    "sha256": "46527a829bcb54f968124c38ebf53889e2d9df8eca5b91973682daf5162f5cd9",
+    "bytes": 6703
   },
   "sections/04_experiments.md": {
-    "sha256": "074c05e350362d2b444540c1a5fa558da1c8a2c30da43d5ece00924a379b5a0d",
-    "bytes": 4994
+    "sha256": "556a96c3c038d5d75bd39cdbe632473bb69129f343b00cd9c3dd6e793300215b",
+    "bytes": 7058
   },
   "sections/05_conclusion.md": {
-    "sha256": "3cd7ce4aee7ee5ccef28c9c1942248c343ee45c628f55cb836b3ab7be26f7c27",
-    "bytes": 2485
+    "sha256": "2e9ee2b5477d00caf43f9cfcd39b6558caf91559388a907aeb85606a5bdcce32",
+    "bytes": 936
   },
   "style.yaml": {
-    "sha256": "dd4e3f6040b82933f6b1185d8583318e90b248fc357e41ba56ae8aea68e166bc",
+    "sha256": "ad5cc3e044db035f84ad4706923c360178698c7583996bc42e57df46343c5f88",
     "bytes": 1272
   },
   "voice_profile.yaml": {

@@ -1,0 +1,38 @@
+\documentclass[10pt]{article}
+\usepackage[paperwidth=198mm,paperheight=59mm,margin=1mm]{geometry}
+\usepackage{newtxtext,newtxmath,tikz,pgfplots}
+\pgfplotsset{compat=1.18}
+\definecolor{methodblue}{HTML}{216A85}
+\definecolor{controlgray}{HTML}{555555}
+\definecolor{accentorange}{HTML}{A64B1D}
+\pagestyle{empty}
+\begin{document}\noindent\begin{tikzpicture}
+\begin{axis}[width=89mm,height=50mm,axis lines=left,tick align=outside,grid=major,grid style={gray!15},scaled ticks=false,tick label style={font=\fontsize{11}{13}\selectfont},label style={font=\fontsize{11}{13}\selectfont},title style={font=\fontsize{11}{13}\selectfont},legend style={font=\fontsize{11}{13}\selectfont,draw=none,fill=white,inner sep=1pt},title={(a) LILogic architectures (T)},xmode=log,xmin=0.3,xmax=40,ymin=47,ymax=65,xlabel={Peak GPU allocation (GiB)},ylabel={Accuracy (\%)},legend pos=south east]
+\addplot+[color=controlgray,mark=square*,mark size=2pt,line width=0.9pt,mark options={solid,fill=controlgray,draw=controlgray},only marks,error bars/.cd,y dir=both,y explicit] coordinates {(0.47362089,49.01) +- (0,0.42579338)(1.5570865,55.333333) +- (0,0.46918369)};
+\addlegendentry{Random}
+\node[font=\fontsize{11}{13}\selectfont,anchor=south east] at (axis cs:0.4736208915710449,49.26) {M};
+\node[font=\fontsize{11}{13}\selectfont,anchor=south east] at (axis cs:1.55708646774292,55.58333333333333) {L};
+\addplot+[color=methodblue,mark=*,mark size=2pt,line width=0.9pt,mark options={solid,fill=methodblue,draw=methodblue},only marks,error bars/.cd,y dir=both,y explicit] coordinates {(0.47362089,52.543333) +- (0,0.29569128)(1.5570865,60.193333) +- (0,0.28571548)};
+\addlegendentry{LC}
+\node[font=\fontsize{11}{13}\selectfont,anchor=south west] at (axis cs:0.4736208915710449,52.79333333333333) {M};
+\node[font=\fontsize{11}{13}\selectfont,anchor=south west] at (axis cs:1.55708646774292,60.443333333333335) {L};
+\addplot+[color=accentorange,mark=triangle*,mark size=2pt,line width=0.9pt,mark options={solid,fill=accentorange,draw=accentorange},only marks,error bars/.cd,y dir=both,y explicit] coordinates {(8.100183,57.84) +- (0,0)(24.86129,62.03) +- (0,0)};
+\addlegendentry{Top-32}
+\node[font=\fontsize{11}{13}\selectfont,anchor=south west] at (axis cs:8.100183010101318,58.09) {M};
+\node[font=\fontsize{11}{13}\selectfont,anchor=south west] at (axis cs:24.861290454864502,62.279999999999994) {L};
+\end{axis}
+\begin{axis}[width=89mm,height=50mm,axis lines=left,tick align=outside,grid=major,grid style={gray!15},scaled ticks=false,tick label style={font=\fontsize{11}{13}\selectfont},label style={font=\fontsize{11}{13}\selectfont},title style={font=\fontsize{11}{13}\selectfont},legend style={font=\fontsize{11}{13}\selectfont,draw=none,fill=white,inner sep=1pt},at={(9.25cm,0)},anchor=south west,title={(b) LILogic architectures (T)},xmode=log,xmin=10,xmax=600,ymin=47,ymax=65,xlabel={Observed training time (min)},ylabel={Accuracy (\%)},legend pos=south east]
+\addplot+[color=controlgray,mark=square*,mark size=2pt,line width=0.9pt,mark options={solid,fill=controlgray,draw=controlgray},only marks,error bars/.cd,y dir=both,y explicit] coordinates {(14.621802,49.01) +- (0,0.42579338)(15.201573,55.333333) +- (0,0.46918369)};
+\addlegendentry{Random}
+\node[font=\fontsize{11}{13}\selectfont,anchor=south east] at (axis cs:14.621801515329732,49.26) {M};
+\node[font=\fontsize{11}{13}\selectfont,anchor=south east] at (axis cs:15.20157268044487,55.58333333333333) {L};
+\addplot+[color=methodblue,mark=*,mark size=2pt,line width=0.9pt,mark options={solid,fill=methodblue,draw=methodblue},only marks,error bars/.cd,y dir=both,y explicit] coordinates {(14.59309,52.543333) +- (0,0.29569128)(18.472438,60.193333) +- (0,0.28571548)};
+\addlegendentry{LC}
+\node[font=\fontsize{11}{13}\selectfont,anchor=south west] at (axis cs:14.593089633125864,52.79333333333333) {M};
+\node[font=\fontsize{11}{13}\selectfont,anchor=south west] at (axis cs:18.472438181000243,60.443333333333335) {L};
+\addplot+[color=accentorange,mark=triangle*,mark size=2pt,line width=0.9pt,mark options={solid,fill=accentorange,draw=accentorange},only marks,error bars/.cd,y dir=both,y explicit] coordinates {(37.808485,57.84) +- (0,0)(350.63496,62.03) +- (0,0)};
+\addlegendentry{Top-32}
+\node[font=\fontsize{11}{13}\selectfont,anchor=south west] at (axis cs:37.80848531601951,58.09) {M};
+\node[font=\fontsize{11}{13}\selectfont,anchor=south west] at (axis cs:350.6349597411812,62.279999999999994) {L};
+\end{axis}
+\end{tikzpicture}\end{document}

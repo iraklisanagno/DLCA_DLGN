@@ -1,0 +1,1739 @@
+                                                      A Scalable, Interpretable, Verifiable & Differentiable Logic Gate
+                                                      Convolutional Neural Network Architecture From Truth Tables
+
+
+                                                          Adrien Benamira 1 Tristan Guérand 1 Thomas Peyrin 1 Trevor Yap 1 Bryan Hooi 2
+
+
+                                                                   Abstract                                1.1. Related works
+                                                                                                           Global and exact interpretability. Interpretability is cru-
+arXiv:2208.08609v3 [cs.AI] 2 Feb 2023
+
+
+
+
+                                                                                                           cial for understanding the decision-making process of the
+                                               We propose T ruth T able net (T T net), a novel             trained model, particularly in security-sensitive applica-
+                                               Convolutional Neural Network (CNN) architec-                tions (Osoba & Welser IV, 2017). Decision trees are widely
+                                               ture that addresses, by design, the open challenges         used in scenarios requiring high interpretability (Bertsimas
+                                               of interpretability, formal verification, and logic         & Dunn, 2017) as they produce all the rules, i.e. the global
+                                               gate conversion. T T net is built using CNNs’ fil-          nature of interpretability, that permit the exact computa-
+                                               ters that are equivalent to tractable truth tables and      tion of the output model result, i.e. the exact nature of
+                                               that we call Learning Truth Table (LTT) blocks.             interpretability. In recent years, there has been a growing
+                                               The dual form of LTT blocks allows the truth ta-            interest in developing DNNs that are as globally and ex-
+                                               bles to be easily trained with gradient descent and         actly interpretable as rule-based models (Wang et al., 2021b;
+                                               makes these CNNs easy to interpret, verify and              Yang et al., 2021), including a NeurIPS 2021 spotlight pa-
+                                               infer. Specifically, T T net is a deep CNN model            per (Agarwal et al., 2020). To date, there is no family of con-
+                                               that can be automatically represented, after post-          volutional DNNs that are globally and exactly interpretable
+                                               training transformation, as a sum of Boolean deci-          as decision trees by design, without the need for an explainer
+                                               sion trees, or as a sum of Disjunctive/Conjunctive          (which often offers local and inexact explanations (Ribeiro
+                                               Normal Form (DNF/CNF) formulas, or as a com-                et al., 2016; 2018)).
+                                               pact Boolean logic circuit. We demonstrate the
+                                               effectiveness and scalability of T T net on multi-          Complete and sound formal verification. Formal veri-
+                                               ple datasets, showing comparable interpretability           fication is a critical aspect in ensuring the soundness and
+                                               to decision trees, fast complete/sound formal veri-         completeness of neural network properties, particularly for
+                                               fication, and scalable logic gate representation, all       safety-critical applications (Driscoll, 2020). Conventional
+                                               compared to state-of-the-art methods. We believe            verifiers work with real-valued networks, but they face scal-
+                                               this work represents a step towards making CNNs             ability challenges e.g. hundreds of seconds to verify an
+                                               more transparent and trustworthy for real-world             MNIST image property (Müller et al., 2022) and provide no
+                                               critical applications.                                      guarantees of correctness due to floating point errors (Jia &
+                                                                                                           Rinard, 2021a). Therefore, developing an efficient DNNs
+                                                                                                           verification process is an important topic, as evidenced by
+                                                                                                           the α−β-Crown paper (Xu et al., 2020b; Wang et al., 2021a)
+                                                                                                           and the winner of the Verification Neural Network compe-
+                                        1. Introduction
+                                                                                                           tition (Bak et al., 2021). In this work, instead of designing
+                                        Deep Convolutional Neural Networks (DCNNs) have been               a new general verification method for DCNNs, we propose
+                                        widely and successfully applied in various tasks in the field      the first architecture that can be fast and correctly verified
+                                        of machine learning. However, despite their achievements,          with any SAT verification solver (Roussel & Manquinho,
+                                        there are still issues that need to be addressed. In this paper,   2009). This research direction is attracting interest, as ex-
+                                        we focus on three major challenges of DCNNs: 1) Global             emplified by (Jia & Rinard, 2020), who strives to show that
+                                        and exact interpretability, 2) Complete and sound formal           Binary Neural Networks (BNNs (Hubara et al., 2016)) are
+                                        verification, 3) Differentiable logic gates CNNs.                  faster to verify if a specific SAT solver is designed, e.g. less
+                                           1                                                               than a second to verify an MNIST image property.
+                                            Nanyang Technological University, Singapore 2 National Uni-
+                                        versity of Singapore, Singapore. Correspondence to: Adrien Be-
+                                        namira <adrien002@e.ntu.edu.sg>.                                   Differentiable logic gates CNNs. Logic gates DNN rep-
+                                                                                                           resentation is essential for deploying compact DNNs on
+                                                                                                           resource-constrained devices (Wang et al., 2019). These
+                                                            T ruth T able Net
+
+logic gate networks consist of logic “AND” and “OR” gates,             SAT solvers. This allows for the formal verification of the
+denoted ∧ and ∨ respectively (Darwiche & Marquis, 2002),               network’s properties in dozens of milliseconds, which is
+which allow very fast execution. However, the challenge in             about 103 times faster than α − β-Crown (Xu et al., 2020b;
+learning logic gate networks is that they are typically non-           Wang et al., 2021a), the state-of-the-art DNN verification
+differentiable, making them difficult to train with gradient           solver and the winner of the VNN competition (Bak et al.,
+descent (Rumelhart et al., 1986). To date, there is no family          2021). (claim 2A). We also provide a comparison with
+of differentiable convolutional DNNs logic gates, and as               BNNs verification (Jia & Rinard, 2020; Narodytska et al.,
+stated in (Petersen et al., 2022): “Convolutional logic gate           2019b). We demonstrate that our method is sligthly more ac-
+networks [...] are interesting and important directions for            curate in low noise cases and faster in all scenarios, whereas
+future research.”                                                      BNNs require a specific SAT solver, we do not. (claim 2B).
+Overall strategy. Among all the families of possible                   To address CNN differentiable logic gate representation,
+DCNN models, some are easier to manipulate than others.                T T net is built upon CNN-based blocks, LTT blocks, that
+A perfect example is BNNs (Hubara et al., 2016), which by              are transformable into logic gate circuits - as desired by (Pe-
+binarizing the architecture, manage to find a friendly DCNN            tersen et al., 2022). Our results demonstrate more compact
+architecture that makes a lot of open problems easier (Jia             and accurate model on tabular datasets than (Petersen et al.,
+& Rinard, 2020). In this paper, we propose to follow the               2022), while being as compact as the (Petersen et al., 2022)
+same strategy. We address the three open challenges pre-               on MNIST, with a slightly lower accuracy and a shorter
+sented above by introducing the first DCNN family that is              training time (claim 3A). Additionally, we show that our
+specifically designed to be (i) as interpretable as a sum of           approach is more scalable in terms of accuracy and training
+Boolean decision trees, (ii) amenable to fast complete/sound           time, achieving 70.2% on CIFAR-10 with less than an hour
+verification using any SAT solver, (iii) easily differentiable         of training. It represents an 8% improvement and 270 times
+with standard machine learning framework and capable of                faster training than (Petersen et al., 2022) approach, at the
+compact logic gate CNN representation, finally (iv) scalable           cost of being less compact (claim 3B).
+to large datasets.                                                     Our (claim 4) is that we demonstrate T T net can achieve
+                                                                       ImageNet classification task as previous works such as
+1.2. Our work
+                                                                       XnorNet (Rastegari et al., 2016) and the BNN original pa-
+Our contributions. In this paper, we introduce an archi-               per (Hubara et al., 2016).
+tecture, T T net, that addresses these open questions by pro-
+viding a CNN filter model that is transformable into a com-            Outline. In Section 2, we provide a comprehensive
+pact truth table representation by design. T T net utilizes            overview of the relevant background in the field of Boolean
+a novel building block called Learning Truth Table (LTT)               logic and formal verification. In Section 3, we introduce
+block, which combines the dual form of tractable truth ta-             the design principles and architecture of T T net model. In
+bles and CNNs, allowing for truth tables to be easily trained          Section 4, we provide a thorough evaluation of the perfor-
+and optimized with standard machine learning libraries. The            mance of our model on various datasets, demonstrating its
+LTT blocks enable T T net to be represented as a sum of                effectiveness in addressing the three open challenges high-
+truth tables, or a sum of DNF/CNF formulas, or sum of                  lighted above. We also discuss the opportunities for further
+Boolean decision trees, or as a compact Boolean logic gate             research and we conclude in Section 5. A glossary can be
+circuit, and the conversion is automatic after training. We            find in Appendix G.
+hope that LLT block can bridge the gap between logic sym-
+bolic Boolean AI and Deep Learning (Marques-Silva, 2022;               2. Background
+Shi et al., 2020; Yu et al., 2021; Choi et al., 2017)
+                                                                       Boolean logic. A truth table is a mathematical represen-
+To address global and exact interpretability, T T net is de-           tation of the output of a Boolean function for all possible
+signed to provide a clear and concise representation of the            input combinations. It can therefore be obtained when the
+decision-making process of the network in the form of a                corresponding Boolean function is tractable. Note that the
+sum of Boolean decisions trees 1 (claim 1A). We also de-               Boolean function of a BNN is generally not tractable as the
+scribe an automatic process for human knowledge injection              input size of the function is too large. A truth table can be
+(claim 1B), a unique feature that is essential for critical            expressed in Conjunctive Normal Form (CNF) or Disjunc-
+applications.                                                          tive Normal Form (DNF)2 , both being standard forms to
+To address sound & complete formal verification, T T net is               2
+                                                                              A CNF is a conjunction of a set of clauses: Φ = (c1 ∧
+designed to support fast property verification using generic           · · · ∧ cm ), where each clause cj is a disjunction of some literals
+                                                                       cj = lj1 ∨ · · · ∨ ljr . A DNF is a disjunction of a set of clauses:
+   1
+     Linear models, shallow decision trees and T T net are inter-      Φ = (c1 ∨ · · · ∨ cm ), where each clause cj is a conjunction of
+pretable only if the features they are trained on are interpretable.   some literals cj = lj1 ∧ · · · ∧ ljr .
+                                                               T ruth T able Net
+
+       Patch Size
+
+
+
+
+                                                                                                                                Conv1D (kernel size = 1)
+                                                                                                Batch Normalization 1D
+
+
+
+
+                                                                                                                                                           Batch Normalization 1D
+      Truth Table, x                                           ΦF
+
+
+
+
+                                                                                       Conv1D
+  0 0 0 0 0 0                                                   1
+
+
+
+
+                                                                                                                                                                                    binact
+                                                                                                                         SeLU
+  1 0 0 0 0 0                                                   1
+  0 1 0 0 0 0                                                   0
+  ... ... ... ... ... ...                                      ...
+  1 1 1 1 1 0                                                   0
+  1 1 1 1 1 1                                                   1
+(a) Converting ΦF into a truth table. The above example has two           (b) Architecture description of one family of LTT block in 1 di-
+layers: the first one has parameters (input channel, output channel,      mension: Expanding AutoEncoder LTT (E-AE LTT). Such a com-
+kernel size, stride) = (1, 4, 4, 2), while the second (4, 1, 2, 2). The   putation is showcased in Figure 1a. LTT block inputs are always
+patch size of ΦF is 6 (i.e. green box) since the output feature (i.e.     binary.
+light green box) requires 6 input entries (orange and blue boxes).
+
+Figure 1. A Learning Truth Table (LTT) block. The intermediate values and weights are floating points, input/output values are binary.
+We hope that LLT block can bridge the gap between logic symbolic Boolean AI and deep learning.
+
+
+represent a Boolean function, especially in formal verifica-              et al., 2017; Brown et al., 2020; Dosovitskiy et al., 2020),
+tion. Each DNF equation becomes a rule if it is evaluated                 the resulting models have become increasingly complex and
+to a space position: see Example 1B in Section 3.2.1. A                   difficult to verify, interpret and implement (Hoefler et al.,
+Boolean circuit is a physical or mathematical representa-                 2021). To address this issue, we focus on CNNs, which are
+tion of a Boolean function, made up of interconnected logic               widely used in the field, and we try to transform them into
+gates that implement the rules (Arora & Barak, 2009; Klir                 tractable Boolean functions.
+et al., 1997).
+                                                                          CNN filter as a tractable Boolean function. The conver-
+Formal verification. Complete and sound property ver-                     sion property of the floating CNN weights filter into a binary
+ification of SAT-convertible DNNs has been presented in                   truth table is achieved by transforming the CNN filter func-
+(Narodytska et al., 2018), where a precondition is placed on              tion into a tractable Boolean function. To accomplish this,
+the inputs, a property is placed on the outputs, and a CNF re-            the complexity of the CNN filter function is reduced by: (A)
+lation is defined between inputs and outputs. An application              decreasing the input size of the CNN filter (noted as n in
+example of property verification is to check for the existence            the rest of the paper), (B) using binary inputs and (C) using
+of an adversarial perturbation in a trained DNN. In this case,            binary outputs. (A) is achieved by decreasing the number
+the precondition defines an -ball of valid perturbations                 of connections between convolution layers and (B-C) by
+around the original image, and the property states that the               utilizing the Heaviside step function3 , denoted as binact ,
+classification should not change under these small perturba-              to binarize the features. It is worth noting that our model
+tions. Thus, we distinguish the traditional “natural accuracy”            differs from BNNs in that we preserve real-valued weights.
+from the “verified accuracy”, the latter measuring the frac-              The combination of (A-B-C) allows for a tractable Boolean
+tion of predictions that remain correct for all adversarial               function, as all input-output pairs can be computed in 2n
+attacks within the perturbation constraints. We give formal               operations (for a not-too-large n). The resulting function is
+definitions in Appendix A, examples in Appendix E.5.                      then stored as a truth table, an example of which is shown
+                                                                          in Figure 1a. Additionally, in Section 3.2.3, we introduce a
+3. T ruth T able deep convolutional neural                                condition (D): the CNN filter must be non-linear before the
+   network                                                                Heaviside step function to achieve satisfactory accuracy.
+
+In this section, we introduce T T net. We also provide a                  Unique property of T T net: trainable truth table,
+companion video that illustrates our design principles. Ap-               logic circuit & CNF/DNF. The conversion of a floating-
+pendix B offers complementary details on the architecture.                weighted CNN filter function into a tractable Boolean func-
+                                                                          tion enables its formulation as a truth table, referred to as
+3.1. General                                                              the Learning Truth Table (LTT). The resulting neural net-
+We propose a DCNN architecture for security applications.                    3
+                                                                              binact (x) = 12 + sgn(x) , and to train with this function with-
+                                                                                                  2
+We argue that while recent developments in DNN archi-                     out much loss in performance we adopted the Straight-Through
+tecture have focused on improving performance (Vaswani                    Estimator (STE) proposed by (Hubara et al., 2016).
+                                                            T ruth T able Net
+
+work is named the T ruth T able Deep Convolutional Neural              the function that maps {0, 1}n to the corresponding ybinary :
+Network ( T T net), as it utilizes LTTs as small truth tables          this is the truth table form and we do not need W1 any-
+in place of floating-weighted CNN filters. It is important to          more. We then transform ΦF into DNF/CNF by applying
+note that one LTT block can be expressed in multiple forms:            the Quine-McCluskey algorithm (Blake, 1938) which gives
+as a neural network, a truth table, a Boolean function, and a          DN F = (x2 ∧ x3 ) ∨ x0 , CN F = (x2 ∨ x0 ) ∧ ( x3 ∨ x0 )
+logic circuit in CNF/DNF form. This means that the LTT                 (simplified DNF/CNF).
+has the unique property of being both a differentiable neu-
+                                                                       In the previous paragraph, we described the general pro-
+ral network that can be trained using standard optimization
+                                                                       cedure for transforming a CNN filter into LTT into a CN-
+techniques and a tractable Boolean function that can be
+                                                                       F/DNF logic gate expression. This expression is indepen-
+expressed as a truth table, CNF/DNF or a logic gate cir-
+                                                                       dent of the spatial position of the feature, commonly referred
+cuit. As a result, CNNs have the benefits of interpretability
+                                                                       to as the patch4 . When we apply the LTT DNF expression
+and compactness of Boolean functions; at the same time,
+                                                                       to a specific spatial position on the input, we convert the
+the Boolean functions benefit from the differentiability and
+                                                                       DNF into a rule. To convert the general DNF form into a
+the training feature of CNNs. We also highlight that this
+                                                                       set of rules R, we divide the input into patches and replace
+transformation is automatic and occurs after training.
+                                                                       the DNF literals with the corresponding feature names. The
+Next, we build the non-linear LTT block architecture step              number of rules for one filter corresponds to the number of
+by step for 1D-CNN, which can be generalized to 2D-CNN.                patches. An example of this process is provided below.
+
+3.2. Construction of non-linear LTT block                              Example 1B: conversion of DNF expressions to rules.
+                                                                       To obtain the rules, we need to consider the padding and the
+3.2.1. 1D- CONVOLUTION , ONE INPUT CHANNEL
+                                                                       stride of the LTT block. Consider the following 6-feature
+We denote as ΦF a 1D-convolution associated with the filter            binary input: [Age > 34, Male, Go to University, Married,
+F of kernel size ker = n, stride s, and no padding. Let                Born in US, Born in France]. In our case, with a stride at 2
+the input feature with a single input channel chninput = 1             and no padding, we get 2 patches: [Age> 34, Male, Go to
+be represented as v0 . . . vN −1 where N is the length of              University, Married] and [Go to University, Married, Born in
+the input feature. We define yi,F , the output of the func-            the US, Born in France]. After the replacement of the literal
+tion ΦF at position i and ybin,i,F = binact (yi,F ) =                  by the corresponding feature, we get 2 rules: RuleDNF 1    =
+                                                                                                                             DNF
+binact (ΦF (vi×s , vi×s+1 , . . . , vi×s+(n−1) )). If vi×s+q are       (Go to University∧Married)∨(Age > 34) and Rule2 =
+binary values for all q = 0, . . . , n − 1, we can express the         (Born in the US ∧ Born in France) ∨ Go to University. We
+1D-convolutional layer ΦF as a truth table by enumerating              underline the logic redundancy in RuleDNF 2  : if someone is
+all 2n possible input combinations. The truth table can then           born in the US, he/she is necessarily not born in France. We
+be converted into a simplified CNF/DNF formula using the               solve this issue by injecting human knowledge into the truth
+Quine–McCluskey algorithm (Blake, 1938) for interpreta-                table as we will see in Section 3.4.
+tion. However, there is a computational limitation when
+using this algorithm because it is solving an NP-complete              3.2.2. 1D- CONVOLUTION , MULTIPLE INPUT CHANNELS
+problem (Umans et al., 2006). Therefore, we shall limit
+ourselves to n ≤ 16 for this paper. In that case, as ΦF                In general, a 1D-convolution takes in several channels as
+fulfilled conditions (A-B-C), ΦF is a linear LTT.                      input (i.e. chninput > 1) and therefore the number of
+                                                                       input variables of ΦF will rise substantially. For exam-
+Example 1A: from CNN filter to truth table to CN-                      ple, a 1D-CNN that takes 32 input channels with a kernel
+F/DNF. We consider a 1D-convolution with one filter                    size of 4 yields an input of size 128, which exceeds our
+of kernel size ker = 4, a stride of size 2 and no                      limit of n = 16. In order to overcome this, we group the
+padding. Let the weights of the 1D-convolutional layer                 channels using the group parameter (Dumoulin & Visin,
+be W1 = (10, −1, 3, −5). We define the following CN-                   2016). Grouped convolutions divide the input channels
+F/DNF literals [x0 x1 x2 x3 ]. As the inputs and outputs               into g groups, then apply separate convolutions within each
+are binary and the number of input entries for the CNN                 group; this effectively decreases the number of inputs of ΦF
+layer is 4 (kernel size = 4 and number of input channel                to each individual filter by a factor of g. In that case, we
+chninput = 1), we have 24 = 16 possible entries: [0                    have n = ker × chninput /g where chninput is the number
+0 0 0], [0 0 0 1], · · · , [1 1 1 1]. For each in-                     of input channels and ker is the kernel size.
+put, we calculate the corresponding output resulting from
+                                                                       Example 2: the grouping parameter. We consider a
+the convolution of W1 with the 16 possible literal entries:
+                                                                       1D-CNN layer with one filter of kernel size ker = 5, a
+[0, −5, 3, −2, −1, −5, 3, −2, 10, 5, 13, 8, 9, 4, 12, 7]. After
+binarization with the Heaviside step function, we have                     4
+                                                                             Patch is the region of the input that produces the feature, which
+ybinary = [0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1]. So ΦF is   is commonly referred to as the receptive field (Araujo et al., 2019).
+                                                      T ruth T able Net
+
+stride of size s =
+                  2 and no padding. Let the 1D-CNN            weights and the intermediate values are real.
+                  10     −1    3   −5 6
+                 8      −2    5   −1 6
+                                        for the 4-channel      3.3. Overall T T net architecture
+weights be W1 =  −3
+                
+                          0    2   4 6
+                 −10      1   −3    5 6                         We integrated LTT blocks into T T net, just as CNN filters
+input. We can observe that W1 requires 20 = 5 × 4 bi-           are integrated into DCNNs: each LTT layer is composed
+nary inputs and leads to a truth table of size 220 , which      of multiple LTT blocks and there are multiple LTT layers
+is too large according to our criteria of 216 . Therefore,      in total. Additionally, there is a pre-processing layer and a
+by defining a group g = 2, then W1 becomes        2 filters   final layer. These two layers provide flexibility in adapting
+                        10 −1 3 −5 6                            to different applications: scalability, interpretability, formal
+matrices: W1,1 =                                 for filter 1
+                         8 −2 5 −1 6                            verification, and logic circuit design.
+which takes as input only the first two input channels
+                 −3 0 2 4 6
+and W1,2 =                               for filter 2 which
+                 −10 1 −3 5 6                                   Pre-processing layer. To maintain the interpretability,
+takes as input only the last two input channels. Therefore,     verifiability and Boolean circuit properties of the network,
+thanks to this grouping, each filter has an input size of       we apply a 3-step pre-processing procedure to the inputs
+n = 10 = 5 × 4/2 which fits our criteria of n ≤ 16.             of DCNNs, which are typically floating-point values: (i)
+                                                                quantization of inputs (Jia & Rinard, 2020); (ii) batch nor-
+3.2.3. N ON LINEAR LTT FOR MULTI - INPUT CHANNELS               malization (Narodytska et al., 2019b); and (iii) step function.
+                                                                The details of the quantization step (i) can be found in Ap-
+In all of the above examples, the LTT ΦF was a linear
+                                                                pendix B.2. To improve scalability, we allow the addition of
+function before the step function. In general, if ΦF is a 1D-
+                                                                a first float-weighted CNN layer before batch normalization.
+convolution, the T T net will not be able to learn complex
+tasks such as image classification (Deng et al., 2009) (see
+Appendix B.7 that supports this claim). Inspired by the         Final layer. To maintain the interpretability, verifiability
+work (Brendel & Bethge, 2019; Dosovitskiy et al., 2020),        and Boolean circuit properties of the network, we apply
+we therefore decided to transform the linear function ΦF        a final layer that is a single linear layer on 1-bit or 4-bit
+into a non-linear one to increase the learning capacity of      weight, which is equivalent to having 4 linear layers with
+the neural network. The idea is to use a DNN architecture       1-bit weight. For scalability, we also allowed the option of
+for ΦF without increasing the input size (and so the patch      having this layer with floating weights.
+of the function) of ΦF . The ΦF input size is now defined
+as n = pc/g where p is the patch size instead of the kernel     3.4. Integration of human knowledge
+size ker.
+                                                                One of the most valuable and unique features of T T net is
+Non-linear LTT block example:                   Expanding-      the integration of human knowledge through the automatic
+AutoEncoder (E-AE LTT). Among all the families                  injection of “Don’t Care Terms” (DCT s) in the truth table
+of possible LTT blocks, we represent in Figure 1b an            as a post-training treatment. DCT s represent the fact that
+Expanding-AutoEncoder LTT block (E-AE LTT): ΦF ,                for a particular input, the LTT block output can be equiva-
+with one input channel and g = 1 with a patch size of 6.        lently 0 or 1 without affecting the overall performance of the
+F now refers to the F th output channel of the last layer       DCNN. The Quine-McCluskey algorithm can then assign
+for DNN ΦF . The E-AE LTT block is built upon a layer           the optimal value to the DCT s to reduce the DNF equa-
+we call the amplification layer. The amplification layer        tion size. The injection of DCT s is achieved automatically
+works by simply adding a new convolution layer with             through human common sense constraint at post-training.
+kernel size 1 after a convolution layer. Doing so will not
+increase the patch size. Overall, the LTT block comprises
+                                                                Example 1C: The above Example 1B illustrates the need
+two 1D-convolution layers, denoted as Conv1D, with an
+                                                                for human knowledge injection: no one can be born in both
+amplification parameter τ , which is the ratio between
+                                                                France and US. This implies that the literals x2 and x3 must
+the number of channels of the first layer and the number
+                                                                not be at 1 at the same time, uniquely for the second rule.
+of channels of the second layer. Each CNN layer in the
+                                                                Then, the DNF equation changes: we inject the DCT inside
+LTT block is followed by a batch normalization (Ioffe &
+                                                                the truth table as ybinary = [0, 0, 1, DCT , 0, 0, 1, DCT ,
+Szegedy, 2015) and a non-linear activation function. In
+                                                                1, 1, 1, DCT , 1, 1, 1, DCT ]. This results in the new rule:
+our case, the first is SeLU (Klambauer et al., 2017) and the
+                                                                RuleDNF
+                                                                      2,H.K. = Born in the US ∨ Go to University.
+second one is binact . We can observe that the conditions
+(A-B-C-D) are now fulfilled: the input size is small (n = 6),   This automatic post-training operation significantly de-
+the input/output values are binary and the function is          creases the size of the rules while keeping the accuracy
+non-linear thanks to the SeLU function. Note that the LTT       the same and avoiding nonsensical rules conditions.
+                                                        T ruth T able Net
+
+4. Results                                                        Table 2. Accuracy (Acc.) performance of T T net on two tabular
+                                                                  datasets alongside the effect of the automatic post-training DCT s
+4.1. Experimental environment
+                                                                  incorporation with Human Knowledge (H.K.) in truth table on the
+The project code was coded in Python with PyTorch li-             number of gates (# Gates idem as the complexity of the model).
+brary (Paszke et al., 2019) for training, Numpy (Van              Comparison proposed with Diff Logic Net (Petersen et al., 2022),
+Der Walt et al., 2011) for testing. We used 4 Nvidia GeForce      more detailed results are given in Appendix D.5, Table 10.
+RTX 3090 GPUs and 8 cores Intel(R) Core(TM) i7-8650U               Models          Diff Logic Net    Ours without H.K.   Ours with H.K.
+CPU clocked at 1.90 GHz, 16 GB RAM.                                                Acc.    # Gates   Acc.     # Gates    Acc.    # Gates
+                                                                   Adult           84.8%    1280     85.3%     2156      85.3%    1475
+4.2. Scalability: Claim 4                                          Breast Cancer   76.1%     640     77.6%      123      77.6%     71
+
+T T net shows an accuracy of 41.1% on ImageNet with truth
+tables of size n = 16, a pre-processing layer of one CNN
+layer with floating weights, and a final layer with float-        Decision Diagram (ROBDD) representation. This transfor-
+ing weights (as in (Hubara et al., 2016; Rastegari et al.,        mation is fast and automatic. One DCNN T T net decision
+2016)). These results are comparable to those achieved by         tree form can be observed in Figure 2: the resulting decision
+the original BNN paper (Hubara et al., 2016) and XNOR-            mechanism is small and easily understandable.
+net (Rastegari et al., 2016), see Table 1. Our experimen-         In the Adult dataset, the goal is to predict whether an individ-
+tal results confirm that T T net can achieve high accuracy        ual I will earn more than $50,000 per year in 1994. Given
+on a large dataset. However, there is still room for im-          an individual’s feature inputs I, the first rule of Figure 2 can
+provement in terms of accuracy as BNNs now can achieve            be read as follows: if I has completed more than 11 years
+≈ 70% − 75% (Liu et al., 2018) on ImageNet. Detailed              of education, then the rule is satisfied. If not, then the rule
+information is given in Appendix C.                               is satisfied if I earns more than $4,200 in investments per
+                                                                  month or loses more than $228. If the rule is satisfied, I
+Table 1. Comparison of top 1 and top 5 natural accuracy between   earns one positive point. If I has more positive points than
+T T net, BNN and XNOR-Net on ImageNet.                            negative points, the model predicts that I will earn more
+Accuracy     T T net (n = 16)    original BNN    XNOR-Net         than $50,000 per year.
+top 1             41.1 %            27.9 %          44.2 %        Mitigating contextual drift in T T net DCNN through
+top 5             65.6 %            50.4 %          69.2 %
+                                                                  global and ixact interpretability. The proposed process
+                                                                  provides a clear method for obtaining a comprehensive and
+Opportunities. T T net presents several opportunities for         precise interpretation of the T T net DCNN through the de-
+future research. These include exploring its application on       livery of all Boolean decision trees. This results in a com-
+time series or graph-based datasets, developing better LTT        plete understanding of the model and the ability to calculate
+architectures and training methods to achieve higher accu-        its predictions exactly. It is essential to recognize that ma-
+racy on ImageNet, and creating heuristics for converting          chine learning models may not always generalize well to
+truth tables to optimal CNF/DNF for large n.                      new data from different geographic locations or contexts,
+                                                                  a phenomenon known as ”contextual drift” or ”concept
+4.3. Global and exact interpretability: Claims 1A / 1B            drift” (Gama et al., 2004). The global and exact interpreta-
+In this section, we present the results of applying T T net       tion of the T T net DCNN is vital in this regard, as it allows
+on two tabular datasets Adult and Breast Cancer (Dua et al.,      for human feedback on the model’s rules and the potential
+2017). The accuracy and compactness performances of our           for these rules to be influenced by contextual drift. For ex-
+model are reported in Table 2, along with comparisons to          ample, as depicted in Figure 2, this accurate model trained
+Diff Logic Net (Petersen et al., 2022). Our results demon-        on US data is highly biased towards the US and is likely to
+strate that T T net achieves higher accuracy with fewer pa-       perform poorly if applied in South America due to rule num-
+rameters. Detailed information on the training conditions,        ber 3. This highlights once again the significance of having
+architectures, and additional results can be found in Ap-         global and exact interpretability of deep neural networks,
+pendix D. We provide experimental evidence to support our         as emphasized by recent NIST Artificial Intelligence Risk
+claims of interpretability on an Adult use case, which can        Management Framework (AI, 2023).
+be extended to other tabular datasets.
+                                                                  Discussion on automatic post-training human knowl-
+Adult use case: exact and global interpretability. For            edge incorporation with DCT s. Table 2 illustrates the
+global and exact interpretability, we first convert each LTT      impact of incorporating human knowledge through the
+block of the DCNN T T net model into truth tables, then           use of automatic DCT s in the truth table in terms of the
+into DNFs, then into a set of rules R. Then we transform          number of gates and accuracy. As shown, incorporating
+the rules in R into their equivalent Reduced Ordered Binary       DCT s results in a significant decrease in the number of
+                                                                         T ruth T able Net
+
+gates without any decrease of accuracy. For a concrete                             CIFAR-10 and 1600x for MNIST, at the same noise level.
+example, a rule without human knowledge is Rule =                                  Additionally, a higher verified accuracy (+4% and +7%) was
+Born in Nicaragua ∨ Born in Haiti ∨ (Born in Columbia ∧                            observed on the cifar 10 resnet benchmark (see Table 11
+Born in Jamaica) ∨ (Born in Jamaica ∧ (Age > 46)),                                 in Appendix E.1). Furthermore, our approach did not en-
+while a rule with automatic human knowledge injection                              counter any timeouts, whereas α-β-Crown had an average
+via DCT s becomes: RuleH.K. = Born in Nicaragua ∨                                  of more than 10% timeouts.
+Born in Haiti ∨ (Born in Jamaica ∧ (Age > 46)). The con-
+                                                                                   It should be noted that our strategy cannot be directly com-
+dition (Born in Columbia ∧ Born in Jamaica) was automati-
+                                                                                   pared in the VNN competition as the competition focuses
+cally removed as it is impossible to satisfy. This experiment
+                                                                                   on novel DNN verification algorithms/pipelines, whereas
+demonstrates the unique ability to incorporate human knowl-
+                                                                                   we propose a new DNN family (T T net) that can be eas-
+edge in a post-training process, which is not possible with
+                                                                                   ily verified using classical verification tools. However, the
+other models (Agarwal et al., 2020; Wang et al., 2021b;
+                                                                                   results presented demonstrate the competitiveness of our
+Yang et al., 2021).
+                                                                                   approach. One can use our strategy to verify the robustness
+Note that in Figure 2, we also illustrate the ability of T T net                   property on CIFAR-10, 1K images, standard DCNN with
+to incorporate hand-crafted human knowledge by allowing                            α-β-Crown which takes 2 days, whereas it takes 14sec if
+the modification of existing rules.                                                one chooses to verify T T net.
+Opportunities. For future research, it would be interest-                          Comparison with BNN. We compared our work with the
+ing to apply T T net to regression tasks, to investigate its                       state-of-the-art of exact verification for BNNs (Jia & Rinard,
+potential for studying causality, and to propose an agnostic                       2020; Narodytska et al., 2019b). As shown in Table 4, our
+global explainer for any model based on T T net.                                   verified accuracy is competitive to the one of BNN in all
+                                                                                   cases. In low noise case, we slightly outperform BNN (Jia &
+4.4. Complete/sound formal verification: Claims 2A /                               Rinard, 2020) in terms of verified accuracy and verification
+     2B                                                                            time. For high noise, we offer a trade-off: a slightly better
+In formal verification, two strategies are commonly applied:                       verification time for a slightly lower verified accuracy. In
+either using a specific solver to verify ReLU based-DNN                            addition, we experienced a better resolution time than BNNs
+like β-Crown (Wang et al., 2021a), or using a specific ar-                         while using a general SAT solver, namely MiniCard (Liffiton
+chitecture that allows a generic verification method. We                           & Maglalang, 2012). We highlight here that in (Jia & Rinard,
+compared both methods based on natural accuracy, verified                          2020) the SAT solver is custom-made and specific to their
+accuracy for l∞ -norm bounded input perturbations, and ver-                        problem, while in our case we use a general one. We tested
+ification time on MNIST and CIFAR-10. Detailed informa-                            9 SAT solvers (Ignatiev et al., 2018) on MNIST high noise:
+tion on the training conditions, architectures, and additional                     the best one is MiniCard with 8e-4s, the worst is MapleCM
+results can be found in Appendix E. It is important to note                        with 33e-4s ; whereas MiniSat takes 0.242s for BNN in (Jia
+that our pre-processing layer and training configuration are                       & Rinard, 2020).
+the same as (Jia & Rinard, 2020).
+                                                                                   Table 4. Application of T T net to complete adversarial robustness
+Table 3. Comparison of verification strategies: usage of a general                 verification for low and high noise bounded by l∞ . We tabulate
+DCNN to verify with α-β-Crown (Xu et al., 2020b; Wang et al.,                      results of verified accuracy, natural accuracy and mean verification
+2021a) or using specific T T net with a general SAT verification                   time on MNIST and CIFAR-10 datasets in comparison to state-of-
+method. The comparison is based on the 7 benchmarks from the                       the-art SAT methods. The best verified accuracy and verification
+VNN competition, and the results are presented as an average, full                 time are displayed in bold.
+                                                                                    Dataset           Complete                            Accuracy        Verification   Timeout
+results are available in Table 11 of Appendix E.1                                   (noise)           Method                         Verified   Natural     time (s)
+                General DCNN + α-β-Crown                T T net + General SAT
+                                                                                                      T T net                        95.12%    98.33%        0.012          0
+            (Xu et al., 2020b; Wang et al., 2021a)        Verification Pipeline     MNIST
+                                                                                                      (Jia & Rinard, 2020)           91.68%    97.46%       0.1115          0
+            Verif. time (s)      Timeout (%)         Verif. time (s) Timeout (%)    (test = 0.1)
+                                                                                                      (Narodytska et al., 2019b) ∗    20.0%    96.0 %          5            0
+ MNIST            96                  13             0.06 (×1600)            0      MNIST             T T net                        66.24%    97.43 %      0.065           0
+ CIFAR-10        175                  27             0.14 (×1250)            0      (test = 0.3)     (Jia & Rinard, 2020)           77.59%    96.36%       0.1179          0
+                                                                                    CIFAR-10          T T net                        32.32%    49.23%         0.06          0
+                                                                                    (test = 2/255)   (Jia & Rinard, 2020)           30.49%    47.35%       
+                                                                                                                                                            0.1750          0
+In Table 3, we present a comparison of our proposed verifi-                         CIFAR-10          T T net                        21.08%    31.13%        0.04           0
+cation strategy, which utilizes the T T net architecture and                       ∗
+                                                                                    (test = 8/255)   (Jia & Rinard, 2020)           22.55%    35.00%       0.1781          0
+                                                                                     results given on the first 1K images of the test set. Moreover, the authors only authorize a
+classical verification tools, against the state-of-the-art α-β-                    maximum of 20 pixels to switch.
+Crown method, the winner of the VNN competition 2021.
+The comparison is based on the 7 benchmarks from the                               Discussion on formal verification strategies. In this sec-
+VNN competition, and the results are presented as an aver-                         tion, we are presenting a comparison of three different ap-
+age. Our approach demonstrates a significant improvement                           proaches for the formal verification of neural networks. The
+in verification time, with an average speedup of 1250x for                         first approach, β-Crown (Xu et al., 2020b; Wang et al.,
+                                                         T ruth T able Net
+
+
+
+
+Figure 2. DCNN T T net model trained on Adult in the form of Boolean decision trees: the output of the DCNN and the output of these
+decision trees are the same, reaching 83.6% accuracy. Added conditions are represented in rectangles. By modifying existing rules and
+incorporating the Human Added Rule we reach 84.6% accuracy. On the same test set, Random Forest reaches 85.1% accuracy and
+Decision Tree 84.4% with depth 10. There is no contradiction to the rules: one person can not be born in both Mexico and Nicaragua.
+
+2021a), is a general method that can be applied to any ReLU-        Table 5. Comparison of T T net with state-of-the-art Differentiable
+based DNN but does not provide any guarantee of correct-            Logic Gate model (Petersen et al., 2022) on MNIST and CIFAR-10
+ness. The second approach is specific to BNNs and provides          Datasets for two models. Acc. stands for Accuracy, OPs for binary
+a guarantee of correctness but requires a well-crafted spe-         OPerations, # Gates for number of gates.
+                                                                      Datasets                                   MNSIT                       CIFAR-10
+cific SAT solver. Our proposed T T net architecture consti-                                              Acc.
+                                                                                                                 # Gates Training
+                                                                                                                                     Acc.
+                                                                                                                                              # Gates Training
+                                                                                                                  = OPs   Time                 = OPs   Time
+tutes a third approach in that it can be verified using any SAT       Diff Logic Net            Small   97.69%     48K     1.8h     51.27%      48K     1.3h
+solver, while providing a guarantee of correctness. In terms          (Petersen et al., 2022)   Big     98.47%    384K     5.3h     62.14%    5.12M    90.3h
+                                                                                                Small   97.23%     46K    10min     51.76%      12M    20min
+                                                                      T T net
+of verification time, our approach is significantly faster than                                 Big     98.02%    360K    10min     70.20%    6015M    20min
+α − β-Crown and slightly faster than BNN, except for low
+noise CIFAR-10 case. On the other hand, it should be noted           nally, in convolutional logic gate networks as well as in logic
+that our method may show a lower verified accuracy, partic-          gate circuit networks, we do not need activation functions as
+ularly in high-noise scenarios.                                      they are intrinsically non-linear. To show the easy-to-train
+Opportunities. One potential opportunity for future re-              character of our model, Table 5 reports the training times:
+search is to propose a dedicated robustness training for in-         T T net can be trained in less than 20 minutes and (Petersen
+creasing T T net verified accuracy, especially for high noise.       et al., 2022) in between 1.8 hour and 90 hours: our training
+                                                                     method is much efficient (see next Section for a hardware
+4.5. Differentiable logic gates CNNs: Claims 3A / 3B                 discussion). We recall that all the experiments were coded
+We have experimental evidence to support our claims of               in Pytorch (Paszke et al., 2019), a standard ML framework.
+providing easy-to-train, scalable, and compact (compact              Compactness on tabular and MNIST. Table 2 data il-
+for tabular and MNIST) logic gate CNNs. The results are              lustrate that on the tabular dataset, T T net outperforms Diff
+presented in Table 2 for tabular datasets (Adult and Breast          Logic Net (Petersen et al., 2022) in both accuracy and num-
+Cancer) and Table 5 for image datasets (MNIST and CIFAR-             ber of parameters. On the MNIST dataset, in Table 5, our
+10) along with Diff Logic Net (Petersen et al., 2022). More          model has slightly fewer parameters and slightly lower ac-
+information on training conditions and architectures can be          curacy than Diff Logic Net (Petersen et al., 2022). We
+found in Appendix F.                                                 highlight that we did not count the number of gates needed
+                                                                     to perform the final binary layer as in (Petersen et al., 2022).
+Convolutional logic gate networks. As highlighted in
+recent research, convolutional logic gate networks are              Scalability on CIFAR-10. We define scalability in terms
+a promising direction for future study (Petersen et al.,            of accuracy, training time, and number of Boolean gates.
+2022). Our work successfully demonstrates that T T net              The results in Table 5 show that while Diff Logic Net (Pe-
+is a Boolean circuit, providing evidence of its potential as a      tersen et al., 2022) achieves a maximum accuracy of 62%,
+compact and interpretable neural network architecture. Fi-          T T net achieves an accuracy of 70.2%. This highlights the
+                                                          T ruth T able Net
+
+superior scalability of T T net in terms of accuracy. However,       References
+we note that T T net does not scale as well as Diff Logic for
+                                                                     Abı́o, I., Nieuwenhuis, R., Oliveras, A., and Rodrı́guez-
+small numbers of parameters. However, this limitation is off-
+                                                                       Carbonell, E. Bdds for pseudo-boolean constraints–
+set by the fact that T T net is much more trainable-friendly
+                                                                       revisited. In International Conference on Theory and
+Logic gate architecture than Diff Logic: T T net can reach
+                                                                      Applications of Satisfiability Testing, pp. 61–75. Springer,
+70% accuracy in less than an hour of training, compared to
+                                                                       2011.
+Diff Logic which takes 90 hours to reach a lower accuracy
+(-8%) with an overall Diff Logic Net architecture which is           Agarwal, R., Frosst, N., Zhang, X., Caruana, R., and
+more than 100 times smaller. This training time difference             Hinton, G. E. Neural additive models: Interpretable
+is consistent across the datasets and the model size. Please           machine learning with neural nets. arXiv preprint
+note that (Petersen et al., 2022) trained on one NVIDIA                arXiv:2004.13912, 2020.
+A6000 GPU we trained on one NVIDIA GeForce RTX
+3090 GPU5 . Overall, the high accuracy achieved by T T net           AI, N. Artificial intelligence risk management framework
+on the CIFAR-10 dataset with effective training highlights             (ai rmf 1.0). 2023.
+its potential as a differentiable CNN logic gate architecture.       Akers, S. B. Binary decision diagrams. IEEE Transactions
+Opportunities. Our T T net model has demonstrated                      on computers, 27(06):509–516, 1978.
+promising results, but there is still room for improvement.          Andriushchenko, M. and Hein, M. Provably robust boosted
+Specifically, we aim to reduce the complexity (# Gates) of             decision stumps and trees against adversarial attacks. Ad-
+our model when scaling to CIFAR-10 and explore the use                 vances in Neural Information Processing Systems, 32,
+of CNNs Boolean circuits for larger datasets like ImageNet.            2019.
+                                                                     Angelino, E., Larus-Stone, N., Alabi, D., Seltzer, M., and
+5. Conclusion
+                                                                       Rudin, C. Learning certifiably optimal rule lists for cate-
+This work is a step towards more transparent DCNNs. While              gorical data. arXiv preprint arXiv:1704.01701, 2017.
+there is still room for improvement, we hope that it will
+                                                                     Aqajari, S. A. H., Naeini, E. K., Mehrabadi, M. A., Labbaf,
+inspire further exploration into the use of truth tables as a
+                                                                       S., Dutt, N., and Rahmani, A. M. pyeda: An open-source
+tool for applying DCNNs to critical applications.
+                                                                       python toolkit for pre-processing and feature extraction
+                                                                       of electrodermal activity. Procedia Computer Science,
+                                                                      184:99–106, 2021.
+                                                                     Araujo, A., Norris, W., and Sim, J.               Comput-
+                                                                       ing receptive fields of convolutional neural net-
+                                                                       works. Distill, 2019. doi: 10.23915/distill.00021.
+                                                                       https://distill.pub/2019/computing-receptive-fields.
+                                                                     Arora, S. and Barak, B. Computational complexity: a mod-
+                                                                       ern approach. Cambridge University Press, 2009.
+                                                                     Bak, S., Liu, C., and Johnson, T. The second interna-
+                                                                       tional verification of neural networks competition (vnn-
+                                                                       comp 2021): Summary and results. arXiv preprint
+                                                                       arXiv:2109.00498, 2021.
+                                                                     Baluta, T., Shen, S., Shinde, S., Meel, K. S., and Saxena,
+                                                                       P. Quantitative verification of neural networks and its
+                                                                       security applications. In Proceedings of the 2019 ACM
+                                                                       SIGSAC Conference on Computer and Communications
+                                                                       Security, pp. 1249–1264, 2019.
+                                                                     Bertsimas, D. and Dunn, J. Optimal classification trees.
+                                                                       Machine Learning, 106:1039–1082, 2017.
+                                                                     Bessiere, C., Hebrard, E., and O’Sullivan, B. Minimis-
+   5
+     According to this benchmark - both GPUs are equivalent in         ing decision tree size as combinatorial optimisation. In
+terms of images training time: https://lambdalabs.com/blog/nvidia-     International Conference on Principles and Practice of
+rtx-a6000-vs-rtx-3090-benchmarks                                       Constraint Programming, pp. 173–187. Springer, 2009.
+                                                     T ruth T able Net
+
+Biere, A., Heule, M., and van Maaren, H. Handbook of           Darwiche, A. and Marquis, P. A knowledge compilation
+  satisfiability, volume 185. IOS press, 2009.                   map. Journal of Artificial Intelligence Research, 17:229–
+                                                                 264, 2002.
+Blake, A. Corrections to Canonical expressions in Boolean
+  algebra. Journal of Symbolic Logic, 3(2):112–113, 1938.      Dash, S., Gunluk, O., and Wei, D. Boolean decision rules
+  doi: 10.2307/2267595.                                          via column generation. Advances in neural information
+Breiman, L. Random forests. Machine learning, 45(1):             processing systems, 31, 2018.
+  5–32, 2001.
+                                                               Deng, J., Dong, W., Socher, R., Li, L.-J., Li, K., and Fei-
+Brendel, W. and Bethge, M. Approximating cnns with               Fei, L. ImageNet: A Large-Scale Hierarchical Image
+  bag-of-local-features models works surprisingly well on        Database. In CVPR09, 2009.
+  imagenet. arXiv preprint arXiv:1904.00760, 2019.
+                                                               Dosovitskiy, A., Beyer, L., Kolesnikov, A., Weissenborn,
+Brown, T. B., Mann, B., Ryder, N., Subbiah, M., Kaplan,          D., Zhai, X., Unterthiner, T., Dehghani, M., Minderer, M.,
+  J., Dhariwal, P., Neelakantan, A., Shyam, P., Sastry, G.,      Heigold, G., Gelly, S., et al. An image is worth 16x16
+  Askell, A., et al. Language models are few-shot learners.     words: Transformers for image recognition at scale. arXiv
+  arXiv preprint arXiv:2005.14165, 2020.                         preprint arXiv:2010.11929, 2020.
+Bryant, R. E. Graph-based algorithms for boolean function      Driscoll, M. System and method for adapting a neural
+  manipulation. Computers, IEEE Transactions on, 100(8):         network model on a hardware platform, July 2 2020. US
+  677–691, 1986.                                                 Patent App. 16/728,884.
+Carlini, N., Katz, G., Barrett, C., and Dill, D. L. Provably
+  minimally-distorted adversarial examples. arXiv preprint     Dua, D. and Graff, C. UCI machine learning repository,
+  arXiv:1709.10207, 2017.                                        2017. URL http://archive.ics.uci.edu/ml.
+
+Carlini, N., Athalye, A., Papernot, N., Brendel, W., Rauber,   Dua, D., Graff, C., et al. Uci machine learning repository.
+  J., Tsipras, D., Goodfellow, I., Madry, A., and Kurakin,       2017.
+  A. On evaluating adversarial robustness. arXiv preprint
+  arXiv:1902.06705, 2019.                                      Dumoulin, V. and Visin, F. A guide to convolution arith-
+                                                                 metic for deep learning. arXiv preprint arXiv:1603.07285,
+Cheng, C.-H., Nührenberg, G., and Ruess, H. Maximum             2016.
+  resilience of artificial neural networks. In International
+  Symposium on Automated Technology for Verification and       Dvijotham, K., Gowal, S., Stanforth, R., Arandjelovic, R.,
+  Analysis, pp. 251–268. Springer, 2017.                         O’Donoghue, B., Uesato, J., and Kohli, P. Training
+                                                                verified learners with learned verifiers. arXiv preprint
+Cheng, C.-H., Nührenberg, G., Huang, C.-H., and Ruess, H.       arXiv:1805.10265, 2018.
+  Verification of binarized neural networks via inter-neuron
+  factoring. In Working Conference on Verified Software:       Eén, N. and Sörensson, N. Translating pseudo-boolean
+  Theories, Tools, and Experiments, pp. 279–290. Springer,        constraints into sat. Journal on Satisfiability, Boolean
+  2018.                                                          Modeling and Computation, 2(1-4):1–26, 2006.
+Choi, A., Shi, W., Shih, A., and Darwiche, A. Compiling        Ehlers, R. Formal verification of piece-wise linear feed-
+  neural networks into tractable boolean circuits. intelli-      forward neural networks. In International Symposium on
+  gence, 2017.                                                   Automated Technology for Verification and Analysis, pp.
+Cohen, W. W. Fast effective rule induction. In Machine           269–286. Springer, 2017.
+  learning proceedings 1995, pp. 115–123. Elsevier, 1995.
+                                                               Evans, R., Bošnjak, M., Buesing, L., Ellis, K., Pfau, D.,
+Cohen, W. W. and Singer, Y. A simple, fast, and effective        Kohli, P., and Sergot, M. Making sense of raw input.
+  rule learner. AAAI/IAAI, 99(335-342):3, 1999.                  Artificial Intelligence, 299:103521, 2021.
+Croce, F., Andriushchenko, M., Sehwag, V., Debenedetti,        Freitas, A. A. Comprehensible classification models: a
+  E., Flammarion, N., Chiang, M., Mittal, P., and Hein,          position paper. ACM SIGKDD explorations newsletter,
+  M. Robustbench: a standardized adversarial robustness          15(1):1–10, 2014.
+  benchmark. In Thirty-fifth Conference on Neural Informa-
+  tion Processing Systems Datasets and Benchmarks Track,       Friedman, N., Geiger, D., and Goldszmidt, M. Bayesian
+  2021. URL https://openreview.net/forum?                        network classifiers. Machine learning, 29(2):131–163,
+  id=SSKZPJCt7B.                                                 1997.
+                                                        T ruth T able Net
+
+Fryer, D., Strümke, I., and Nguyen, H. Shapley values            Katz, G., Barrett, C., Dill, D. L., Julian, K., and Kochender-
+  for feature selection: the good, the bad, and the axioms.         fer, M. J. Reluplex: An efficient smt solver for verifying
+  IEEE Access, 9:144352–144360, 2021.                               deep neural networks. In International Conference on
+                                                                    Computer Aided Verification, pp. 97–117. Springer, 2017.
+Gama, J., Medas, P., Castillo, G., and Rodrigues, P. Learning
+  with drift detection. In Advances in Artificial Intelligence–   Kingma, D. P. and Ba, J. Adam: A method for stochastic
+  SBIA 2004: 17th Brazilian Symposium on Artificial In-             optimization. arXiv preprint arXiv:1412.6980, 2014.
+  telligence, Sao Luis, Maranhao, Brazil, September 29-
+  Ocotber 1, 2004. Proceedings 17, pp. 286–295. Springer,         Klambauer, G., Unterthiner, T., Mayr, A., and Hochreiter, S.
+  2004.                                                             Self-Normalizing Neural Networks, 2017.
+Gottemukkula, V. Polynomial activation functions. 2020.
+                                                                  Klir, G. J., St. Clair, U., and Yuan, B. Fuzzy set theory:
+He, C., Ma, M., and Wang, P. Extract interpretability-              foundations and applications. Prentice-Hall, Inc., 1997.
+  accuracy balanced rules from artificial neural networks:
+  A review. Neurocomputing, 387:346–358, 2020.                    Kurtz, J. and Bah, B. Efficient and robust mixed-integer
+                                                                    optimization methods for training binarized deep neural
+Hoefler, T., Alistarh, D., Ben-Nun, T., Dryden, N., and             networks. arXiv preprint arXiv:2110.11382, 2021.
+  Peste, A. Sparsity in deep learning: Pruning and growth
+  for efficient inference and training in neural networks. J.     Lakkaraju, H., Bach, S. H., and Leskovec, J. Interpretable
+ Mach. Learn. Res., 22(241):1–124, 2021.                            decision sets: A joint framework for description and pre-
+Hölldobler, S., Manthey, N., and Steinke, P. A compact             diction. In Proceedings of the 22nd ACM SIGKDD in-
+  encoding of pseudo-boolean constraints into sat. In An-           ternational conference on knowledge discovery and data
+  nual Conference on Artificial Intelligence, pp. 107–118.          mining, pp. 1675–1684, 2016.
+  Springer, 2012.
+                                                                  Lee, C.-Y. Representation of switching circuits by binary-
+Huan, Z., Kaidi, X., Shiqi, W., and Cho-Jui,                        decision programs. The Bell System Technical Journal,
+  H.      Aaai 2022: ’tutorial on neural network                    38(4):985–999, 1959.
+ verification:  Theory and practice’.    https:
+ //neural-network-verification.com/,                              Liffiton, M. H. and Maglalang, J. C. A cardinality solver:
+  2022.                                                             More expressive constraints for free. In International
+                                                                    Conference on Theory and Applications of Satisfiability
+Hubara, I., Courbariaux, M., Soudry, D., El-Yaniv, R., and          Testing, pp. 485–486. Springer, 2012.
+  Bengio, Y. Binarized neural networks. Advances in
+  neural information processing systems, 29, 2016.                Liu, Z., Wu, B., Luo, W., Yang, X., Liu, W., and Cheng, K.-
+Ignatiev, A., Morgado, A., and Marques-Silva, J. PySAT:             T. Bi-real net: Enhancing the performance of 1-bit cnns
+  A Python toolkit for prototyping with SAT ora-                    with improved representational capability and advanced
+  cles. In SAT, pp. 428–437, 2018. doi: 10.1007/                    training algorithm. In Proceedings of the European con-
+  978-3-319-94144-8 26. URL https://doi.org/                        ference on computer vision (ECCV), pp. 722–737, 2018.
+  10.1007/978-3-319-94144-8_26.
+                                                                  Lomuscio, A. and Maganti, L. An approach to reachability
+Ioffe, S. and Szegedy, C. Batch normalization: Accelerating         analysis for feed-forward relu neural networks. arXiv
+   deep network training by reducing internal covariate shift.      preprint arXiv:1706.07351, 2017.
+   In International conference on machine learning, pp. 448–
+  456. PMLR, 2015.                                                Lomuscio, A., Qu, H., and Raimondi, F. Mcmas: an open-
+                                                                    source model checker for the verification of multi-agent
+Jia, K. and Rinard, M. Efficient exact verification of bina-        systems. International Journal on Software Tools for
+   rized neural networks. arXiv preprint arXiv:2005.03597,          Technology Transfer, 19(1):9–30, 2017.
+   2020.
+Jia, K. and Rinard, M. Exploiting verified neural networks        Loshchilov, I. and Hutter, F. Sgdr: Stochastic gra-
+   via floating point numerical error. In International Static      dient descent with warm restarts. arXiv preprint
+   Analysis Symposium, pp. 191–205. Springer, 2021a.                arXiv:1608.03983, 2016.
+
+Jia, K. and Rinard, M. Verifying low-dimensional in-              Madry, A., Makelov, A., Schmidt, L., Tsipras, D., and
+   put neural networks via input quantization. In Interna-         Vladu, A. Towards deep learning models resistant to
+   tional Static Analysis Symposium, pp. 206–214. Springer,        adversarial attacks. arXiv preprint arXiv:1706.06083,
+   2021b.                                                          2017.
+                                                        T ruth T able Net
+
+Manthey, N., Philipp, T., and Steinke, P. A more compact           Petersen, F., Borgelt, C., Kuehne, H., and Deussen, O.
+ translation of pseudo-boolean constraints into cnf such             Deep differentiable logic gate networks. arXiv preprint
+ that generalized arc consistency is maintained. In Joint            arXiv:2210.08277, 2022.
+ German/Austrian Conference on Artificial Intelligence
+ (Künstliche Intelligenz), pp. 123–134. Springer, 2014.           Quine, W. V. The problem of simplifying truth functions.
+                                                                    The American mathematical monthly, 59(8):521–531,
+Marques-Silva, J. Logic-based explainability in machine             1952.
+ learning. arXiv preprint arXiv:2211.00541, 2022.
+                                                                   Quinlan, J. R. Induction of decision trees. Machine learning,
+Meurer, A., Smith, C. P., Paprocki, M., Čertı́k, O., Kirpichev,    1(1):81–106, 1986.
+ S. B., Rocklin, M., Kumar, A., Ivanov, S., Moore, J. K.,
+ Singh, S., Rathnayake, T., Vig, S., Granger, B. E., Muller,       Quinlan, J. R. Simplifying decision trees. International
+ R. P., Bonazzi, F., Gupta, H., Vats, S., Johansson, F.,             journal of man-machine studies, 27(3):221–234, 1987.
+ Pedregosa, F., Curry, M. J., Terrel, A. R., Roučka, v.,
+                                                                   Quinlan, J. R. C4. 5: programs for machine learning. Else-
+ Saboo, A., Fernando, I., Kulal, S., Cimrman, R., and
+                                                                     vier, 2014.
+ Scopatz, A. Sympy: symbolic computing in python.
+ PeerJ Computer Science, 3:e103, January 2017. ISSN                Raghunathan, A., Steinhardt, J., and Liang, P. Certified
+ 2376-5992. doi: 10.7717/peerj-cs.103. URL https:                    defenses against adversarial examples. arXiv preprint
+ //doi.org/10.7717/peerj-cs.103.                                     arXiv:1801.09344, 2018.
+Mirman, M., Gehr, T., and Vechev, M. Differentiable ab-            Rastegari, M., Ordonez, V., Redmon, J., and Farhadi, A.
+ stract interpretation for provably robust neural networks.          Xnor-net: Imagenet classification using binary convo-
+ In International Conference on Machine Learning, pp.                lutional neural networks. In European conference on
+ 3578–3586. PMLR, 2018.                                              computer vision, pp. 525–542. Springer, 2016.
+Molnar, C. Interpretable machine learning. Lulu. com,              Regulation, G. D. P.         Regulation eu 2016/679 of
+ 2020.                                                               the european parliament and of the council of 27
+Müller, M. N., Makarchuk, G., Singh, G., Püschel, M.,              april 2016.       Official Journal of the European
+ and Vechev, M. Prima: general and precise neural net-               Union. Available at: http://ec. europa. eu/justice/data-
+ work certification via scalable convex hull approxima-              protection/reform/files/regulation oj en. pdf (accessed 20
+ tions. Proceedings of the ACM on Programming Lan-                   September 2017), 2016.
+ guages, 6(POPL):1–33, 2022.
+                                                                   Ribeiro, M. T., Singh, S., and Guestrin, C. ” why should
+Narodytska, N., Kasiviswanathan, S., Ryzhyk, L., Sagiv,              i trust you?” explaining the predictions of any classifier.
+  M., and Walsh, T. Verifying properties of binarized deep           In Proceedings of the 22nd ACM SIGKDD international
+  neural networks. In Proceedings of the AAAI Conference             conference on knowledge discovery and data mining, pp.
+  on Artificial Intelligence, volume 32, 2018.                       1135–1144, 2016.
+Narodytska, N., Shrotri, A., Meel, K. S., Ignatiev, A., and        Ribeiro, M. T., Singh, S., and Guestrin, C. Anchors: High-
+  Marques-Silva, J. Assessing heuristic machine learn-               precision model-agnostic explanations. In Proceedings of
+  ing explanations with model counting. In International             the AAAI conference on artificial intelligence, volume 32,
+  Conference on Theory and Applications of Satisfiability            2018.
+ Testing, pp. 267–278. Springer, 2019a.
+                                                                   Rivest, R. L. Learning decision lists. Machine learning, 2
+Narodytska, N., Zhang, H., Gupta, A., and Walsh, T. In               (3):229–246, 1987.
+  search for a sat-friendly binarized neural network archi-
+  tecture. In International Conference on Learning Repre-          Roussel, O. and Manquinho, V. Pseudo-boolean and car-
+  sentations, 2019b.                                                 dinality constraints. In Handbook of satisfiability, pp.
+                                                                     695–733. IOS Press, 2009.
+Osoba, O. A. and Welser IV, W. An intelligence in our image:
+  The risks of bias and errors in artificial intelligence. Rand    Rumelhart, D. E., Hinton, G. E., and Williams, R. J. Learn-
+  Corporation, 2017.                                                 ing representations by back-propagating errors. nature,
+                                                                     323(6088):533–536, 1986.
+Paszke, A., Gross, S., Massa, F., Lerer, A., Bradbury, J.,
+  Chanan, G., Killeen, T., Lin, Z., Gimelshein, N., Antiga,        Sahoo, S. S., Venugopalan, S., Li, L., Singh, R., and Riley,
+  L., et al. Pytorch: An imperative style, high-performance          P. Scaling symbolic methods using gradients for neural
+  deep learning library. Advances in neural information              model explanation. arXiv preprint arXiv:2006.16322,
+  processing systems, 32:8026–8037, 2019.                            2020.
+                                                      T ruth T able Net
+
+Sandler, M., Howard, A., Zhu, M., Zhmoginov, A., and               In International Conference on Machine Learning, pp.
+  Chen, L.-C. Mobilenetv2: Inverted residuals and linear           5286–5295. PMLR, 2018.
+  bottlenecks. In Proceedings of the IEEE conference on
+  computer vision and pattern recognition, pp. 4510–4520,       Wong, E., Schmidt, F. R., Metzen, J. H., and Kolter, J. Z.
+  2018.                                                          Scaling provable adversarial defenses. arXiv preprint
+                                                                 arXiv:1805.12514, 2018.
+Shi, W., Shih, A., Darwiche, A., and Choi, A. On tractable
+  representations of binary neural networks. arXiv preprint     Wu, H., Barrett, C., Sharif, M., Narodytska, N., and Singh,
+  arXiv:2004.02082, 2020.                                        G. Scalable verification of gnn-based job schedulers.
+                                                                 arXiv preprint arXiv:2203.03153, 2022.
+Shih, A., Darwiche, A., and Choi, A. Verifying binarized
+  neural networks by local automaton learning. In AAAI          Xiao, K. Y., Tjeng, V., Shafiullah, N. M. M., and Madry, A.
+  Spring Symposium on Verification of Neural Networks             Training for faster adversarial robustness verification via
+  (VNN), 2019.                                                    inducing relu stability. In International Conference on
+                                                                  Learning Representations, 2019.
+Tjeng, V., Xiao, K., and Tedrake, R. Evaluating robust-
+  ness of neural networks with mixed integer programming.       Xu, K., Shi, Z., Zhang, H., Wang, Y., Chang, K.-
+  ICLR, 2019.                                                    W., Huang, M., Kailkhura, B., Lin, X., and Hsieh,
+Umans, C., Villa, T., and Sangiovanni-Vincentelli, A. Com-        C.-J. Automatic perturbation analysis for scalable
+ plexity of two-level logic minimization. IEEE Transac-           certified robustness and beyond. In Larochelle, H.,
+ tions on Computer-Aided Design of Integrated Circuits            Ranzato, M., Hadsell, R., Balcan, M., and Lin, H.
+ and Systems, 25(7):1230–1246, 2006. doi: 10.1109/               (eds.), Advances in Neural Information Processing
+ TCAD.2005.855944.                                               Systems, volume 33, pp. 1129–1141. Curran Associates,
+                                                                  Inc., 2020a.        URL https://proceedings.
+Van Der Walt, S., Colbert, S. C., and Varoquaux, G. The           neurips.cc/paper/2020/file/
+  numpy array: a structure for efficient numerical computa-       0cbc5671ae26f67871cb914d81ef8fc1-Paper.
+  tion. Computing in science & engineering, 13(2):22–30,          pdf.
+  2011.
+                                                                Xu, K., Zhang, H., Wang, S., Wang, Y., Jana, S., Lin, X., and
+Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones,       Hsieh, C.-J. Fast and complete: Enabling complete neural
+  L., Gomez, A. N., Kaiser, Ł., and Polosukhin, I. Atten-         network verification with rapid and massively parallel
+  tion is all you need. In Advances in neural information         incomplete verifiers. arXiv preprint arXiv:2011.13824,
+  processing systems, pp. 5998–6008, 2017.                        2020b.
+Wang, E., Davis, J. J., Cheung, P. Y., and Constantinides,      Yang, F., He, K., Yang, L., Du, H., Yang, J., Yang, B.,
+ G. A. Lutnet: Rethinking inference in fpga soft logic.           and Sun, L. Learning interpretable decision rule sets: A
+ In 2019 IEEE 27th Annual International Symposium                 submodular optimization approach. Advances in Neural
+ on Field-Programmable Custom Computing Machines                  Information Processing Systems, 34, 2021.
+ (FCCM), pp. 26–34. IEEE, 2019.
+                                                                Yu, J., Ignatiev, A., Stuckey, P. J., and Le Bodic, P. Learn-
+Wang, S., Zhang, H., Xu, K., Lin, X., Jana, S., Hsieh, C.-J.,
+                                                                  ing optimal decision sets and lists with sat. Journal of
+ and Kolter, J. Z. Beta-crown: Efficient bound propaga-
+                                                                  Artificial Intelligence Research, 72:1251–1279, 2021.
+ tion with per-neuron split constraints for complete and
+ incomplete neural network verification. arXiv preprint         Zhang, B., Cai, T., Lu, Z., He, D., and Wang, L. Towards
+ arXiv:2103.06624, 2021a.                                         certifying l-infinity robustness using neural networks with
+Wang, Z., Zhang, W., Liu, N., and Wang, J. Scalable rule-         l-inf-dist neurons. In International Conference on Ma-
+ based representation learning for interpretable classifica-      chine Learning, pp. 12368–12379. PMLR, 2021a.
+ tion. Advances in Neural Information Processing Systems,
+                                                                Zhang, H., Chen, H., Xiao, C., Gowal, S., Stanforth, R.,
+ 34, 2021b.
+                                                                  Li, B., Boning, D., and Hsieh, C.-J. Towards stable and
+Wei, D., Dash, S., Gao, T., and Gunluk, O. Generalized lin-       efficient training of verifiably robust neural networks.
+ ear rule models. In International Conference on Machine          arXiv preprint arXiv:1906.06316, 2019.
+ Learning, pp. 6687–6696. PMLR, 2019.
+                                                                Zhang, Y., Tiňo, P., Leonardis, A., and Tang, K. A survey
+Wong, E. and Kolter, Z. Provable defenses against adver-          on neural network interpretability. IEEE Transactions on
+ sarial examples via the convex outer adversarial polytope.       Emerging Topics in Computational Intelligence, 2021b.
+                                                    T ruth T able Net
+
+Zhang, Y., Zhao, Z., Chen, G., Song, F., and Chen, T.
+  Bdd4bnn: a bdd-based quantitative analysis framework
+  for binarized neural networks. In International Con-
+  ference on Computer Aided Verification, pp. 175–200.
+  Springer, 2021c.
+Zhou, S., Wu, Y., Ni, Z., Zhou, X., Wen, H., and Zou, Y.
+  Dorefa-net: Training low bitwidth convolutional neural
+  networks with low bitwidth gradients. arXiv preprint
+  arXiv:1606.06160, 2016.
+Zwitter, M. and Soklic, M. Uci machine learning repository:
+  Breast cancer data set, 1988.
+                                                       T ruth T able Net
+
+Appendix
+A. Background & Related Work
+A.1. Definitions and notations
+First, we introduce the definitions of a DNN verifiably robust, soundness and completeness verification methods, and the
+verified accuracy.
+We define a dataset D and the subsets D1 , D2 of D such that D1 ∪ D2 = D and D1 ∩ D2 = ∅. We define Fθ as the DNN
+with parameters θ and P as the property. We consider that for all inputs from D1 we have that P holds, whereas for all
+inputs from D2 , P does not hold. In our case, we only consider the verifiably robust DNN as the property P, which is
+defined as follows.
+
+Definition: Verifiably robust property. Given an input x and its label y from the dataset D, a norm p, a DNN Fθ is
+verifiably robust on input x at the given noise level  > 0 if for ||x − x0 ||p <  one has Fθ (x) = Fθ (x0 ) = y for all x0 .
+
+Definition: Sound, complete, verifiable, certification, robustness methods and accuracies. Given a dataset D and a
+DNN Fθ , the natural accuracy is the ratio of data (x, y) ∈ D such that Fθ (x) = y. For a method M and a property P, we
+define various type of methods as follows:
+
+   • if for all inputs in D2 , M states that P does not hold then M is sound.
+
+   • if for all inputs in D1 , M states that P does hold then M is complete.
+
+   • if there exists an input in D2 such that M states that P holds or M never halts, then M is unsound.
+
+   • if there exist an input in D1 such that M states that P does not hold or M never halts, M is incomplete.
+
+   • a verifiable method MV is a sound and complete method. The verified accuracy is the ratio of data (x, y) ∈ D such
+     that Fθ (x) = y and MV states that P holds.
+
+   • a certification method MC is a sound and incomplete method. The certification accuracy is the ratio of data
+     (x, y) ∈ D such that Fθ (x) = y and MC states that P holds.
+
+   • a robust method MR is an unsound method. The robust accuracy is the ratio of data (x, y) ∈ D such that Fθ (x) = y
+     and MR states that P holds.
+
+We also define the method M of verification of the property P on Fθ for the dataset D. M can use an exact solver (like a
+SAT solver), a probabilistic solver, or no solver at all (as in the case of PGD attacks (Madry et al., 2017)). M has three
+different possible outcomes: P holds, P does not hold, or M never halts. When using solvers and if the method never halts,
+the solvers will output a timeout.
+Verifiable methods can be mainly divided into SMT-based methods (Katz et al., 2017), Mixed-Integer Linear Programming
+MILP-based methods (Xiao et al., 2019), or SAT-based methods. There are few works and the gap between natural and
+verified accuracy remains important. Certification methods try to fill this gap by proposing a trade-off between security and
+performance. In contrary, the literature concerning robustness methods is large: we refer to (Croce et al., 2021; Carlini et al.,
+2019) that compares and benchmarks these methods.
+In this work, Fθ is the T T net model, D is either MNIST or CIFAR-10 and we only consider the infinity norm (p = ∞).
+Furthermore, the noise level  is {0.1, 0.3} for MNIST and {2/255, 8/255} for CIFAR-10. Our method MV is verified as
+it is sound and complete. We use the exact and generic SAT solver MiniCard (Liffiton & Maglalang, 2012), in contrast to a
+probabilistic one as in (Zhang et al., 2021c) or a handcrafted one as in (Jia & Rinard, 2020)).
+
+A.2. Background on Boolean SATisfiability
+The SAT problem (Biere et al., 2009) is that of deciding whether there exists a variable assignment to satisfy a given Boolean
+expression Φ. We can consider a Boolean expression in a Conjunctive Normal Form (CNF) or in a Disjunctive Normal
+Form (DNF). They are both defined over a set of Boolean variables (x1 , · · · , xn ). A literal li is defined as a variable xi or
+                                                         T ruth T able Net
+
+its complement xi . A CNF is a conjunction of a set of clauses: Φ = (c1 ∧ · · · ∧ cm ), where each clause cj is a disjunction
+of some literals cj = lj1 ∨ · · · ∨ ljr . A DNF is a disjunction of a set of clauses: Φ = (c1 ∨ · · · ∨ cm ), where each clause cj
+                                                                                                            PN
+is a conjunction of some literals cj = lj1 ∧ · · · ∧ ljr . A pseudo-Boolean constraint has the form: p=1 ap lp ◦ b, where
+ap ∈ Z, b ∈ Z and ◦ ∈ {≤, =, ≥}, which can be mapped to a SAT formula (Roussel & Manquinho, 2009). However, such
+a conversion generally leads to a tremendous number of clauses and literals compared to the number of variables in the
+original pseudo-Boolean form, making it impractical to comprehend. For an illustration of the latter, see Appendix A.9 with
+examples of inequality conversion into SAT formulas according to different methodologies.
+
+A.3. Background on SAT encoding of neural networks
+The sole published method converting a DNN into a SAT formula is limited to BNNs (Narodytska et al., 2018; Cheng et al.,
+2018) and involves recomposing a block formed of a Two-Dimensional Convolutional Neural Network (2D-CNN) layer, a
+batch normalization layer and a step function into an inequality in order to apply the pseudo-Boolean constraint (Roussel
+& Manquinho, 2009). This approach has been further refined using a different training method and a specific SAT solver,
+resulting in a significantly reduced verification time (Jia & Rinard, 2020). Although the proposed inequality rewriting is
+elegant, the corresponding SAT formula still contains a large number of clauses and literals compared to the number of
+variables in the pseudo-Boolean constraint. This prevents the tractability of those SAT/BNNs formulas. In this work, we
+will only focus on comparison with DNN models, and not other machine learning family such as (Andriushchenko & Hein,
+2019). The main feature of DNNs is that there are more parameters in the model than samples in the dataset. This is not the
+case with decision trees. Their learning capacity is very different and for example, we are able to learn on ImageNET, in
+contrary to them.
+
+A.4. Background on sound, complete verification and robustness
+We provide in Appendix A.1 the definition of completeness, soundness, etc. Complete and sound property verification of
+SAT-convertible DNNs has been presented in (Narodytska et al., 2018) as follows: given a precondition prec on the inputs x,
+a property prop on the outputs o and a SAT relations given by a DNN between inputs/outputs denoted as DN N (x, o), we
+check whether the following statement is valid: prec(x) ∧ DN N (x, o) =⇒ prop(o). In order to seek a counter-example to
+this property, we look for a satisfying assignment of prec(x) ∧ DN N (x, o) ∧ prop(o). An application example of property
+verification is to check for the existence of an adversarial perturbation in a trained DNN. In this case, prec defines an -ball
+of valid perturbations around the original image and prop states that the classification should not change under these small
+perturbations. Therefore, we distinguish the traditional ”natural accuracy” from the ”verified accuracy”, the latter measuring
+the fraction of the predictions which remains correct for all adversarial attacks within the perturbation constraints.
+
+A.5. Background on 2-dimensional convolutional neural networks
+A Boolean function has the form {0, 1}n → {0, 1} and its corresponding truth table lists the outputs for all 2n possible
+inputs combinations (easily set up when n is not too large). Within our method, we consider the 2D-CNN as a Boolean
+function Φ(f,s,p,k,c) which, for a given filter f , takes n = k 2 c/g inputs at position (i, j) with k the kernel size, c the number
+of input channels, s the stride, p the padding and g the group parameter (Dumoulin & Visin, 2016). The outputs can be
+            (i,j)         (i,j)       (i,j)
+written as yf = Φf (x1 , · · · , xn ). If we now consider a multi-layer network, a similar truth table can be constructed,
+except for the kernel size k that needs to be replaced by a patch function, sometimes also referred to as the size of a receptive
+field (Araujo et al., 2019). We denote the vector obtained after the flatten operation and before the final classifier layer as the
+vector of features V .
+
+A.6. Background on global exact interpretability
+Lack of explainability and difficulty in integrating human knowledge are well-known concerns for Deep Neural Networks
+(DNNs) and more generally for all ensemble ML models due to their large complexity (Zhang et al., 2021b; He et al., 2020;
+Ribeiro et al., 2016; 2018; Molnar, 2020; Fryer et al., 2021). Therefore, the global and exact interpretability of these systems
+is the subject of intense research efforts, especially for safety-critical applications (Driscoll, 2020; Regulation, 2016; Osoba
+& Welser IV, 2017).
+In practice, rule-based models (Freitas, 2014), like tree-based models (Quinlan, 1986; 1987; Bessiere et al., 2009), can easily
+provide global explanations, i.e. independent of the input, and exact, i.e. giving the same output as the model. However,
+                                                         T ruth T able Net
+
+despite their intrinsic interpretable nature, their performances are lower than those of other less interpretable family models
+including DNN or ensemble ML models such as Random Forest (Breiman, 2001).
+Rule-based models produce predicates for the decision that are expressed in DNF. For example, in the Adult Census dataset
+(Dua & Graff, 2017) one rule of the model for determining whether an individual would be reaching yearly earnings
+exceeding 50K$/year might be:
+           ((Age > 34) ∧ Maried) ∨ (Male ∧ (Capital Loss < 1k/year)) ∨ ((Age < 34) ∧ Go to University)
+Despite the large number of works published on DNN interpretability (Zhang et al., 2021b; He et al., 2020), few can
+provide as strong interpretations as those from rule-based models. Rules are particularly suited for tabular data that contain
+mixed-type features and exhibit complex high-order feature interactions. The quality assessment of a model is usually based
+on three criteria: a) the performance, b) the number of rules and c) the size of each of the rules (Freitas, 2014).
+
+A.7. Related work on formal verification
+As application, we study Deep Convolutional Neural Networks (DCNNs) from the standpoint of their complete and sound
+formal verification: in other words, knowing a certain property, we want to confirm whether this property holds or not
+for a specific DNN. DNNs complete and sound verification property methods are mainly based either on Satisfiability
+Modulo Theory (SMT) (Katz et al., 2017) or Mixed-Integer Programming (MIP) (Xiao et al., 2019) which are not yet
+scalable to real-valued DNNs. Some recent publications (Jia & Rinard, 2020; Narodytska et al., 2019b; 2018) approached
+the problem of complete verification from the well-known Boolean SATisfiability (SAT) (Biere et al., 2009) point of view
+where BNNs (Hubara et al., 2016) are first converted into SAT formulas and then formally verified using SAT. This pipeline
+is computationally efficient (Jia & Rinard, 2020), enables security verification (Baluta et al., 2019) and more generally can
+answer a large range of questions including how many adversarial attacks exist for a given BNN, image and noise level
+(Narodytska et al., 2019a). However, to date, only BNNs can be transformed into a SAT formula and, as they were not
+designed for this application, their corresponding SAT conversion method intrinsically leads to formulas with a large number
+of variables and clauses, impeding formal verification scalability. In (Jia & Rinard, 2020), the authors developed their SAT
+solver to achieve verification scaling.
+A well-known example of property to verify on image classification datasets is the robustness to adversarial attacks. The
+performance of formal DNN robustness verification methods is evaluated against two main characteristics: verified accuracy
+(i.e. the ratio of images that are correctly predicted and that do not have any adversarial attacks) and verification time (i.e. the
+duration to verify that one correctly predicted image in the test set does/does not have an adversarial attack). The verification
+time is the sum of the problem construction time and its resolution time. The latter is intimately related to the quality of the
+solver and the complexity of the DNN encoding: a less efficient encoding and the solver will lead to a longer time to verify
+an image. Most robustness improvements in the literature have been in the form of new trainings (Carlini et al., 2017; Wong
+& Kolter, 2018; Wong et al., 2018; Dvijotham et al., 2018; Raghunathan et al., 2018; Mirman et al., 2018), new testing
+method to increase robustness (Carlini et al., 2017; Sahoo et al., 2020; Dvijotham et al., 2018), new certification method to
+guarantee robustness properties (Sahoo et al., 2020; Wong & Kolter, 2018; Wong et al., 2018; Dvijotham et al., 2018) or new
+formal verification methods (Ehlers, 2017; Lomuscio & Maganti, 2017; Cheng et al., 2017; Mirman et al., 2018; Shih et al.,
+2019; Wu et al., 2022; Lomuscio et al., 2017). Table 6 presents a comparison of the functionalities of current state-of-the-art
+sound and complete verification methods. For a more detailed state-of-the-art, we refer to (Huan et al., 2022).
+
+A.8. Related Work on global exact interpretability
+Along decision trees (Quinlan, 1986; 1987; Bessiere et al., 2009), rules lists (Rivest, 1987; Angelino et al., 2017; Dash et al.,
+2018) or bayesian networks (Friedman et al., 1997; Freitas, 2014), rules sets (Lakkaraju et al., 2016; Cohen, 1995; Cohen &
+Singer, 1999; Quinlan, 2014; Wei et al., 2019) are part of the rule-based models family. In rules sets, each rule encodes
+a different class and all have the same weight. Therefore, our work may be classified in the rules sets field. Interestingly,
+in (Lakkaraju et al., 2016), the authors show that rules sets are ultimately more interpretable than rules lists as they are
+easier to infer. Yet, to the best of our knowledge, none of the previous rules sets models managed to propose rules for more
+complex tasks than tabular datasets classification, like image datasets classification, for example (Yang et al., 2021; Wang
+et al., 2021b). Moreover, most of them handle only binary classification.
+
+A.9. Examples of pseudo-Boolean constraint encoding
+Table 7 presents a few examples of pseudo-Boolean constraint encoding.
+                                                                      T ruth T able Net
+
+
+Table 6. Comparison of state-of-the-art formal verification methods according to four criteria: the method type (sound and complete), the
+method applicability scope (can the method extend to all properties and all DNNs), the solver used and the method scalability.
+                                                     Type                    Applicability scope                 Solver Used                   Scalability
+                            Method                                           All                  All                                   MNIST           CIFAR-10
+                                             Sound      Complete                                                   SAT/MIP
+                                                                         Properties            DNNs                                    Low / High      Low / High
+                                                 √            √             √                                                           √ √             √ √
+     (Jia & Rinard, 2020)                        √            √             √                only BNN            specific SAT
+     (Narodytska et al., 2019a)                  √            √             √                only√BNN            specific SAT          only   ×
+                                                                                                                                         √ lp √           ×
+                                                                                                                                                          √        ×
+                                                                                                                                                                   √
+     (Xiao et al., 2019)                         √            √             √                     √                  MIP                 √ √              √        √
+     (Tjeng et al., 2019)                        √                                                √                  MIP                 √ √              √        √
+     (Müller et al., 2022)                      √            ×
+                                                              √               ×
+                                                                              √                   √                  MIP                 √ √              √        √
+     (Wang et al., 2021a)                        √                                                √                  MIP
+     (Xu et al., 2020a)                          √            ×               ×                   √                    -                ×      ×
+                                                                                                                                               √          ×        ×
+                                                                                                                                                                   √
+     (Zhang et al., 2021a)                       √            ×               ×                   √                    -                ×
+                                                                                                                                        √      √          ×
+                                                                                                                                                          √        √
+     (Zhang et al., 2019)                        √            ×
+                                                              √               ×                                        -                       √                   √
+     (Andriushchenko & Hein, 2019)               √            √               ×            only dec. tree              -                ×                 ×
+     (Kurtz & Bah, 2021)                         √            √               ×
+                                                                              √             only√BNN                 MIP                ×      ×          ×        ×
+     (Jia & Rinard, 2021b)                       √            √               √                                      MIP                ×
+                                                                                                                                        √      ×
+                                                                                                                                               √          ×        ×
+     (Zhang et al., 2021c)                                                                   only BNN               MIP∗                                  ×        ×
+                                                 √            √               √                                                         √      √          √        √
+     Ours                                                                                   only T T net         general SAT
+∗
+    Probabilistic solver.                                                                                                                                                s
+
+
+Table 7. Examples of inequality conversion into SAT formulas according to different methodologies. The first row presents one inequality
+example containing 3 natural variables (x1 , x2 , x3 ). The corresponding output SAT encodings are given for 5 different published methods
+(Abı́o et al., 2011; Hölldobler et al., 2012; Eén & Sörensson, 2006; Manthey et al., 2014). The SAT equation outputs include many literals
+and clauses, adding complexity to the problem. Moreover, there is no straightforward relationship between the SAT literals li and the
+variables xi , or between the clauses and the inequality coefficients.
+     SAT encoding and source                                        Inequality to convert into SAT Formulas: x1 − 2x2 + 3x3 ≤ 3
+     Encoding 1 (Abı́o et al., 2011)                                               (l4 ) ∧ (l1 ∨ l2 ∨ l5 ) ∧ (l5 ∨ l3 ∨ l6 ) ∧ (l6 )
+                                                                                       (l4 ∨ l9 ) ∧ (l5 ∨ l10 ) ∧ (l6 ∨ l11 )
+                                                                      ∧(l7 ∨ l12 ) ∧ (l8 ∨ l13 ) ∧ (l9 ∨ l14 ) ∧ (l10 ∨ l15 ) ∧ (l11 ∨ l16 )
+                                                                                          ∧(l12 ∨ l17 ) ∧ (l13 ∨ l18 )∧
+                                                                                       (l3 ∨ l4 ) ∧ (l3 ∨ l5 ) ∧ (l3 ∨ l6 )∧
+     Encoding 2 (Hölldobler et al., 2012)
+                                                                            (l2 ∨ l9 ) ∧ (l2 ∨ l10 ) ∧ (l1 ∨ 14) ∧ (l4 ∨ l2 ∨ l11 )∧
+                                                                             (l5 ∨ l2 ∨ l12 ) ∧ (l6 ∨ l2 ∨ l13 ) ∧ (l9 ∨ l1 ∨ l15 )∧
+                                                                       (l10 ∨ l1 ∨ l16 ) ∧ (l1 1 ∨ l1 ∨ l17 ) ∧ (l12 ∨ l1 ∨ l18 ) ∧ (l7 )∧
+                                                                                          (l8 ) ∧ (l7 ∨ l2 ) ∧ (l13 ∨ l1 )
+     Encoding 3 (Eén & Sörensson, 2006)              (l5 ∨ l3 ∨ l2 ) ∧ (l7 ∨ l3 ∨ l1 ) ∧ (l8 ∨ l3 ) ∧ (l8 ∨ l2 ) ∧ (l6 ∨ l8 ∨ l7 ) ∧ (l4 ∨ l6 ∨ l5 ) ∧ (l4 )
+                                                               (l3 ∨ l1 ∨ l4 ) ∧ (l3 ∨ l1 ∨ l4 ) ∧ (l3 ∨ l1 ∨ l4 ) ∧ (l3 ∨ l1 ∨ l4 ) ∧ (l3 ∨ l5 )∧
+                                                                   (l1 ∨ l5 ) ∧ (l3 ∨ l1 ∨ l5 ) ∧ (l3 ∨ l2 ∨ l5 ∨ l6 ) ∧ (l3 ∨ l2 ∨ l5 ∨ l6 )∧
+                                                                        (l3 ∨ l2 ∨ l5 ∨ l6 ) ∧ (l3 ∨ l2 ∨ l5 ∨ l6 ) ∧ (l3 ∨ l2 ∨ l5 ∨ l6 )
+     Encoding 4 (Eén & Sörensson, 2006)
+                                             ∧(l3 ∨ l2 ∨ l5 ∨ l6 ) ∧ (l3 ∨ l2 ∨ l5 ∨ l6 ) ∧ (l3 ∨ l2 ∨ l5 ∨ l6 ) ∧ (l2 ∨ l5 ∨ l7 ) ∧ (l3 ∨ l5 ∨ l7 ) ∧ (l3 ∨ l2 ∨ l7 )
+                                                                     ∧(l2 ∨ l5 ∨ l7 ) ∧ (l3 ∨ l5 ∨ l7 ) ∧ (l3 ∨ l2 ∨ l7 ) ∧ (l7 ∨ l6 ∨ l3 )∧
+                                                       (l7 ∨ l6 ∨ l2 ) ∧ (l7 ∨ l6 ∨ l5 ) ∧ (l7 ∨ l6 ∨ l3 ) ∧ (l7 ∨ l6 ∨ l2 ) ∧ (l7 ∨ l6 ∨ l5 ) ∧ (l7 ∨ l6 )
+                                                     (l4 ) ∧ (l3 ∨ l5 ) ∧ (l1 ∨ l5 ) ∧ (l3 ∨ l1 ∨ l6 ) ∧ (l3 ∨ l7 ) ∧ (l2 ∨ l7 ) ∧ (l3 ∨ l2 ∨ l8 ) ∧ (l7 ∨ l9 )∧
+     Encoding 5 (Manthey et al., 2014)
+                                                                        (l8 ∨ l10 ) ∧ (l6 ∨ l9 ) ∧ (l7 ∨ l6 ∨ l10 ) ∧ (l8 ∨ l6 ∨ l11 ) ∧ (l1 1)
+
+
+
+B. T T net complementary details
+B.1. General architecture
+Figure 3 gives the general architecture for a 2D-T T net. In this Figure 3, we can observe that T T net is similar to a Neural
+Additive Model (NAM) (Agarwal et al., 2020): like T T net, NAM is a sum of non-linear functions with small input size:
+1 for NAM and n ≤ 16 for T T net. The main difference is that NAM is built for plotting only one continuous variable
+function, while we are built for multiple discrete variable functions.
+                                                              T ruth T able Net
+
+                                             LTT Layer 1                      LTT Layer 2
+
+                                                                                        LTT 3
+
+                                                   LTT 1
+
+                                                                                        LTT 4
+                                                                                                                                      Output
+                 Processing                                                                                            Flatten
+   Floating                       Binary
+                                                                                                                          +
+    Input             F           Input
+                                                                                                                       Linear
+                                                                                        LTT 5
+
+                                                   LTT 2
+
+                                                                                        LTT 6
+
+
+Figure 3. General architecture of the T T net model with a one-channel input. Layer 0 is a pre-processing layer that allows image
+binarization. Then follow two layers of 2D Learning Truth Table (LTT) blocks with group g = 1: two blocks in the first layer, four in the
+second. It should be noted that the LTT block of layer 2 does not take as input all the filters of layer 1, as it is usually the case: it only
+takes the filter of their groups. Finally, the last linear layer performs the classification. Depending on the application the processing F and
+the final Linear Layer can change.
+
+
+B.2. First layer: pre-processing layer
+Before applying the batch normalisation and the step function, we quantify the inputs as xq = b xq c · s where x is the
+real-valued input, xq is the quantized input to be fed into the T T net and s is the quantization step size which can be set to
+s = 1/255 to emulate 8-bit fixed-point values, or 2 for adversarial training with a l∞ disturbance limit of . (Jia & Rinard,
+2020)
+
+B.3. Last layer: linear classifier
+Depending on the application, the last layer can be floating point weights (scalability experiment), 1-bit weights or 4-bit
+weights. Next paragraphs describes 1) a possible natural accuracy optimisation and the transformation of the linear layer
+into CNF, especially for Formal verification.
+Last layer. The last linear layer is composed of a linear layer and a batch normalisation. The weights of the linear layer
+can be natural instead of binary but this leads to a large increase in the size of the SAT formulas.
+ Natural features. We may also increase the amount of information held by the vector of features V by
+accepting natural values. Coming back to our Example 1 for Section                                3.2, we can see the output      y =
+  0, −5, 3, −2, 1, −4, 4, −1, 10, 5, 13, 8, 11, 6, 14, 9 as y = −5 × 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 + 3 ×
+                                                                                                          
+  0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 + · · · + 9 × 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 . Therefore, each of these coeffi-
+ cients can have an associated SAT expression of its own.
+For the sake of natural accuracy performance, as in (Evans et al., 2021), it is advisable to encode features and weights on 8
+or 4 bits. However, the results in this paper are given for binary features and weights.
+As we trained the T T net with a final linear layer and then a batch normalisation, we encoded the last layer for the label i as
+follows:
+
+                                                                  |V |
+                                                                  X
+                                                           yi =          wk,i Vk + bi
+                                                                  k=1
+                                                        T ruth T able Net
+
+and
+
+
+                                                                                   P|V |
+                                             yi − E(yi )                              k=1 γwk,i Vk + γbi − E(yi )
+                yiBN = BatchNorm(yi ) = γ · p               +β =                                                 p                                                             +β
+                                              V ar[yi ] +                                                        V ar[x] + 
+
+with  = 1e − 5 and · denotes element-wise multiplication. We can rewrite the equality as:
+
+
+                                                           |V |
+                                                           X
+                                                  yiBN =          w̃k,i Vk + b˜i
+                                                           k=1
+                                                                γwk,i
+                                                  w̃k,i = b p               c
+                                                              V ar[yi ] + 
+                                                            γbi − E(yi )
+                                                     b˜i = p               +β
+                                                             V ar[yi ] + 
+
+To facilitate the CNF conversion, we also restrict the variance statistics and the scale parameter γ in BatchNorm() of the
+last layer to be scalars computed on the whole feature map rather than per-channel statistics. Before rounding, we multiply
+w̃k,i and b˜i by 100 in order to keep some details contained in the floating points. This inequality is encoded with the project
+(Ignatiev et al., 2018). The overall project is based on Sympy (Meurer et al., 2017).
+
+B.4. Computation LTT with group g = 2 in 1-dimension
+Computation of a LTT block 1D with group g = 2 is given in Table
+
+
+                                                                                                                           Conv1D (kernel size = 1)
+                                                                                        Batch Normalization 1D
+
+
+
+
+                                                                                                                                                      Batch Normalization 1D
+                                                                             Conv1D
+
+
+
+
+                                                                                                                                                                                binact
+                                                                                                                    SeLU
+
+
+
+
+  (a) E-AE LTT internal working for 1 dimension: first 1D-              (b) LTT overview of a Expanding AutoEncoder LTT in 1 di-
+  CNN layer of kernel size 2, stride 1 and group g = 2. The             mension: the Conv1D with kernel size = 1 is the amplification
+  amplification layer (second Conv1D layer) has an amplifi-             layer. The intermediate values are real and the input/output
+  cation parameter, τ = 3 of kernel size 1 and stride 1.The             values are binary.
+  intermediate values are real and the input/output values are
+  binary.
+
+                                           Figure 4. Learning Truth Table Block (LTT)
+
+
+B.5. Code comparison
+Figure 5 gives a code comparison between a Pytorch (Paszke et al., 2019) computation of CNN form of T T net and its
+equivalent Numpy (Van Der Walt et al., 2011) truth table form. Both gives the same result if the truth tale is created from the
+CNN.
+                                                        T ruth T able Net
+
+                                                                     def BitsToInt(bits):
+                                                                     m,n = bits.shape
+                                                                     a = 2**np.arange(n)[::-1]
+                                                                    return bits @ a
+  # PyTorch CNN computation
+                                                                     # Numpy LTT Layer computation
+  import torch
+                                                                    import torch.nn.Unfold as U
+  import torch.nn as nn
+                                                                    import numpy as np
+  conv1 = nn.Conv2d(1, 32, 3)       ;                                                                         ;
+                                                                    u = U(kernel size=3)
+  image bin # Shape (1, 1, 28, 28))
+                                                                    image bin # Shape (1, 1, 28, 28))
+  output = conv1(image bin)
+                                                                    TT l = np.array(32, 2**9)
+  output bin = act bin(output)
+                                                                    image unfold = u(image bin).reshape(9,-1)
+                                                                    H0 = np.sqrt(image unfold.shape[-1])
+                                                                    image unfoldint = BitsToInt(image unfold)
+                                                                    res = TT l[:, image unfoldint]
+                                                                    output = res.reshape(1,32,H0, H0)
+
+                               Figure 5. Computation of DCNN standard and LTT layer with numpy.
+
+
+B.6. Automatic training & post-training optimizations
+B.6.1. Don’t Care Terms (DCT s) INJECTION VIA D UAL S TEP (DS) ACTIVATION FUNCTION
+We transform the classic step function by adding a noise zone in the middle as follows: Given a threshold T ∈ R, we define
+the noisy binary activation function h : R → R for an input x as:
+
+                                                                           T   
+                                                         1        if x ∈    2,∞ ,
+                                                        
+                                                        
+                                                        
+                                                        
+                                                        
+                                                                  if x ∈ − T2 , T2 ,
+                                                                                 
+                                           DSact,T (x) = r
+                                                        
+                                                        
+                                                                  if x ∈ −∞, − T2
+                                                                                       
+                                                         0
+                                                        
+                                                        
+
+
+where r ∈ {0, 1} is a random binary integer that follows a Bernoulli distribution with probability 1/2.
+The goal of the activation function is to propose a way to integrate the ”don’t care” term directly in the learning phase. By
+doing so, we also introduce the ”don’t care” for the LTT block: in fact, instead of assigning the value 0 or 1 in the truth table,
+if the output falls in the ”noisy part” - then it means for that input we don’t care. It leads to a drastic simplification of the
+CNF/DNF equation.
+
+B.6.2. LTT CORRELATION : REDUCING THE NUMBER OF LTT
+To reduce the number of LTT obtained with T T net, we introduce a new metric called Truth Table Correlation (T T C). This
+metric is based on the idea that two different LTT blocks may learn similar Truth Tables as they are all completely decoupled
+from each other. Thus, to prevent filter/truth table redundancy, we introduce a correlation measure between two LTT block
+rules. It is defined as follows:
+                                            ( HW (y ,y )
+                                                    1 2
+                                                 |y1 |     − 1 if abs( HW|y(y11|,y2 ) − 1) > HW|y(y11|,y2 )
+                          T T C(y1 , y2 ) =   HW (y1 ,y2 )
+                                                 |y1 |         otherwise.
+
+where y1 and y2 are the outputs of the LTT blocks, y2 is the negation of y2 , |y1 | represents the number of elements in y1 ,
+HW is the Hamming distance function (the Hamming distance between two equal-length strings of symbols is the number
+of positions at which the corresponding symbols are not equal). T T C metric varies from -1 to 1. For T T C = −1, the
+LTT blocks are exactly opposite while they are the same if T T C = 1. We systematically filter redundant rules above the
+threshold correlation of ±0.9. If the correlation is positive, we delete one of the two filters and give the same value to the
+second filter. If the correlation is negative, we delete one of the two filters and give the opposite value to the second filter.
+                                                         T ruth T able Net
+
+B.6.3. P OLYNOMIAL ACTIVATION FUNCTION
+We propose to use the order 2 polynomial approximation of the ReLu function as proposed in (Gottemukkula, 2020), to
+raise the accuracy without losing the property of interpretability, Boolean circuit conversion, and formal verification. for
+that, we simply use two binary layers for classification, separated by the order 2 polynomial activation function. As the
+feature and the weights are binary, we can transform this non-linear block into 1 linear block and increase the size of the
+feature size F by order F 2 using AND gates.
+
+B.6.4. S CALING GLOBAL T T NET ARCHITECTURE
+
+
+
+
+Figure 6. Multi-head CNN layers, with green layers as output from shallow-big LTT block, red as output from the deep-small LTT block
+and grey from the residual connection.
+
+Multi-head CNN layers. First, we add multi-head CNN layers into T T net. Figure 6 shows the structure of the multi-head
+CNN layers used. With the aim to increase the learning capacity of T T net while still maintaining a small look-up table,
+it makes perfect sense that we want some LTT blocks to see deeply between channels but have small kernel size (called
+deep-small LTT blocks), but also want some LTT blocks that have larger kernel size but shallow between channels (called
+shallow-big LTT block).
+Residual connection. We also stabilise the training by concatenating the input. In the case of stride 2, we apply an average
+pooling and reuse the Dual Step activation function.
+Shuffle operation and second stage LTT block. Finally, we shuffle the channels in order to set side by side the channels
+from the deep-small LTT block, followed by the shallow-small LTT block, and then the residual connection. Then we add a
+second LTT block that takes the three channels as input and outputs a value.
+
+B.6.5. P ERMUTATION STRATEGY: IMPROVEMENT OF THE ACCURACY FOR TABULAR DATASET
+The T T net decoupled nature is at the same time its strength and its weakness. It means that one feature of V , the final
+vector before the final binary linear regression, can only see a subpart of all the inputs - whereas in MLP one feature of V
+can see all the inputs. To overcome this natural drawback of T T net, we present a straightforward and efficient strategy
+that randomly tries multiple pairs of features. More precisely, the updated dataset Df is composed of the original dataset
+D, concatenated will P permutated versions of its features: Df = D||P erm1 (D)|| . . . ||P ermP (D), where || denotes the
+concatenation operation and P ermi are randomly chosen permutations on F elements.
+
+B.6.6. ROBDD RULE FORMAT FOR TABULAR DATASET ONLY
+At this step, a rule is in DNF format. However, we prefer to have the rules in a decision tree format. Therefore, we transform
+our DNF into its equivalent ROBDD graph. A Binary Decision Diagram (BDD) is a directed acyclic graph used to represent
+a Boolean function. They were originally introduced by (Lee, 1959; Akers, 1978). In (Bryant, 1986), Randal Bryant
+introduced the Reduced Ordered BDD (ROBDD), which is a canonical form given an identical ordering of input variables,
+equivalent Boolean functions will always reduce to the same ROBDD. This is a desirable property for determining formal
+equivalence and very useful for visualizing rules. We perform the transformation with PyEda library (Aqajari et al., 2021).
+Graphs, given in Figure 2, are small and easy to understand.
+                                                            T ruth T able Net
+
+B.7. Ablation study: amplification layer study for natural accuracy
+From a practical standpoint, using eight filters in layer one and one filter in layer two drastically improves the learning
+capacity of the T T net and therefore the natural accuracy as well. This observation is consistent with other published studies
+(Sandler et al., 2018). We computed the natural accuracy for two models (model A(6,6) and model B(7,7)), for three types of
+amplifications (no amplification, ×4, ×8) and high noise training (see Table 13 in Appendix E.3 for more details). Results
+are presented in Table 8. We confirm that in all cases, adding an amplification layer significantly improves the resulting
+natural accuracy.
+
+Table 8. Effect of amplification layer on T T net natural accuracy. Natural accuracy was examined for three different types of amplification
+configuration, for CIFAR-10 and MNIST, in the case of training with high noise.
+                                                                                      Natural accuracy
+                  Dataset          Noise Training          Amplification          Model A (6,6) Model B (7,7)
+                                                                 None                 82.63%                92.42%
+                  MNIST                    0.4                    ×4                  85.67%                94.19%
+                                                                  ×8                  87.59%                95.77%
+                                                                 None                 22.40%                28.05%
+                  CIFAR-10               16/255                   ×4                  27.86%                37.29%
+                                                                  ×8                  32.19%                47.12%
+
+
+C. ImageNet scalability- complementary details
+Training details. We employed the DoReFa-Net method (Zhou et al., 2016) for CIFAR-10, a technique for training
+convolutional neural networks with low-bitwidth activations. Finally, to overcome the limitations of the T T net grouping
+method, we extended the training to 500 epochs, resulting in a more accurate model. We train the networks using the SGD
+optimizer with a minibatch size of 128. Learning rate is 0.001, the loss is cross entropy. We use SGD momentum is 0.9 and
+the weight decay is 5e-4. Finally the learning rate scheduler cosine annealing (Loshchilov & Hutter, 2016) with a maximum
+number of iterations 200. We use random crop function and horizontal flip as data augmentation techniques for training.
+Architecture details. There are 3 layers of multihead-layer with n = 16, the last 2 with stride 2, there are 64 × l filters
+with l the layer number.
+
+D. Global exact interpretability - complementary details
+D.1. Model architecture and training conditions - general
+Training method. We built our training method on top of (Jia & Rinard, 2020) project and we refer to their notations
+for this Section. We trained the networks using the Adam optimizer (Kingma & Ba, 2014) for 10 epochs with a minibatch
+size of 128. The mean and variance statistics of batch normalization layers are recomputed on the whole training set after
+training finishes.
+Weights initialization. Weights for the final connected layers are initialized from a Gaussian distribution with standard
+deviation 0.01 and the mask weights in BinMask are enforced to be positive by taking the absolute value during initialization.
+Other hyperparameters. We apply a weight decay of 1e − 7 on the binarized mask weight of BinMask.
+Architecture. Each dataset has the same input layers and output layer, with of course the size adapted to the dataset for
+the output layer. The first layer is a Batch Normalization layer with an  of 10−5 and a momemtum of 0.1. It is followed by
+the LTT block, which will be detailled for each dataset. Finally, the binary linear regression is computed, with input and
+output features sizes detailled below.
+
+D.2. Model architecture and training conditions - dataset specific
+Adult. We trained the Adult dataset in 10 epochs. The first layer is the Batch Normalization layer as described above. It is
+followed by a LTT block. The first convolution has 10 filters. The convolution is done with a stride of 5, a kernel size of 5
+                                                        T ruth T able Net
+
+and no padding. It is followed by a Batch Normalization layer with the same parameters as the input one. The following
+convolution has 10 filters and a kernel size and a stride of 1. A last Batch Normalization finishes with the same parameter as
+above the LTT Block. The final linear regression takes 200 features as input and 2 as outputs. The learning rate is 0.005.
+Breast-Cancer. We trained the Breat-Cancer dataset in 10 epochs. The first layer is the Batch Normalization layer as
+described above. It is followed by a LTT block. The first convolution has 10 filters. The convolution is done with a stride of
+4, a kernel size of 3 and no padding. It is followed by a Batch Normalization layer with the same parameters as the input
+one. The following convolution has 10 filters and a kernel size and a stride of 1. A last Batch Normalization finishes with
+the same parameter as above the LTT Block. The learning rate is 0.005.
+Compas. We trained the Compas dataset in 60 epochs. The first layer is the Batch Normalization layer as described above.
+It is followed by a LTT block. The first convolution has 20 filters (amplification of 20). The convolution is done with a stride
+of 1, a kernel size of 6 and no padding. It is followed by a Batch Normalization layer with the same parameters as the input
+one. The following convolution has 5 filters and a kernel size and a stride of 1. A last Batch Normalization finishes with the
+same parameter as above the LTT Block. The final linear regression takes 60 features as input and 2 as outputs. The learning
+rate is 0.0005. Only the best model in terms of testing accuracy was kept.
+Cancer. We trained the Cancer dataset in 10 epochs. The first layer is the Batch Normalization layer as described above.
+It is followed by a LTT block. The first convolution has 10 filters (amplification of 10). The convolution is done with a stride
+of 1, a kernel size of 6 and no padding. It is followed by a Batch Normalization layer with the same parameters as the input
+one. The following convolution has 10 filters and a kernel size and a stride of 1. A last Batch Normalization finishes with
+the same parameter as above the LTT Block. The final linear regression takes 80 features as input and 2 as outputs. The
+learning rate is 0.005.
+Diabetes. We trained the Diabetes dataset in 10 epochs. The first layer is the Batch Normalization layer as described
+above. It is followed by a LTT block. The first convolution has 10 filters (amplification of 10). The convolution is done with
+a stride of 1, a kernel size of 6 and no padding. It is followed by a Batch Normalization layer with the same parameters
+as the input one. The following convolution has 10 filters and a kernel size and a stride of 1. A last Batch Normalization
+finishes with the same parameter as above the LTT Block. The final linear regression takes 295 features as input and 3 as
+outputs. The learning rate is 0.0005.
+
+D.3. Dataset details
+All datasets have been split 5 times in a 80-20 train-test split for k-fold testing.
+Adult. The Adult dataset contains 48,842 individuals with 18 binary features and a label indicating whether the income is
+greater than 50K$ USD or not.
+Breast-Cancer. More details in (Zwitter & Soklic, 1988).
+Compas. The Compas dataset consists of 6,172 individuals with 10 binary features and a label that takes a value of 1 if
+the individual does not re-offend and 0 otherwise.
+Cancer. Cancer dataset contains 569 data points with 30 numerical features. The goal is to predict if a tumor is cancerous
+or not. We encoded each integer value into a one-hot vector, resulting in a total of 81 binary features.
+Diabetes. Regarding the Diabetes dataset, it contains 100000 data points of patients with 50 features, both categorical
+and numerical. We kept 43 features, 5 numerical and the other are categorical which resulted in 291 binary features and 5
+numerical features. We will predict one of the three labels for hospital readmission.
+
+D.4. Complementary results ablation study
+We present additional results for the ablation study in Table 9.
+Permutation strategy influence. Except for Compas, the algorithm is valuable for P ≥ 5. Indeed, the accuracy increases
+by 1.2%, 0.7%, 0.4% for the datasets Adult, Cancer, and Diabetes respectively when using the permutation strategy. On the
+other hand, it drastically amplifies the complexity, with a 10 to 40-fold increase, depending on the dataset. We also note that
+the permutation strategy has barely any impact on the average number of conditions per rule. This is expected as this metric
+is heavily depending on the kernel size of T T net.
+                                                                T ruth T able Net
+
+Rules optimizations influence. Complexity decreases drastically from R to Ropt : between ×1.4 and ×2.8 for Adult,
+between ×1.9 and ×2.3 for Compas, between ×1.8 and ×5.3 for Cancer and between ×1.4 and ×5.4 for Diabetes. On
+the other hand, except for Compas, the optimizations lead to a slight decrease in measured accuracy, the largest observed
+decreases being −0.5%, −0.7%, and −0.9% for the datasets Adult, Cancer, and Diabetes respectively. In addition, we can
+observe that the size of each rule decreases: this is mainly due to the DCT s injection. Quine-McCluskey algorithm (Quine,
+1952) outputs smaller rules with DCT s usage. Finally, in the case P = 10, many rules are filtered, even with the high
+threshold ±0.9.
+
+
+Table 9. Ablation study results for T T net on the four datasets. All results are computed for 5 models with 5 different k-fold for learning.
+No permutation column refers to normal dataset. Complexity is defined as the total number of conditions for all rules.
+             Permutations                       No Permutation                           P =5                                P = 10
+  Dataset
+             Rule Set used                     R               Ropt               R                 Ropt              R                   Ropt
+             Accuracy (%)                  83.4 ± 0.6       83.2 ± 0.5      84.6 ± 0.3          84.2 ± 0.3        84.4 ± 0.5          83.9 ± 0.3
+             F1-score (%)                  61.1 ± 1.3       61.1 ± 1.4      65.9 ± 1.4          66.1 ± 1.6        66.9 ± 0.6          64.0 ± 5.7
+  Adult      Number of rules               7.0 ± 2.2         6.0 ± 2.2      137.0 ± 6.8         130.0 ± 9.8     310.0 ± 27.8         260.0 ± 23.0
+             Complexity                   47.0 ± 15.6       24.0 ± 8.5    909.0 ± 212.2       673.0 ± 144.5    2156.0 ± 374.5      1404.0 ± 181.7
+             Avgerage conditions/rule      5.6 ± 1.2         3.3 ± 1.5        6.7 ± 1.4          5.1 ± 0.9        7.8 ± 0.9             5.8 ± 0.4
+             Statistical Parity            99.0 ± 0.6       82.4 ± 1.1      85.1 ± 7.1          96.3 ± 2.9        93.8 ± 2.5           nan ± nan
+             Odds Equalized                0.0 ± 0.0         0.0 ± 0.0       -0.1 ± 0.0          -0.1 ± 0.1       -0.1 ± 0.0           -0.1 ± 0.1
+             Extraction time (s.)            7±2               8±1              9±1                10 ± 2           17 ± 2               17 ± 4
+             Train Time (s.)                         53 ± 2                             56 ± 3                                58 ± 1
+             Accuracy (%)                  66.4 ± 1.3       66.4 ± 1.3      65.5 ± 1.2          65.5 ± 1.2        66.1 ± 1.6          66.1 ± 1.6
+             F1-score (%)                  72.2 ± 1.7       72.2 ± 1.7      71.3 ± 0.7          71.3 ± 0.7        70.8 ± 2.1          70.8 ± 2.1
+  Compas     Number of rules               13.0 ± 1.8       13.0 ± 1.8      219.0 ± 9.9         219.0 ± 9.9      511.0 ± 9.5          511.0 ± 9.5
+             Complexity                  343.0 ± 41.0     155.0 ± 21.8    6118.0 ± 812.3 2670.0 ± 468.4       15541.0 ± 1276.7     7974.0 ± 918.0
+             Avgerage conditions/rule      27.1 ± 3.2       10.3 ± 1.3      27.9 ± 2.4          12.2 ± 1.6        30.4 ± 2.4          15.6 ± 1.8
+             Statistical Parity            81.4 ± 3.0       81.4 ± 3.0      100.0 ± 0.0         100.0 ± 0.0      100.0 ± 0.0          100.0 ± 0.0
+             Odds Equalized                0.0 ± 0.0         0.0 ± 0.0        0.0 ± 0.1          0.0 ± 0.1        0.1 ± 0.1             0.1 ± 0.1
+             Extraction time (s.)            7±1               7±1             12 ± 1              12 ± 1           22 ± 1               21 ± 1
+             Train Time                             117 ± 7                             118 ± 3                              117 ± 8
+             Accuracy (%)                  96.4 ± 1.0       95.7 ± 0.9      95.7 ± 0.9          95.7 ± 0.7        97.1 ± 0.6          97.1 ± 0.7
+             F1-score (%)                  94.9 ± 1.6       94.3 ± 1.6      94.6 ± 1.4          93.8 ± 1.0        96.0 ± 1.0          96.0 ± 1.2
+  Cancer     Number of rules               60.0 ± 3.6       49.0 ± 6.8      288.0 ± 8.7        231.0 ± 21.5     615.0 ± 22.0         371.0 ± 61.8
+             Complexity                 1098.0 ± 239.5 205.0 ± 33.7       5222.0 ± 167.4 2924.0 ± 328.5       10467.0 ± 1902.1 4665.0 ± 1027.4
+             Avgerage conditions/rule      19.4 ± 2.8        4.2 ± 0.3      17.6 ± 0.6          13.3 ± 0.8        17.2 ± 2.5          12.1 ± 1.1
+             Extraction time (s.)            9±1               9±1             18 ± 1              18 ± 1           31 ± 5               30 ± 5
+             Train Time (s.)                         19 ± 1                             20 ± 2                                20 ± 2
+             Accuracy (%)                  56.7 ± 0.2       56.7 ± 0.2      57.0 ± 0.5          57.0 ± 0.5        57.4 ± 0.8          56.5 ± 0.9
+             F1-score (%)                  56.7 ± 0.2       56.7 ± 0.2      57.0 ± 0.5          57.0 ± 0.5        57.4 ± 0.8          56.5 ± 0.9
+  Diabetes   Number of rules               35.0 ± 5.9       33.0 ± 5.2     406.0 ± 15.7        406.0 ± 15.7     1059.0 ± 45.5       1043.0 ± 46.2
+             Complexity                  568.0 ± 131.9 106.0 ± 27.6      7834.0 ± 1143.0 5561.0 ± 761.1       21644.0 ± 2802.2 15475.0 ± 2224.5
+             Avgerage conditions/rule      16.2 ± 1.3        3.6 ± 0.4      19.4 ± 2.5          13.8 ± 1.7        20.8 ± 2.8          14.3 ± 1.7
+             Extraction time (s.)            19 ± 3           18 ± 2           35 ± 6              34 ± 5           68 ± 4               67 ± 5
+             Train Time (s.)                        110 ± 4                             126 ± 8                              149 ± 4
+
+
+
+D.5. Results tabular dataset
+Table 10 shows the results of various models on three tabular datasets: Adult breast Cancer. The comparisons include linear
+models such as Decision Tree and Logistic Regression, and non-linear models such as Diff Logic Net, RRL, Decision Rule
+Sets and the proposed T T net model. The evaluation criteria include accuracy and the number of gates in the model. The
+results show that T T net has comparable accuracy to other models while having a smaller number of gates. We also want to
+hightligths that RRL need more than a hour to train on adult wheras we need few seconds. Finally, any of these models can
+scale to Cifar-10 with 70% accuracy as us. We also highlight that BNNs is not interpretable by design and therefore can not
+be considedred as an exact and global interpretable model. We deicde too put LogicNet ithat comparison, despitdes the fact
+that not interpration study was made on the model, as we think as the model is suitable for interpreatblility even if it was not
+made.
+
+D.6. Complementary results on adult dataset use-case
+Changing existing rules & adding a new rule. We first change the existing rules by, on the one hand, optimizing
+numerical values of existing conditions and on the other hand adding complementary conditions. We optimized on the training
+                                                                                      T ruth T able Net
+
+
+Table 10. Comparison of accuracy (acc.) and number of gates (# Gates) for different models on tabular datasets. Our results is given with
+and without Human Knowledge (H.K.) injection.
+                         Linear Models                                                                                 Non Linear Model
+                   Decision         Logistic         Diff Logic Net                                              Decision                Ours (Big)       Ours (Big)      Ours (small)      Ours (smal)
+                                                                            RRL (Wang et al., 2021b)
+                    Tree           Regression     (Petersen et al., 2022)                              Rule Sets (Yang et al., 2021)     with H.K.       without H.K.      with H.K.        without H.K.
+                Acc.    #Param   Acc.    #Param   Acc.        #Gates        Acc.         #Gates        Acc.           #Gates           Acc.    #Gates   Acc.    #Gates    Acc.    #Gates    Acc.    #Gates
+Adult           79.5%    50      84.8%    234     84.8%        1280         85.7%       5 10**6        84.4%             83            85.3%    1475    85.3%   2156     84.8%     471     84.8%     563
+Breast Cancer   71.9%    100     72.9%    104     76.1%        640             -           -              -               -               -       -       -     -        77.6 %    71      77.6 %    123
+Compas             -      -         -      -         -           -             -           -           66.5%             42               -       -        -    -        66.4%     155     66.4%     343
+
+
+
+
+dataset the numerical values in the “Years of Education” condition, and we fixed it to 12. Then, we added the conditions “Is
+a School Prof” in Rule 2. In fact, it seems to be an important feature as we find it in almost all other configurations. We
+also added “Born In Peru” in Rule 3 as we simply add the countries of South and Latin America (other such countries did
+not change performances so we did not include them). The accuracy went up to 83.66% and 83.61% respectively and the
+statistical parity to 0.823 and 0.824 respectively. These changes are done on the train, altogether leading to test the accuracy
+of 84.0% (+0.4%) and a statistical parity of 0.826 (+0.02). Surprisingly, age and job type do not influence the prediction.
+We also noticed that the “Statistical Weight” feature is used in most of the models. Therefore, we decided to add the following
+rule displayed in Figure 2 : (Age < 28)∨Farmer∨HandlerCleaner∨Machinist∨((Age > 60)∧(StatisticalWeight < 300k)).
+The accuracy went further up to 84.6%(+1%), and the statistical parity to 0.838 + (+0.01) . This illustrates the possibility
+to add human knowledge to a CNN-based model.
+
+Other model for Adult. Regarding this specific model in Figure 2, the rules are fully interpretable. Yet, depending on the
+features learnt by T T net, it would be sometimes not fully interpretable: indeed, the feature Statistical Weight is a feature
+regarding the sampling weight of each group in the Adult census, see Figure 7. This feature does not give a clear indication
+about an individual. Moreover, some clear unfair rules regarding the Race attribute were deducted by the algorithm such
+as the Born in Columbia/Dominican Republic/Ecuador features. These features are not directly the Race attributes, but
+are correlated to the Race of the individual. Here, it would translate to a ghost rule describing a Latin American. This
+model even learnt the Black and Asian attribute with an accuracy of 82.28%. By removing these two conditions, we got an
+accuracy of 82.43%. These rules are clearly affected by inter-attributes correlation. As such, the original dataset and the
+features used have to be carefully analysed to ensure a fair algorithm.
+
+E. Sound complete verification - complementary details
+E.1. Detailed comparison results between T T net and α − β-Crown
+The detailed comparison results between T T net and α − β-Crown is presented Table 11.
+
+E.2. Global comparison between methods
+In Table 12, we are presenting a comparison of three different approaches for the formal verification of neural networks. The
+first approach, β-Crown (Xu et al., 2020b; Wang et al., 2021a), is a general method that can be applied to any ReLU-based
+DNN but does not provide any guarantee of correctness. The second approach is specific to BNNs and provides a guarantee
+of correctness but requires a well-crafted specific SAT solver. Our proposed T T net architecture constitutes a third approach
+in that it can be verified using any SAT solver, while providing a guarantee of correctness. In terms of verification time, our
+approach is significantly faster than α − β-Crown and slightly faster than BNN, except for low noise CIFAR-10 case. On
+the other hand, it should be noted that our method may show a lower verified accuracy, particularly in high-noise scenarios.
+
+E.3. Overall architecture
+In this study, we considered the three architectures shown in Table 13. All the paddings are set to 0.
+
+E.4. Training details
+Training method. We built our training method on top of (Jia & Rinard, 2020) project and we refer to their notations
+for this section. We trained the networks using the Adam optimizer (Kingma & Ba, 2014) for 90 epochs with a minibatch
+size of 128. The mean and variance statistics of batch normalization layers are recomputed on the whole training set after
+training finishes.
+                                                          T ruth T able Net
+
+
+Figure 7. An other example of a learned model on the Adult dataset. With this model, we reach an accuracy of 82.28% but with much
+more conditions than the initial one presented in Figure 2 which reached an accuracy of 83.6%. They have 29 conditions and 8 conditions
+respectively.
+
+
+
+
+Learning rate is 0.0005. We use Projected Gradient Descent (PGD (Madry et al., 2017)) with adaptive gradient cancelling to
+train robust networks, where the perturbation bound  is increased linearly from 0 to the desired value in the first 50 epochs
+and the number of PGD iteration steps grows linearly from 0 to 10 in the first 23 epochs.
+The parameter α in adaptive gradient cancelling is chosen to maximize the PGD attack success rate evaluated on 40
+minibatches of training data sampled at the first epoch. Candidate values of α are between 0.6 to 3.0 with a step of 0.4. Note
+that α is a global parameter shared by all neurons. We do not use any data augmentation techniques for training. Due to
+limited computing resources and significant differences between the settings we considered, data in this paper are reported
+based on one evaluation run.
+Weights initialization. Weights for the final connected layers are initialized from a Gaussian distribution with standard
+deviation 0.01, and the mask weights in BinMask are enforced to be positive by taking the absolute value during initialization.
+Post-tuning parameters. We use a proportion ratio of 0.1 and a probability p = 0.05 for MNIST low noise, we double it
+for high noise and a proportion ratio of 0.05 and a probability p = 0.01 for CIFAR-10 low noise and we double it for high
+noise.
+Other hyperparameters. The input quantization step s is set to be 0.61 = 0.3 × 2 + 0.01 for training on the MNIST
+dataset, and 0.064 ≈ 16.3/255 for CIFAR-10, which are chosen to be slightly greater than twice the largest perturbation
+bound we consider for each dataset. Except for CIFAR-10 for which we double the training noise, the training noise level is
+                                                                              T ruth T able Net
+
+
+Table 11. Comparison of verification strategies: usage of a general DCNN to verify with α-β-Crown (Xu et al., 2020b; Wang et al., 2021a)
+or using specific T T net with general SAT verification method. The comparison is based on the 7 benchmarks from the VNN competition.
+                                                                        DNN + α-β-Crown                                            T T net + Classic Verification Pipeline
+                             Noise             Model                  Verified             Verification     Timeout     Model            Verified               Verification    Timeout
+Dataset    Dataset Name
+                             level             verified             Accuracy (%)            time (s)          (%)       verified       Accuracy (%)              time (s)         (%)
+                             2/255             resnet 2b                     27                  80            21       T T net C         31 (+4%)             0.06 (×1300)         0
+           cifar10 resnet
+                             1/255             resnet 4b                     23                 183            29       T T net C         38 (+9%)             0.03 (×6100)         0
+                             2/255             cifar10 2 255                  -                 52              5       T T net C              31               0.06 (×870)         0
+           cifar2020         8/255             cifar10 8 255                  -                 57              9       T T net A              23              0.04 (×1400)         0
+                             2/255             convBigRELU                    -                 70              6       T T net C              31              0.06 (×1200)         0
+                             0.012             large                          -                 139            33       T T net C              30              0.03 (×4600)         0
+CIFAR10                      0.024             large                          -                  45             8       T T net A              23              0.04 (×1100)         0
+                             0.012             small                          -                 226            50       T T net C              30              0.03 (×7500)         0
+           marabou
+                             0.024             small                          -                 108            25       T T net A              23              0.04 (×2700)         0
+                             0.012             medium                         -                 139            33       T T net C              30              0.03 (×4600)         0
+                             0.024             medium                         -                  44             8       T T net A              23              0.04 (×1100)         0
+                             max. 13/255       cifar base                     -                 262            30       T T net A              13               0.5 (×520)          0
+           oval21            max. 13/255       cifar wide                     -                 489            60       T T net A              13               0.5 (×990)          0
+                             max. 13/255       cifar deep                     -                 496            60       T T net A              13               0.5 (×1000)         0
+                             0.015             relu 9                         -                 151            6        T T net C              99              0.07 (×2000)         0
+           eran
+                             0.012             ffnn                           -                  58            17       T T net C              99               0.07 (×830)         0
+                             0.02              Convnet                        -                 14              0       T T net C              98              0.07 (×2000)         0
+           verivital
+                             0.04              Convnet                        -                 18              0       T T net C              97              0.01 (×1800)         0
+MNIST                        0.03              net 256x2                      -                  23             0       T T net C              98               0.09 (×260)         0
+                             0.05              net 256x2                      -                  20             0       T T net C              97              0.02 (×1000)         0
+                             0.03              net 256x4                      -                 129            20       T T net C              98              0.09 (× 1430)        0
+           mnistfc
+                             0.05              net 256x4                      -                 193            33       T T net C              97              0.02 (×9700)         0
+                             0.03              net 256x6                      -                 214            33       T T net C              98              0.09 (× 2380)        0
+                             0.05              net 256x6                      -                 240            43       T T net C              97              0.02 (×12000)        0
+
+
+
+Table 12. Comparison of verifiable strategies according architectures, correctness, type of solver, verification time, verified accuracy and
+timeouts.
+                                                                         Verifiable                                                Verification     Verified
+                                                                                           Correctness       Type of solver                                     Timeouts
+                                                                        Architecture                                                  Time           Acc.
+              α-β-Crown (Xu et al., 2020b; Wang et al., 2021a)     All ReLU DNNs              No           Only Beta-Crown            High           High        Many
+              BNN (Jia & Rinard, 2020)                                Only BNN                Yes         Only well crafted SAT     Very Low        Medium       Any
+              Ours                                                  Only T T net              Yes           Any SAT solver          Very Low        Medium       Any
+
+
+
+
+                                          Table 13. Different studied model architectures with T T net.
+Dataset       Name          Layers    # of blocks       Filters sizes       Amplification      Kernels       Groups      Strides    Features        Parameters      FLOPS      Patch size
+           Model A(6,6)       4            2         60-48-384-48                 1.25-8        3-1-2-1     1-1-24-24    3-1-2-1        768            15488         0.63 m      (6,6)
+MNIST
+           Model B(7,7)       4            2         60-48-384-48                 1.25-8        3-1-3-1     1-1-48-48    2-1-2-1       2352            30780         0.77 m      (7,7)
+           Model C(7,7)       4            2        144-48-384-48                   3-8         3-1-3-1     1-1-48-48    2-1-1-1       8112            86580         0.98 m      (7,7)
+           Model A(6,6)       4            2         60-48-384-48                 1.25-8        3-1-2-1     3-3-24-24    3-1-2-1       1200            17890         0.89 m      (6,6)
+CIFAR 10
+           Model B(7,7)       4            2         60-48-384-48                 1.25-8        3-1-3-1     3-3-48-48    2-1-2-1       2352            30780         0.87 m      (7,7)
+           Model C(7,7)       4            2        144-48-384-48                   3-8         3-1-3-1     1-1-48-48    2-1-1-1       8112            86580         1.12 m      (7,7)
+
+
+
+
+equal to the testing noise level. The CBD loss is applied on MNIST high noise only and ν is set to be 5e − 4, 0 otherwise.
+We apply a weight decay of 1e − 7 on the binarized mask weight of BinMask. We use the encoding proposed in (Abı́o et al.,
+2011) for the linear regression encoding into SAT. In Table 4, we use Model C(7,7) except for the high noise model with
+CIFAR-10, we use Model A.
+
+E.5. Example of an adversarial sound and complete verification using SAT
+Figure 8 is an example of an adversarial sound and complete verification using SAT. LT TB2 outputs (U1 ∨ U2 ) ∧ (U1 ∨ U1 )
+that represents the CNF
+                       relation between
+                                         the unknown input U1 and the unknown input U2 according the filter SAT equation
+                       x0 x1          1 U1
+x1 ∧ x3 for the input             =           . In this example, we need to encode U1 = U2 in CNF: as all the input/output
+                       x2 x3          0 0
+                                                        T ruth T able Net
+
+relations have been pre-computed in LT TB2 we simply need to give the input and save the output.
+
+F. Differentiable logic gates CNNs - complementary details
+F.1. Training details
+Same as for Sound and Complete Verification section, without the PGD.
+
+F.2. Architecture details
+MNIST. This model is composed of one LTT block of kernel size (3, 2) and stride 2 with no padding. The input is resized
+to 20 ∗ 20 before entering the LTT block. It is followed then by a linear layer of 1600 features to 10 classes. The final linear
+layer is on 4 bit.
+CIFAR10. This model is composed of one LTT block multihead of kernel size 4 and stride 1 with no padding. The input
+is resized to 20 ∗ 20 before entering the LTT block. It is followed then by a linear layer of 1600 features to 10 classes. The
+final linear layer is on 1 bit. There is also a first binary CNN layer of kernel 4, sparse at 92%.
+
+G. Glossary
+Notations glossary:
+
+   • Bin: Heaviside step function defined as Bin(x) = 12 + sgn(x)
+                                                             2    with x ∈ R
+   • c: number of input channels
+   • cj = l1 ∧ · · · ∧ lk : conjonction j with j ∈ N
+   • dj = l1 ∨ · · · ∨ lk : disjunction j with j ∈ N
+   • f : filter number
+   • g: group parameter
+   • k: kernel size
+   • li : literal i, li = xi or li = xi with i ∈ N
+   • l∞ -norm: infinite norm
+                                                                                                 2
+   • n: number of inputs of 2D-CNN corresponding of pixel size of an input patch, n = kg c
+   • p: padding parameter
+   • prec: precondition on inputs (in the case of robustness, the -ball, which is concretely in Figure 8 the first U1 )
+   • prop: property on outputs. In our case, the property is that the prediction should not change under the perturbation. In
+     Figure 8, prop is ”Class 1 higher than Class 0 and Class 1 higher than Class 2” for one of the SAT equation.
+   • ri,j = yi − yj > 0: reified cardinality
+   • s: stride parameter
+   • sgn: sign function
+   • U : ”Unknown” (undetermined if 0 or 1). Literal l in SAT equation.
+   • V : vector of features obtained in the penultimate layer after the flatten operation but before the final classification layer.
+   • xi : Boolean variable i with i ∈ N
+   • xi : complement of Boolean variable xi with i ∈ N
+   • (x1 , · · · , xn ): set of n Boolean variables with n ∈ N
+   • Φ: Boolean expression
+                                                               T ruth T able Net
+
+Acronyms glossary:
+
+  • BNN: Binary Neural Network
+  • CNF: conjunctive Normal Form. Φ = (d1 ∧ · · · ∧ dm ) with m ∈ N
+  • DCNN: Deep Convolutional Neural Network
+  • DNF: disjunctive Normal Form. Φ = (c1 ∨ · · · ∨ cm ) with m ∈ N
+  • DNN: Deep Neural Network
+  • LTT: Learning Truth Table
+  • MIP: Mixed Integer Programming
+  • SMT: Satisfiability Modulo Theory
+  • T T net: Truth Table Deep Convolutional Neural Network
+  • 2D-CNN: 2-Dimensional Convolutional Neural Network, given filter f , stride s, padding p, kernel size k, number of
+                                                                                                  (i,j)   (i,j)
+    input channels c. With (i, j) ∈ N2 , xX the X th pixel of the considered image patch, (x1 , · · · , xn ) the set of n
+    pixels in the considered patch which top-left pixel is located at position (i, j) in the input image.
+
+                                                              Φ(f,s,p,k,c) : Rn → R
+                                           (i,j)                          (i,j)          (i,j)
+                                        (x1        , · · · , x(i,j)
+                                                              n     ) 7→ yf       = Φf (x1       , · · · , x(i,j)
+                                                                                                            n     )
+
+    In our specific case, a LTT block has the form:
+
+                                (i,j)                            (i,j)                             (i,j)
+                              (x1       , · · · , x(i,j)
+                                                   n     ) 7→ yf         = Φ2f (GELU (Φ18 (x1              , · · · , x(i,j)
+                                                                                                                      n     ))
+
+    with Φ1(8f,s,0,k,c) : {0, 1}n → R8 and Φ2(f,1,0,1,8c) : R8 → {0, 1}.
+Figure 8. Example of an adversarial sound and complete verification using SAT with class 0 as the correctly predicted class for the image. After the preprocessing block, only the pixel
+U1 can switch value under the norm l∞ and noise level  = 0.1. As all input/outputs have been computed and stored, the first LTT block outputs 1 (which means that the perturbation
+does not influence the first LTT block), and the second one outputs two values: U2 and the SAT equation that linked U1 and U2 : U1 = U2 . After the linear regression, two possible
+conditions can lead to an attack: either the attack leads to class 1 or class 2 as the final prediction. The SAT solver outputs that the first case is impossible and the second case is
+possible: there is an attack that leads to the prediction being switched from class 0 to class 2.
+
+
+                     1.1 0.05     1   1
+
+                     -0.9 -1.9    0   0                                                           1   -1   1
+                                                                1
+                                                                                                  0   1    1
+                                                                0       0
+           1 -0.05                         1                                                1
+                                                                                                  1
+           -1   -2                         0   0
+                                                                                                                                                                                           T ruth T able Net
+
+
+
+
+                     0.9 -0.15    1   0
+                                                            1
+                     -1.1 -2.1    0   0
+                                                            0       0
+                                                                                                                                                                1 0.05
+                                                                                                                                                               -1   -2
+

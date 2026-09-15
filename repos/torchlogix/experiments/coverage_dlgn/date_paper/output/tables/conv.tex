@@ -9,14 +9,14 @@
 Size & Method & Scope / seeds & Accuracy, \% & Time, h & GPU, GiB & Random T (R) \\
 \midrule
 S & Random (REP) & T / 1 & 57.37 & 4.98 & 1.831 & 60.38 \\
-S & U2 (OUR) & T / 1 & 60.63 & 4.95 & 1.831 & \NA \\
+S & LC (OUR) & T / 1 & 60.63 & 4.95 & 1.831 & \NA \\
 M & Random (REP) & T / 1 & 69.57 & 25.47 & 14.614 & 71.01 \\
-M & U2 (OUR) & T / 1 & 71.65 & 35.69 & 14.614 & \NA \\
+M & LC (OUR) & T / 1 & 71.65 & 35.69 & 14.614 & \NA \\
 \midrule
 S & Random (REP) & V / 3 & $59.82\pm1.13$ & 4.97 & 1.831 & \NA \\
-S & U2 (OUR) & V / 3 & $61.05\pm1.04$ & 4.97 & 1.831 & \NA \\
+S & LC (OUR) & V / 3 & $61.05\pm1.04$ & 4.97 & 1.831 & \NA \\
 \bottomrule
 \end{tabular}
 \par\smallskip
-\begin{minipage}{\textwidth}\normalsize R: published convolutional S/M results \cite{petersen2024}. Full-S validation uses seeds 0, 1, 2: U2 $-$ random $=+1.23$ pp, paired 95\% CI $[-3.36,5.82]$, 2/3 wins. Additional S seeds have no held-out test evaluation. Time is the per-run mean; memory is the maximum recorded peak allocation.\end{minipage}
+\begin{minipage}{\textwidth}\normalsize R: published S/M results \cite{petersen2024}. Full-S V: paired gain $+1.23$ pp, 95\% CI $[-3.36,5.82]$, 2/3 wins; extra seeds have no test results. Time: mean; memory: maximum peak allocation.\end{minipage}
 \end{table*}

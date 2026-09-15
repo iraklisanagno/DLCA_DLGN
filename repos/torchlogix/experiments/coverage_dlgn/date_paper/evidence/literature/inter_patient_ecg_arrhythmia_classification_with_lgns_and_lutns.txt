@@ -1,0 +1,782 @@
+                                                                                                                                                                                   1
+
+
+
+
+                                          Inter-patient ECG Arrhythmia Classification with
+                                                         LGNs and LUTNs
+                                         Wout Mommen, Lars Keuninckx, Paul Detterer, Achiel Colpaert and Piet Wambacq, Senior Member, IEEE
+
+
+
+
+                                            Abstract— Deep Differentiable Logic Gate Networks                        to benchmark different technologies or algorithms for ECG
+                                         (LGNs) and Lookup Table Networks (LUTNs) are demon-                         arrhythmia classification, irrespective of the power usage [3],
+                                         strated to be suitable for the automatic classification                     [4], [5], [6]. However, if these algorithms are envisioned
+                                         of electrocardiograms (ECGs) using the inter-patient
+arXiv:2601.11433v1 [cs.LG] 16 Jan 2026
+
+
+
+
+                                         paradigm. The methods are benchmarked using the MIT-                        to run on small embedded devices such as pacemakers,
+                                         BIH arrhythmia data set, achieving up to 94.28% accu-                       where replacing the battery is not desired, care should be
+                                         racy and a jκ index of 0.683 on a four-class classification                 taken regarding the power and energy consumption of these
+                                         problem. Our models use between 2.89k and 6.17k FLOPs,                      algorithms.
+                                         including preprocessing and readout, which is three to six
+                                         orders of magnitude less compared to SOTA methods. A
+                                         novel preprocessing method is utilized that attains superior                   Quantization and pruning of artificial neural networks have
+                                         performance compared to existing methods for both the                       been used in the past to increase power and energy efficiency
+                                         mixed-patient and inter-patient paradigms. In addition, a                   of these algorithms [7]. A next approach is to use a Spiking
+                                         novel method for training the Lookup Tables (LUTs) in                       Neural Network to do the arrhythmia classification [8], [9]. To
+                                         LUTNs is devised that uses the Boolean equation of a                        further reduce energy consumption, researchers have explored
+                                         multiplexer (MUX). Additionally, rate coding was utilized for
+                                         the first time in these LGNs and LUTNs, enhancing the                       non-conventional computing systems. For example, the use of
+                                         performance of LGNs. Furthermore, it is the first time that                 Monostable Multivibrator (MMV) networks has been shown to
+                                         LGNs and LUTNs have been benchmarked on the MIT-BIH                         improve power efficiency and is straightforward to implement
+                                         arrhythmia dataset using the inter-patient paradigm. Using                  in hardware [10]. These MMV networks use simple digital
+                                         an Artix 7 FPGA, between 2000 and 2990 LUTs were needed,                    timers as their basic element. To further extend this trend,
+                                         and between 5 to 7 mW (i.e. 50 pJ to 70 pJ per inference)
+                                         was estimated for running these models. The performance                     researchers have explored reducing the network elements
+                                         in terms of both accuracy and jκ-index is significantly                     even further, and state-of-the-art research has demonstrated
+                                         higher compared to previous LGN results. These positive                     that networks of digital logic gates can be trained to tackle a
+                                         results suggest that one can utilize LGNs and LUTNs for                     wide range of tasks. These Deep Differentiable Logic Gate
+                                         the detection of arrhythmias at extremely low power and                     Networks (LGNs) [11] are constructed from the optimal
+                                         high speeds in heart implants or wearable devices, even
+                                         for patients not included in the training set.                              2-input logic gate network configuration with randomly
+                                                                                                                     chosen fixed connections, utilizing a given dataset and
+                                           Index Terms— AI accelerators, Artificial intelligence,                    traditional backpropagation techniques. Similarly, networks
+                                         Backpropagation, Edge AI, Logic gates, Neuromorphic
+                                         computing, Ultra low power
+                                                                                                                     built with simple Lookup Tables (LUTs) have been proposed
+                                                                                                                     in literature under different names: LUTNet [12], [13],
+                                                                                                                     LogicNets [14], NullaNet [15], PolyLUT [16], NeuraLUT
+                                                                  I. I NTRODUCTION                                   [17], Differentiable Weightless Neural Networks (DWNs)
+                                                                                                                     [18] and Walsh-Assisted Relaxation for Probabilistic Look-Up
+                                            The World Health Organization (WHO) states that globally
+                                                                                                                     Tables (WARP-LUTs) [19]. For clarity, in this work, we
+                                         in 2025, the main cause of death is so-called cardiovascular
+                                                                                                                     will use the term Lookup Table Network (LUTN) since
+                                         diseases (CVDs) [1]. Each year, about 17.9 million people
+                                                                                                                     this best represents its essence. Although a LUT element
+                                         die of CVDs [1]. Hence, measures need to be taken for early
+                                                                                                                     consists of multiple logic gates, it offers two advantages
+                                         detection or monitoring of such CVDs. Heart implants or even
+                                                                                                                     over LGNs. Firstly, a LUT is a reconfigurable element that
+                                         wearables could obtain such information, provided that these
+                                                                                                                     enables a single LUTN architecture to execute different
+                                         battery-operated hardware use very low power. Generally,
+                                                                                                                     functionalities. Secondly, a LUT can have more than two
+                                         the MIT-BIH arrhythmia data set [2] is used as a first step
+                                                                                                                     input ports, allowing for more complex neuron functions. To
+                                            This research received funding from the Flemish Government under         create a LUTN for a specific application, two methods have
+                                         the “Onderzoeksprogramma Artificiële Intelligentie (AI) Vlaanderen” pro-   been presented: on one side, a regular neural network can be
+                                         gramme.                                                                     converted into a LUTN using a multitude of techniques [12],
+                                            W. Mommen, L. Keuninckx, P. Detterer, A. Colpaert and P.
+                                         Wambacq are with imec, Kapeldreef 75, 3001 Leuven, Belgium                  [13], [14], [15], [16], [17], on the other side, a LUTN can
+                                         (e-mail:      wout.mommen@imec.be;             lars.keuninckx@imec.be;      be trained directly [18], [19]. The first solution allows for
+                                         paul.detterer@imec.be;                         achiel.colpaert@imec.be;     conventional neural network training, but the final accuracy
+                                         piet.wambacq@imec.be).
+                                            W. Mommen and P. Wambacq are with the Vrije Universiteit Brussel,        is lower and the number of LUTs is quite high, while the
+                                         Pleinlaan 2, 1050 Elsene Belgium.                                           second method adapts the training algorithm, allowing for
+2
+
+
+
+high accuracy and a much fewer LUTs. Questions remain                   backpropagation can be used to learn the gate-type. At the
+open on whether a LUTN can be used for efficient arrhythmia             end of training, the gate-type with the highest probability
+classification, what potential data preprocessing would be              is chosen for each superposition. This final network can be
+required, and how to efficiently train these LUT networks for           used for inference. After the final layer of the network, one
+this type of application.                                               groups the outputs of the different gates, where each group
+                                                                        corresponds to one class, and counts the number of 1’s for
+   In this work, to address the aforementioned open questions,          each group. The highest value of these group sums (i.e.
+we propose an ECG classification system using LUTNs by im-              population counters) determines the predicted class. During
+plementing a novel training method and preprocessing method.            training, these population count values are converted to
+The contributions of this work can be summarized as follows:            probabilities using a softmax function with temperature T , a
+   1) The first exploration of the MIT-BIH arrhythmia data set          hyperparameter of the model. Apart from feedforward LGNs,
+       on the LGNs using the inter-patient paradigm.                    it is also possible to create recurrent [21] and convolutional
+   2) The first usage of the LUTNs on the MIT-BIH data set,             architectures [22]. All of these architectures exhibit very
+       showing that these types of networks are also suitable           low power consumption at a high throughput, as they are
+       for arrhythmia classification.                                   essentially networks of 2-input logic gates. It is also possible
+   3) A new method for training the LUTs in LUTNs by using              to train the connections of these networks [23], in that way, a
+       the Boolean equation of a MUX.                                   much smaller network can be used to perform the same task
+   4) The first time using rate coding on the LGNs and                  with a similar performance. Apart from the classical LGNs,
+       LUTNs, showcasing a better performance on the                    Gumbel LGNs [24] have been proposed, which use Gumbel
+       MNIST, Fashion-MNIST and MIT-BIH data set using                  noise to decrease training time, increase the number of used
+       the LGNs.                                                        neurons, and decrease the discretization gap.
+   5) An alternative preprocessing for the LGNs, showing
+       an increased performance compared to the previous                TABLE I: The index of summation i, corresponding binary
+       preprocessing techniques using both the mixed-patient            operation, truth table and real-valued logic operation fi . [11]
+       and inter-patient paradigms.
+                                                                          i    Operation     00   01   10   11   fi
+                                                                          0       False       0    0    0    0   0
+                        II. R ELATED WORK                                 1    x 0 ∧ x1      0    0    0    1    x0 x1
+                                                                          2   ¬(x0 ⇒ x1 )    0    0    1    0    x0 − x0 x1
+   SNNs [20] are often used as energy-efficient AI models                 3        x0        0    0    1    1    x0
+for a wide range of applications, including ECG arrhythmia                4   ¬(x0 ⇐ x1 )    0    1    0    0    x1 − x0 x1
+classification. Mao et al. [8] benchmarks the MIT-BIH data                5        x1        0    1    0    1    x1
+                                                                          6    x 0 ⊕ x1      0    1    1    0    x0 + x1 − 2x0 x1
+set on an SNN, achieving an accuracy of 93.67% using 0.3 µJ               7    x 0 ∨ x1      0    1    1    1    x 0 + x 1 − x 0 x1
+per inference on a chip with a leakage power of 1.14 µW.                  8   ¬(x0 ∨ x1 )    1    0    0    0    1 − (x0 + x1 − x0 x1 )
+Yan et al. [9] trained a two-stage CNN on the MIT-BIH data                9   ¬(x0 ⊕ x1 )    1    0    0    1    1 − (x0 + x1 − 2x0 x1 )
+                                                                         10       ¬ x1       1    0    1    0    1 − x1
+set. The first classifier acts as a wake-up system to determine          11    x0 ⇐ x1       1    0    1    1    1 − x1 + x0 x1
+if there is a normal heartbeat or an arrhythmia and the second           12       ¬ x0       1    1    0    0    1 − x0
+classifier determines the type of arrhythmia. Both CNNs                  13    x 0 ⇒ x1      1    1    0    1    1 − x0 + x0 x1
+                                                                         14   ¬ (x0 ∧ x1 )   1    1    1    0    1 − x 0 x1
+were converted to rate-coded SNNs, achieving an accuracy                 15       True        1    1    1    1   1
+of 90.00 % and a jκ index of 0.636. The estimated power to
+run these SNNs back to back is 77 mW.                                      Lookup Table Networks (LUTNs) [18] are similar to
+                                                                        LGNs, but instead of using logic gates as “neurons”, Lookup
+   Deep Differentiable Logic Gate Networks (LGNs) were first            Tables (LUTs) are employed. These LUTNs can be seen as a
+introduced by Petersen et al. [11]. An LGN is a network of              generalization of LGNs, in the sense that a LUT transforms
+randomly connected 1-input and 2-input logic gates. The gate-           an n-bit input into one binary output, while a logic gate
+layers are connected to each other using randomly chosen                transforms a 2-bit input into one binary output. Hence, a
+connections that remain fixed during training. The gate type,           2-LUTN is equivalent to an LGN. Due to the increased
+on the other hand, is learned using backpropagation by creating         complexity of the “neurons”, an n-input LUT can learn
+a linear combination of the operations fi of all 16 gates and           exponentially more functions than a logic gate. Namely, the
+learning the corresponding coefficients wi . One can apply the                                            n
+                                                                        number of functions scales as 22 . As can be seen from
+softmax function on the coefficients, essentially learning a            Table II, this means that the number of possible learnable
+discrete probability distribution pi over all possible gates. The       functions for a single LUT increases exponentially as the
+output of the gate is the activation and is given by [11]               number of inputs increases. The most basic building block
+                                                                        of an FPGA is the 6-LUT. Thus, having the ability to learn
+         15                           15                                a network of 6-LUTs on a specific data set can lead to
+         X                            X    ewi
+    a=         pi · fi (x0 , x1 ) =       P w · fi (x0 , x1 ) .   (1)   very efficient implementations of AI algorithms on FPGAs.
+                                           je
+                                               j
+         i=0                          i=0                               Additionally, due to the high complexity (compared to logic
+  The real-valued logic operations fi used in this formula              gates) of these 6-LUTs, it is expected that we will need
+can be found in Table I. Since (1) is differentiable,                   fewer neurons and hence less global interconnect for chip
+MOMMEN et al.: INTER-PATIENT ECG ARRHYTHMIA CLASSIFICATION WITH LGNS AND LUTNS                                                        3
+
+
+
+implementations. Consequently, chips can be smaller and             TABLE II: n represents the number of inputs of a LUT and
+routing easier when using 6-LUTs compared to logic gates.           # binary functions indicates how many binary functions that
+Along with reconfigurability, this is the primary motivation        LUT can represent.
+for switching from LGNs to LUTNs.                                                         Type   # binary functions
+                                                                                        2-LUT            16
+                                                                                        4-LUT          65 536
+   Some research has already been conducted on LUTNs.                                   6-LUT       1.845 · 1019
+Wang et al. [12], [13] take a pruned XNOR-Net [25] and                                  n-LUT           22
+                                                                                                           n
+
+
+convert it to a network of LUTs, called LUTNet. This
+network still includes activation functions and accumulation
+operations. Umuroglu et al. introduce LogicNets [14], which         are the inputs to the model. Subsequently, we describe the
+are sparse quantized neural networks converted into networks        training method for LGNs and how rate coding is applied to
+of LUTs. They manage to map an artificial neuron with               improve performance. Next, the training method of the LUTNs
+limited and quantized inputs (X) and outputs (Y) to an              is delineated. Finally, we describe the evaluation metrics used
+X:Y logical LUT, which can be implemented in FPGAs                  in this work.
+using their underlying hardware building blocks, such as 6:1
+or 5:2 physical LUTs. The transformation from neuron to
+logical LUT eliminates the need for multiply and accumulate         A. Preprocessing
+operations, making the computation more efficient. Due                 1) MIT-BIH data set: The data set contains 48 two-channel
+to the transformation from logical LUT to physical LUTs,            ECG recordings, each about 30 minutes long, originating
+the final AI model only consists of physical LUTs and               from 47 patients. This comes down to approximately 50000
+their connectivity. NullaNet [15] also converts neurons to          heartbeats, containing both normal heartbeats and different
+logical LUTs, but these logical LUTs are converted to               arrhythmias [2]. The signal was digitized at a sample rate of
+sum-of-products terms and are next converted to logic gates         360 Hz and a resolution of 11 bits. We will only use one
+using a logic synthesis tool, optimizing for area, delay, and       channel and leave out certain parts of the data as explained
+power consumption. PolyLUT [16] is similar to LogicNets,            in the next subsection.
+since it also maps neurons to logical LUTs to physical
+LUTs, but their neuron contains multivariate polynomials              2) Train-test split: The dataset was split into a train set
+instead of a linear transformation, such that fewer physical        (DS1) and test set (DS2) according to the inter-patient scheme
+LUTs are needed for the same accuracy. NeuraLUT [17]                designed by [4]:
+builds further on PolyLUT, modelling entire sub-networks              • DS1: 101, 106, 108, 109, 112, 114, 115, 116, 118, 119,
+in the same size logical LUT. All these previous methods                  122, 124, 201, 203, 205, 207, 208, 209, 215, 220, 223,
+train conventional neural networks and convert them to                    230
+LUTNs; however, research has also been conducted on                   • DS2: 100, 103, 105, 111, 113, 117, 121, 123, 200, 202,
+directly trainable LUTNs. Bacellar et al. managed to train                210, 212, 213, 214, 219, 221, 222, 228, 231, 232, 233,
+both the connections and LUTs in a LUTN they call a                       234
+Differentiable Weightless Neural Network (DWN) [18]. They
+                                                                    Here, each number designates a patient recording, where
+utilize an extended finite difference method to train the LUT.
+                                                                    only the first channel of the two-channel signal is used. As
+However, their representation does not remain true to the
+                                                                    proposed by the Association for the Advancement of Medical
+boolean operation of the MUX. The difference between this
+                                                                    Instrumentation (AAMI), patient records containing paced
+work and [18], is the way the LUTs are trained. Our work
+                                                                    beats (102, 104, 107, 217) are removed [26]. Additionally,
+uses a boolean equation representing a MUX, which is the
+                                                                    beats are grouped together according to the AAMI guidelines
+actual hardware element behind the LUT. This represents a
+                                                                    [26]:
+closer representation of the building blocks in reconfigurable
+hardware. Gerlach et al. continue on the works of the
+original LGNs and Gumbel LGNs towards an algorithm                             N, L, R → N        (89 474 = 45 626 + 43 848)
+called Walsh-Assisted Relaxation for Probabilistic Look-Up
+                                                                        e, j, A, a, J, S → S           (6 986 = 3 778 + 3 208)
+Tables (WARP-LUTs) [19]. These are networks of 2-input
+LUTs that are trained with backpropagation, but require fewer                      V, E → V              (3 018 = 975 + 2 043)
+parameters and training time compared to LGNs and Gumbel                              F→F                    (801 = 413 + 388)
+LGNs. As of the time of writing, higher input LUTs have not                        Q,/,f → Q                          (15 = 8 + 7).
+been tried out using this method.
+                                                                    Following these guidelines as in [27], [3], [28], the Q class is
+                                                                    ignored, since there are only 15 examples in the data set (8
+                                                                    train examples and 7 test examples). This results in a four-class
+                     III. M ETHODOLOGY
+                                                                    classification problem: normal heartbeats (N), supraventricular
+   In this section, we will first describe the data set and which   ectopic beats (S or SVEB), ventricular ectopic beats (V or
+data is used for training and testing. Following this, we explain   VEB), and beats resulting from the fusion of VEBs and normal
+the novel preprocessing method for extracting the features that     beats (F) [4].
+4
+
+
+
+   3) Feature extraction: A binary feature vector of length 138
+is constructed containing the following parameters:
+                                                                                                                            180
+     [RR1 , RR2 , RR3 , RR4 , ∆RRp , ∆RRm ,                       (2)                   Rm3         Rm2         Rm1          R0         Rp1
+        RRlocCV , RRratio , tb , M1 , M2 , M4 , cf1 , cf2 , δ].
+Each of these features is explained in the following paragraphs.
+                                                                                              RR4         RR3         RR2         RR1
+
+
+
+
+                                                                            Magnitude
+   First, for each peak position R0 , the next peak position
+Rp1 and three previous peak positions Rm1 , Rm2 and Rm3
+are extracted (see Fig. 1). Using these peak positions the
+RR-intervals [3], [8] RR1 , RR2 , RR3 and RR4 can be
+determined. Each of the intervals is encoded into 8-bit binary
+numbers. The features ∆RRp and ∆RRm designate the RR-
+interval changes [8] and are simply sign bits:
+                         (                                                                                  Time
+                           1 if RR1 > RR2
+                ∆RRp =
+                           0 otherwise                                  Fig. 1: Excerpt of the ECG data highlighting some of the
+                                                                        features to be extracted for the heartbeat that is indicated in
+                         (
+                           1 if RR2 > RR3
+               ∆RRm =                                                   gray.
+                           0 otherwise.
+
+
+   Inspired by [3], the local RR interval is determined,                Each crest factor is encoded into 8 bits.
+specifically RR2 of n = 500 previous examples is calculated.
+Following this, the mean m and standard deviation s of this               Finally, delta encoding is applied as in [8], obtaining 74
+list of numbers are calculated to obtain the coefficient of             binary numbers represented by δ.
+variation m/s. To save power, this value is updated for each
+heartbeat, rather than calculating it fully from scratch every
+time. m/s is converted to binary numbers by using thresholds            B. Logic gate networks
+of 0.5 and 0.1 to obtain a two-bit feature RRlocCV for each                The LGNs were trained in the same manner a described
+heartbeat. Additionally, the RR-ratio RRratio = RR1 /m is               in [11] with fixed connections and a learning rate of 0.01.
+calculated and converted to 2 binary values by using thresholds         All networks had 8000 gates per layer and were trained for
+of 0.25 and 0.5 to see if this value lies below these thresholds.       200 epochs using a batch size of 100. An example of an
+                                                                        LGN is illustrated in Fig. 2, which shows the binary inputs,
+   Another feature to be extracted is a tachycardia bit tb ,            feedforward gate network, and population counts for the
+to check if the current selected heartbeat occurs at a rate             different classes at the output. While training, the gate types
+faster than 100 bpm, which is determined using the local                are learned using the differentiable expressions from Table I.
+RR-interval.                                                            In practice, the inputs to the LGNs are binary values; however,
+                                                                        in these expressions, x0 and x1 can be seen as independent
+   Hereafter, morphological features are extracted in a similar         probabilities as mentioned in [11], [22]. Since x0 and x1 are
+way to [3]:                                                             probabilities of the inputs being equal to 1, the output of the
+   • M1 = |ecg[R0 ]-min(beat[0:40])|/norm                               gate can then again be seen as a probability of being equal to 1.
+   • M2 = |ecg[R0 ]-min(beat[65:85])|/norm                              Therefore, during training, it is not needed to convert the inputs
+   • M3 = |ecg[R0 ]-min(beat[95:105])|/norm                             into bit streams; we can just propagate full-precision values
+   • M4 = |ecg[R0 ]-min(beat[150:180])|/norm.                           between 0 and 1 that represent infinitely long bit streams using
+Here, ecg is the array containing the values of a patient’s             rate coding. This method not only makes training very fast
+recording, beat is an array containing 180 values around                compared to using bit streams, but it also ensures that the
+the center peak R0 representing one heartbeat, and norm                 model achieves the best possible performance when using rate
+= max(beat) - min(beat). For the final feature vector, M3               coding. Of course, during inference, one has to use finite-
+is excluded, as the results were better without it. All these           length bit streams, resulting in a slightly lower performance
+features are encoded into 3 bits.                                       depending on the length of the bit stream. In the limit of
+                                                                        infinitely long bit streams, the discrete logic gate operations
+   Additionally, the crest factor is determined for better              will converge to fi . The full precision feature values of (2)
+distinguishing normal beats from ventricular ectopic beats,             were used as inputs for the rate-coded networks. Furthermore,
+and is defined as the peak amplitude divided by the RMS                 an additional RR ratio, RR2 /m, is added, resulting in 89 input
+value of the complete heartbeat. The crest factor cf1 is                features. For the non-rate-coded networks, the conventional
+determined for a window of 180 samples (as previously                   way of training these networks was employed, using the binary
+done), and cf2 for a window of 400 samples centered at R0 .             input vector (2).
+MOMMEN et al.: INTER-PATIENT ECG ARRHYTHMIA CLASSIFICATION WITH LGNS AND LUTNS                                                            5
+
+
+
+C. LUT networks
+   The method for training the LUTNs is based on the fact
+that a LUT in an FPGA is implemented as a MUX. As an
+example, the boolean equation of an 8:1 MUX is given by the
+following equation:
+
+
+ Lout = W0 L0 L1 L2 + W1 L0 L1 L2 + . . . + W7 L0 L1 L2 . (3)
+   Here Lout is the output of the MUX, W0 , . . . , W7 are the
+inputs of the MUX, and L0 , L1 and L2 are the selector bits.
+Alternatively, this can also be viewed as a 3-input LUT, where             Fig. 3: Equivalence between an 8:1 MUX and a 3-input LUT.
+the values of L0 , L1 , and L2 determine which of the eight
+possible LUT outputs W0 , . . . , W7 is selected to produce the
+output Lout . The equivalence between a LUT and a MUX                                                                                N
+is given in Fig. 3. Note that this formula is differentiable;
+hence, backpropagation can be used to find all LUT output                                                                            0
+values.
+
+  In general, an N-input LUT is represented by an 2N :1 MUX.
+The generalized formula for an N-input LUT is given by
+                                                                                                                                     S
+
+              Lout =
+                        N
+                       2X −1
+                               Wi
+                                    N
+                                    Y −1
+                                           sij Lj + sij Lj
+                                                             
+                                                                     (4)    1
+                                                                                                                                     0
+                       i=0          j=0                                     0
+                                                                            0
+                       N
+                       2X−1
+                   =           Wi p(Wi |L1 , . . . , LN −1 ),        (5)
+                       i=0
+                                                                            1                                                        V
+                                                                            0
+                    = E(W)
+                      
+                        0 0         ···        0   0
+                                                    
+                                                                     (6)
+                                                                                                                                     2
+                      0 0
+                                   ···        0   1
+                                                    
+          with    s = 0 0
+                                   ···        1   0
+                                                    .               (7)
+                                     ..
+                                                                                                                                     F
+                                                   
+                                     .             
+                        1 1         ···        1   1
+   Here, Wi are the trainable weights, which are the outputs of                                                                      1
+the LUT. The values of Wi are continuous and are binarized
+layer-wise during training as in [10]. As can be seen from the
+sum in this equation, an N-input LUT contains 2N − 1 entries,
+starting from zero. Lj with j = 0, . . . , N − 1 are the inputs of                  Fig. 4: An example of a 4 layer 6-LUTN.
+the LUT. Lout is the LUT output that is selected based on the
+
+                                                                           values of the inputs Lj . In this general formula, the selector
+                                                                     N     matrix s is used to select the correct boolean variables Lj or
+                                                                     0     Lj for each j and each LUT output index i. Looking carefully
+                                                                           at s, it can be seen that it simply lists values 0 through N − 1
+ 1
+                                                                     S     in binary format, as is typically observed when writing down
+ 0                                                                   1     truth tables or LUTs. The inputs Lj can also be continuous,
+                                                                           representing the probability of the input being equal to one, so
+ 0                                                                   V     these values lie between 0 and 1, meaning that the products
+                                                                 1         of these values (and their inverses) also lie between 0 and
+ 1                                                                   2     1. Hence, all of the products in (4) lie between 0 and 1. In
+                                           0
+ 0                                                                   F
+                                                                           addition, the sum of all the products in (4) lies between 0 and
+                                                                           1, as can be proven by induction. Consequently from (4) to
+                                                                     0     (5), we can define a probability to obtain (6). During training,
+                                                                           one must consider the batch size and the number of LUTs
+                                                                           per layer, so that the above Lout variable becomes a matrix.
+            Fig. 2: An example of a 3-layer LGN.                           The PyTorch pseudo-code for training a layer of LUTs using
+6
+
+
+
+the above method is presented in Algorithm 1. Here B is the        more difficult data set, also containing 10 classes of 28x28
+batch size, I is the input size of a layer, O is the output size   grayscale images, but this time the images represent clothing
+of a layer, and N is the number of inputs of a LUT.                items. The LUTN training method is also tested on these data
+                                                                   sets, but only for non-rate-coded input values. Afterwards the
+Algorithm 1 Forward pass of a LUTN layer                           LGNs and LUTNs are benchmarked on the MIT-BIH data
+Require: dim(input) = B × I                                        set using binary input values and full precision rate-coded
+Require: dim(idx) = O × N                                          input values, and are compared against SOTA models based
+Require: dim(W ) = 2N × O                                          on accuracy, jκ-index and number of FLOPs per inference.
+Require: dim(s) = 2N × N                                           To estimate the number of FLOPs for the LGNs, we use the
+Ensure: Lout is calculated according to (4)                        conservative estimate of 100 binary (i.e. gate) operations for
+  L ← input[:, idx].unsqueeze(2)                                   one floating point operation as mentioned in [11]. In reality,
+  L ← broadcast to(L, (B, O, 2N , N ))                             it is expected that one FLOP requires much more than 100
+  L ← torch.prod(L · s + (1 − L)(1 − s), dim = −1)                 gate operations, and as such, the number of FLOPs for the
+  L ← torch.transpose(L, 1, 2)                                     LGNs (and by extension the LUTNs) should be lower. The
+  Lout ← torch.sum(L · W, dim = 1)                                 number of FLOPs for the LUTNs is calculated in the same
+  return Lout                                                      manner, taking into account that an N-LUT is represented by
+                                                                   a 2N :1 MUX that contains 3(2N − 1) gates. To estimate the
+                                                                   FLOPs of the readout, the number of gates for an adder tree
+                                                                   is counted and converted to FLOPs. Finally, we estimate the
+D. Evaluation metrics                                              number of LUTs and power usage on an FPGA for the LGNs
+   Accuracy may not be the best evaluation metric for the MIT-     and LUTNs, and compare these to SOTA LGN models.
+BIH data set, as 89.21% of the test data examples are normal
+                                                                                           IV. R ESULTS
+heartbeats. This class imbalance means that any classifier that
+predicts every heartbeat as normal already has an accuracy         A. Rate coding of LGNs
+of 89.21%. Hence, a different metric called the jκ index has          To evaluate the effect of rate-coding LGNs, the networks
+been proposed for this [27], [3]. The jκ index consists of the     were tested on the MNIST and Fashion-MNIST datasets for
+j index and the Cohen’s Kappa index κ as follows:                  different network depths, using 8000 gates per layer. These
+                                                                   findings are displayed in Fig. 5a (MNIST) and 5b (Fashion-
+                   jκ = 1/8 · j + 1/2 · κ.                   (8)   MNIST), and are compared to traditional single threshold-
+                                                                   coded LGNs. From these results, it can be concluded that
+  To make sure that jκ ∈ [0, 1] the values 1/8 and 1/2 are         all rate-coded networks outperform the thresholded ones on
+chosen, since j ∈ [0, 4] and κ ∈ [0, 1]. The j index is given      both data sets. The results of using rate coding for the MIT-
+by [27]:                                                           BIH data set are presented in Section IV-D, along with the
+                                                                   performance of the other models on this data set.
+      j index = SENS + SENV + P P VS + P P VV ,              (9)
+                                                                   B. LUTN training method
+and tries to quantify the distinction between the S class and V       To ensure that the LUTN training method works effectively,
+class, since these are the most important types of arrhythmias.    it is first tested on the MNIST and Fashion-MNIST data sets.
+The κ index is given by [29], [3]                                  Table III gives the accuracy of an LGN (8000 gates/layer),
+                             Acc − pe                              2-LUTN (8000 gates/layer), 4-LUTN (3000 gates/layer), and
+                        κ=            ,                    (10)    6-LUTN (2000 gates/layer). This means that the 4-LUTNs
+                              1 − pe
+                                                                   and 6-LUTNs have only 12000 connections, while the LGNs
+where Acc is the overall accuracy and pe is the chance
+                                                                   and 2-LUTNs have 16000. Although the 6-LUTNs have fewer
+agreement [29], [3]:
+                                                                   connections compared to the LGNs, they always have the
+                     P hP                                          best performance, due to the exponential number of functions
+                                   P       i
+                      k   i C ik ·  j C kj
+               pe =                          ,    (11)             that a LUT can represent (Table II). However, for the last
+                        P         2
+                                                                   entry, the 6-LUTN performs worse. We suspect that the LUTN
+                            ij Cij
+                                                                   training algorithm performs worse for deep networks and a
+where C is the confusion matrix. The κ index is a more             high number of inputs per LUT, since this results in a lot
+robust metric for imbalanced data sets compared to just the        of multiplications of small numbers, as can be seen from
+overall or mean accuracy [29], [3].                                equations (3), (4), and (7). Finding the exact reason for this
+                                                                   behavior would require further investigation. Furthermore, the
+   To make sure that the rate-coded LGNs work as intended,         LGNs and 2-LUTNs exhibit similar performance, which is
+we first benchmark them on the MNIST and Fashion-MNIST             understandable since they are both networks of logic gates,
+data sets. These data sets are often used to test models; they     albeit trained in different manners. The performance of the
+considered as the “Hello, World!” of novel AI models. The          4-LUTNs is somewhere between the LGNs and 6-LUTNs,
+MNIST data set contains 28x28 grayscale images of handwrit-        because the size of the 4-LUT function space is between the
+ten digits ranging from 0 to 9. Fashion-MNIST is a slightly        size of the function spaces of 2-LUTs and 6-LUTs.
+MOMMEN et al.: INTER-PATIENT ECG ARRHYTHMIA CLASSIFICATION WITH LGNS AND LUTNS                                                                   7
+
+
+
+                    98                                                TABLE IV: Accuracy (%) results for the mixed patients case
+     Accuracy (%)   97                                                (LGNs). The second and third columns use the binary and
+                    96                                                numerical features described in this work respectively. The
+                    95                                                superscript r indicates the use of rate coding as described in
+                    94                                                this work. The last column only uses dynamic thresholds as
+                    93                             rate coding        preprocessing [30].
+                    92                             threshold coding           # layers    LGNs (ours)   LGNsr (ours)        LGNs [30]
+                    91
+                         1     2       3         4       5        6               2         97.90          97.56              97.10
+                                     Number of layers                             3         98.25          97.64              97.30
+                                                                                  4         98.35          97.76              97.44
+                                         (a)
+                    86
+                                                                      TABLE V: Ideal temperatures for the networks that use mixed
+                    84                                                patients.
+     Accuracy (%)
+
+
+
+
+                    82                                                  Temperature
+                                                                                         LGNs
+                                                                                          30
+                                                                                                LGNsr
+                                                                                                  20
+                                                                                                         [30] (4 classes)
+                                                                                                                8
+                                                                                                                              [30] (5 classes)
+                                                                                                                                     5
+                    80
+                                                   rate coding
+                    78                             threshold coding
+                                                                      used only dynamic thresholds for preprocessing. From these
+                         1     2       3         4       5        6   results, it can be concluded that using just thresholds is
+                                     Number of layers
+                                                                      not enough for performing well on this data set, e.g. the
+                                         (b)                          normal class occurs 89.21% of the time, which should be
+Fig. 5: Comparison between single threshold coding and rate           the lower bound of the accuracy, and the networks of [30]
+coding on the MNIST data set (a) and Fashion-MNIST data               do not perform that much better. On the other hand, using
+set (b), for LGNs using 8000 gates per layer.                         our preprocessing method, all networks achieve an accuracy
+                                                                      above 94%. For the jκ-index the same story holds, just using
+TABLE III: Accuracies (%) of the LGNs [11] and LUTNs                  thresholds does not give a high enough performance using
+(ours) on the MNIST and Fashion-MNIST data set.                       the inter-patient paradigm. The most important metric of the
+                                                                      two is the jκ-index, which is highest for a rate-coded 2-layer
+                                    MNIST          Fashion-MNIST
+                     Model     1 layer 2 layers   1 layer  2 layers
+                                                                      LGN. To actually implement such an LGN, bit streams of
+                    LGN [11]    91.22   94.57      77.41    79.40     finite length are necessary. Fig. 6 gives the accuracy and
+                    2-LUTN      92.21   94.29      76.91    77.92     jκ-index of this network on the whole test set as a function of
+                    4-LUTN      93.11   96.73      77.91    79.28
+                    6-LUTN      94.13   97.24      78.72    77.67
+                                                                      the number of time steps (i.e. bit stream length). As expected,
+                                                                      the lower the bit stream length, the lower the performance.
+                                                                      Looking back at Tables VI and VII, one can also see that the
+C. ECG arrhythmia classification: Mixed patients                      rate-coded LUTNs perform worse than the non-rate-coded
+                                                                      ones. Why that is the case is not entirely clear, since inputs
+   Table IV gives the accuracy on the ECG test set using LGNs
+                                                                      and outputs are between 0 and 1, according to (6), which
+when patients are mixed. In all experiments, the networks were
+                                                                      represents rates. It is possible that before binarization, the
+trained for 200 epochs using 8000 gates per layer. Here, a
+                                                                      output is not necessarily between 0 and 1, which can cause
+random train-test split of 0.67-0.33 was used. The reported ac-
+                                                                      issues during training. Additionally, deep 6-LUTNs perform
+curacies of [30] are 97.54%, 97.86% and 98.05%, respectively,
+                                                                      quite badly due to multiplying many small numbers, as
+but under previously mentioned training circumstances, the
+                                                                      explained in section IV-B. Table VIII gives the optimal output
+accuracies are lower, as can be seen in Table IV. As mentioned
+                                                                      softmax temperature of the different models. Table X and
+in III-A, 4 classes were used in all of our models, since the fifth
+                                                                      Table XI compare our approaches with SOTA approaches
+class only consists of 15 examples. It can be concluded that
+                                                                      in terms of accuracy and jκ-index respectively. In terms
+our preprocessing method significantly increases the accuracy
+                                                                      of accuracy, only an ensemble of SVMs performs better.
+on the ECG data set. Table V gives the ideal temperature of
+                                                                      Examining the jκ-index, the SVM and the deep residual
+the softmax of the output layer.
+                                                                      CNN yield the best results.
+
+D. ECG arrhythmia classification: Inter-patient paradigm                 With the goal of assessing the power consumption of our
+   The results of applying the inter-patient paradigm to the          networks, we estimate the number of FLOPs (per inference).
+MIT-BIH data set using LGNs and LUTNs are presented                   Table IX shows the results for the top-performing SOTA
+in Tables VI and VII. The LGNs, 4-LUTNs, and 6-                       models and an SNN. Although the SVM has the best per-
+LUTNs use 8000 gates/layer (16000 connections), 3000                  formance, the LGNs and LUTNs require about three orders of
+LUTs/layer (12000 connections), and 2000 LUTs/layer                   magnitude less FLOPs. As mentioned before, it is expected
+(12000 connections) respectively. Both binary features and            that the number of FLOPs for the LGNs and LUTNs are
+numerical features (rate-coded) are tested. In addition, our          significantly lower, due to our conservative conversion from
+results are compared to those of the LGNs in [30], which              gates to FLOPs. Additionally, the number of FLOPs for the
+8
+
+
+
+TABLE VI: Accuracies (%) of our networks (LGNs, 4-input LUTNs, and 6-input LUTNs) that use the inter-patient paradigm.
+The superscript r indicates the use of rate coding as described in this work. This is compared to state-of-the-art LGNs on this
+data set.
+                         # layers    LGNs    LGNsr    4-LUTNs    4-LUTNsr    6-LUTNs     6-LUTNsr     LGNs [30]
+                             1       93.79    93.63     94.00      92.91       94.04       92.66        90.86
+                             2       94.06    93.48     94.26      92.85       94.24       92.79        90.30
+                             3       94.19    93.50     94.21      93.14       94.20       93.17        89.73
+                             4       94.28    93.26     94.23      93.20       88.67       92.14        91.13
+
+TABLE VII: jκ-indexes of our networks (LGNs, 4-input LUTNs and 6-input LUTNs) that use the inter-patient paradigm. The
+superscript r indicates the use of rate coding as described in this work. This is compared to state-of-the-art LGNs on this data
+set.
+                         # layers    LGNs    LGNsr    4-LUTNs    4-LUTNsr    6-LUTNs     6-LUTNsr     LGNs [30]
+                             1       0.645    0.633     0.646      0.549       0.651       0.572        0.398
+                             2       0.569    0.683     0.638      0.614       0.643       0.571        0.425
+                             3       0.650    0.660     0.624      0.557       0.583       0.561        0.441
+                             4       0.559    0.649     0.635      0.612       0.000       0.000        0.410
+
+                     TABLE VIII: Ideal temperatures for the networks that use the inter-patient paradigm.
+                                         LGNs    LGNsr      4-LUTNs   4-LUTNsr   6-LUTNs      6-LUTNsr       [30]
+                          Temperature     35       10          30        40         25           15           30
+
+TABLE IX: Comparison of the number of floating-point operations per inference (FLOPs) for different approaches. The accuracy
+and jκ-index are also added. The total number of FLOPs is the sum of the FLOPs for preprocessing, the network, and the
+readout. Only the convolution operations are counted for the ANN, and no preprocessing FLOPs are counted for the SVM.
+            Model     Architecture   FLOPs preproc.   FLOPs network   FLOPs readout    FLOPs total   Acc.        jκ     Reference
+             LGNs        1x8k            2246               80            560            2.89 K      94.28     0.645      Ours
+           2-LUTNs       1x8k            2246               720           560            3.53 K      94.28     0.645      Ours
+           4-LUTNs       1x3k            2246              1350           211            3.81 K      94.26     0.646      Ours
+           6-LUTNs       1x2k            2246              3780           139            6.17 K      94.24     0.651      Ours
+             SVM       Ensemble            -            4.93 · 106         0            > 4.93 M     94.50     0.773       [3]
+             SNN         Conv.            0             31.0 · 106         -             31.0 M      90.00     0.636       [9]
+             ANN         Conv.             -            1.35 · 109         0            > 1.35 G     88.99     0.701       [5]
+
+
+TABLE X: Comparison of different SOTA approaches based                TABLE XI: Comparison of different SOTA approaches based
+on accuracy.                                                          on jκ-index.
+                 Model          Accuracy (%)    Reference                               Model            jκ-index      Reference
+          Ensemble of 6 SVMs       94.50           [3]                           Ensemble of 6 SVMs       0.773           [3]
+                  LGN              94.28          Ours                            Deep residual CNN       0.701           [5]
+                4-LUTN             94.26          Ours                                  LGNr              0.683          Ours
+                6-LUTN             94.24          Ours                              SNNr + CNN            0.672           [9]
+                  SNN              93.67           [8]                                 6-LUTN             0.651          Ours
+                 LGNr              93.63          Ours                                 4-LUTN             0.646          Ours
+             SNNr + CNN            90.00           [9]                                   LGN              0.645          Ours
+            SNNr + SNNr            90.00           [9]                             SNNr + SNNr            0.636           [9]
+           Deep residual CNN       88.99           [5]                                LS-SVM              0.610           [6]
+               LS-SVM              81.00           [6]
+
+
+                                                                      is the 4-layer network. Our networks have a higher accuracy
+preprocessing is mainly dominated by the calculation of the           and jκ-index, but a lower power usage compared to that
+crest factor.                                                         network, and as such perform better in every aspect, except
+                                                                      for preprocessing FLOPs. The same networks are synthesized
+E. FPGA implementation                                                in Vivado to determine the number of LUTs, which can
+  Power estimations for different networks are shown in               be found in Fig. 7b. Again, our networks outperform those
+Fig. 7a. These networks were simulated in both Xilinx Vivado          in [30] in terms of the number of LUTs. In addition, the
+and Cadence Excelium. The latter was used to obtain the               hyperparameter in PyTorch that specified the number of 6-
+activity files that are loaded into Vivado to estimate the power.     LUTs per layer was set to 2000, which is exactly the number of
+Our networks consume a power between 5 mW and 7 mW                    LUTs in the final implementation of the 6-LUTN, showcasing
+without preprocessing and readout, and only require one clock         that there is indeed a one-to-one mapping from software to
+cycle of 10 ns to compute the output, which amounts to an             hardware. These results were estimated using an Artix 7 low-
+energy of 50 pJ to 70 pJ per inference. In this figure, the best-     voltage FPGA (part number xc7a12tlcpg238-2L). A similar
+performing network in terms of accuracy, as reported in [30],         experiment was performed for the 1-layer and 2-layer rate-
+MOMMEN et al.: INTER-PATIENT ECG ARRHYTHMIA CLASSIFICATION WITH LGNS AND LUTNS                                                                                              9
+
+
+
+
+                                                                                                             14
+                 94                                                     0.70                                 12
+                 92                                                     0.65                                 10
+
+
+
+
+                                                                                             Power (mW)
+                 90
+                                                                        0.60                                  8
+                 85                                                     0.55                                  6
+  Accuracy (%)
+
+
+
+
+                                                                                                              4
+
+
+
+
+                                                                           j -index
+                 80                                                     0.50                                  2
+                                                                        0.45                                  0 1 layer 1 layer 1 layer 1 layer 2 layer 3 layer 4 layer
+                 75                                                     0.40                                     LGN 4-LUTN 6-LUTN LGN LGN LGN LGN
+                                                       Accuracy                                                 (ours) (ours) (ours) ([30]) ([30]) ([30]) ([30])
+                 70                                    j -index         0.35
+                                                                                                                                         (a)
+                                                       Max. performance 0.30
+                      1   2   4   8 16 32 64 128 256 512 1024                                                8000
+                                      Nb of time steps
+
+
+
+
+                                                                                            Number of LUTs
+Fig. 6: The accuracy (dashed line) and jκ-index (solid line)                                                 6000
+of the 2-layer rate-coded LGN as a function of the number of                                                 4000
+timesteps. The star indicates the best value that can be reached
+for both accuracy and jκ-index.                                                                              2000
+                                                                                                                0 1 layer 1 layer 1 layer 1 layer 2 layer 3 layer 4 layer
+coded LGNs, with a sequence length of 128. Since each output                                                       LGN 4-LUTN 6-LUTN LGN LGN LGN LGN
+gate now has an 8-bit counter attached to it to count the                                                         (ours) (ours) (ours) ([30]) ([30]) ([30]) ([30])
+number of spikes or ones over all 128 timesteps, the power                                                                               (b)
+and number of LUTs are significantly higher. The results on
+an Artix UltraScale+ FPGA (part number xcau7p-fcva289-                                Fig. 7: (a) Power estimation and (b) number of LUTs of an
+1LV-i) for a 1-layer and 2-layer network were 133 mW using                            Artix 7 low-voltage FPGA (part number xc7a12tlcpg238-2)
+33526 LUTs and 271 mW using 53476 LUTs. Hence, the                                    using our LGN, 4-LUTN and 6-LUTN networks compared to
+small increase in performance likely does not justify the large                       [30]
+increase in LUTs and power consumption.
+
+                                   V. C ONCLUSION
+   We show that the LGNs and LUTNs can be used for ECG                                                                             R EFERENCES
+arrhythmia classification using the inter-patient paradigm. It
+                                                                                       [1] World Health Organization (WHO), “Cardiovascular diseases.”
+was demonstrated that rate-coded LGNs outperform LGNs                                      https://www.who.int/health-topics/cardiovascular-diseases, 2025.
+with only threshold coding. Additionally, it was demonstrated                          [2] G. Moody and R. Mark, “The impact of the MIT-BIH Arrhythmia
+that the novel LUTN training method is effective for the                                   Database,” IEEE Engineering in Medicine and Biology Magazine,
+                                                                                           vol. 20, pp. 45–50, May 2001.
+MNIST, Fashion-MNIST, and MIT-BIH arrhythmia datasets.                                 [3] V. Mondéjar-Guerra, J. Novo, J. Rouco, M. G. Penedo, and M. Ortega,
+Using a new preprocessing method, improvements can be                                      “Heartbeat classification fusing temporal and morphological information
+made to the mixed-patient and inter-patient paradigms of the                               of ECGs via ensemble of classifiers,” Biomedical Signal Processing and
+                                                                                           Control, vol. 47, pp. 41–48, Jan. 2019.
+ECG dataset. Using a 4-layer LGN, a mixed-patient accuracy                             [4] P. de Chazal, M. O’Dwyer, and R. Reilly, “Automatic classification of
+of 98.35% was achieved. Utilizing the inter-patient paradigm,                              heartbeats using ECG morphology and heartbeat interval features,” IEEE
+accuracies above 94% could be achieved for the LGNs and                                    Transactions on Biomedical Engineering, vol. 51, pp. 1196–1206, July
+                                                                                           2004.
+LUTNs. The highest jκ-index for these types of networks                                [5] Y. Li, R. Qian, and K. Li, “Inter-patient arrhythmia classification
+was 0.683. Additionally, FPGA power and area estimations                                   with improved deep residual convolutional neural network,” Computer
+showed that our models have a lower energy usage and a                                     Methods and Programs in Biomedicine, vol. 214, p. 106582, Feb. 2022.
+                                                                                       [6] A. Villa, M. Deviaene, R. Willems, S. Van Huffel, and C. Varon, “Are
+lower number of LUTs compared to SOTA LGNs, while still                                    we training our heartbeat classification algorithms properly?,” IEEE
+having a significantly higher accuracy and jκ-index. The                                   Engineering in Medicine and Biology Society, vol. 2019, pp. 6363–6366,
+rate-coded networks showed a significant increase in power,                                July 2019.
+                                                                                       [7] B. Hawks, J. Duarte, N. J. Fraser, A. Pappalardo, N. Tran, and
+latency, and area, making it better to use the normal binary                               Y. Umuroglu, “Ps and Qs: Quantization-Aware Pruning for Efficient Low
+encoding. Finally, compared to general SOTA methods, the                                   Latency Neural Network Inference,” Frontiers in Artificial Intelligence,
+LGNs and LUTNs perform quite well. Only an ensemble of                                     vol. 4, July 2021.
+                                                                                       [8] R. Mao, S. Li, Z. Zhang, Z. Xia, J. Xiao, Z. Zhu, J. Liu, W. Shan,
+SVMs and a deep residual CNN performs better, since they                                   L. Chang, and J. Zhou, “An Ultra-Energy-Efficient and High Accuracy
+require an estimated three to six orders of magnitude more                                 ECG Classification Processor With SNN Inference Assisted by On-Chip
+FLOPs. To further improve the models and address the class                                 ANN Learning,” IEEE transactions on biomedical circuits and systems,
+                                                                                           vol. 16, pp. 832–841, Oct. 2022.
+imbalance, we could utilize a focal loss [31] and synthetic                            [9] Z. Yan, J. Zhou, and W.-F. Wong, “Energy efficient ECG classification
+minority oversampling (SMOTE) [32]. Finally, LGNs and                                      with spiking neural network,” Biomedical Signal Processing and Con-
+LUTNs are good candidates as wake-up systems for more                                      trol, vol. 63, p. 102170, Jan. 2021.
+                                                                                      [10] L. Keuninckx, M. Hartmann, P. Detterer, A. Safa, W. Mommen, and
+complex classifiers, due to their simple implementation and                                I. Ocket, “On Training Networks of Monostable Multivibrator Timer
+low power consumption.                                                                     Neurons,” Neural Networks, p. 108092, Sept. 2025.
+10
+
+
+
+[11] F. Petersen, C. Borgelt, H. Kuehne, and O. Deussen, “Deep Dif-
+     ferentiable Logic Gate Networks,” Advances in Neural Information
+     Processing Systems, vol. 35, pp. 2006–2018, Dec. 2022.
+[12] E. Wang, J. J. Davis, P. Y. K. Cheung, and G. A. Constantinides,
+     “LUTNet: Rethinking Inference in FPGA Soft Logic,” Apr. 2019.
+[13] E. Wang, J. J. Davis, P. Y. K. Cheung, and G. A. Constantinides,
+     “LUTNet: Learning FPGA Configurations for Highly Efficient Neural
+     Network Inference,” Mar. 2020.
+[14] Y. Umuroglu, Y. Akhauri, N. J. Fraser, and M. Blott, “LogicNets: Co-
+     Designed Neural Networks and Circuits for Extreme-Throughput Appli-
+     cations,” in 2020 30th International Conference on Field-Programmable
+     Logic and Applications (FPL), pp. 291–297, Aug. 2020.
+[15] M. Nazemi, G. Pasandi, and M. Pedram, “Energy-Efficient, Low-Latency
+     Realization of Neural Networks Through Boolean Logic Minimization,”
+     in 2019 24th Asia and South Pacific Design Automation Conference
+     (ASP-DAC), pp. 1–6, Jan. 2019.
+[16] M. Andronic and G. A. Constantinides, “PolyLUT: Learning Piecewise
+     Polynomials for Ultra-Low Latency FPGA LUT-based Inference,” in
+     2023 International Conference on Field Programmable Technology
+     (ICFPT), pp. 60–68, Dec. 2023.
+[17] M. Andronic and G. A. Constantinides, “NeuraLUT: Hiding Neural
+     Network Density in Boolean Synthesizable Functions,” in 2024 34th In-
+     ternational Conference on Field-Programmable Logic and Applications
+     (FPL), pp. 140–148, Sept. 2024.
+[18] A. T. L. Bacellar, Z. Susskind, M. B. Jr, E. John, L. K. John,
+     P. M. V. Lima, and F. M. G. França, “Differentiable Weightless Neural
+     Networks,” Nov. 2024.
+[19] L. Gerlach, L. Våge, T. Gerlach, and E. Kauffman, “WARP-LUTs -
+     Walsh-Assisted Relaxation for Probabilistic Look Up Tables,” Oct. 2025.
+[20] W. Maass, “Networks of spiking neurons: The third generation of neural
+     network models,” Neural Networks, vol. 10, pp. 1659–1671, Dec. 1997.
+[21] S. Bührer, A. Plesner, T. Aczel, and R. Wattenhofer, “Recurrent Deep
+     Differentiable Logic Gate Networks,” Aug. 2025.
+[22] F. Petersen, H. Kuehne, C. Borgelt, J. Welzel, and S. Ermon, “Convo-
+     lutional Differentiable Logic Gate Networks,” Nov. 2024.
+[23] W. Mommen, L. Keuninckx, M. Hartmann, and P. Wambacq, “A Method
+     for Optimizing Connections in Differentiable Logic Gate Networks,”
+     July 2025.
+[24] S. Yousefi, A. Plesner, T. Aczel, and R. Wattenhofer, “Mind the
+     Gap: Removing the Discretization Gap in Differentiable Logic Gate
+     Networks,” June 2025.
+[25] M. Rastegari, V. Ordonez, J. Redmon, and A. Farhadi, “XNOR-Net:
+     ImageNet Classification Using Binary Convolutional Neural Networks,”
+     Aug. 2016.
+[26] Testing and Reporting Performance Results of Cardiac Rhythm and ST
+     Segment Measurement Algorithms. Association for the Advancement of
+     Medical lnstrumentation, 1998.
+[27] T. Mar, S. Zaunseder, J. P. Martı́nez, M. Llamedo, and R. Poll,
+     “Optimization of ECG Classification by Means of Feature Selection,”
+     IEEE Transactions on Biomedical Engineering, vol. 58, pp. 2168–2177,
+     Aug. 2011.
+[28] Z. Zhang, J. Dong, X. Luo, K.-S. Choi, and X. Wu, “Heartbeat
+     classification using disease-specific feature selection,” Computers in
+     Biology and Medicine, vol. 46, pp. 79–89, Mar. 2014.
+[29] M. Fatourechi, R. K. Ward, S. G. Mason, J. Huggins, A. Schlögl,
+     and G. E. Birch, “Comparison of Evaluation Metrics in Classification
+     Applications with Imbalanced Datasets,” in 2008 Seventh International
+     Conference on Machine Learning and Applications, pp. 777–782, Dec.
+     2008.
+[30] C. Feng, X. Wang, and T. T. Ye, “Low-Power Consumption Inference
+     of ECG Signals Using Differential Logic Networks,” in 2024 IEEE Asia
+     Pacific Conference on Circuits and Systems (APCCAS), pp. 20–24, Nov.
+     2024.
+[31] T.-Y. Lin, P. Goyal, R. Girshick, K. He, and P. Dollár, “Focal Loss for
+     Dense Object Detection,” Feb. 2018.
+[32] N. V. Chawla, K. W. Bowyer, L. O. Hall, and W. P. Kegelmeyer,
+     “SMOTE: Synthetic Minority Over-sampling Technique,” Journal of
+     Artificial Intelligence Research, vol. 16, pp. 321–357, June 2002.
+
