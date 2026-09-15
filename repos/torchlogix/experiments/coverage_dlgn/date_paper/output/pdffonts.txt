@@ -3,20 +3,17 @@ name                                 type              encoding         emb sub 
 IHAIZV+TeXGyreTermesX-Regular-Identity-H CID Type 0C       Identity-H       yes yes yes      5  0
 BZIVMZ+TeXGyreTermesX-BoldItalic-Identity-H CID Type 0C       Identity-H       yes yes yes      7  0
 IXFAWU+TeXGyreTermesX-Bold-Identity-H CID Type 0C       Identity-H       yes yes yes      9  0
-YEUUOC+txsys                         Type 1C           Builtin          yes yes yes     15  0
-TQTHRL+TeXGyreTermesX-Italic-Identity-H CID Type 0C       Identity-H       yes yes yes     30  0
-AKHCZK+NewTXMI                       Type 1C           Builtin          yes yes yes     32  0
-VDVGTR+NewTXMI7                      Type 1C           Builtin          yes yes yes     33  0
-DDIEWW+TeXGyreTermesX-Regular        Type 1C           WinAnsi          yes yes yes     34  0
-FKPJSN+NewTXMI5                      Type 1C           Builtin          yes yes yes     35  0
-CAFSZL+txmiaX                        Type 1C           Builtin          yes yes yes     36  0
-PVTTLK+txexs                         Type 1C           Builtin          yes yes no      38  0
-IHAIZV+TeXGyreTermesX-Regular-Identity-H CID Type 0C       Identity-H       yes yes yes     63  0
-BZIVMZ+TeXGyreTermesX-Regular        Type 1C           WinAnsi          yes yes yes     70  0
-IXFAWU+txsys                         Type 1C           Builtin          yes yes yes     75  0
-BZIVMZ+TeXGyreTermesX-Regular        Type 1C           WinAnsi          yes yes yes     82  0
-IHAIZV+TeXGyreTermesX-Regular-Identity-H CID Type 0C       Identity-H       yes yes yes     87  0
-IXFAWU+NewTXMI7                      Type 1C           Builtin          yes yes yes     94  0
-IHAIZV+TeXGyreTermesX-Regular-Identity-H CID Type 0C       Identity-H       yes yes yes    106  0
-BZIVMZ+TeXGyreTermesX-Regular        Type 1C           WinAnsi          yes yes yes    113  0
-IXFAWU+txsys                         Type 1C           Builtin          yes yes yes    118  0
+YEUUOC+txsys                         Type 1C           Builtin          yes yes yes     17  0
+TQTHRL+TeXGyreTermesX-Italic-Identity-H CID Type 0C       Identity-H       yes yes yes     32  0
+AKHCZK+NewTXMI                       Type 1C           Builtin          yes yes yes     34  0
+VDVGTR+NewTXMI7                      Type 1C           Builtin          yes yes yes     35  0
+DDIEWW+TeXGyreTermesX-Regular        Type 1C           WinAnsi          yes yes yes     36  0
+FKPJSN+NewTXMI5                      Type 1C           Builtin          yes yes yes     37  0
+CAFSZL+txmiaX                        Type 1C           Builtin          yes yes yes     38  0
+PVTTLK+txexs                         Type 1C           Builtin          yes yes no      40  0
+BZIVMZ+TeXGyreTermesX-Regular        Type 1C           WinAnsi          yes yes yes     64  0
+IHAIZV+TeXGyreTermesX-Regular-Identity-H CID Type 0C       Identity-H       yes yes yes     69  0
+IXFAWU+NewTXMI7                      Type 1C           Builtin          yes yes yes     76  0
+IHAIZV+TeXGyreTermesX-Regular-Identity-H CID Type 0C       Identity-H       yes yes yes     91  0
+BZIVMZ+TeXGyreTermesX-Regular        Type 1C           WinAnsi          yes yes yes     98  0
+IXFAWU+txsys                         Type 1C           Builtin          yes yes yes    103  0

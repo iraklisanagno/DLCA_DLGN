@@ -1,103 +1,78 @@
 # Quality Report
 
-## Manuscript Summary
+## Current manuscript
 
-- Title: **LogicConnect: Structured Connectivity Design for Differentiable Logic Gate Networks**.
-- Venue: DATE 2027, anonymous research-paper draft.
-- Actual length: **six content pages plus one references-only page**.
-- Main evidence: **four tables, four figures, one algorithm, fifteen references**.
-- Companion material: **ten two-panel vector plots and fifteen detailed tables**, assembled into a 28-page atlas.
-- Build: successful with the local Tectonic compiler and cached dependencies.
-- Scope: all changes remain within date_paper; no new training, inference, dataset access, or experiment-code changes.
-- Earlier manuscript preserved under revisions/before_story_20260915/.
+The manuscript is **LogicConnect: Structured Connectivity Design for Differentiable Logic Gate Networks**, an anonymous DATE research-paper draft. Following the user's feedback, all six sections were rewritten after rereading the six papers in `previous_pdfs/`. Commit `4b51235` preserves the preceding draft.
 
-This is a completed manuscript draft and editorial audit. It has not undergone external peer review; the audit does not establish acceptance or supply missing experimental evidence.
+The compiled paper contains **six content pages and one references-only page**, with **four tables, three figures, one algorithm, and fifteen references**. The evidence atlas retains fifteen detailed tables and all ten two-panel plots across 28 pages. The dense accuracy plot remains in the atlas because its means and paired intervals are already reported in the main accuracy table.
 
-## Scientific Narrative
+All changes are confined to the paper directory. No training, inference, checkpoint evaluation, or experimental implementation was changed.
 
-The problem is restricted predecessor access at a fixed DLGN depth and gate budget. Gate training cannot create an absent connection, while learning connections adds training state. The insight is to design signal combinations before training using semantic input pairs and regular multiscale matchings.
+## Revision against the author's papers
 
-[paper_story.md](../paper_story.md) was created before drafting. The introduction establishes the constraint, degree-preserving observation, insight, and three contributions. The methodology motivates the design through the constraints it addresses. Evaluation answers questions about accuracy, resources, attribution, and transfer. The conclusion synthesizes those findings without introducing another claim.
+The local PDFs match the six source hashes recorded in the voice profile. *Less is More* and *RankMap* provide the closest DATE examples; FairBoost, Ecomap, Pythia, and ToolAssist inform the mechanism, trade-off, and ablation explanations. [research_prose_review.md](research_prose_review.md) records the diagnosis and section reviews.
 
-## Claim–Evidence Audit
+The previous draft compressed the argument into short statements and reporting labels. The revision establishes the Boolean-circuit context before introducing predecessor constraints, explains the design rationale before selection details, and develops comparisons into connected paragraphs. Related work is synthesized without bold category labels. Evaluation uses descriptive scientific subsection titles in place of RQ announcements. The conclusion integrates the mechanism, results, and remaining questions in one paragraph.
 
-| Claim | Design and evidence | Status | Boundary |
-|---|---|---|---|
-| C1: shared fixed-connectivity construction | Semantic pairing, degree-first stage selection, ancestry tie criterion, channel/classifier adapters; Fig. 1, Algorithm 1, inspected source/configurations | Supported for evaluated rank-2 architectures | Equal gate budgets do not imply equal physical area or wire cost. |
-| C2: improved dense accuracy | Table II and Fig. 2: CIFAR-10 gains +3.18/+4.56/+4.59 pp, n=3, positive paired intervals | Supported | Fashion-MNIST interval includes zero; the dense specialization can be better. |
-| C2: training-resource trade-off | Table IV and Fig. 3: 93.7–94.2% less peak GPU memory, 80% fewer trainable parameters, 1.84–5.30 pp accuracy cost against Top-32 | Supported as a measured trade-off | Top-32 n=1; wall-time ratios do not isolate algorithmic speedup. |
-| C2: convolutional application | Table III: S/M test gains +3.26/+2.08 pp, n=1; full-S validation replication retained | Supported compatibility and descriptive gains | Full-S n=3 validation interval [-3.36, 5.82] is inconclusive. |
-| C3: first-layer effect beyond degree | Fig. 4: per-predecessor, per-slot degree-preserving randomization; first-layer effects +4.49/+3.69 pp | Supported at dense M, 20K updates | Deeper +0.52 pp interval includes zero; all five contrasts are exploratory and unadjusted. |
-| C3: mechanism and transfer boundaries | Nominal controls, conditional convolutional attribution, adapted WARP, frozen CIFAR-10.1; atlas plots | Supported bounded characterization | No isolated ancestry-selection gain, universal compatibility, or universal transfer improvement. |
+The reference papers' broad novelty adjectives and strong causal assertions were not adopted. The revision imitates recurring explanatory structures while retaining the actual strength of this paper's evidence. Automated checks support the review but cannot certify research quality or exact stylistic imitation.
 
-## Naming and Selection
+## Claim–evidence audit
 
-LogicConnect names the frozen unified method. LogicConnect-D names the distinct dense specialization. Only the unified construction appears in the methodology. Table II retains both variants and highlights the largest observed local mean. No best-of-variants test maximum is represented as an evaluated selection policy or attributed to an algorithm that did not produce it.
+| Claim | Evidence in the main paper | Assessment and limits |
+|---|---|---|
+| C1: shared fixed-connectivity construction | Section III, Fig. 1, Algorithm 1, three equations | Semantic input pairing and degree-first multiscale selection apply to the evaluated rank-2 dense and convolutional architectures. Equal logical budgets do not establish physical area or interconnect savings. |
+| C2: dense accuracy at matched architecture | Table II: CIFAR-10 gains of 3.18, 4.56, and 4.59 percentage points, three paired seeds | All three intervals exclude zero. Fashion-MNIST remains inconclusive, and the dense specialization can have a higher mean. |
+| C2: accuracy versus training resources | Table IV and Fig. 2: 93.7–94.2% less peak GPU memory and 80% fewer trainable parameters than Top-32 | The corresponding accuracy cost is 1.84–5.30 points. Top-32 has one local seed; recorded time ratios do not isolate an algorithmic speedup. |
+| C2: convolutional application | Table III: S/M test gains of 3.26/2.08 points, one seed each | Three-seed S validation gives a 1.23-point difference with interval [-3.36, 5.82]. The replication does not establish consistent superiority. |
+| C3: contribution of pair identities | Fig. 3: dense first/deeper factorial with per-predecessor, per-input-slot degree preservation | First-layer effects are 4.49/3.69 points with positive intervals. The deeper effect and interaction remain inconclusive. |
+| C3: limits of the design | Section IV-D/E and atlas: nominal controls, conditional body/classifier ablation, WARP, CIFAR-10.1 | No additional ancestry-selection advantage, universal parameterization compatibility, or general transfer improvement is established. |
 
-The abstract and headline gains use unified-method measurements. Raw U2/V3 identifiers remain internal provenance, script keys, notes, and preserved drafts.
+Only the unified construction is described as LogicConnect in the methodology. LogicConnect-D remains a separately named dense specialization in the comparisons. Reported literature values retain their provenance, and validation and test results remain distinct.
 
-## Section Audit
+## Section review and word budgets
 
-Counts exclude headings, asset markers, citations, math, captions, tables, and bibliography text.
+Counts use the existing renderer convention: prose excludes headings, asset markers, citations, mathematical expressions, captions, tables, and references.
 
-| Section | Scientific role and evidence | Style and continuity | Words | Nominal target | Budget |
-|---|---|---|---:|---:|---|
-| Abstract | Problem, method, scope, resource cost, ablation | Written last; every result developed in the body | 174 | 170–200 range | Pass |
-| Introduction | Constraint → cost → observation → insight → contributions | Direct technical opening; bounded headline results | 449 | 700 | Justified shortfall |
-| Related work | Graph, routing, optimization, simplification | Synthesized research choices; eleven 2022–2026 sources | 317 | 490 | Justified shortfall |
-| Methodology | Graph, semantic rationale, stage decision, convolution, cost | Equations explained; procedural detail specifies the evaluated algorithm | 795 | 1610 | Justified shortfall |
-| Evaluation | RQ1–RQ4, matching, costs, controls, limits | Patterns and implications; losing coordinates retained | 894 | 1610 | Justified shortfall |
-| Conclusion | Mechanism, dense gain, resource trade-off, scope | Synthesis without new results | 117 | 490 | Justified shortfall |
+| Section | Role in the revised argument | Prose words | Nominal target |
+|---|---|---:|---:|
+| Abstract | Problem, offline design, evaluation, measured benefit and cost | 181 | 170–200 range |
+| Introduction | Boolean-circuit context, connectivity constraint, observation, proposed response | 446 | 700 |
+| Related work | Architecture, learned routing, gate optimization, circuit simplification | 334 | 490 |
+| Methodology | Representation, semantic pairing, multiscale rationale, convolutional extension, cost | 909 | 1610 |
+| Evaluation | Setup, accuracy, resources, structural contribution, transfer | 1090 | 1610 |
+| Conclusion | Integrated mechanism, findings, and remaining questions | 107 | 490 |
 
-The body totals **2,572 prose words** against 4,900 nominal words in the user-edited configuration. Those targets cannot all fit beside four tables, four figures, equations, and an algorithm in six content pages at the required type size. Targets were preserved; repeated framing and interpretation were removed. The validation record reports word_budgets_pass=false and budget_exceptions_justified=true. No padding, smaller body fonts, or compressed line spacing was used.
+The body contains **2,886 prose words**, compared with 2,572 in the preceding draft. The user's nominal body target remains 4,900 words. The shorter manuscript is an explicit budget exception needed to accommodate the evidence and mathematical formulation within six content pages. The validation record correctly reports `word_budgets_pass=false` and `budget_exceptions_justified=true`. No font or line-spacing reduction was used.
 
-## Explicit Style and Anti-Manual Review
+Approximate sentence means, excluding math, are 20.1/18.6/16.7/16.5/17.0/17.8 words from abstract through conclusion. Several remain below the soft 18–24-word preference. The final review prioritized connected reasoning and clear mathematical definitions over mechanically extending sentences. There are no em dashes, listed banned terms, or prose-extraction sentences above the 35-word review threshold.
 
-style.yaml guided the evidence-bounded tone, concrete subjects, explicit measurements, and paragraph continuity. voice_profile.yaml supplied complementary author preferences.
+The sections were revised and reviewed in sequence, with the abstract completed after the body. A complete-manuscript pass consolidated repeated wording for layout. The final generated LaTeX was reread as a whole, and every compiled page was inspected.
 
-The introduction starts from an architectural constraint. Each mechanism explains the purpose of semantic distinctions, disjoint matchings, degree priority, or channel adaptation. Results follow question/comparison/observation/implication rather than run order. No repository inventory, API walkthrough, or chronological implementation narrative remains.
+## Evidence preservation and source validation
 
-No authored em dash, listed banned term, or prose-only sentence over the 35-word review threshold remains. Names, mathematical definitions, comparison scope, and uncertainty stay consistent. Native-random and degree-preserving controls are distinguished. Accuracy benefits retain the associated resource cost or uncertainty.
+[prose_revision_integrity.json](prose_revision_integrity.json) compares the revised files with commit `4b51235` and confirms:
 
-Approximate sentence means excluding math and labels are 15.8/18.0/13.6/14.5/13.3/13.0 words from abstract through conclusion. Several sections are below the soft 18–24-word guide. Contextual review accepts these shorter result and mathematical sentences because joining them would blur comparison, condition, or limitation. This is an explicit editorial judgment, not a claim of exact stylistic imitation.
+- All three mathematical expressions and labels match; sentence-ending punctuation is excluded from this comparison.
+- All four main table matrices, including headers and numerical entries, are unchanged.
+- The frozen experimental snapshot and bibliography entries are unchanged.
+- All ten standalone plot PDFs are unchanged.
+- All six author PDFs match the recorded corpus hashes.
+- All six generated manuscript sections match their Markdown sources after accounting for float placement.
 
-Scientific and continuity checks followed each section, with complete-text reviews after concision passes. [section_review_log.md](section_review_log.md) records the decisions. The candidate passed the scientific and anti-manual review within three major prose passes.
+The existing [validation script](../scripts/validate_paper.py) also passes **452 checks**, including 49 experimental source hashes, 16 refinement logical rows and completion records, paired statistics, naming, citation years, embedded fonts, references, and PDF bounds. The main figure/table inventory is now computed from the included LaTeX rather than reported as the preceding draft's count.
 
-## Numerical and Source Validation
+Reported-value provenance remains in [reported_sources.md](../evidence/reported_sources.md); plot provenance remains in [figure_registry.json](../evidence/figure_registry.json). The historical catalog and negative results remain available. This revision does not claim to re-audit every historical run or rehash checkpoint binaries.
 
-[validate_paper.py](../scripts/validate_paper.py) performs the following without running a model:
+## Build and visual review
 
-- Verifies all **49 source hashes** in the frozen experimental registry.
-- Checks all **16 refinement logical rows**, including artifact existence, metrics/configuration/summary hashes, and applicable completion receipts.
-- Recomputes dense moments and paired intervals, full-S replication, dense and convolutional factorial effects, mechanism controls, adapted-WARP effects, and transfer statistics.
-- Allows 0.001 pp in interval recomputation for rounded Student-t constants in archived summaries; printed conclusions are unaffected.
-- Checks headline values, scope qualifiers, method naming, related-work years, font embedding, references, and page bounds.
-- Verifies ten single-page standalone plots and the references-only seventh manuscript page.
+The paper builds successfully with the local Tectonic compiler and cached dependencies. It uses the DATE IEEEtran template, A4 pages, and a 184 mm × 239 mm text area. The seventh page contains only references. Body, abstract, captions, tables, and bibliography retain 10-point Times-compatible text; included plot labels remain above 10 points.
 
-Reported values remain separate, with PDF locations in [reported_sources.md](../evidence/reported_sources.md). Every plot has a source entry in [figure_registry.json](../evidence/figure_registry.json). Negative interval endpoints remain visible. Poor local BitLogic-related reproductions remain negative evidence in the atlas and do not justify superiority over published BitLogic.
+All fonts are embedded, with no Type 3 fonts, unresolved references, unresolved citations, or overfull boxes. Main pages, atlas pages, and standalone plots have nonempty text within page bounds. All ten standalone plots remain single-page PDFs.
 
-The broad historical catalog is preserved; this review does not claim to re-audit every historical run or rehash all checkpoint binaries.
+Visual review covered all seven manuscript pages: complete contribution bullets, readable equations, table alignment, plot legends and intervals, conclusion placement, and bibliography. The overview appears with the methodology, while the resource and ablation plots accompany evaluation. The final word change in the construction-cost paragraph preserved the page count.
 
-## Literature and Citations
+## Remaining scientific issues
 
-All eleven related-work sources date from 2022–2026. Added Mind the Gap, scalability, and multilinear-fitting references were checked against supplied PDFs and primary metadata. Preprints retain their status. Supplied BitLogic and unit-tying PDFs establish their publication metadata; older sources identify datasets only. [The literature record](../evidence/literature_review_20260915.md) documents verification.
+The revision preserves the following limits: additional held-out convolutional replications, additional learned-routing seeds, an isolated ancestry-selection benefit, and matched physical implementation measurements are still needed. No universal accuracy superiority, general deeper-layer benefit, or physical area/energy reduction is claimed.
 
-No missing manuscript citation remains. The paper makes no firstness or state-of-the-art claim.
-
-## Build and Visual Checks
-
-The seven-page A4 manuscript uses the official DATE IEEEtran template and 184 mm × 239 mm text area. Page seven contains only references. There is no author block, acknowledgment, page number, or copyright notice.
-
-Body, abstract, captions, tables, and bibliography use 10-point Times-compatible text. Plot labels use 11-point source text in a 198 mm canvas, displayed at 184 mm, retaining approximately 10.22 points. Mathematical subscripts use standard math typography.
-
-All fonts are embedded. No Type 3 fonts, unresolved citations/references, or overfull boxes remain in the main paper, atlas, or ten plots. Each standalone plot has exactly one nonblank page. All extracted word boxes stay inside PDF bounds. Every main page and plot panel was visually reviewed for clipping, readability, equations, labels, uncertainty, and reference placement.
-
-An initial compiler failure during bold-math loading was resolved by using ordinary bold text within math for highlighted means. The atlas uses cached base table support instead of unavailable optional packages. Neither adjustment changes numbers or claims. Benign class/font initialization and legacy-package notices remain in logs.
-
-[build.sh](../scripts/build.sh) compiles both PDFs and runs the audit offline. [validation.json](validation.json), [pdfinfo.txt](pdfinfo.txt), and [pdffonts.txt](pdffonts.txt) record the final checks.
-
-## Potential Overclaims and Remaining Scientific Issues
-
-Excluded claims include universal best accuracy; attributing the dense specialization to the unified constructor; an independently established balancing/ancestry cause; a general deeper-layer benefit; replicated convolutional held-out superiority; hardware-independent timing speedups; physical area/energy gains from gate count; and superiority inferred from failed local BitLogic reproductions.
-
-Remaining evidence needs are replicated convolutional held-out accuracy, additional learned-routing seeds, an isolated ancestry-selection benefit, and matched physical implementation measurements. These require further experiments, not stronger prose. No indispensable author-dependent placeholder remains.
+The eleven related-work sources remain from 2022–2026; four older references identify datasets. Existing verified bibliographic entries are unchanged, and preprints retain their status. No indispensable citation or author-dependent placeholder remains.

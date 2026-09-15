@@ -1,6 +1,6 @@
 {
   "00_abstract": {
-    "words": 174,
+    "words": 181,
     "target": 180,
     "range": [
       170,
@@ -11,13 +11,13 @@
       200
     ],
     "budget_exception": null,
-    "approx_mean_sentence_words_excluding_math": 15.8,
+    "approx_mean_sentence_words_excluding_math": 20.1,
     "sentences_over_35_words": [],
     "em_dashes": 0,
     "banned_terms": []
   },
   "01_introduction": {
-    "words": 449,
+    "words": 446,
     "target": 700,
     "range": [
       595,
@@ -28,13 +28,13 @@
       550
     ],
     "budget_exception": "Figure-rich six-content-page limit; see paper_story.md",
-    "approx_mean_sentence_words_excluding_math": 18.0,
+    "approx_mean_sentence_words_excluding_math": 18.6,
     "sentences_over_35_words": [],
     "em_dashes": 0,
     "banned_terms": []
   },
   "02_related_work": {
-    "words": 317,
+    "words": 334,
     "target": 490,
     "range": [
       417,
@@ -45,13 +45,13 @@
       450
     ],
     "budget_exception": "Figure-rich six-content-page limit; see paper_story.md",
-    "approx_mean_sentence_words_excluding_math": 13.6,
+    "approx_mean_sentence_words_excluding_math": 16.7,
     "sentences_over_35_words": [],
     "em_dashes": 0,
     "banned_terms": []
   },
   "03_methodology": {
-    "words": 795,
+    "words": 909,
     "target": 1610,
     "range": [
       1369,
@@ -62,13 +62,13 @@
       1050
     ],
     "budget_exception": "Figure-rich six-content-page limit; see paper_story.md",
-    "approx_mean_sentence_words_excluding_math": 14.5,
+    "approx_mean_sentence_words_excluding_math": 16.5,
     "sentences_over_35_words": [],
     "em_dashes": 0,
     "banned_terms": []
   },
   "04_experiments": {
-    "words": 894,
+    "words": 1090,
     "target": 1610,
     "range": [
       1369,
@@ -79,13 +79,13 @@
       1150
     ],
     "budget_exception": "Figure-rich six-content-page limit; see paper_story.md",
-    "approx_mean_sentence_words_excluding_math": 13.3,
+    "approx_mean_sentence_words_excluding_math": 17.0,
     "sentences_over_35_words": [],
     "em_dashes": 0,
     "banned_terms": []
   },
   "05_conclusion": {
-    "words": 117,
+    "words": 107,
     "target": 490,
     "range": [
       417,
@@ -96,7 +96,7 @@
       210
     ],
     "budget_exception": "Figure-rich six-content-page limit; see paper_story.md",
-    "approx_mean_sentence_words_excluding_math": 13,
+    "approx_mean_sentence_words_excluding_math": 17.8,
     "sentences_over_35_words": [],
     "em_dashes": 0,
     "banned_terms": []

@@ -2,6 +2,14 @@
 
 Prepared on 2026-09-15 before the section rewrite. The previous manuscript, sources, and reports are preserved in `output/revisions/before_story_20260915/`.
 
+## Manuscript revision after reading the author's papers
+
+The user found the prose in commit `4b51235` too similar to a research report. That commit preserves the starting manuscript for this revision. All six PDFs in `previous_pdfs/` were reread before changing the sections; their hashes match the corpus recorded in `voice_profile.yaml`.
+
+The scientific question and C1–C3 evidence map below remain unchanged. The revision changes how that argument is developed: introduce Boolean inference and the connectivity constraint before the numerical motivation; explain semantic pairing and multiscale construction through their design rationale; then interpret comparisons in connected paragraphs. RQ identifiers remain internal planning aids. Descriptive subsection titles and ordinary statistical language replace report labels in the manuscript. Numerical results, equations, published-reference distinctions, and method identities are preserved.
+
+The working allocation is approximately 500–550 introduction words, 330–400 related-work words, 900–1050 method words, 1000–1150 evaluation words, and 120–160 conclusion words. These are editorial estimates within the existing six-content-page requirement, not replacements for the user's nominal configuration. The prose must remain explanatory when layout is adjusted.
+
 ## Central Research Question
 
 How much accuracy can a differentiable logic gate network recover by designing its fixed connections before training, without paying for trainable routing or increasing the declared gate budget?
@@ -128,7 +136,7 @@ Each section is drafted and audited before the next. After each completed sectio
 
 ## Figure and Table Strategy
 
-Use a compact set of paper figures for the overview, dense scaling, routing trade-offs, and structural attribution. Generate additional standalone figures for seed variability, construction overhead, mechanism controls, convolutional attribution, transfer, and gate-parameterization compatibility. A separate evidence atlas includes these plots and detailed comparison tables; it is not assumed to be an admissible DATE supplement. Every plotted point must have a machine-readable source, scope, and seed count.
+The revised main paper uses figures for the overview, routing trade-offs, and structural attribution. The dense scaling plot remains in the evidence atlas, because the main dense table already reports its means and paired intervals. Additional standalone figures cover seed variability, construction overhead, mechanism controls, convolutional attribution, transfer, and gate-parameterization compatibility. The separate atlas retains all ten plots and detailed comparison tables; it is not assumed to be an admissible DATE supplement. Every plotted point must have a machine-readable source, scope, and seed count.
 
 ## Narrative
 

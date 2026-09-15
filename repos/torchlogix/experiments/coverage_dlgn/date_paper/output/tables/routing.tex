@@ -1,6 +1,6 @@
 \begin{table*}[t]
 \centering
-\caption{CIFAR-10 routing trade-off under LILogic architectures: M is $1\times64$K gates; L is $2\times128$K gates. Both use seven input thresholds. Local accuracy is T; R retains the published statistic.}
+\caption{Test accuracy and training cost under LILogic architectures: M uses $1\times64$K gates and L uses $2\times128$K gates, with seven input thresholds.}
 \label{tab:routing}
 \tabfont
 \setlength{\tabcolsep}{4pt}
@@ -18,5 +18,5 @@ L & Top-32 (REP) & 1 & $62.03$ & 20.480 & 350.63 & 24.861 & 60.98$\pm$0.19 \\
 \bottomrule
 \end{tabular}
 \par\smallskip
-\begin{minipage}{\textwidth}\normalsize Local: 35K updates, batch 256, Adam at 0.075, reflected-padding crops and horizontal flips. R: LILogic v2 \cite{fojcik2026}. Top-32 adds 4.096M/16.384M routing parameters; its single-seed resource comparison is descriptive.\end{minipage}
+\begin{minipage}{\textwidth}\normalsize Training: 35K updates, batch 256, Adam at 0.075, reflected-padding crops and horizontal flips. R: LILogic v2 \cite{fojcik2026}. Top-32 adds 4.096M/16.384M routing parameters.\end{minipage}
 \end{table*}

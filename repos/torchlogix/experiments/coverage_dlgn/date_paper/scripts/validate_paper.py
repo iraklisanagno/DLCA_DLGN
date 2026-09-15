@@ -80,6 +80,14 @@ def pdf_audit(path,expected_pages=None):
         bounds.append(b)
     return {'pages':pages,'bounds':bounds,'info':info,'fonts':fonts,'text':text}
 
+def expanded_tex(path):
+    text=path.read_text()
+    return re.sub(r'\\input\{([^}]+)\}',lambda m:expanded_tex(OUT/(m[1]+'.tex')),text)
+
+manuscript_tex=expanded_tex(OUT/'main.tex')
+table_count=len(re.findall(r'\\begin\{table\*?\}',manuscript_tex))
+figure_count=len(re.findall(r'\\begin\{figure\*?\}',manuscript_tex))
+check(table_count==4 and figure_count==3,'four main tables and three main figures')
 main=pdf_audit(OUT/'main.pdf',7)
 check(main['text'].split('\f')[6].lstrip().startswith('REFERENCES'),'page seven references only')
 check(not re.search(r'\b(?:U2|V3|CoverageDLGN)\b',main['text']),'manuscript method naming')
@@ -110,10 +118,10 @@ atlas=pdf_audit(OUT/'evidence_atlas.pdf')
 check(11*184/198>=10,'plot label size after inclusion')
 for filename,value in [('pdfinfo.txt',main['info']),('pdffonts.txt',main['fonts']),('main.txt',main['text'])]:(OUT/filename).write_text(value)
 v={'verified_on':'2026-09-15','pages':main['pages'],'content_pages':6,'references_only_page':7,'bibliographic_references':len(re.findall(r'\\bibitem\{', (OUT/'main.bbl').read_text())),
-   'tables':4,'figures':4,'standalone_two_panel_plots':10,'atlas_tables':len(json.loads((PAPER/'evidence/atlas_tables.json').read_text())),'atlas_pages':atlas['pages'],
+   'tables':table_count,'figures':figure_count,'standalone_two_panel_plots':10,'atlas_tables':len(json.loads((PAPER/'evidence/atlas_tables.json').read_text())),'atlas_pages':atlas['pages'],
    'source_hashes_verified':len(D['sources']),'refinement_logical_rows_checked':logical_rows,'checks_passed':len(checks),'new_training_or_inference':False,
    'word_budgets_pass':all(r['range'][0]<=r['words']<=r['range'][1] for r in metrics.values()),'budget_exceptions_justified':True,
-   'budget_rationale':'Configured 4,900 body words exceed six content pages with four tables, four figures, and an algorithm. Section shortfalls preserve claims and evidence; see paper_story.md and quality_report.md.',
+   'budget_rationale':'Configured 4,900 body words exceed six content pages with four tables, three figures, and an algorithm. The duplicate dense accuracy plot remains in the evidence atlas. Section shortfalls preserve the scientific argument; see paper_story.md and quality_report.md.',
    'unresolved_references':0,'overfull_boxes':0,'all_fonts_embedded':True,'type3_fonts':0,'pdf_page_word_bounds_pt':main['bounds'],'plot_audits':plots,'checks':checks}
 (OUT/'validation.json').write_text(json.dumps(v,indent=2)+'\n')
 print(json.dumps({k:v[k] for k in ['pages','content_pages','atlas_pages','source_hashes_verified','refinement_logical_rows_checked','checks_passed','word_budgets_pass','budget_exceptions_justified']},indent=2))

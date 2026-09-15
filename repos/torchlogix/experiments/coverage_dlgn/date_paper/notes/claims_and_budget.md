@@ -6,6 +6,6 @@ The title is **LogicConnect: Structured Connectivity Design for Differentiable L
 
 C1 establishes the shared construction; C2 measures accuracy/resource trade-offs; C3 characterizes structure through degree-preserving ablations, simpler controls, and transfer. The [quality report](../output/quality_report.md) traces these claims through the manuscript.
 
-The user-edited configuration specifies seven total pages and nominal body targets of 700, 490, 1610, 1610, and 490 words. The six-content-page DATE limit and four figures/four tables require shorter prose. The final body has 2,572 words under the renderer's counting convention, plus a 174-word abstract. These are documented editorial exceptions, not a pass against the nominal targets. Fonts and line spacing were not compressed.
+The user-edited configuration specifies seven total pages and nominal body targets of 700, 490, 1610, 1610, and 490 words. The revision after rereading `previous_pdfs/` contains three main figures and four tables, with all ten standalone plots retained in the atlas. The final body has 2,886 words under the renderer's counting convention, plus a 181-word abstract. These are documented editorial exceptions to fit six content pages, not a pass against the nominal targets. Fonts and line spacing were not compressed.
 
 Each section underwent scientific, anti-manual, style, and whole-text continuity checks, recorded in [section_review_log.md](../output/section_review_log.md). The abstract was written after the body. No new accuracy experiment or test-set access is part of this work.

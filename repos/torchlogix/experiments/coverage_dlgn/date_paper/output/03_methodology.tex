@@ -1,61 +1,66 @@
 \input{figures/overview}
 \section{LogicConnect Methodology}
+\label{sec:method}
 
-\subsection{Designing the graph at a fixed budget}
+LogicConnect uses the input representation and layer dimensions to construct connections before training, as shown in Figure \ref{fig:overview}. Semantic pairing exploits known relationships between encoded image values, while multiscale matching extends the construction to hidden signals whose spatial meaning is no longer explicit. Both components produce fixed predecessor indices, allowing training with the original gate parameterization.
 
-LogicConnect constructs the predecessor graph before optimizing gate functions. The objective is to organize signal access while retaining the baseline architecture and training state. For layer $l$ with $m_l$ two-input gates and $n_l$ predecessors, let $I_l\in\{0,\ldots,n_l-1\}^{2\times m_l}$ contain the connection indices. Gate $j$ receives distinct inputs $a=I_l[0,j]$ and $b=I_l[1,j]$. Its relaxed output follows the baseline parameterization \cite{petersen2022}:
+
+
+\subsection{Network representation}
+
+For a layer $l$ containing $m_l$ two-input gates and $n_l$ available predecessors, we represent connectivity by $I_l\in\{0,\ldots,n_l-1\}^{2\times m_l}$. Gate $j$ receives distinct predecessors $a=I_l[0,j]$ and $b=I_l[1,j]$. Following the baseline DLGN formulation \cite{petersen2022}, its relaxed output is
 
 \begin{equation}
 h_{l,j}=\sum_{q=0}^{15}\mathrm{softmax}(\theta_{l,j})_q\,\widetilde f_q(h_{l-1,a},h_{l-1,b}).
 \label{eq:gate}
 \end{equation}
 
-Here, $\widetilde f_q$ is a continuous relaxation of Boolean function $q$. Training updates $\theta$ while holding $I_l$ fixed; hardening selects the highest-weight function. LogicConnect changes the admissible signal combinations through $I_l$, without modifying the loss, gate relaxation, or output aggregation.
+Here, $\theta_{l,j}$ contains the trainable gate logits and $\widetilde f_q$ denotes the continuous relaxation of Boolean function $q$. Training optimizes $\theta$ on the fixed graph, and discretization selects the highest-weight function for each gate. LogicConnect determines $I_l$ while preserving this optimization, the loss function, and output aggregation.
 
-The constructor represents available signals through graph metadata. We associate predecessor $i$ with structural ancestry $A_i$ and propagate $A_j=A_a\cup A_b$. In dense image inputs, an ancestry label identifies a raw channel-pixel value, so thermometer thresholds of the same value share a label. Ancestry records potential graph access, rather than functional dependence after gates have been learned. Figure \ref{fig:overview} separates this construction metadata from the fixed indices retained during training and inference.
+We associate each predecessor $i$ with a structural ancestry set $A_i$ describing its accessible sources. At a dense image input, labels identify raw channel-pixel values, with thermometer thresholds of the same value sharing a label. Propagating $A_j=A_a\cup A_b$ records sources that can reach each gate through its connections. The learned gate function determines which accessible inputs actually affect the output.
 
+\subsection{Semantic input pairing}
 
+The image encoding provides useful information that is lost when inputs are treated only as numbered bits. In particular, thresholds of the same pixel-channel value share a source, whereas bits from different positions or channels can convey distinct image information. We use this distinction to construct candidate pairs from channel, spatial, and threshold metadata, excluding pairs whose two bits come from the same raw source.
 
-\subsection{Semantic pairing at the input}
+Spatial candidates connect horizontal and vertical positions at power-of-two strides up to half the corresponding axis length, using cyclic boundaries. Additional candidates at the finest scale connect aligned channels and combine different thresholds with a spatial displacement. The construction cycles through these candidate stages, distributing connections across the available relationships while controlling how often each predecessor is selected.
 
-Image encodings expose a distinction that index-only pairing misses: two bits can represent either different image sources or different thresholds of one source. LogicConnect therefore uses channel, position, and threshold metadata to form semantic candidate stages, excluding pairs drawn from the same raw source.
+Within each stage, candidates are ordered by the sum of endpoint fan-outs, then their maximum fan-out, and finally their indices. The initial selection examines up to 64 unused candidates in a seeded affine order; once distinct pairs are exhausted, repeated pairs follow the same degree priority. This bounded search preserves a deterministic construction while limiting the cost of selecting semantically defined pairs.
 
-Spatial stages pair positions along horizontal and vertical axes at power-of-two strides up to half the axis length, with cyclic boundaries. At the finest scale, additional stages pair aligned channels and mix thresholds with a spatial displacement. Cycling across stages distributes pairs across these axes before repeatedly using one kind of relation. Within a stage, selection favors the smallest endpoint fan-out sum, then maximum endpoint fan-out, then endpoint indices. The initial search examines up to 64 unused candidates in a seeded affine order; after distinct pairs are exhausted, repeated pairs follow the same degree priority. This bounded selection balances semantic variety against construction cost without claiming a global optimum.
+\subsection{Multiscale matching in hidden layers}
 
-\subsection{Multiscale structure in deeper layers}
+Deeper signals lack a direct image-coordinate interpretation, so we construct their connections through regular matchings over predecessor indices and use ancestry to distinguish their accessible sources. Each matching contains disjoint pairs, allowing a predecessor to participate at most once per stage. Varying the matching changes which signals are combined while controlling predecessor reuse.
 
-Hidden features no longer have the raw image coordinates needed by the input rule. LogicConnect instead constructs regular matchings over predecessor indices and uses ancestry to distinguish their structural support. A matching changes pair identities while using each predecessor at most once.
+For $n$ predecessors, the construction considers $K=\lceil\log_2 n\rceil$ scales. When $n$ is a power of two, scale $s$ pairs index $i$ with $i\mathbin{\oplus}2^s$, providing connections at different index separations. For other widths, an affine traversal with a coprime step pairs adjacent elements; at odd widths, the unmatched predecessor rotates. Each complete stage contains $\lfloor n/2\rfloor$ pairs. If fewer gates remain, a partial stage selects disjoint pairs by endpoint degree sum, maximum degree, and index.
 
-For $n$ predecessors, the candidate schedule has $K=\lceil\log_2 n\rceil$ scales. At power-of-two widths, scale $s$ pairs $i$ with $i\mathbin{\oplus}2^s$. Other widths use an affine traversal with a coprime step and pair adjacent elements; odd widths rotate the unmatched predecessor. A complete stage contains $\lfloor n/2\rfloor$ pairs. A final partial stage selects disjoint pairs by endpoint degree sum, maximum degree, and index, retaining the regular matching structure.
-
-Stage selection gives priority to predecessor balance. Let $d_i$ denote current fan-out and $P_s$ the pairs retained from candidate stage $s$. The prospective degree spread is
+We select stages by prioritizing balanced reuse and then considering the overlap between their ancestry sets. Let $d_i$ be the current fan-out of predecessor $i$, and let $\delta_i(P_s)$ count its occurrences in the pairs retained from candidate stage $s$. The resulting degree spread is
 
 \begin{equation}
-D_s=\max_i(d_i+\delta_i(P_s))-\min_i(d_i+\delta_i(P_s)),
+D_s=\max_i(d_i+\delta_i(P_s))-\min_i(d_i+\delta_i(P_s)).
 \label{eq:degree}
 \end{equation}
 
-where $\delta_i(P_s)$ counts occurrences of $i$. Minimizing $D_s$ prevents ancestry preferences from overriding balance. Among equally balanced candidates, the constructor favors smaller relative ancestry overlap:
+Minimizing $D_s$ gives preference to stages that maintain uniform access to preceding signals. Among candidates with the same spread, we favor pairs with less relative ancestry overlap, measured by
 
 \begin{equation}
 N_s=\frac{1}{|Q_s|}\sum_{(a,b)\in Q_s}\left(1-\frac{|A_a\cap A_b|}{\max(1,\min(|A_a|,|A_b|))}\right).
 \label{eq:novelty}
 \end{equation}
 
-Here, $Q_s$ is the complete candidate matching, or 2,048 evenly indexed pairs for a larger matching, including when only a partial stage will be retained. The score is zero for identical nonempty ancestry and one for disjoint ancestry. LogicConnect minimizes $D_s$, then maximizes $N_s$, using cyclic nominal scale order to resolve ties. Every scale is used once per cycle. This criterion is a structural heuristic; its incremental accuracy value is tested separately from that of the complete construction.
+The set $Q_s$ contains the complete candidate matching, or 2,048 evenly indexed pairs when the matching is larger. We use the same set when selecting a partial stage. Identical nonempty ancestry sets contribute zero to this score, while disjoint sets contribute one. LogicConnect minimizes $D_s$ and then maximizes $N_s$, resolving remaining ties by cyclic nominal scale order. Every scale is used once per cycle, as summarized in Algorithm \ref{alg:construction}. Ancestry overlap is a structural heuristic whose contribution to accuracy is evaluated separately.
 
 \input{figures/construction}
 
-For even widths, a complete matching increments every predecessor degree once. A final partial matching increments each degree at most once, giving a final spread of at most one from an initially uniform vector. For example, eight predecessors and ten gates use two complete matchings and two pairs from a third, producing degrees of two or three. Degree-preserving randomization tests the value of pair identities beyond this balance property.
+For even widths, complete matchings increment every degree equally, and a final partial matching increments each degree at most once. Starting from uniform degrees therefore gives a final spread of at most one. For example, eight predecessors feeding ten gates use two complete matchings and two additional pairs, producing degrees of two or three. Degree-preserving ablations test the accuracy contribution of pair identities beyond this balance property.
 
-\subsection{Preserving convolutional semantics}
+\subsection{Extension to convolutional networks}
 
-Convolutional DLGNs share gate functions across spatial positions, so unrestricted dense rewiring would change the architecture being evaluated. LogicConnect instead assigns channel pairs while retaining the existing spatial receptive-field sampler, depth-three logic trees, weight sharing, and OR pooling \cite{petersen2024}. The first channel assignment uses semantic metadata; subsequent channel groups use the multiscale rule.
+Convolutional DLGNs share logic trees across spatial positions, requiring the construction to preserve both channel organization and spatial sampling \cite{petersen2024}. We apply LogicConnect to channel pairing while retaining the original receptive-field sampler, depth-three logic trees, weight sharing, and OR pooling. The first channel assignment uses semantic metadata, and subsequent channel groups use multiscale matching. This formulation changes connectivity at the channel level without replacing the convolutional computation with independent dense gates.
 
-Channel ancestry begins with encoded-channel identities. Each output channel receives an additional identity label, preserving distinctions after upstream channel support saturates. Flattened classifier features retain upstream ancestry and receive a spatial-feature identity; semantic pairing then precedes deeper classifier matchings. These labels are construction metadata, not exact pixel-dependence sets. The construction operates at each architecture's signal granularity.
+Channel ancestry initially uses encoded-channel identities. We add an identity label to each output channel so that channels remain distinguishable when their upstream support sets become identical. After flattening, classifier inputs retain this ancestry and receive spatial-feature identities; semantic pairing constructs the classifier input connections, followed by deeper matching stages. These labels support a common construction at different signal granularities, rather than representing exact pixel-dependence sets.
 
-\subsection{Construction and retained cost}
+\subsection{Construction overhead}
 
-Construction uses packed ancestry bitsets on the CPU. Each stage decision considers $K$ candidate matchings, with overlap work bounded by 2,048 sampled pairs per candidate; ancestry storage still grows with the label universe and layer width. This cost is paid before training and measured separately from GPU allocation. A dense layer retains $16m_l$ gate logits and $2m_l$ fixed indices, with no trainable routing parameters. Deployment retains the hardened functions and connections, while discarding ancestry metadata. Equal logical budgets leave physical area and wire cost dependent on synthesis and placement.
+Construction uses packed ancestry bitsets; CPU storage grows with layer width and label universe. Each stage decision considers $K$ matchings and evaluates at most 2,048 ancestry pairs per candidate. We measure this one-time cost separately from training. A dense layer retains $16m_l$ trainable gate logits and $2m_l$ fixed indices, discarding ancestry before deployment. The circuit retains its logical budget; physical area and interconnect cost depend on synthesis and placement.
 \input{tables/protocol}
 \input{tables/dense}

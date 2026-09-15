@@ -6,16 +6,16 @@ This summary accompanies [voice_profile.yaml](voice_profile.yaml). The YAML reta
 
 ## Corpus and confidence
 
-Six user-provided PDFs were analyzed, totaling 60 pages. Page references below are PDF page numbers, starting at one.
+The six PDFs now supplied in `previous_pdfs/` were reread for the September 15 manuscript revision. They total 60 pages and match the hashes of the originally analyzed corpus. Page references below are PDF page numbers, starting at one.
 
 | ID | Paper | Pages | Most useful voice evidence |
 |---|---|---:|---|
-| D1 | [Balancing Throughput and Fair Execution / FairBoost](/home/ianagno/.codex/skills/writing-style/assets/pdfs/Balancing_Throughput_and_Fair_Execution_of_Multi-DNN_Workloads_on_Heterogeneous_Embedded_Devices.pdf) | 14 | Motivating quantitative example; explicit definitions; throughput/fairness trade-offs and exceptions |
-| D2 | [Ecomap](/home/ianagno/.codex/skills/writing-style/assets/pdfs/Ecomap.pdf) | 13 | Constraint-driven methodology; representation definitions; separate overhead analysis |
-| D3 | [Less is More](/home/ianagno/.codex/skills/writing-style/assets/pdfs/Less_is_More_Optimizing_Function_Calling_for_LLM_Execution_on_Edge_Devices.pdf) | 7 | Compact DATE organization; concrete motivating query; offline/online distinction |
-| D4 | [Pythia](/home/ianagno/.codex/skills/writing-style/assets/pdfs/Pythia_An_Edge_First_Agent_for_State_Prediction_in_High-Dimensional_Environments.pdf) | 4 | Concise component explanations; accuracy plus runtime and power; explicit limitations |
-| D5 | [RankMap](/home/ianagno/.codex/skills/writing-style/assets/pdfs/RankMap_Priority_Aware_Multi_DNN_Manager_for_Heterogeneous_Embedded_Devices.pdf) | 8 | DATE contribution structure; worked reward example; metric-by-metric trade-offs |
-| D6 | [ToolAssist](/home/ianagno/.codex/skills/writing-style/assets/pdfs/ToolAssist_An_Edge_First_Function_Calling_Framework_for_Large_Language_Models_with_Adaptive_Cloud_Collaboration.pdf) | 14 | Component ablations; interpretation of proxies; success/latency/cost analysis |
+| D1 | [Balancing Throughput and Fair Execution / FairBoost](previous_pdfs/Balancing_Throughput_and_Fair_Execution_of_Multi-DNN_Workloads_on_Heterogeneous_Embedded_Devices.pdf) | 14 | Motivating quantitative example; explicit definitions; throughput/fairness trade-offs and exceptions |
+| D2 | [Ecomap](previous_pdfs/Ecomap.pdf) | 13 | Constraint-driven methodology; representation definitions; separate overhead analysis |
+| D3 | [Less is More](previous_pdfs/Less_is_More_Optimizing_Function_Calling_for_LLM_Execution_on_Edge_Devices.pdf) | 7 | Compact DATE organization; concrete motivating query; offline/online distinction |
+| D4 | [Pythia](previous_pdfs/Pythia_An_Edge_First_Agent_for_State_Prediction_in_High-Dimensional_Environments.pdf) | 4 | Concise component explanations; accuracy plus runtime and power; explicit limitations |
+| D5 | [RankMap](previous_pdfs/RankMap_Priority_Aware_Multi_DNN_Manager_for_Heterogeneous_Embedded_Devices.pdf) | 8 | DATE contribution structure; worked reward example; metric-by-metric trade-offs |
+| D6 | [ToolAssist](previous_pdfs/ToolAssist_An_Edge_First_Function_Calling_Framework_for_Large_Language_Models_with_Adaptive_Cloud_Collaboration.pdf) | 14 | Component ablations; interpretation of proxies; success/latency/cost analysis |
 
 All six share Iraklis Anagnostopoulos as a coauthor. The profile captures the recurring voice of this author group; the PDFs cannot establish which individual wrote each passage. ToolAssist also discloses language-model assistance for grammar, language, and clarity on page 13. Recurrence across papers carries more weight than that manuscript's distinctive phrasing. The compact structures of the two PDFs labeled DATE 2025, D3 and D5, are the closest venue examples.
 
@@ -62,5 +62,11 @@ Keep these requirements separate from the inferred voice:
 - Preserve achieved versus reported provenance, validation versus held-out test scope, paired seeds, and uncertainty. A positive mean alone does not establish a consistent gain.
 - Distinguish offline construction, training time, allocated GPU memory, and inference cost. An unchanged gate budget does not establish physical area or energy savings.
 - Recheck the current experiment artifacts before using numbers. The voice profile is not a frozen results ledger.
+
+## Revision after direct manuscript feedback
+
+The previous draft applied the profile too mechanically: short statements, reporting labels, and frequent qualifications displaced the explanation connecting the method to its evidence. The revision develops the Boolean-circuit context before the graph constraint, explains semantic pairing before its algorithm, and uses descriptive evaluation headings instead of RQ announcements. Necessary statistical distinctions remain in the experimental setup and beside the relevant findings. See [research_prose_review.md](output/research_prose_review.md) for the section-by-section comparison and review.
+
+The selected-passage cadence measurements above are unchanged historical observations. The September 15 rereading refines the drafting guidance; it does not claim a new full-corpus measurement.
 
 Explicit instructions and project evidence requirements take precedence over stylistic imitation; hard writing constraints take precedence over recurring corpus habits; numerical style targets remain flexible. Apply this profile before subsequent drafting with the paper-writing skill.

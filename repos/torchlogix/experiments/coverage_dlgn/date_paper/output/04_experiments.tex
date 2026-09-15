@@ -1,56 +1,56 @@
 \input{tables/conv}
 \input{tables/routing}
-\input{figures/dense_results}
 \input{figures/routing_tradeoff}
 \input{figures/structural_ablation}
 \section{Experimental Evaluation}
 
-\subsection{Evaluation protocol}
+\subsection{Experimental setup}
 
-We evaluate whether fixed graph design improves accuracy (RQ1), changes the training-resource trade-off (RQ2), and yields identifiable structural effects (RQ3). Compatibility and transfer tests examine the boundary of those findings (RQ4). Table \ref{tab:protocol} specifies the main MNIST \cite{lecun1998}, Fashion-MNIST \cite{xiao2017}, and CIFAR-10 \cite{krizhevsky2009} configurations. Each attribution pair matches architecture, input encoding, gate parameterization, optimizer, updates, evaluation cadence, initialization, and training seed. A 10\% validation split uses split seed 2027. Checkpoints are selected by hardened validation accuracy and frozen before held-out evaluation.
-
-
-
-Experiments use RTX PRO 6000 Blackwell Max-Q GPUs with PyTorch 2.9.0 and CUDA 13.0. We report hardened accuracy, peak PyTorch GPU allocation, trainable parameters, CPU construction time, and training wall time including evaluation. Paired experiments use seeds 0, 1, and 2 unless stated otherwise. Tables report means and sample standard deviations; effect intervals use paired Student-$t$ statistics over training seeds. The labels OUR, REP, and R distinguish our constructions, locally reproduced baselines, and reported literature values; V/T distinguish validation/test accuracy.
-
-LogicConnect (LC) denotes the unified method of Section III. LogicConnect-D (LC-D) is a separate dense specialization using semantic butterfly pairing and ancestry-based swaps. Its measurements remain separate from the unified method. Boldface marks the highest local mean, not statistical superiority or an evaluated variant-selection policy.
-
-\subsection{Accuracy at a fixed architectural budget}
-
-Table \ref{tab:dense} answers RQ1 across five dense configurations. LogicConnect improves CIFAR-10 accuracy by 3.18, 4.56, and 4.59 points at S, M, and L. All three paired confidence intervals exclude zero, and every seed pair improves. Figure \ref{fig:dense_results} shows the advantage across sizes and paired seeds. MNIST improves by 0.66 points with a positive interval; Fashion-MNIST gains 0.52 points, but its interval includes zero.
+We evaluate LogicConnect on MNIST \cite{lecun1998}, Fashion-MNIST \cite{xiao2017}, and CIFAR-10 \cite{krizhevsky2009}, using the configurations in Table \ref{tab:protocol}. The evaluation covers accuracy, training requirements, structural ablations, and transfer. Experiments use RTX PRO 6000 Blackwell Max-Q GPUs with PyTorch 2.9.0 and CUDA 13.0.
 
 
 
+For each connectivity comparison, we match the architecture, encoding, gate parameterization, optimizer, training updates, evaluation cadence, initialization, and training seed. The dense random baseline balances predecessor fan-out, whereas the convolutional baseline cycles through adjacent channel groups and samples spatial connections randomly. We reserve 10\% of the training data for validation using split seed 2027, select checkpoints by hardened validation accuracy, and freeze them before test evaluation. Hardened accuracy is measured after selecting a discrete Boolean function for each gate.
 
-The dense specialization provides a useful qualification. LC-D has the larger mean at Fashion-MNIST and CIFAR-10 S/L, while unified LC leads at MNIST and CIFAR-10 M. At L, LC-D improves on LC by 0.61 points. Structure improves on native random wiring, but the unified constructor does not dominate every specialization. Published values use different protocols and remain separate.
+Unless otherwise stated, experiments use paired seeds 0, 1, and 2. We report means and sample standard deviations, and compute 95\% confidence intervals for accuracy differences using paired Student-$t$ statistics. Resource measurements comprise peak PyTorch GPU allocation, trainable parameters, CPU construction time, and training wall time including evaluation. Tables distinguish our methods (OUR), reproduced baselines (REP), and published values (R), with V and T identifying validation and test results.
 
-Table \ref{tab:conv} reports convolutional S/M test gains of 3.26/2.08 points at unchanged architecture, using one seed each. Full-S validation replication gives 61.05\% for LC versus 59.82\% for random, with a paired gain of 1.23 points and interval $[-3.36,5.82]$. LC wins two of three seeds. The held-out comparisons demonstrate positive operating points, while validation replication does not establish a consistent gain. The additional checkpoints have no held-out evaluations.
+LogicConnect (LC) refers to the unified construction in Section \ref{sec:method}. LogicConnect-D (LC-D) is a dense specialization based on semantic butterfly pairing and ancestry-based swaps. Its results are reported separately, and boldface identifies the largest observed local mean.
 
+\subsection{Classification accuracy}
 
-
-\subsection{Accuracy versus training resources}
-
-Table \ref{tab:routing} addresses RQ2 under the two LILogic architectures and their seven-threshold encoding. At M/L, LC attains 52.54/60.19\% test accuracy, improving on matched fixed random by 3.53/4.86 points. Learned Top-32 routing remains more accurate at 57.84/62.03\%, but its peak allocations are 8.10/24.86 GiB versus 0.474/1.557 GiB for LC. The fixed constructor therefore uses 94.2\%/93.7\% less peak GPU memory and 80\% fewer trainable parameters, at an accuracy cost of 5.30/1.84 points.
-
+Table \ref{tab:dense} compares the dense networks at identical gate budgets. LogicConnect improves CIFAR-10 test accuracy by 3.18, 4.56, and 4.59 percentage points for S, M, and L, respectively. Each improvement is positive for all three paired seeds, and all three confidence intervals exclude zero. The gain therefore persists across the evaluated model sizes without increasing the number of gates or changing gate optimization. MNIST also improves by 0.66 points with a positive confidence interval; the 0.52-point Fashion-MNIST improvement remains inconclusive because its interval includes zero.
 
 
 
-Figure \ref{fig:routing_tradeoff} presents this trade-off in memory and time. Observed Top-32-to-LC training-time ratios are 2.59/18.98 at M/L; they describe recorded executions, not isolated algorithmic speedups. At L, LC recovers 4.86 of the 6.70 accuracy points that Top-32 gains over random, approximately 73\%, using about one-sixteenth of its peak allocation. This operating point suits constrained training memory, while retaining the accuracy cost explicitly.
+The unified construction remains competitive with LC-D, although neither has the highest mean in every configuration. LC-D leads on Fashion-MNIST and CIFAR-10 S/L, including a 0.61-point advantage at L; LC leads on MNIST and CIFAR-10 M. Published values in Table \ref{tab:dense} retain their original protocols, while reproduced baselines support the matched comparisons.
 
-At dense M/L, CPU construction takes 14.33/31.22 seconds, compared with 41.39/113.53 minutes of training. These construction times are below 0.6\% of the corresponding recorded training durations. Dense matched runs retain the same peak GPU allocation as random. Full-S convolutional training averages approximately 4.97 hours for both methods at 1.83 GiB, whereas full-M records 35.69 hours for LC and 25.47 for random. Different execution conditions prevent attributing the M timing difference solely to connectivity. No physical area, energy, or placement benefit is inferred from equal gate counts.
-
-\subsection{Structural attribution}
-
-RQ3 asks whether the gain survives controls that preserve predecessor use. At dense M with 20K updates, we independently keep or randomize first-layer and deeper-layer wiring. Randomization preserves each predecessor's degree in each input slot. The SS, SR, RS, and RR arms reach 59.13, 58.61, 54.64, and 54.93\% validation accuracy, respectively, where S denotes LC structure.
+Table \ref{tab:conv} reports single-seed convolutional test improvements of 3.26 and 2.08 points for S and M at unchanged architecture. Repeating full-S training over three seeds gives mean validation accuracies of 61.05\% for LC and 59.82\% for random connectivity. LC improves in two pairs, but the 1.23-point mean difference has a confidence interval of $[-3.36,5.82]$. The test results therefore demonstrate a possible convolutional benefit whose magnitude and consistency remain uncertain. The additional seeds have validation results only.
 
 
 
-Figure \ref{fig:structural_ablation} separates the paired effects. First-layer structure adds 4.49 points with structured deeper layers and 3.69 with randomized deeper layers; both intervals exclude zero. Adding deeper structure to the structured first layer gives 0.52 points with interval $[-0.52,1.56]$. The interaction interval also includes zero. The full construction leads in mean accuracy; first-layer pairing has the strongest identified effect.
+\subsection{Training memory and time}
 
-Simpler stage-selection controls bound the explanation further. At 20K updates, LC-minus-nominal gains are $-0.09$ points for dense M and $+0.59$ for convolutional S, with intervals $[-1.76,1.59]$ and $[-1.12,2.31]$. Neither result establishes an incremental ancestry-selection advantage. A convolutional body/classifier ablation finds a 2.14-point body effect with a fixed structured classifier, interval $[0.67,3.61]$. That classifier retains reference-body ancestry, so the result is conditional rather than a head-independent body effect. All ablation intervals are exploratory and unadjusted.
+We compare LogicConnect with learned Top-32 routing using the M and L architectures and seven-threshold encoding of LILogic Net \cite{fojcik2026}. As shown in Table \ref{tab:routing}, LC achieves 52.54\% and 60.19\% test accuracy, improving on fixed random connectivity by 3.53 and 4.86 points. Top-32 achieves higher accuracies of 57.84\% and 62.03\%, respectively, but requires considerably more training memory. Its peak allocations are 8.10 and 24.86 GiB, compared with 0.474 and 1.557 GiB for LC. Consequently, LC reduces peak GPU memory by 94.2\% and 93.7\% and trainable parameters by 80\%, at accuracy costs of 5.30 and 1.84 points.
 
-\subsection{Compatibility and transfer boundaries}
 
-RQ4 tests whether benefits survive changes outside the main graph comparison. Matched adapted-WARP experiments retain a dense LC gain of 4.70 points, interval $[3.92,5.48]$, but the convolutional gain is 0.09 with interval $[-1.24,1.42]$. Both adapted recipes trail their matched raw parameterizations. Parameter reduction alone does not establish a better accuracy/memory result.
 
-Frozen CIFAR-10.1 evaluation \cite{recht2018} provides a separate distribution test without adaptation. Dense M gains 3.73 points, interval $[2.80,4.67]$, across three seeds. Convolutional S/M changes are $-0.05$/$+1.95$ points, one seed each, while CIFAR-100 pilots do not establish an LC benefit. The dense transfer gain extends beyond the original test set; the other results bound its applicability.
+
+Figure \ref{fig:routing_tradeoff} illustrates the trade-off: at L, LC recovers 4.86 of the 6.70 points gained by Top-32 over random, approximately 73\%, using one-sixteenth of its peak GPU memory. Recorded Top-32 training times are 2.59 and 18.98 times those of LC for M and L. These ratios include evaluation and reflect execution conditions, with only one Top-32 training seed. They quantify the observed cost difference but do not isolate an algorithmic speedup.
+
+The fixed graph introduces a separate CPU construction cost before training. For the main dense M and L models, construction takes 14.33 and 31.22 seconds, compared with training durations of 41.39 and 113.53 minutes. This cost is below 0.6\% of the respective training times, and peak GPU allocation remains equal to the random baseline. Full-S convolutional training averages approximately 4.97 hours for both methods at 1.83 GiB; full-M takes 35.69 hours for LC and 25.47 hours for random. Because execution conditions differ, the M timing difference cannot be attributed solely to connectivity. Physical area and energy require a separate synthesis and implementation study.
+
+\subsection{Contribution of connectivity structure}
+
+To determine where the accuracy gain originates, we independently retain or randomize the first-layer and deeper-layer connections of dense M after defining the structured graph. Each randomization preserves every predecessor's degree in each gate input position, separating pair identity from frequency of use. At 20K training updates, the SS, SR, RS, and RR configurations achieve validation accuracies of 59.13\%, 58.61\%, 54.64\%, and 54.93\%, respectively. The two letters denote first-layer and deeper-layer connectivity, with S indicating LC structure and R its degree-preserving randomization.
+
+
+
+Figure \ref{fig:structural_ablation} shows that first-layer structure contributes 4.49 points when deeper layers remain structured and 3.69 points when they are randomized. Both confidence intervals exclude zero. In comparison, adding deeper structure to the structured first layer yields 0.52 points with an interval of $[-0.52,1.56]$, and the interaction interval also includes zero. The complete construction achieves the highest mean, but the clearest measured contribution comes from the first-layer pairing.
+
+We further compare ancestry-based stage selection with a nominal scale schedule at 20K updates. LC changes validation accuracy by $-0.09$ points for dense M and $+0.59$ for convolutional S, with intervals of $[-1.76,1.59]$ and $[-1.12,2.31]$. These comparisons do not establish an additional accuracy benefit from ancestry-based selection. A separate convolutional ablation finds a 2.14-point benefit from the structured body with a fixed structured classifier, with an interval of $[0.67,3.61]$. The classifier was constructed using reference-body ancestry, so this finding applies to that particular body–classifier combination. All ablation intervals are exploratory and unadjusted for multiple comparisons.
+
+\subsection{Gate parameterization and transfer}
+
+We examine whether the connectivity benefit persists when gate functions are trained using an adapted WARP parameterization. Relative to random connectivity under the same parameterization, LC improves dense validation accuracy by 4.70 points with an interval of $[3.92,5.48]$. The convolutional difference is 0.09 points with an interval of $[-1.24,1.42]$. Both adapted parameterizations achieve lower accuracy than their corresponding gate-logit baselines, indicating that the connectivity and parameterization gains cannot be assumed to combine.
+
+Finally, we evaluate the frozen CIFAR-10 models on CIFAR-10.1 \cite{recht2018} without adaptation. Dense M retains a 3.73-point LC advantage across three seeds, with an interval of $[2.80,4.67]$. Convolutional S and M change by $-0.05$ and $+1.95$ points, respectively, using one seed each; separate CIFAR-100 pilots do not establish an LC benefit. These findings extend the dense result to a related test distribution while showing that improvements across architectures and datasets remain dependent on the evaluated setting.

@@ -1,5 +1,11 @@
 # Section Review Log
 
+## Revision after reading previous_pdfs — 2026-09-15
+
+The user identified the committed manuscript's report-like prose as inadequate. Reread all six local papers and refined the voice profile before revising the sections in order: introduction, related work, methodology, evaluation, conclusion, and abstract. [research_prose_review.md](research_prose_review.md) records the diagnosis and the scientific/style/continuity review for each section. This revision supersedes the editorial assessment in the earlier passes below.
+
+The final manuscript develops the technical context and mechanism rationale more fully, replaces RQ announcements with scientific subsection titles, and explains comparisons through connected paragraphs. Kept all three equations, table values, uncertainty, method distinctions, and unfavorable results. The dense accuracy plot remains in the atlas, allowing its table to carry the same evidence in the main paper. Consolidated repeated wording to fit six content pages while keeping ten standalone plots available. Reread the final generated LaTeX and visually inspected all seven compiled pages, including equations, tables, legends, and references. No font or line-spacing reduction was used.
+
 ## Pass 3 — Final complete-paper review
 
 Reread the full manuscript after the last concision pass. Retained all three contributions, full unified-method equations, reported/local distinctions, both variants in the dense comparison, and the negative or inconclusive boundaries. The conclusion was shortened to synthesis rather than repeating the evaluation. All six content pages and the references-only seventh page were visually inspected. Four main tables, four figures, and the algorithm remain legible at the required text size.

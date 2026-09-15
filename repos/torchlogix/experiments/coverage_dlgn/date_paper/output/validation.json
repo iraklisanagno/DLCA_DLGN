@@ -5,17 +5,17 @@
   "references_only_page": 7,
   "bibliographic_references": 15,
   "tables": 4,
-  "figures": 4,
+  "figures": 3,
   "standalone_two_panel_plots": 10,
   "atlas_tables": 15,
   "atlas_pages": 28,
   "source_hashes_verified": 49,
   "refinement_logical_rows_checked": 16,
-  "checks_passed": 454,
+  "checks_passed": 452,
   "new_training_or_inference": false,
   "word_budgets_pass": false,
   "budget_exceptions_justified": true,
-  "budget_rationale": "Configured 4,900 body words exceed six content pages with four tables, four figures, and an algorithm. Section shortfalls preserve claims and evidence; see paper_story.md and quality_report.md.",
+  "budget_rationale": "Configured 4,900 body words exceed six content pages with four tables, three figures, and an algorithm. The duplicate dense accuracy plot remains in the evidence atlas. Section shortfalls preserve the scientific argument; see paper_story.md and quality_report.md.",
   "unresolved_references": 0,
   "overfull_boxes": 0,
   "all_fonts_embedded": true,
@@ -25,34 +25,34 @@
       36.85041,
       71.343057,
       558.429833,
-      739.308203
+      745.406213
     ],
     [
       36.8504,
       69.918443,
-      558.429833,
-      740.715045
+      558.43303,
+      734.931774
     ],
     [
-      36.8504,
+      36.85039,
       71.873623,
+      558.433433,
+      745.406233
+    ],
+    [
+      36.8504,
+      64.668092,
       558.434465,
-      745.406243
+      745.000263
     ],
     [
       36.8504,
       64.668092,
-      558.435113,
-      745.406223
+      558.430126,
+      741.197483
     ],
     [
-      36.8504,
-      64.668092,
-      558.431717,
-      743.747803
-    ],
-    [
-      36.85041,
+      36.85039,
       74.046986,
       558.429833,
       745.406253
@@ -377,6 +377,7 @@
     "ur1_factorial_dense_m_rr_seed2 training_config.json",
     "ur1_factorial_dense_m_rr_seed2 artifact existence",
     "ur1_factorial_dense_m_rr_seed2 completion receipt",
+    "four main tables and three main figures",
     "main.pdf page count",
     "main.pdf no Type 3 fonts",
     "main.pdf embedded font IHAIZV+TeXGyreTermesX-Regular-Identity-H",
@@ -390,9 +391,6 @@
     "main.pdf embedded font FKPJSN+NewTXMI5",
     "main.pdf embedded font CAFSZL+txmiaX",
     "main.pdf embedded font PVTTLK+txexs",
-    "main.pdf embedded font IHAIZV+TeXGyreTermesX-Regular-Identity-H",
-    "main.pdf embedded font BZIVMZ+TeXGyreTermesX-Regular",
-    "main.pdf embedded font IXFAWU+txsys",
     "main.pdf embedded font BZIVMZ+TeXGyreTermesX-Regular",
     "main.pdf embedded font IHAIZV+TeXGyreTermesX-Regular-Identity-H",
     "main.pdf embedded font IXFAWU+NewTXMI7",
@@ -440,6 +438,7 @@
     "claim boundary physical",
     "recent related work petersen2022",
     "recent related work petersen2024",
+    "recent related work brandle2025",
     "recent related work mommen2025",
     "recent related work fojcik2026",
     "recent related work yousefi2025",
@@ -447,7 +446,6 @@
     "recent related work gerlach2026",
     "recent related work kim2026",
     "recent related work buehrer2026",
-    "recent related work brandle2025",
     "recent related work lee2026",
     "00_abstract prose checks",
     "01_introduction prose checks",

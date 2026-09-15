@@ -1,6 +1,6 @@
 \begin{table*}[t]
 \centering
-\caption{Dense held-out accuracy (T, \%). Local entries are mean $\pm$ sample SD over seeds 0, 1, 2. LC gains are percentage points against the paired random baseline.}
+\caption{Dense test accuracy (T, \%): mean $\pm$ sample SD over three paired seeds. $\Delta$ LC denotes the percentage-point gain over random connectivity.}
 \label{tab:dense}
 \tabfont
 \setlength{\tabcolsep}{4pt}
@@ -16,5 +16,5 @@ CIFAR-10 L & 1,280 & $55.87\pm0.31$ & $60.46\pm0.35$ & $\text{\bfseries 61.07}\p
 \bottomrule
 \end{tabular}
 \par\smallskip
-\begin{minipage}{\textwidth}\normalsize LC wins 3/3 pairs at each coordinate. LC-D: separate dense specialization. Bold: largest local mean. R: published random baseline \cite{petersen2022}; no exact-budget MNIST/Fashion reference.\end{minipage}
+\begin{minipage}{\textwidth}\normalsize LC improves in all three seed pairs for every model. LC-D: dense specialization. R: published baseline \cite{petersen2022}; exact-budget MNIST/Fashion references are unavailable.\end{minipage}
 \end{table*}

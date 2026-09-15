@@ -1,11 +1,11 @@
 # Author-group voice inferred from six user-provided papers.
 # Observations describe the corpus; drafting targets and project rules are prescriptions.
-profile_version: "1.0"
-generated_on: "2026-09-11"
-target: "DATE paper on unified structured connectivity for dense and convolutional LGNs"
+profile_version: "1.1"
+generated_on: "2026-09-15"
+target: "LogicConnect: Structured Connectivity Design for Differentiable Logic Gate Networks"
 
 source_corpus:
-  root: "/home/ianagno/.codex/skills/writing-style/assets/pdfs"
+  root: "previous_pdfs"
   documents:
     - "Balancing_Throughput_and_Fair_Execution_of_Multi-DNN_Workloads_on_Heterogeneous_Embedded_Devices.pdf"
     - "Ecomap.pdf"
@@ -18,6 +18,7 @@ source_corpus:
   notes: "All six papers informed the analysis of abstracts, introductions, methods, results, and conclusions. Page references use one-based PDF pages. These are coauthored papers with Iraklis Anagnostopoulos in every author list; the profile describes their shared technical voice, not uniquely attributable individual authorship. D6 explicitly discloses language-model assistance for grammar, language, and clarity on PDF page 13. Its distinctive rhetoric is not treated as independent proof of personal style."
   extraction: "pdftotext in default and layout modes. Text is readable; two-column ordering, mathematical notation, figure labels, and line-end hyphenation require care. Bibliographies, tables, affiliations, and figure labels are excluded from cadence samples. Color-profile warnings did not prevent extraction."
   weighting: "Use recurrence across documents, rather than raw word frequency, to identify stable habits. Prefer the compact organization of D3 and D5, explicitly labeled DATE 2025 papers in their PDFs. Do not let the longer journal manuscripts dictate conference length."
+  reread: "All six local PDFs were reread for the September 15 manuscript revision. Their SHA-256 hashes match the original corpus. The earlier selected-passage measurements below are retained, not presented as newly measured full-corpus statistics."
   document_sha256:
     D1: "ba071a1f42775e471bec95064f91a9b5c2c611e0101c2edbe42b8d0e5804ed0c"
     D2: "7ea0b6897cc1723f25119e604704d920dd893c8e7670528064261d3d3fa401cb"
@@ -186,6 +187,17 @@ validation_checklist:
   - "Review sentences over 35 words and paragraphs outside the soft targets; do not shorten definitions merely to pass a count."
   - "Remove em dashes and generic scaffolding; check acronym consistency and user terminology."
   - "Check that observed habits, editorial targets, and project evidence rules remain distinct."
+
+manuscript_revision_priorities:
+  basis: "User feedback that the generated LaTeX reads like a report; direct rereading of previous_pdfs. These priorities refine the application of the profile."
+  rules:
+    - "Develop the technical context before introducing formal predecessor notation or experimental statistics. Explain why the constraint matters for learning a Boolean circuit."
+    - "Write connected explanatory paragraphs. Do not compress a mechanism into several terse statements simply to meet the page budget."
+    - "Use descriptive scientific subsection titles. Keep RQ labels, claim identifiers, provenance codes, and audit language out of ordinary body prose; define necessary table codes once."
+    - "Introduce a comparison and explain its consequence. Avoid shorthand such as positive operating points, coordinates, boundary evidence, retained cost, and raw recipes."
+    - "State a limitation where it affects interpretation, then continue the scientific argument. Do not end every paragraph with a generic disclaimer."
+    - "Use precise authorial language such as we propose and we evaluate without importing unsupported novelty or causal claims from the reference papers."
+    - "Preserve equations and results while explaining the relationships between their terms. Sentence-length checks cannot substitute for reading the compiled manuscript."
 
 precedence:
   - "Explicit user instructions, subject to governing system/developer requirements."

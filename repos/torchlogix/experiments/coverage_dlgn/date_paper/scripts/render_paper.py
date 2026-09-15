@@ -54,7 +54,7 @@ for i,p in enumerate(sorted((PAPER/'sections').glob('*.md'))):
                      'sentences_over_35_words':[s for s,n in zip(sentences,lengths) if n>35],
                      'em_dashes':raw.count('\u2014'),'banned_terms':[x for x in ['delve','brittle','embark','intricate','multifaceted','admittedly','testament','seamless','synergistically'] if re.search(r'\b'+x+r'\b',raw,re.I)]}
     rendered=render(raw,i==0)
-    assets=['figures/overview','tables/protocol','tables/dense','tables/conv','tables/routing','figures/dense_results','figures/routing_tradeoff','figures/structural_ablation']
+    assets=['figures/overview','tables/protocol','tables/dense','tables/conv','tables/routing','figures/routing_tradeoff','figures/structural_ablation']
     if p.stem in ['03_methodology','04_experiments']:
         for asset in assets: rendered=rendered.replace(r'\input{'+asset+'}', '')
     if p.stem=='03_methodology':
@@ -94,8 +94,8 @@ reported=[None,None,(51.27,0.26),(57.39,0.13),(60.78,0.12)]
 rows=[]
 for r,ref in zip(D['dense'],reported):
  e=r['effect'];rows.append(row([r['label'],f"{r['gates']/1000:,.0f}",pm(r['random']),pm(r['u2'],r['u2']['mean']>=r['v3']['mean']),pm(r['v3'],r['v3']['mean']>r['u2']['mean']),f"$+{e['mean']:.2f}$",ci(e['ci95']),r'\NA' if ref is None else f'${ref[0]:.2f}\\pm{ref[1]:.2f}$']))
-table('dense',r'Dense held-out accuracy (T, \%). Local entries are mean $\pm$ sample SD over seeds 0, 1, 2. U2 gains are percentage points against the paired random baseline.', 'lrrrrrrr', ['Model','Gates, K','Random (REP)','LC (OUR)','LC-D (OUR)',r'$\Delta$ U2',r'Paired 95\% CI','Random (R)'],rows,
-      r'LC wins 3/3 pairs at each coordinate. LC-D: separate dense specialization. Bold: largest local mean. R: published random baseline \cite{petersen2022}; no exact-budget MNIST/Fashion reference.')
+table('dense',r'Dense test accuracy (T, \%): mean $\pm$ sample SD over three paired seeds. $\Delta$ LC denotes the percentage-point gain over random connectivity.', 'lrrrrrrr', ['Model','Gates, K','Random (REP)','LC (OUR)','LC-D (OUR)',r'$\Delta$ U2',r'Paired 95\% CI','Random (R)'],rows,
+      r'LC improves in all three seed pairs for every model. LC-D: dense specialization. R: published baseline \cite{petersen2022}; exact-budget MNIST/Fashion references are unavailable.')
 rows=[]
 for r in D['conv_test']:
  ref={'S':60.38,'M':71.01}[r['architecture']] if r['method']=='random' else None
@@ -104,7 +104,7 @@ rows.append(r'\midrule'+'\n')
 for method in ['random','u2']:
  r=D['full_s'][method]
  rows.append(row(['S','Random (REP)' if method=='random' else 'U2 (OUR)','V / 3',pm(r),f"{r['time_h']:.2f}",f"{r['gpu_gib']:.3f}",r'\NA']))
-table('conv','Convolutional CIFAR-10 accuracy and measured training cost. Single-seed test results and three-seed validation replications are separate evidence.', 'llcrrrr', ['Size','Method','Scope / seeds',r'Accuracy, \%','Time, h','GPU, GiB','Random T (R)'],rows,
+table('conv','Convolutional CIFAR-10 accuracy and training cost, with single-seed test results and three-seed validation replications reported separately.', 'llcrrrr', ['Size','Method','Scope / seeds',r'Accuracy, \%','Time, h','GPU, GiB','Random T (R)'],rows,
       r'R: published S/M results \cite{petersen2024}. Full-S V: paired gain $+1.23$ pp, 95\% CI $[-3.36,5.82]$, 2/3 wins; extra seeds have no test results. Time: mean; memory: maximum peak allocation.')
 rows=[]
 for coord in ['m','l']:
@@ -115,8 +115,8 @@ for coord in ['m','l']:
   reftext=r'\NA' if ref is None else f"{ref['accuracy_pct']:.2f}"+(r'$\pm$'+f"{ref['spread_pct']:.2f}" if 'spread_pct' in ref else '')
   rows.append(row([coord.upper(),{'random':'Random (REP)','u2':'U2 (OUR)','top32':'Top-32 (REP)'}[method],str(len(r['seeds'])),pm(r['best_test_hard_pct']),f"{r['trainable_parameters']/1e6:.3f}",f"{r['training_wall_minutes']['mean']:.2f}",f"{r['training_peak_gpu_gib']['mean']:.3f}",reftext]))
  if coord=='m':rows.append(r'\midrule'+'\n')
-table('routing',r'CIFAR-10 routing trade-off under LILogic architectures: M is $1\times64$K gates; L is $2\times128$K gates. Both use seven input thresholds. Local accuracy is T; R retains the published statistic.', 'llcrrrrr', ['Size','Method','$n$',r'Accuracy, \%','Params., M','Time, min','GPU, GiB','Accuracy (R)'],rows,
-      r'Local: 35K updates, batch 256, Adam at 0.075, reflected-padding crops and horizontal flips. R: LILogic v2 \cite{fojcik2026}. Top-32 adds 4.096M/16.384M routing parameters; its single-seed resource comparison is descriptive.')
+table('routing',r'Test accuracy and training cost under LILogic architectures: M uses $1\times64$K gates and L uses $2\times128$K gates, with seven input thresholds.', 'llcrrrrr', ['Size','Method','$n$',r'Accuracy, \%','Params., M','Time, min','GPU, GiB','Accuracy (R)'],rows,
+      r'Training: 35K updates, batch 256, Adam at 0.075, reflected-padding crops and horizontal flips. R: LILogic v2 \cite{fojcik2026}. Top-32 adds 4.096M/16.384M routing parameters.')
 rows=[]
 for arm in ['SS','SR','RS','RR']:
  r=D['factorial_arms'][arm]
