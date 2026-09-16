@@ -1,132 +1,132 @@
 \section{Introduction}
 
 Differentiable Logic Gate Networks (DLGNs) provide an alternative path toward
-efficient machine learning by learning directly with the primitive operations
+efficient machine learning at the edge by learning directly with the primitive operations
 used in digital hardware. Rather than relying on multiply-accumulate
-operations, a DLGN is composed of Boolean gates such as \textsc{and},
-\textsc{or}, and \textsc{xor}. During training, these discrete operations are
+operations, a DLGN is composed of Boolean gates. During training, these discrete operations are
 represented through differentiable relaxations, allowing the network to be
-optimized with gradient descent; after training, each relaxed gate is hardened
+optimized with gradient descent. After training, each relaxed gate is hardened
 to a Boolean function for efficient inference \cite{petersen2022}. This direct
 correspondence between the learned model and Boolean computation makes DLGNs
-particularly attractive for resource-constrained and hardware-oriented
-machine learning.
+particularly attractive for resource-constrained embedded and edge and systems.
 
-A fundamental characteristic of this architecture, however, is its sparse
-connectivity. Each conventional DLGN gate has only two inputs. In the original
-formulation, these two predecessors are selected before training and remain
+However, a fundamental characteristic of DLGNs is their sparse
+connectivity. Each conventional DLGN gate has only two inputs. These two predecessors are selected before training and remain
 fixed, while optimization determines which Boolean function the gate should
 implement \cite{petersen2022}. Therefore, training can change \emph{how} two
-signals are combined, but not \emph{which} signals meet at a gate. If two
+signals are combined, but not \emph{which} signals arrive at a gate. To that end,  if two
 informative signals are never connected through the available graph, learning
 the gate functions alone cannot create that missing edge. At a fixed depth and
 width, connectivity consequently determines the combinations of information
 that can be formed throughout the network and becomes part of the effective
 architectural capacity of the DLGN.
 
-Recent work increasingly supports this view of connectivity as an independent
-design dimension. BitLogic, for example, separates connectivity from the gate
-parameterization, fan-in, input encoding, and output head when studying the
-design space of LUT- and logic-native neural networks \cite{buehrer2026}.
-Other approaches go further and optimize the predecessors themselves during
-training \cite{mommen2025,fojcik2026}. Learned connectivity can recover
+A way to address this issue is to consider connectivity as an independent
+design dimension~\cite{buehrer2026} and optimize the predecessors themselves during
+training \cite{mommen2025,fojcik2026}. This type of learned connectivity can recover
 connections that were absent from the original graph and can therefore improve
-accuracy or reduce the number of required gates. This flexibility, however, is
-not free. During training, each gate must consider multiple candidate signals,
+accuracy. However, such methods require significantly increased training time as each gate must consider multiple candidate signals,
 requiring additional routing state and candidate activations even though the
 final hardened network may retain only a small number of predecessors. This
 creates a practical design choice between inexpensive but arbitrary
 \emph{fixed random connectivity} and more flexible but substantially heavier
 \emph{learned connectivity}.
 
-The connectivity question becomes even more important for vision workloads.
-Early DLGNs operate on flattened image representations, where random
-connections do not explicitly preserve the strong spatial and channel
-relationships present in images \cite{petersen2022}. Convolutional DLGNs
-address this limitation by introducing shared logic-gate trees that operate
-over local receptive fields, enabling logic networks to capture spatial
-patterns and scale to substantially more challenging vision tasks
-\cite{petersen2024}. Yet convolution does not remove the connectivity design
-problem; instead, it changes its form. A convolutional logic tree must select
-both \emph{where} to sample within its receptive field and \emph{which input
-channels} provide those samples. The spatial pattern is reused across image
-locations through weight sharing, making arbitrary changes to this structure
-undesirable. Thus, a useful connectivity method should respect the
-convolutional spatial sampler while improving how channels are paired. A
-shared connectivity principle must therefore accommodate two distinct
-representations: individual input coordinates in dense DLGNs and shared
-channel groups in convolutional DLGNs.
 
-Before designing such a method, we ask whether a simpler property---balanced
-predecessor usage---is already sufficient. As a motivational experiment, we
-consider a dense CIFAR-10 network whose deeper connectivity is kept fixed and
-structured. We then randomize only the first-layer predecessor identities
-while preserving, for every input slot, exactly how often each predecessor is
-used. The resulting graph therefore maintains the same predecessor degrees,
-but forms different input pairs. This seemingly small change reduces hardened
-validation accuracy by $4.49$ percentage points, with a paired $95\%$
-confidence interval of $[3.90,5.09]$ over three seeds. Since the native dense
-random construction already provides broadly balanced fan-out, this experiment
-shows that \emph{which signals are paired matters beyond how frequently each
-signal is used}. It motivates exploiting signal identity when constructing the
-graph rather than treating predecessor indices as interchangeable.
+% The connectivity question becomes even more important for vision workloads.
+% Early DLGNs operate on flattened image representations, where random
+% connections do not explicitly preserve the strong spatial and channel
+% relationships present in images \cite{petersen2022}. Convolutional DLGNs
+% address this limitation by introducing shared logic-gate trees that operate
+% over local receptive fields, enabling logic networks to capture spatial
+% patterns and scale to substantially more challenging vision tasks
+% \cite{petersen2024}. Yet convolution does not remove the connectivity design
+% problem; instead, it changes its form. A convolutional logic tree must select
+% both \emph{where} to sample within its receptive field and \emph{which input
+% channels} provide those samples. The spatial pattern is reused across image
+% locations through weight sharing, making arbitrary changes to this structure
+% undesirable. Thus, a useful connectivity method should respect the
+% convolutional spatial sampler while improving how channels are paired. A
+% shared connectivity principle must therefore accommodate two distinct
+% representations: individual input coordinates in dense DLGNs and shared
+% channel groups in convolutional DLGNs.
 
-Based on this observation, we propose \textbf{LogicConnect}, an offline
-connectivity construction for dense and convolutional DLGNs. LogicConnect
-first introduces structure where signal identity is most explicit. For dense
-image inputs, it forms semantic first-layer pairs according to relationships
-among the encoded image signals rather than arbitrary input indices. In
-subsequent layers, LogicConnect organizes predecessor interactions using
-regular multiscale matchings. Complete matching stages are selected primarily
-to balance predecessor usage, while an ancestry-overlap criterion
-distinguishes alternatives with equivalent degree balance. Once constructed,
-the graph is frozen and conventional DLGN training learns only the gate
-functions.
+To demonstrate the need for connectivity design, we consider a
+motivational example on a dense CIFAR-10 DLGN. We keep the deeper
+connectivity unchanged and randomize only the first-layer connections
+under a degree-preserving constraint. Hence, every predecessor is used
+exactly the same number of times before and after randomization; only
+the identities of the signals paired at each gate are changed. Despite
+preserving the same fan-out, hardened validation accuracy decreases by
+$4.49$ percentage points. This result reveals an important limitation of
+degree-balanced connectivity: \emph{how often a signal is used does not
+determine which information is brought together}. However, explicitly
+selecting favorable pairs is itself challenging to scale. Given $N$
+candidate predecessors, a two-input gate can already choose from
+$\mathcal{O}(N^2)$ possible pairs, and this choice is repeated across
+thousands or millions of gates and multiple network layers. Moreover,
+while input signals have explicit image semantics, intermediate signals
+progressively lose this direct interpretation, making a manually defined
+pairing rule increasingly difficult to justify at deeper layers. Fixed
+random connectivity avoids this search but ignores signal relationships,
+whereas learned connectivity explores the enlarged space by maintaining
+additional routing state and candidate activations during training.
+Therefore, a key challenge is to construct informative connections
+\emph{before training} using principles that remain scalable as the
+network grows and do not introduce the training overhead of a separate
+routing problem.
 
-The same principle is applied to convolutional DLGNs without replacing their
-convolutional execution model. LogicConnect modifies the channel pairs
-available to the shared logic trees while retaining the existing spatial
-sampler and parameter sharing of the convolutional architecture
-\cite{petersen2024}. The classifier is then constructed using the same fixed
-multiscale connectivity principle employed by the dense network. Thus,
-LogicConnect neither introduces a new inference operator nor increases the
-declared depth, width, or gate budget. Instead, it moves connectivity design
-offline, seeking a more useful fixed graph without creating an additional
-trainable routing problem.
+In this paper, we propose \textbf{LogicConnect}, an offline connectivity
+construction that introduces structure into the DLGN graph before training.
+LogicConnect first exploits signal identity where it is most explicit by
+forming semantic first-layer pairs according to relationships among the
+encoded inputs rather than arbitrary indices. In subsequent layers, it
+organizes predecessor interactions through regular multiscale matchings,
+selecting complete matching stages primarily to balance predecessor usage
+and using ancestry overlap to distinguish alternatives with equivalent
+degree balance. 
 
-This leads to the central question investigated in this work:
-\emph{how much accuracy can a DLGN recover through structured offline
-connectivity, under the same declared architecture, before the additional
-training cost of learned routing becomes necessary?}
-Our main contributions are:
+% This leads to the central question investigated in this work:
+% \emph{how much accuracy can a DLGN recover through structured offline
+% connectivity, under the same declared architecture, before the additional
+% training cost of learned routing becomes necessary?}
+% Our main contributions are:
 
-\begin{itemize}
+% \begin{itemize}
 
-    \item We propose \textbf{LogicConnect}, a shared fixed-connectivity
-    construction for dense and convolutional DLGNs. It combines semantic
-    input pairing with regular multiscale predecessor matchings, while
-    preserving the conventional fixed-index representation and introducing no
-    trainable routing parameters.
+%     \item We propose \textbf{LogicConnect}, a shared fixed-connectivity
+%     construction for dense and convolutional DLGNs. It combines semantic
+%     input pairing with regular multiscale predecessor matchings, while
+%     preserving the conventional fixed-index representation and introducing no
+%     trainable routing parameters.
 
-    \item We quantify the resulting \textbf{accuracy--training-resource
-    trade-off}. Across three matched dense CIFAR-10 network sizes,
-    LogicConnect improves hardened test accuracy over fixed random
-    connectivity by $3.18$--$4.59$ percentage points across three paired
-    seeds. Compared with the evaluated Top-32 learned-routing configuration,
-    it uses $93.7$--$94.2\%$ less peak GPU memory while remaining within
-    $1.84$--$5.30$ accuracy points. We further evaluate the same connectivity
-    principle in convolutional DLGNs; the held-out single-seed results are
-    positive, while replicated validation results remain inconclusive.
+%     \item We quantify the resulting \textbf{accuracy--training-resource
+%     trade-off}. Across three matched dense CIFAR-10 network sizes,
+%     LogicConnect improves hardened test accuracy over fixed random
+%     connectivity by $3.18$--$4.59$ percentage points across three paired
+%     seeds. Compared with the evaluated Top-32 learned-routing configuration,
+%     it uses $93.7$--$94.2\%$ less peak GPU memory while remaining within
+%     $1.84$--$5.30$ accuracy points. We further evaluate the same connectivity
+%     principle in convolutional DLGNs; the held-out single-seed results are
+%     positive, while replicated validation results remain inconclusive.
 
-    \item We perform \textbf{structural attribution} to identify where the
-    gains originate. Degree-preserving experiments separate predecessor
-    identity from predecessor frequency and show the strongest measured dense
-    effect at the first layer. Additional experiments examine the incremental
-    effect of deeper connectivity, simpler construction rules, alternative
-    gate training, and distribution shift, characterizing both the benefits
-    and the limits of structured fixed connectivity.
+%     \item We perform \textbf{structural attribution} to identify where the
+%     gains originate. Degree-preserving experiments separate predecessor
+%     identity from predecessor frequency and show the strongest measured dense
+%     effect at the first layer. Additional experiments examine the incremental
+%     effect of deeper connectivity, simpler construction rules, alternative
+%     gate training, and distribution shift, characterizing both the benefits
+%     and the limits of structured fixed connectivity.
 
-\end{itemize}
+%     \item LogicConnect neither introduces a new inference operator nor
+% increases the declared depth, width, or gate budget; instead, it moves
+% connectivity design entirely offline, providing a more informative fixed
+% graph without creating an additional trainable routing problem.
+% \item differences between desne and convolutional
+
+% \end{itemize}   
+
+
 
 \begin{comment}
 
