@@ -21,48 +21,57 @@
 \BIBdecl
 
 \bibitem{petersen2022}
-F.~Petersen, C.~Borgelt, H.~Kuehne, and O.~Deussen, ``Deep differentiable logic gate networks,'' in \emph{Advances in Neural Information Processing Systems}, vol.~35, 2022.
+F.~Petersen, C.~Borgelt, H.~Kuehne, and O.~Deussen, ``Deep differentiable logic gate networks,'' in \emph{Advances in Neural Information Processing Systems}, vol.~35, 2022, pp. 2006--2018.
 
 \bibitem{buehrer2026}
-S.~B{\"u}hrer, A.~Plesner, T.~Aczel, and R.~Wattenhofer, ``{BitLogic}: A framework for gradient-based {LUT}-native neural networks,'' \emph{Transactions on Machine Learning Research}, 2026.
+S.~B{\"u}hrer, A.~Plesner, T.~Aczel, and R.~Wattenhofer, ``{BitLogic}: A framework for gradient-based {LUT}-native neural networks,'' \emph{Transactions on Machine Learning Research}, Jun. 2026.
 
 \bibitem{mommen2025}
-W.~Mommen, L.~Keuninckx, M.~Hartmann, and P.~Wambacq, ``A method for optimizing connections in differentiable logic gate networks,'' arXiv:2507.06173, 2025.
+W.~Mommen, L.~Keuninckx, M.~Hartmann, and P.~Wambacq, ``A method for optimizing connections in differentiable logic gate networks,'' 2025.
 
 \bibitem{fojcik2026}
-K.~Fojcik, R.~Zioma, and J.~Armaitis, ``{LILogic Net}: Compact logic gate networks with learnable connectivity for efficient hardware deployment,'' arXiv:2511.12340v2, 2026.
+K.~Fojcik, R.~Zioma, and J.~Armaitis, ``{LILogic Net}: Compact logic gate networks with learnable connectivity for efficient hardware deployment,'' in \emph{Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition Workshops}, 2026, pp. 3498--3507.
 
 \bibitem{petersen2024}
 F.~Petersen, H.~Kuehne, C.~Borgelt, J.~Welzel, and S.~Ermon, ``Convolutional differentiable logic gate networks,'' in \emph{Advances in Neural Information Processing Systems}, vol.~37, 2024.
 
+\bibitem{buehrer2025recurrent}
+S.~B{\"u}hrer, A.~Plesner, T.~Aczel, and R.~Wattenhofer, ``Recurrent deep differentiable logic gate networks,'' in \emph{Proceedings of the 2nd International Workshop on Edge and Mobile Foundation Models}, 2025, pp. 31--36.
+
 \bibitem{brandle2025}
-S.~Br{\"a}ndle, T.~Aczel, A.~Plesner, and R.~Wattenhofer, ``From {MNIST} to {ImageNet}: Understanding the scalability boundaries of differentiable logic gate networks,'' arXiv:2509.25933, 2025.
+S.~Br{\"a}ndle, T.~Aczel, A.~Plesner, and R.~Wattenhofer, ``From {MNIST} to {ImageNet}: Understanding the scalability boundaries of differentiable logic gate networks,'' 2025.
+
+\bibitem{yue2024}
+C.~Yue and N.~K. Jha, ``Learning interpretable differentiable logic networks,'' \emph{IEEE Transactions on Circuits and Systems for Artificial Intelligence}, vol.~1, no.~1, pp. 69--82, 2024.
+
+\bibitem{benamira2022}
+A.~Benamira, T.~Gu{\'e}rand, T.~Peyrin, T.~Yap, and B.~Hooi, ``A scalable, interpretable, verifiable \& differentiable logic gate convolutional neural network architecture from truth tables,'' 2022.
+
+\bibitem{benamira2024}
+A.~Benamira, T.~Peyrin, T.~Yap, T.~Gu{\'e}rand, and B.~Hooi, ``Truth table net: Scalable, compact \& verifiable neural networks with a dual convolutional small boolean circuit networks form,'' in \emph{Proceedings of the Thirty-Third International Joint Conference on Artificial Intelligence}, 2024, pp. 13--21.
+
+\bibitem{mordvintsev2020}
+A.~Mordvintsev, E.~Randazzo, E.~Niklasson, and M.~Levin, ``Growing neural cellular automata,'' \emph{Distill}, vol.~5, no.~2, 2020.
+
+\bibitem{miotti2025}
+P.~Miotti, E.~Niklasson, E.~Randazzo, and A.~Mordvintsev, ``Differentiable logic cellular automata: From game of life to pattern generation,'' in \emph{ALIFE 2025: Proceedings of the Artificial Life Conference 2025}, 2025.
+
+\bibitem{li2022deepgate}
+M.~Li, S.~Khan, Z.~Shi, N.~Wang, H.~Yu, and Q.~Xu, ``Deepgate: Learning neural representations of logic gates,'' in \emph{Proceedings of the 59th ACM/IEEE Design Automation Conference}, 2022, pp. 667--672.
 
 \bibitem{yousefi2025}
-S.~Yousefi, A.~Plesner, T.~Aczel, and R.~Wattenhofer, ``Mind the gap: Removing the discretization gap in differentiable logic gate networks,'' in \emph{Advances in Neural Information Processing Systems}, 2025.
+S.~Yousefi, A.~Plesner, T.~Aczel, and R.~Wattenhofer, ``Mind the gap: Removing the discretization gap in differentiable logic gate networks,'' in \emph{Advances in Neural Information Processing Systems}, vol.~38, 2025, pp. 135\,798--135\,828.
 
 \bibitem{ruttgers2025}
-L.~R{\"u}ttgers, T.~Aczel, A.~Plesner, and R.~Wattenhofer, ``Light differentiable logic gate networks,'' arXiv:2510.03250, 2025.
+L.~R{\"u}ttgers, T.~Aczel, A.~Plesner, and R.~Wattenhofer, ``Light differentiable logic gate networks,'' in \emph{International Conference on Learning Representations}, 2026.
 
 \bibitem{gerlach2026}
-L.~Gerlach, T.~Gerlach, L.~V{\aa}ge, E.~Kauffman, and I.~Ojalvo, ``{WARP} logic neural networks,'' arXiv:2602.03527, 2026.
+L.~Gerlach, T.~Gerlach, L.~V{\aa}ge, E.~Kauffman, and I.~Ojalvo, ``{WARP} logic neural networks,'' 2026.
 
 \bibitem{kim2026}
-Y.~Kim, ``Fitting multilinear polynomials for logic gate networks,'' arXiv:2605.08657, 2026.
+Y.~Kim, ``Fitting multilinear polynomials for logic gate networks,'' 2026.
 
-\bibitem{lee2026}
-S.~Lee, J.~Sun, and J.~Chung, ``Two-stage unit tying for simplifying differentiable logic gate networks,'' in \emph{Proceedings of the International Conference on Machine Learning}, ser. Proceedings of Machine Learning Research, vol. 306, 2026.
-
-\bibitem{lecun1998}
-Y.~LeCun, L.~Bottou, Y.~Bengio, and P.~Haffner, ``Gradient-based learning applied to document recognition,'' \emph{Proceedings of the IEEE}, vol.~86, no.~11, pp. 2278--2324, 1998.
-
-\bibitem{xiao2017}
-H.~Xiao, K.~Rasul, and R.~Vollgraf, ``{Fashion-MNIST}: A novel image dataset for benchmarking machine learning algorithms,'' arXiv:1708.07747, 2017.
-
-\bibitem{krizhevsky2009}
-A.~Krizhevsky, ``Learning multiple layers of features from tiny images,'' University of Toronto, Tech. Rep., 2009.
-
-\bibitem{recht2018}
-B.~Recht, R.~Roelofs, L.~Schmidt, and V.~Shankar, ``Do {CIFAR-10} classifiers generalize to {CIFAR-10}?'' arXiv:1806.00451, 2018.
+\bibitem{damera2026}
+S.~S. Damera, R.~Matheu, A.~G. Puranic, and J.~S. Baras, ``Polynomial surrogate training for differentiable ternary logic gate networks,'' 2026.
 
 \end{thebibliography}

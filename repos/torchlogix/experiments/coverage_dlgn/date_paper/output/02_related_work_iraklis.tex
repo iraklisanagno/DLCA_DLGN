@@ -1,0 +1,48 @@
+\section{Related Work}
+
+
+Petersen et al. introduced Differentiable Logic Gate Networks (DLGNs),
+enabling gradient-based optimization of Boolean gate functions while
+keeping randomly initialized connections fixed during training
+\cite{petersen2022}. In~\cite{petersen2024}, the authors extended DLGNs
+to convolutional architectures, exploiting image structure through shared
+logic trees, spatial sampling, pooling, and residual initialization. Other
+works extend DLGNs to recurrent models \cite{buehrer2025recurrent},
+improve output aggregation for larger classification problems
+\cite{brandle2025}, or develop interpretable and truth-table-based logic
+architectures \cite{yue2024,benamira2022,benamira2024}. Related
+differentiable logic models have also been explored for cellular automata
+\cite{mordvintsev2020,miotti2025} and circuit representation learning
+\cite{li2022deepgate}. However, these works primarily focus on extending
+the architecture and applicability of logic-based networks, without exploring the connectivity problem.
+% rather than isolating how a deliberately structured \emph{fixed} predecessor graph should be constructed under the same architecture and gate budget.
+
+
+Regarding DLGN connectivity, Mommen et al. optimize distributions over
+candidate predecessors, allowing gate inputs to change during training
+\cite{mommen2025}. Similarly, LILogic Net employs sparse Top-$K$ routing
+to learn compact network connectivity \cite{fojcik2026}, while BitLogic
+studies connectivity together with encoding, fan-in, node
+parameterization, and output-head design \cite{buehrer2026}. These works
+demonstrate that selecting better predecessors can significantly improve
+logic networks. However, learned routing requires processing candidate
+connections and maintaining additional routing parameters and
+intermediate activations during training, increasing both execution time
+and memory requirements, even though the hardened network ultimately
+retains only a small number of inputs per gate. In contrast, our approach
+constructs the connectivity \emph{offline} and keeps it fixed during gate
+training, avoiding an additional routing optimization problem while
+preserving the declared depth, width, and gate budget.
+
+
+Additionally, several works focus on improving the optimization of the
+gate functions themselves. Mind the Gap reduces the discrepancy between
+continuous training and discrete inference \cite{yousefi2025}. Light
+DLGNs redesign the gate parameterization to improve training efficiency
+\cite{ruttgers2025}, while WARP introduces a Walsh-based Boolean
+representation \cite{gerlach2026}. The works in
+\cite{kim2026,damera2026} further explore polynomial formulations to
+analyze or replace conventional soft gate mixtures. These methods
+optimize \emph{what function} a gate computes from its assigned inputs,
+whereas our work focuses on \emph{which signals} are made available to
+that gate.
