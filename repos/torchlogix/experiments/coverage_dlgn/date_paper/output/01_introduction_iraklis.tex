@@ -78,21 +78,21 @@ creates a practical design choice between inexpensive but arbitrary
 
 
 To isolate the effect of \emph{pair identity}, we consider a four-layer
-dense CIFAR-10 DLGN with 512K gates. We compare its structured first-layer
-graph against a randomized control derived from the same graph. The control
+dense CIFAR-10 DLGN with 512K gates.
+We compare first-layer pairing constructed using spatial, channel, and encoding relationships against a randomized control derived from the same graph.
+The control
 preserves exactly how often every encoded input appears in each of the two
 gate-input positions, but permutes these assignments across gates. Thus, the
 two networks have identical dimensions and predecessor-usage statistics and
-differ only in which inputs are paired. All deeper connections remain
-unchanged, and both networks use the same data split, paired initialization,
-and training configuration.
+differ only in which inputs are paired.
+All deeper connections remain unchanged. Both graphs are constructed before training and trained separately for $20,000$ updates using the same data split, paired initialization, and training configuration.
 \input{tables/motivation.tex}
 As shown in Table~\ref{tab:motivation}, randomizing only the pair identities
 reduces hardened validation accuracy in all three runs, with a mean drop of
-$4.59\%$. Hence, balanced predecessor usage alone does not
+$4.49\%$. Hence, balanced predecessor usage alone does not
 determine connectivity quality: the specific signals combined by each gate
-also matter. Determining favorable pairs, however, quickly becomes
-intractable. With $N$ available predecessors, each two-input gate admits
+also matter. 
+Exhaustively evaluating candidate pairs, however, becomes costly as the network grows. With $N$ available predecessors, each two-input gate admits
 $N(N-1)/2$ possible unordered pairs, and this decision is repeated across
 many gates and layers. Furthermore, image inputs provide explicit spatial,
 channel, and encoding relationships that can guide connectivity, whereas
