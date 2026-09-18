@@ -22,14 +22,7 @@ for convolutional DLGNs, again at the first classifier layer after
 flattening, where feature-channel and spatial identities are available. For
 intermediate signals without such direct metadata, LogicConnect instead uses
 \emph{degree-balanced multiscale matchings}, which systematically combine
-predecessors while controlling their reuse based on structural ancestry. At the network input, signals retain explicit
-relationships inherited from the data representation, such as their spatial
-location, channel, and encoding. LogicConnect exploits these relationships
-through \emph{semantic input pairing}, avoiding an arbitrary selection of inputs. After signals pass through logic gates, however, this direct
-interpretation is progressively lost. Rather than imposing the same semantic
-rule at every layer, LogicConnect organizes subsequent connections through
-\emph{degree-balanced multiscale matchings}. These matchings systematically
-combine predecessors while controlling their reuse based on structural ancestry. 
+predecessors while controlling their reuse based on structural ancestry.
 
 Importantly, the construction is entirely architecture-driven. LogicConnect
 does not observe class labels, training loss, validation or test accuracy, or
