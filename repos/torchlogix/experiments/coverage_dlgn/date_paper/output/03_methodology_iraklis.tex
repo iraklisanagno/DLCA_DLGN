@@ -1,0 +1,404 @@
+% \input{figures/overview}
+\section{Methodology}
+\label{sec:method}
+
+\textcolor{red}{LogicConnect constructs the connectivity of a DLGN \emph{before training},
+with the goal of exposing each gate to more informative combinations of
+signals while retaining the simplicity of fixed connectivity}. As illustrated
+in Figure~\ref{fig:overview}, LogicConnect takes the encoded input
+representation and the dimensions of each network layer and returns the two
+fixed predecessor indices required by every gate. Once these connections are
+generated, the graph is frozen and training proceeds using the original DLGN
+gate parameterization. Therefore, LogicConnect does not introduce additional
+routing parameters, change the number of gates, or modify the gate-training
+procedure.
+
+The key challenge is that the information available for connectivity design
+changes with network depth. At the network input, signals retain explicit
+relationships inherited from the data representation, such as their spatial
+location, channel, and encoding. LogicConnect exploits these relationships
+through \emph{semantic input pairing}, avoiding an arbitrary selection of inputs. After signals pass through logic gates, however, this direct
+interpretation is progressively lost. Rather than imposing the same semantic
+rule at every layer, LogicConnect organizes subsequent connections through
+\emph{degree-balanced multiscale matchings}. These matchings systematically
+combine predecessors while controlling their reuse based on structural ancestry. 
+
+Importantly, the construction is entirely architecture-driven. LogicConnect
+does not observe class labels, training loss, validation or test accuracy, or
+trained gate parameters when selecting connections. It also does not search
+over individual edges using accuracy feedback or perform post-hoc edge
+swapping. Instead, it selects from predefined structured pairing and matching
+stages using deterministic structural criteria. Thus, the one-time
+construction is separated from learning: connectivity is designed offline,
+while conventional DLGN training subsequently determines only the Boolean
+functions implemented by the fixed graph. 
+% The following subsections describe the graph representation, semantic input construction, multiscale matching, and its application to convolutional DLGNs
+
+\subsection{Fixed-Graph Representation}
+\label{sec:representation}
+
+We first define the fixed connectivity used throughout the network. For a
+layer $l$ with $m_l$ two-input gates and $n_l$ available predecessors, we
+represent its connections by
+$I_l\in\{0,\ldots,n_l-1\}^{2\times m_l}$. For every gate $j$, the two
+entries $I_l[0,j]$ and $I_l[1,j]$ identify distinct predecessor signals.
+Following the original DLGN formulation~\cite{petersen2022}, the output of
+gate $j$ during training is computed as
+%
+\begin{equation}
+h_{l,j} =
+\sum_{q=0}^{15}
+\mathrm{softmax}(\theta_{l,j})_q\,
+\widetilde{f}_q
+\!\left(
+h_{l-1,I_l[0,j]},
+h_{l-1,I_l[1,j]}
+\right),
+\label{eq:gate}
+\end{equation}
+%
+where $\theta_{l,j}$ contains the trainable logits over the 16 two-input
+Boolean functions and $\widetilde{f}_q$ denotes their continuous
+relaxation. After training, the function with the highest weight is selected
+for discrete inference. LogicConnect modifies only the fixed predecessor
+indices $I_l$; the gate parameterization, optimization objective,
+discretization procedure, and output aggregation remain unchanged. This
+allows us to isolate the effect of connectivity from changes to the DLGN
+training formulation.
+
+To preserve information about how signals are related as they propagate
+through the fixed graph, we associate every predecessor with a
+\emph{structural ancestry set}. At the network input, each encoded signal is
+assigned a source identity describing the raw value from which it originates.
+For image inputs, for example, multiple thermometer-encoded thresholds of
+the same pixel and channel share the same source identity. The ancestry of an
+input therefore contains its source label. For a gate receiving predecessors
+$a$ and $b$, its ancestry is propagated simply as
+%
+\begin{equation}
+A_{l,j}=A_{l-1,a}\cup A_{l-1,b}.
+\label{eq:ancestry}
+\end{equation}
+%
+Importantly, $A_{l,j}$ describes the set of sources that are
+\emph{structurally reachable} by the gate, rather than the inputs that
+functionally determine its output. The learned Boolean function may suppress
+or ignore one of its predecessors. We use this structural information only
+during offline connectivity construction; it does not introduce trainable
+parameters or alter the gate computation.
+
+\subsection{Semantic Input Pairing}
+\label{sec:semantic}
+
+The first layer is the only part of the network where the identity of each
+signal is known directly from the input representation. Rather than treating
+these inputs as arbitrary bit indices, we use their source metadata to expose
+the gates to relationships already present in the encoded image. We denote an
+encoded input by $x_{p,c,t}$, where $p$ identifies the spatial position, $c$
+the channel, and $t$ the encoding threshold. All thresholds originating from
+the same raw pixel--channel value share the same source identity,
+$\sigma(x_{p,c,t})=(p,c)$. Therefore, pairs satisfying
+$\sigma(x_i)=\sigma(x_j)$ are excluded, since they originate from the same
+underlying image value and provide limited complementary information.
+
+Using this metadata, we construct a collection of semantic pairing stages.
+Spatial stages connect inputs whose positions differ by power-of-two
+displacements,
+%
+\begin{equation}
+\Delta = \{1,2,4,\ldots\},
+\label{eq:semantic_stride}
+\end{equation}
+%
+up to half of the corresponding image dimension. Horizontal and vertical
+displacements are considered separately, with cyclic boundaries used to avoid
+systematically favoring particular image regions. Additional stages capture
+cross-channel and cross-threshold relationships, including aligned channels
+and threshold combinations with spatial displacement. Hence, the candidate
+set can be viewed as
+%
+\begin{equation}
+\mathcal{C}
+=
+\mathcal{C}_{\mathrm{spatial}}
+\cup
+\mathcal{C}_{\mathrm{channel}}
+\cup
+\mathcal{C}_{\mathrm{threshold}},
+\label{eq:semantic_candidates}
+\end{equation}
+%
+where every pair in $\mathcal{C}$ satisfies the distinct-source constraint
+above. This exposes the first-layer gates to multiple complementary notions
+of input structure instead of relying on a single local pairing rule.
+
+Semantic structure alone, however, does not guarantee balanced predecessor
+usage. Let $d_i$ denote the number of times predecessor $i$ has already been
+selected. For a candidate pair $(i,j)$, LogicConnect prioritizes smaller
+%
+\begin{equation}
+d_i+d_j,
+\label{eq:pair_degree}
+\end{equation}
+%
+followed by the smaller value of $\max(d_i,d_j)$, and finally the pair indices
+to resolve remaining ties. This degree-aware ordering prevents a small subset
+of semantically favorable inputs from dominating the first layer. Candidate
+stages are visited cyclically so that spatial, channel, and encoding
+relationships all contribute to the final graph.
+
+To keep the construction scalable, we avoid searching the complete
+$\mathcal{O}(n^2)$ space of possible predecessor pairs. At each selection,
+the constructor examines at most 64 unused candidates following a fixed
+seeded affine traversal and applies the degree criteria above. Once the
+distinct pairs of a stage are exhausted, repeated pairs are allowed under the
+same ordering. Importantly, this bounded search is purely structural:
+class labels, training loss, validation accuracy, and trained gate parameters
+are never used to select a pair. The first-layer connectivity is therefore
+fully determined before training from the input metadata and the requested
+network dimensions.
+
+
+\subsection{Degree-Balanced Multiscale Matching}
+\label{sec:multiscale}
+
+Semantic pairing is well-defined at the network input because every signal
+retains explicit spatial, channel, and encoding metadata. This interpretation
+does not persist in deeper layers, where each predecessor represents the
+output of several previously combined logic gates. Reapplying the same
+input-level semantic rules would therefore impose relationships that are no
+longer directly supported by the signal representation. Instead, LogicConnect
+uses a regular \emph{multiscale matching} construction that progressively
+mixes hidden signals while controlling how frequently each predecessor is
+reused.
+
+For a layer with $n$ available predecessors, we consider
+$K=\lceil\log_2 n\rceil$ nominal interaction scales. When $n$ is a power of
+two, scale $s$ forms the matching
+%
+\begin{equation}
+\mathcal{M}_s =
+\left\{(i,i\oplus 2^s)\right\},
+\qquad
+s=0,\ldots,\log_2 n-1,
+\label{eq:xor_matching}
+\end{equation}
+%
+where each unordered pair is retained only once. Consequently, every stage
+contains $n/2$ disjoint pairs and every predecessor appears exactly once.
+Different values of $s$ expose the gates to progressively different index
+separations. For example, with eight predecessors,
+%
+\begin{align*}
+s=0 &: (0,1),(2,3),(4,5),(6,7),\\
+s=1 &: (0,2),(1,3),(4,6),(5,7),\\
+s=2 &: (0,4),(1,5),(2,6),(3,7).
+\end{align*}
+%
+This structure provides regular mixing at multiple scales without searching
+over arbitrary edge combinations.
+
+For widths that are not powers of two, we preserve the same principle using
+affine traversals of the predecessor indices. A traversal follows
+$\pi(k)=(o+kr)\bmod n$, where the step $r$ is chosen to be coprime with $n$,
+and adjacent elements of the traversal are paired. This guarantees that the
+traversal visits every predecessor before repeating. For odd $n$, one
+predecessor necessarily remains unmatched in each complete stage; the
+unmatched position is rotated across stages to avoid systematically excluding
+the same signal. Thus, a complete matching contains $\lfloor n/2\rfloor$
+pairs. If fewer gates remain than required for a complete stage, LogicConnect
+uses a final partial matching and selects disjoint pairs according to endpoint
+degree sum, maximum endpoint degree, and index order.
+
+The remaining question is \emph{which matching stage should be used next}.
+LogicConnect follows a strict selection hierarchy. First, it prioritizes
+balanced predecessor reuse. Let $d_i$ denote the current number of times
+predecessor $i$ has been selected, and let $\delta_i(\mathcal{M}_s)$ denote
+its additional occurrences if stage $s$ is appended. We measure the resulting
+degree imbalance as
+%
+\begin{equation}
+D_s =
+\max_i \left(d_i+\delta_i(\mathcal{M}_s)\right)
+-
+\min_i \left(d_i+\delta_i(\mathcal{M}_s)\right).
+\label{eq:degree_spread}
+\end{equation}
+%
+Stages with smaller $D_s$ are preferred. This criterion prevents repeated
+selection of a small subset of predecessors and keeps access to the preceding
+layer as uniform as possible.
+
+Degree balance alone, however, cannot distinguish stages that use predecessors
+equally often but repeatedly combine signals with similar structural history.
+We therefore use the ancestry sets introduced in
+Section~\ref{sec:representation} only as a secondary tie-breaking criterion.
+For a candidate stage, we define its ancestry novelty as
+%
+\begin{equation}
+N_s =
+\frac{1}{|Q_s|}
+\sum_{(a,b)\in Q_s}
+\left(
+1-
+\frac{|A_a\cap A_b|}
+{\max\!\left(1,\min(|A_a|,|A_b|)\right)}
+\right),
+\label{eq:ancestry_novelty}
+\end{equation}
+%
+where $Q_s$ contains all pairs of the candidate matching, or at most 2,048
+evenly sampled pairs for very large stages. Identical nonempty ancestry sets
+contribute zero, whereas disjoint sets contribute one. Hence, among stages
+with the same degree spread, LogicConnect favors the one that combines
+predecessors with less redundant reachable support. The ancestry score does
+not override degree balance; it is used only when the primary criterion
+cannot distinguish between candidate stages.
+
+Any remaining ties are resolved by a deterministic cyclic scale order, with
+every nominal scale used once before the cycle restarts. Importantly,
+LogicConnect selects \emph{whole predefined matching stages}. It does not
+optimize individual edges, swap connections according to validation accuracy,
+or perform an accuracy-driven search over candidate graphs. Only the final
+truncated stage, required when the remaining number of gates is smaller than a
+complete matching, is selected at the pair level. This stage-based
+construction substantially reduces the connectivity search space while
+retaining controlled predecessor reuse and multiscale signal mixing.
+
+Algorithm~\ref{alg:construction} summarizes the hidden-layer construction.
+
+\begin{algorithm}[t]
+\caption{Degree-Balanced Multiscale Matching}
+\label{alg:construction}
+\begin{algorithmic}[1]
+\REQUIRE Number of predecessors $n$, number of gates $m$, ancestry sets
+$\{A_i\}$
+\ENSURE Fixed predecessor pairs for the layer
+\STATE Generate $K=\lceil\log_2 n\rceil$ multiscale candidate matchings
+\STATE Initialize predecessor degrees $d_i\leftarrow 0$
+\STATE Initialize cyclic scale order
+\WHILE{unassigned gates remain}
+    \STATE Determine whether a complete or partial stage is required
+    \FOR{each eligible candidate stage $s$}
+        \STATE Compute degree spread $D_s$
+    \ENDFOR
+    \STATE Retain stages with minimum $D_s$
+    \IF{multiple stages remain}
+        \STATE Compute ancestry novelty $N_s$ for the tied stages
+        \STATE Retain stages with maximum $N_s$
+    \ENDIF
+    \STATE Resolve any remaining tie using the cyclic scale order
+    \STATE Append the selected complete or partial matching
+    \STATE Update predecessor degrees and ancestry
+\ENDWHILE
+\RETURN Fixed predecessor pairs
+\end{algorithmic}
+\end{algorithm}
+
+
+\subsection{Convolutional DLGNs}
+\label{sec:conv}
+
+The same connectivity principles can be applied to convolutional DLGNs, but
+the object being connected changes from individual signals to shared channel
+groups. Convolutional DLGNs already impose a strong spatial inductive bias
+through their receptive-field sampler and shared logic trees
+\cite{petersen2024}. LogicConnect therefore does not alter the spatial
+sampling pattern or replace the convolutional computation. Instead, it
+constructs the \emph{channel pairs} presented to the shared logic trees,
+allowing connectivity to be structured while preserving the original
+convolutional execution model.
+
+More specifically, the receptive-field sampler, tree depth, gate sharing,
+and pooling operations remain identical to the baseline convolutional DLGN.
+For the first convolutional layer, channel assignments are constructed using
+the available input metadata, analogous to the semantic pairing described in
+Section~\ref{sec:semantic}. Subsequent channel groups are formed using the
+degree-balanced multiscale matching of
+Section~\ref{sec:multiscale}. Since the same channel pairing is reused across
+spatial positions, the construction preserves weight sharing and does not
+introduce location-dependent routing. Thus, LogicConnect changes which
+channels are combined, while the spatial locations sampled by the
+convolutional operator remain unchanged.
+
+To support the same structural criteria across convolutional layers, ancestry
+is tracked at the channel level. Initially, each encoded input channel is
+assigned a source label. After a shared logic tree produces a new output
+channel, its ancestry is formed from the union of the ancestries of its input
+channels. We additionally retain an identity label for each generated output
+channel. This distinction is important when two channels obtain identical
+upstream support: although their reachable sources are the same, they remain
+separate signals and may learn different Boolean functions. As in the dense
+case, these labels are used only during offline graph construction and do not
+become trainable features.
+
+After the convolutional blocks, the resulting feature maps are flattened for
+classification. Each classifier input retains its channel ancestry together
+with its spatial-feature identity, allowing the fixed classifier graph to be
+constructed using the same source-aware pairing and multiscale matching
+principles introduced above. Therefore, the convolutional implementation does
+not require a separate connectivity-learning mechanism. LogicConnect modifies
+only the fixed predecessor assignments; the convolutional sampler, shared
+logic trees, pooling, gate parameterization, training objective, and
+discretization procedure remain unchanged from the underlying convolutional
+DLGN.
+
+\begin{comment}
+    
+
+
+LogicConnect treats fixed DLGN connectivity as an offline architectural design problem and constructs the graph in two stages: source-aware pairing where signal semantics are known, followed by degree-balanced multiscale mixing where direct semantics disappear. It produces an ordinary fixed DLGN graph without learning routing or changing the declared architecture.
+
+
+A. Design Principles and Overview --> This subsection should be new and short—approximately 2 paragraphs.
+Something like "LogicConnect is entirely architecture-driven: the constructor does not
+observe class labels, training loss, validation accuracy, or trained gate
+parameters, and it performs no accuracy-driven edge selection or
+individual-edge swapping."
+
+
+B. Fixed-Graph Representation
+Ancestry needs a more precise definition
+A_j denotes reachable structural support, not functional dependence. A learned gate may ignore one of its accessible inputs.
+
+C. Semantic Pairing at the Input
+Why semantics?
+
+The first-layer inputs correspond to known encoded image sources. Therefore, unlike hidden features, there is information about:
+
+raw spatial position,
+channel identity,
+threshold/bit identity.
+
+Then define exactly what constitutes a source. That makes the rule
+“exclude pairs whose two bits come from the same raw source”
+define the candidate families
+
+Rather than prose alone, I would enumerate compactly:
+
+C=Cspatial∪Cchannel∪Cencoded
+
+
+D. Multiscale matching in hidden layers
+This is the conceptual core of the deeper constructor.
+Once signals have passed through the first logic layer, their indices no longer correspond directly to image coordinates; therefore, imposing the same semantic pairing rule at every depth would be unjustified.
+We want:
+
+balanced exposure,
+systematic cross-signal mixing,
+multiple interaction scales,
+deterministic construction.
+
+Then introduce the matchings.
+A small \(n=8\) illustration would help tremendously:
+
+E. Matching Selection: Balance First, Diversity Second
+Separate the candidate matching definition from the matching-selection rule. Right now both are packed into one subsection.
+Very important: stage-level selection: Importantly, LogicConnect selects predefined matching stages rather than
+optimizing individual edges. Except for the final truncated stage required
+to match the requested gate count, no edge-level search, replacement, or
+accuracy-driven swapping is performed.
+
+F. Applying the Same Constructor to Shared Convolutional Logic
+
+\end{comment}
