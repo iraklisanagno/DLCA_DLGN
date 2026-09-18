@@ -6,15 +6,23 @@
 with the goal of exposing each gate to more informative combinations of
 signals while retaining the simplicity of fixed connectivity}. As illustrated
 in Figure~\ref{fig:overview}, LogicConnect takes the encoded input
-representation and the dimensions of each network layer and returns the two
-fixed predecessor indices required by every gate. Once these connections are
+representation and the dimensions of each network layer and returns fixed
+predecessor assignments at the signal granularity controlled by the
+constructor. Once these connections are
 generated, the graph is frozen and training proceeds using the original DLGN
 gate parameterization. Therefore, LogicConnect does not introduce additional
 routing parameters, change the number of gates, or modify the gate-training
 procedure.
 
 The key challenge is that the information available for connectivity design
-changes with network depth. At the network input, signals retain explicit
+changes across the network. Whenever predecessor signals retain explicit
+source metadata, LogicConnect exploits these relationships through
+\emph{semantic input pairing}. This occurs at the encoded network input and,
+for convolutional DLGNs, again at the first classifier layer after
+flattening, where feature-channel and spatial identities are available. For
+intermediate signals without such direct metadata, LogicConnect instead uses
+\emph{degree-balanced multiscale matchings}, which systematically combine
+predecessors while controlling their reuse based on structural ancestry. At the network input, signals retain explicit
 relationships inherited from the data representation, such as their spatial
 location, channel, and encoding. LogicConnect exploits these relationships
 through \emph{semantic input pairing}, avoiding an arbitrary selection of inputs. After signals pass through logic gates, however, this direct
@@ -37,12 +45,16 @@ functions implemented by the fixed graph.
 \subsection{Fixed-Graph Representation}
 \label{sec:representation}
 
-We first define the fixed connectivity used throughout the network. For a
-layer $l$ with $m_l$ two-input gates and $n_l$ available predecessors, we
-represent its connections by
-$I_l\in\{0,\ldots,n_l-1\}^{2\times m_l}$. For every gate $j$, the two
-entries $I_l[0,j]$ and $I_l[1,j]$ identify distinct predecessor signals.
-Following the original DLGN formulation~\cite{petersen2022}, the output of
+We first define the fixed connectivity constructed by LogicConnect. For a
+dense layer $l$ with $m_l$ two-input gates and $n_l$ available predecessors,
+we represent its connections by
+$I_l\in\{0,\ldots,n_l-1\}^{2\times m_l}$. LogicConnect constructs distinct
+predecessor pairs for these dense connections, i.e.,
+$I_l[0,j]\neq I_l[1,j]$. The same distinctness constraint is applied to the
+channel pairs constructed for convolutional DLGNs; the convolutional spatial
+sampler itself is preserved and may sample with replacement, as discussed in
+Section~\ref{sec:conv}. Following the original DLGN
+formulation~\cite{petersen2022}, the output of
 gate $j$ during training is computed as
 %
 \begin{equation}
@@ -66,56 +78,66 @@ discretization procedure, and output aggregation remain unchanged. This
 allows us to isolate the effect of connectivity from changes to the DLGN
 training formulation.
 
-To preserve information about how signals are related as they propagate
-through the fixed graph, we associate every predecessor with a
-\emph{structural ancestry set}. At the network input, each encoded signal is
-assigned a source identity describing the raw value from which it originates.
-For image inputs, for example, multiple thermometer-encoded thresholds of
-the same pixel and channel share the same source identity. The ancestry of an
-input therefore contains its source label. For a gate receiving predecessors
-$a$ and $b$, its ancestry is propagated simply as
+To preserve structural information as signals propagate through the dense
+graph, we associate each predecessor with a \emph{structural ancestry set}.
+At a dense image input, each encoded signal is assigned the identity of its
+underlying raw pixel--channel value. Multiple thermometer-encoded thresholds
+of the same pixel and channel therefore share the same source label. For a
+dense gate receiving predecessors $a$ and $b$, ancestry is propagated as
 %
 \begin{equation}
 A_{l,j}=A_{l-1,a}\cup A_{l-1,b}.
 \label{eq:ancestry}
 \end{equation}
 %
-Importantly, $A_{l,j}$ describes the set of sources that are
+Here, $A_{l,j}$ describes the set of dense input sources that are
 \emph{structurally reachable} by the gate, rather than the inputs that
-functionally determine its output. The learned Boolean function may suppress
-or ignore one of its predecessors. We use this structural information only
-during offline connectivity construction; it does not introduce trainable
-parameters or alter the gate computation.
+functionally determine its output; the learned Boolean function may suppress
+or ignore one of its predecessors. Convolutional DLGNs use a separate
+channel-level ancestry label space, described in
+Section~\ref{sec:conv}, and those sets should not be interpreted as exact
+reachable raw-pixel sets. In both cases, ancestry is used only during offline
+connectivity construction and does not introduce trainable parameters or
+alter the gate computation.
 
 \subsection{Semantic Input Pairing}
 \label{sec:semantic}
 
-The first layer is the only part of the network where the identity of each
-signal is known directly from the input representation. Rather than treating
-these inputs as arbitrary bit indices, we use their source metadata to expose
-the gates to relationships already present in the encoded image. We denote an
-encoded input by $x_{p,c,t}$, where $p$ identifies the spatial position, $c$
-the channel, and $t$ the encoding threshold. All thresholds originating from
-the same raw pixel--channel value share the same source identity,
-$\sigma(x_{p,c,t})=(p,c)$. Therefore, pairs satisfying
-$\sigma(x_i)=\sigma(x_j)$ are excluded, since they originate from the same
-underlying image value and provide limited complementary information.
+Semantic pairing is applied whenever predecessor signals carry explicit
+source metadata. In dense DLGNs, this occurs at the encoded image input. In
+convolutional DLGNs, metadata is also available when constructing the
+channel assignments and, after flattening, at the first classifier layer,
+where feature-channel and spatial identities are known. We first describe
+the dense image-input case. We denote an encoded input by $x_{p,c,t}$, where
+$p$ identifies the spatial position, $c$ the channel, and $t$ the encoding
+threshold. All thresholds originating from the same raw pixel--channel value
+share the same source identity, $\sigma(x_{p,c,t})=(p,c)$. Therefore, pairs
+satisfying $\sigma(x_i)=\sigma(x_j)$ are excluded, since they originate from
+the same underlying image value and provide limited complementary
+information.
 
 Using this metadata, we construct a collection of semantic pairing stages.
-Spatial stages connect inputs whose positions differ by power-of-two
-displacements,
+For an image axis of length $L$, spatial stages use approximately geometric
+displacements while ensuring that the largest displacement reaches half of
+the axis:
 %
 \begin{equation}
-\Delta = \{1,2,4,\ldots\},
+\Delta(L)=
+\left\{
+1,2,4,\ldots,
+2^{\left\lfloor\log_2 \left\lfloor L/2\right\rfloor\right\rfloor},
+\left\lfloor L/2\right\rfloor
+\right\},
 \label{eq:semantic_stride}
 \end{equation}
 %
-up to half of the corresponding image dimension. Horizontal and vertical
-displacements are considered separately, with cyclic boundaries used to avoid
-systematically favoring particular image regions. Additional stages capture
-cross-channel and cross-threshold relationships, including aligned channels
-and threshold combinations with spatial displacement. Hence, the candidate
-set can be viewed as
+where duplicate values are removed. Thus, $L=28$ produces
+$\{1,2,4,8,14\}$, whereas $L=32$ produces $\{1,2,4,8,16\}$.
+Horizontal and vertical displacements are considered separately, with cyclic
+boundaries used to avoid systematically favoring particular image regions.
+Additional stages capture cross-channel and cross-threshold relationships,
+including aligned channels and threshold combinations with spatial
+displacement. Hence, the candidate set can be viewed as
 %
 \begin{equation}
 \mathcal{C}
@@ -129,8 +151,9 @@ set can be viewed as
 \end{equation}
 %
 where every pair in $\mathcal{C}$ satisfies the distinct-source constraint
-above. This exposes the first-layer gates to multiple complementary notions
-of input structure instead of relying on a single local pairing rule.
+above. This exposes gates at metadata-aware interfaces to multiple
+complementary notions of source structure instead of relying on a single
+local pairing rule.
 
 Semantic structure alone, however, does not guarantee balanced predecessor
 usage. Let $d_i$ denote the number of times predecessor $i$ has already been
@@ -143,7 +166,7 @@ d_i+d_j,
 %
 followed by the smaller value of $\max(d_i,d_j)$, and finally the pair indices
 to resolve remaining ties. This degree-aware ordering prevents a small subset
-of semantically favorable inputs from dominating the first layer. Candidate
+of semantically favorable inputs from dominating the constructed layer. Candidate
 stages are visited cyclically so that spatial, channel, and encoding
 relationships all contribute to the final graph.
 
@@ -154,23 +177,24 @@ seeded affine traversal and applies the degree criteria above. Once the
 distinct pairs of a stage are exhausted, repeated pairs are allowed under the
 same ordering. Importantly, this bounded search is purely structural:
 class labels, training loss, validation accuracy, and trained gate parameters
-are never used to select a pair. The first-layer connectivity is therefore
-fully determined before training from the input metadata and the requested
-network dimensions.
+are never used to select a pair. Each application of semantic pairing is
+therefore fully determined before training from the available source metadata
+and the requested layer dimensions.
 
 
 \subsection{Degree-Balanced Multiscale Matching}
 \label{sec:multiscale}
 
-Semantic pairing is well-defined at the network input because every signal
-retains explicit spatial, channel, and encoding metadata. This interpretation
-does not persist in deeper layers, where each predecessor represents the
-output of several previously combined logic gates. Reapplying the same
-input-level semantic rules would therefore impose relationships that are no
-longer directly supported by the signal representation. Instead, LogicConnect
-uses a regular \emph{multiscale matching} construction that progressively
-mixes hidden signals while controlling how frequently each predecessor is
-reused.
+Semantic pairing is appropriate whenever explicit source metadata is
+available. Within hidden logic layers, however, predecessors are outputs of
+previously combined gates and no longer have a direct spatial, channel, or
+encoding interpretation. Applying the same source-level rules to these
+signals would therefore impose relationships that are not supported by their
+representation. LogicConnect instead uses a regular \emph{multiscale matching} construction for such layers, progressively mixing hidden signals
+while controlling how frequently each predecessor is reused. When explicit
+metadata becomes available again, such as at the flattened convolutional
+classifier interface, semantic pairing can be reapplied as described in
+Section~\ref{sec:conv}.
 
 For a layer with $n$ available predecessors, we consider
 $K=\lceil\log_2 n\rceil$ nominal interaction scales. When $n$ is a power of
@@ -213,21 +237,26 @@ degree sum, maximum endpoint degree, and index order.
 The remaining question is \emph{which matching stage should be used next}.
 LogicConnect follows a strict selection hierarchy. First, it prioritizes
 balanced predecessor reuse. Let $d_i$ denote the current number of times
-predecessor $i$ has been selected, and let $\delta_i(\mathcal{M}_s)$ denote
-its additional occurrences if stage $s$ is appended. We measure the resulting
-degree imbalance as
+predecessor $i$ has been selected. For every candidate scale $s$, we denote
+by $P_s$ the set of pairs that would actually be appended at the current
+step. When enough gates remain, $P_s$ is the complete matching; otherwise,
+$P_s$ contains only the degree-prioritized pairs retained to fill the
+remaining gate budget. Let $\delta_i(P_s)$ denote the number of occurrences
+of predecessor $i$ in this retained set. We measure the resulting degree
+imbalance as
 %
 \begin{equation}
 D_s =
-\max_i \left(d_i+\delta_i(\mathcal{M}_s)\right)
+\max_i \left(d_i+\delta_i(P_s)\right)
 -
-\min_i \left(d_i+\delta_i(\mathcal{M}_s)\right).
+\min_i \left(d_i+\delta_i(P_s)\right).
 \label{eq:degree_spread}
 \end{equation}
 %
-Stages with smaller $D_s$ are preferred. This criterion prevents repeated
-selection of a small subset of predecessors and keeps access to the preceding
-layer as uniform as possible.
+Stages with smaller $D_s$ are preferred. Thus, the balance criterion always
+evaluates the connections that would actually be added, including a
+truncated final stage. This prevents repeated selection of a small subset of
+predecessors and keeps access to the preceding layer as uniform as possible.
 
 Degree balance alone, however, cannot distinguish stages that use predecessors
 equally often but repeatedly combine signals with similar structural history.
@@ -247,8 +276,11 @@ N_s =
 \label{eq:ancestry_novelty}
 \end{equation}
 %
-where $Q_s$ contains all pairs of the candidate matching, or at most 2,048
-evenly sampled pairs for very large stages. Identical nonempty ancestry sets
+where $Q_s$ contains the complete candidate matching, or at most 2,048
+evenly sampled pairs when that matching is larger. Unlike $P_s$, $Q_s$
+therefore characterizes the structural diversity of the complete candidate
+stage even when only a partial stage will be appended. Identical nonempty
+ancestry sets
 contribute zero, whereas disjoint sets contribute one. Hence, among stages
 with the same degree spread, LogicConnect favors the one that combines
 predecessors with less redundant reachable support. The ancestry score does
@@ -280,7 +312,7 @@ $\{A_i\}$
 \WHILE{unassigned gates remain}
     \STATE Determine whether a complete or partial stage is required
     \FOR{each eligible candidate stage $s$}
-        \STATE Compute degree spread $D_s$
+        \STATE Form the actual append set $P_s$ and compute $D_s$ using $P_s$
     \ENDFOR
     \STATE Retain stages with minimum $D_s$
     \IF{multiple stages remain}
@@ -315,11 +347,14 @@ For the first convolutional layer, channel assignments are constructed using
 the available input metadata, analogous to the semantic pairing described in
 Section~\ref{sec:semantic}. Subsequent channel groups are formed using the
 degree-balanced multiscale matching of
-Section~\ref{sec:multiscale}. Since the same channel pairing is reused across
-spatial positions, the construction preserves weight sharing and does not
-introduce location-dependent routing. Thus, LogicConnect changes which
-channels are combined, while the spatial locations sampled by the
-convolutional operator remain unchanged.
+Section~\ref{sec:multiscale}. LogicConnect enforces distinct channels in
+these constructed channel pairs, and the same pairing is reused across
+spatial positions to preserve weight sharing. However, the original spatial
+sampler operates with replacement; consequently, an individual leaf gate may
+still receive the same spatial/channel coordinate twice. LogicConnect does
+not alter this behavior. Thus, it changes which channels are combined while
+retaining the spatial sampling mechanism of the underlying convolutional
+DLGN.
 
 To support the same structural criteria across convolutional layers, ancestry
 is tracked at the channel level. Initially, each encoded input channel is
@@ -334,9 +369,10 @@ become trainable features.
 
 After the convolutional blocks, the resulting feature maps are flattened for
 classification. Each classifier input retains its channel ancestry together
-with its spatial-feature identity, allowing the fixed classifier graph to be
-constructed using the same source-aware pairing and multiscale matching
-principles introduced above. Therefore, the convolutional implementation does
+with its spatial-feature identity. These explicit metadata allow semantic
+pairing to be applied again at the first classifier layer; subsequent
+classifier layers use the degree-balanced multiscale construction of
+Section~\ref{sec:multiscale}. Therefore, the convolutional implementation does
 not require a separate connectivity-learning mechanism. LogicConnect modifies
 only the fixed predecessor assignments; the convolutional sampler, shared
 logic trees, pooling, gate parameterization, training objective, and
