@@ -51,30 +51,55 @@ creates a practical design choice between inexpensive but arbitrary
 % representations: individual input coordinates in dense DLGNs and shared
 % channel groups in convolutional DLGNs.
 
-To demonstrate the need for connectivity design, we consider a
-motivational example on a dense CIFAR-10 DLGN. We keep the deeper
-connectivity unchanged and randomize only the first-layer connections
-under a degree-preserving constraint. Hence, every predecessor is used
-exactly the same number of times before and after randomization; only
-the identities of the signals paired at each gate are changed. Despite
-preserving the same fan-out, hardened validation accuracy decreases by
-$4.49$ percentage points. This result reveals an important limitation of
-degree-balanced connectivity: \emph{how often a signal is used does not
-determine which information is brought together}. However, explicitly
-selecting favorable pairs is itself challenging to scale. Given $N$
-candidate predecessors, a two-input gate can already choose from
-$\mathcal{O}(N^2)$ possible pairs, and this choice is repeated across
-thousands or millions of gates and multiple network layers. Moreover,
-while input signals have explicit image semantics, intermediate signals
-progressively lose this direct interpretation, making a manually defined
-pairing rule increasingly difficult to justify at deeper layers. Fixed
-random connectivity avoids this search but ignores signal relationships,
-whereas learned connectivity explores the enlarged space by maintaining
-additional routing state and candidate activations during training.
-Therefore, a key challenge is to construct informative connections
-\emph{before training} using principles that remain scalable as the
-network grows and do not introduce the training overhead of a separate
-routing problem.
+% To demonstrate the need for connectivity design, we consider a
+% motivational example on a dense CIFAR-10 DLGN. We keep the deeper
+% connectivity unchanged and randomize only the first-layer connections
+% under a degree-preserving constraint. Hence, every predecessor is used
+% exactly the same number of times before and after randomization; only
+% the identities of the signals paired at each gate are changed. Despite
+% preserving the same fan-out, hardened validation accuracy decreases by
+% $4.49$ percentage points. This result reveals an important limitation of
+% degree-balanced connectivity: \emph{how often a signal is used does not
+% determine which information is brought together}. However, explicitly
+% selecting favorable pairs is itself challenging to scale. Given $N$
+% candidate predecessors, a two-input gate can already choose from
+% $\mathcal{O}(N^2)$ possible pairs, and this choice is repeated across
+% thousands or millions of gates and multiple network layers. Moreover,
+% while input signals have explicit image semantics, intermediate signals
+% progressively lose this direct interpretation, making a manually defined
+% pairing rule increasingly difficult to justify at deeper layers. Fixed
+% random connectivity avoids this search but ignores signal relationships,
+% whereas learned connectivity explores the enlarged space by maintaining
+% additional routing state and candidate activations during training.
+% Therefore, a key challenge is to construct informative connections
+% \emph{before training} using principles that remain scalable as the
+% network grows and do not introduce the training overhead of a separate
+% routing problem.
+
+
+To isolate the effect of \emph{pair identity}, we consider a four-layer
+dense CIFAR-10 DLGN with 512K gates. We compare its structured first-layer
+graph against a randomized control derived from the same graph. The control
+preserves exactly how often every encoded input appears in each of the two
+gate-input positions, but permutes these assignments across gates. Thus, the
+two networks have identical dimensions and predecessor-usage statistics and
+differ only in which inputs are paired. All deeper connections remain
+unchanged, and both networks use the same data split, paired initialization,
+and training configuration.
+\input{tables/motivation.tex}
+As shown in Table~\ref{tab:motivation}, randomizing only the pair identities
+reduces hardened validation accuracy in all three runs, with a mean drop of
+$4.59\%$. Hence, balanced predecessor usage alone does not
+determine connectivity quality: the specific signals combined by each gate
+also matter. Determining favorable pairs, however, quickly becomes
+intractable. With $N$ available predecessors, each two-input gate admits
+$N(N-1)/2$ possible unordered pairs, and this decision is repeated across
+many gates and layers. Furthermore, image inputs provide explicit spatial,
+channel, and encoding relationships that can guide connectivity, whereas
+intermediate signals generally lack the same direct interpretation. This
+creates the need for a scalable construction that exploits known signal
+relationships where available and organizes subsequent interactions without
+introducing a separate trainable routing problem.
 
 In this paper, we propose \textbf{LogicConnect}, an offline connectivity
 construction that introduces structure into the DLGN graph before training.

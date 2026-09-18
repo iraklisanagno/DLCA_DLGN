@@ -1,0 +1,29 @@
+\begin{table}[t]
+\centering
+\caption{Effect of first-layer pair identity on a four-layer, 512K-gate
+dense CIFAR-10 DLGN. The randomized control preserves, for every encoded
+input, its number of occurrences in each gate-input slot; only the
+pairings across gates are changed. All deeper connections and training
+settings are identical. Values report best hardened validation accuracy
+(\%).}
+\label{tab:motivation}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{c|cc|c}
+\hline
+\textbf{Seed} &
+\textbf{Structured Pairs} &
+\textbf{Randomized Pairs} &
+$\mathbf{\Delta}$ \textbf{(pp)} \\
+\hline
+0 & 58.86 & 54.26 & +4.60 \\
+1 & 59.48 & 55.26 & +4.22 \\
+2 & 59.06 & 54.40 & +4.66 \\
+\hline
+\textbf{Mean $\pm$ SD}
+& $\mathbf{59.13\pm0.32}$
+& $54.64\pm0.54$
+& $\mathbf{+4.49\pm0.24}$ \\
+\hline
+\end{tabular}
+\end{table}
